@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1048591941251",
+    "firebase_url": "https://e-srkr-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "e-srkr",
+    "storage_bucket": "e-srkr.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1048591941251:android:525992ce19cab401a665b6",
+        "android_client_info": {
+          "package_name": "com.nimmalasujith.esrkr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1048591941251-f0gfe05vfo0ek43ocam9ernic9er96jf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA571aMLOiKnsZzJCPRy-1aFQYTDhrSjbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1048591941251-f0gfe05vfo0ek43ocam9ernic9er96jf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
