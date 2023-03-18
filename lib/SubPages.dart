@@ -294,7 +294,6 @@ class _SubjectsState extends State<Subjects> {
                   )
                 ],
               ),
-              Image.network(""),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -370,115 +369,111 @@ class _SubjectsState extends State<Subjects> {
                                                                     ),
                                                                     Spacer(),
                                                                     InkWell(
-                                                                      child: Padding(
-                                                                        padding:  EdgeInsets.only(right: 3),
-                                                                        child:isLike(SubjectsData.id)
+                                                                      child: StreamBuilder<DocumentSnapshot>(
+                                                                        stream: FirebaseFirestore.instance.collection('ECE')
+                                                                            .doc("Subjects")
+                                                                            .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+                                                                        builder: (context, snapshot) {
+                                                                          if (snapshot.hasData) {
+                                                                            if (snapshot.data!.exists) {
+                                                                              return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+                                                                            } else {
+                                                                              return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+                                                                            }
+                                                                          } else {
+                                                                            return Container();
+                                                                          }
+                                                                        },
                                                                       ),
-                                                                      onTap: (){
-                                                                     print(isDocumentExsist(SubjectsData.id)!=false);
+                                                                      onTap:
+                                                                          ()async {
+
+                                                                        try {
+                                                                          await FirebaseFirestore.instance.
+                                                                          collection('ECE')
+                                                                              .doc("Subjects")
+                                                                              .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+                                                                              .get()
+                                                                              .then((docSnapshot) {
+                                                                            if (docSnapshot.exists) {
+                                                                              FirebaseFirestore.instance.
+                                                                              collection('ECE')
+                                                                                  .doc("Subjects")
+                                                                                  .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                  .delete();
+                                                                              showToast("Unliked");
+                                                                            } else {
+                                                                              FirebaseFirestore.instance.
+                                                                              collection('ECE')
+                                                                                  .doc("Subjects")
+                                                                                  .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                  .set({"id": fullUserId()});
+                                                                              showToast("Liked");
+                                                                            }
+                                                                          });
+                                                                        } catch (e) {
+                                                                          print(e);
+                                                                        }
                                                                       },
                                                                     ),
-                                                                    Text("${SubjectsData.like}",style: TextStyle(color: Colors.white,fontSize: 20),),
+                                                                    StreamBuilder<QuerySnapshot>(
+                                                                      stream: FirebaseFirestore.instance
+                                                                          .collection('ECE')
+                                                                          .doc("Subjects")
+                                                                          .collection("Subjects").doc(SubjectsData.id).collection("likes")
+                                                                          .snapshots(),
+                                                                      builder: (context, snapshot) {
+                                                                        if (snapshot.hasData) {
+                                                                          return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
+                                                                        } else {
+                                                                          return const Text("0");
+                                                                        }
+                                                                      },
+                                                                    ),
                                                                     SizedBox(width: 5,),
                                                                     InkWell(
-                                                                      child: Padding(
-                                                                        padding: const EdgeInsets.only(right: 20),
-                                                                        child: Icon(
-                                                                          Icons.library_add_outlined,
-                                                                          color: Colors.blue,
-                                                                          size: 28,
-                                                                        ),
+                                                                      child: StreamBuilder<DocumentSnapshot>(
+                                                                        stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
+                                                                        builder: (context, snapshot) {
+                                                                          if (snapshot.hasData) {
+                                                                            if (snapshot.data!.exists) {
+                                                                              return const Icon(
+                                                                                  Icons.library_add_check,
+                                                                                  size: 26, color: Colors.cyanAccent
+                                                                              );
+                                                                            } else {
+                                                                              return const Icon(
+                                                                                Icons.library_add_outlined,
+                                                                                size: 26,
+                                                                                color: Colors.cyanAccent,
+                                                                              );
+                                                                            }
+                                                                          } else {
+                                                                            return Container();
+                                                                          }
+                                                                        },
                                                                       ),
-                                                                      onTap: () {
-                                                                        showDialog(
-                                                                          context: context,
-                                                                          builder: (context) {
-                                                                            return Dialog(
-                                                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                                                              elevation: 16,
-                                                                              child: Container(
-                                                                                decoration: BoxDecoration(
-                                                                                  border: Border.all(color: Colors.tealAccent),
-                                                                                  borderRadius: BorderRadius.circular(20),
-                                                                                ),
-                                                                                child: ListView(
-                                                                                  shrinkWrap: true,
-                                                                                  children: <Widget>[
-                                                                                    SizedBox(height: 10),
-                                                                                    SizedBox(height: 5),
-                                                                                    Padding(
-                                                                                      padding: const EdgeInsets.only(left: 15),
-                                                                                      child: Text(
-                                                                                        "Do you want Add to Favourites",
-                                                                                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 18),
-                                                                                      ),
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      height: 5,
-                                                                                    ),
-                                                                                    Center(
-                                                                                      child: Row(
-                                                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                        children: [
-                                                                                          Spacer(),
-                                                                                          InkWell(
-                                                                                            child: Container(
-                                                                                              decoration: BoxDecoration(
-                                                                                                color: Colors.black26,
-                                                                                                border: Border.all(color: Colors.black),
-                                                                                                borderRadius: BorderRadius.circular(25),
-                                                                                              ),
-                                                                                              child: Padding(
-                                                                                                padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-                                                                                                child: Text("Back"),
-                                                                                              ),
-                                                                                            ),
-                                                                                            onTap: () {
-                                                                                              Navigator.pop(context);
-                                                                                            },
-                                                                                          ),
-                                                                                          SizedBox(
-                                                                                            width: 10,
-                                                                                          ),
-                                                                                          InkWell(
-                                                                                            child: Container(
-                                                                                              decoration: BoxDecoration(
-                                                                                                color: Colors.red,
-                                                                                                border: Border.all(color: Colors.black),
-                                                                                                borderRadius: BorderRadius.circular(25),
-                                                                                              ),
-                                                                                              child: Padding(
-                                                                                                padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-                                                                                                child: Text(
-                                                                                                  "Add + ",
-                                                                                                  style: TextStyle(color: Colors.white),
-                                                                                                ),
-                                                                                              ),
-                                                                                            ),
-                                                                                            onTap: () {
-                                                                                              FavouriteSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
-                                                                                              Navigator.pop(context);
-                                                                                              showToast("${SubjectsData.heading} is Added");
-                                                                                            },
-                                                                                          ),
-                                                                                          SizedBox(
-                                                                                            width: 20,
-                                                                                          ),
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      height: 10,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                            );
-                                                                          },
-                                                                        );
+                                                                      onTap: () async{
+                                                                        try {
+                                                                          await FirebaseFirestore
+                                                                              .instance
+                                                                              .collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id)
+                                                                              .get()
+                                                                              .then((docSnapshot) {
+                                                                            if (docSnapshot.exists) {
+                                                                              FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
+                                                                              showToast("Removed from saved list");
+                                                                            } else {
+                                                                              FavouriteSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
+                                                                              showToast("${SubjectsData.heading} in favorites");                                                                  }
+                                                                          });
+                                                                        } catch (e) {
+                                                                          print(
+                                                                              e);
+                                                                        }
+
                                                                       },
-                                                                    )
+                                                                    ),
                                                                   ],
                                                                 ),
                                                                 SizedBox(
@@ -508,13 +503,20 @@ class _SubjectsState extends State<Subjects> {
                                                                     child: Container(
                                                                       decoration: BoxDecoration(
                                                                         borderRadius: BorderRadius.circular(15),
-                                                                        color: Colors.white.withOpacity(0.5),
-                                                                        border: Border.all(color: Colors.white),
+                                                                        color: Colors.black.withOpacity(0.3),
+                                                                        border: Border.all(color: Colors.white.withOpacity(0.5)),
                                                                       ),
+                                                                      width: 70,
                                                                       child: InkWell(
-                                                                        child: Padding(
-                                                                          padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                                                          child: Text("+Add"),
+                                                                        child: Row(
+                                                                          children: [
+                                                                            SizedBox(width: 5,),
+                                                                            Icon(Icons.edit,color: Colors.white,),
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.only(left: 3, right: 3),
+                                                                              child: Text("Edit",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 18),),
+                                                                            ),
+                                                                          ],
                                                                         ),
                                                                         onTap: () {
                                                                           Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: SubjectsData.id,heading: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl,mode:"Subjects" ,)));
@@ -757,14 +759,112 @@ class _LabSubjectsState extends State<LabSubjects> {
                                                             ),
                                                             Spacer(),
                                                             InkWell(
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.only(right: 20),
-                                                                child: Icon(Icons.library_add_outlined,color: Colors.white,),
+                                                              child: StreamBuilder<DocumentSnapshot>(
+                                                                stream: FirebaseFirestore.instance.collection('ECE')
+                                                                    .doc("LabSubjects")
+                                                                    .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+                                                                builder: (context, snapshot) {
+                                                                  if (snapshot.hasData) {
+                                                                    if (snapshot.data!.exists) {
+                                                                      return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+                                                                    } else {
+                                                                      return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+                                                                    }
+                                                                  } else {
+                                                                    return Container();
+                                                                  }
+                                                                },
                                                               ),
-                                                              onTap: (){
+                                                              onTap:
+                                                                  ()async {
+
+                                                                try {
+                                                                  await FirebaseFirestore.instance.
+                                                                  collection('ECE')
+                                                                      .doc("LabSubjects")
+                                                                      .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                      .get()
+                                                                      .then((docSnapshot) {
+                                                                    if (docSnapshot.exists) {
+                                                                      FirebaseFirestore.instance.
+                                                                      collection('ECE')
+                                                                          .doc("LabSubjects")
+                                                                          .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                          .delete();
+                                                                      showToast("Unliked");
+                                                                    } else {
+                                                                      FirebaseFirestore.instance.
+                                                                      collection('ECE')
+                                                                          .doc("LabSubjects")
+                                                                          .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                          .set({"id": fullUserId()});
+                                                                      showToast("Liked");
+                                                                    }
+                                                                  });
+                                                                } catch (e) {
+                                                                  print(e);
+                                                                }
+                                                              },
+                                                            ),
+                                                            StreamBuilder<QuerySnapshot>(
+                                                              stream: FirebaseFirestore.instance
+                                                                  .collection('ECE')
+                                                                  .doc("LabSubjects")
+                                                                  .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes")
+                                                                  .snapshots(),
+                                                              builder: (context, snapshot) {
+                                                                if (snapshot.hasData) {
+                                                                  return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
+                                                                } else {
+                                                                  return const Text("0");
+                                                                }
+                                                              },
+                                                            ),
+                                                            SizedBox(width: 5,),
+                                                            InkWell(
+                                                              child: StreamBuilder<DocumentSnapshot>(
+                                                                stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).snapshots(),
+                                                                builder: (context, snapshot) {
+                                                                  if (snapshot.hasData) {
+                                                                    if (snapshot.data!.exists) {
+                                                                      return const Icon(
+                                                                          Icons.library_add_check,
+                                                                          size: 26, color: Colors.cyanAccent
+                                                                      );
+                                                                    } else {
+                                                                      return const Icon(
+                                                                        Icons.library_add_outlined,
+                                                                        size: 26,
+                                                                        color: Colors.cyanAccent,
+                                                                      );
+                                                                    }
+                                                                  } else {
+                                                                    return Container();
+                                                                  }
+                                                                },
+                                                              ),
+                                                              onTap: () async{
+                                                                try {
+                                                                  await FirebaseFirestore
+                                                                      .instance
+                                                                      .collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id)
+                                                                      .get()
+                                                                      .then((docSnapshot) {
+                                                                    if (docSnapshot.exists) {
+                                                                      FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
+                                                                      showToast("Removed from saved list");
+                                                                    } else {
+                                                                      FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
+                                                                      showToast("${LabSubjectsData.heading} in favorites");                                                         }
+                                                                  });
+                                                                } catch (e) {
+                                                                  print(
+                                                                      e);
+                                                                }
 
                                                               },
-                                                            )
+                                                            ),
+                                                            SizedBox(width: 10,)
                                                           ],
                                                         ),
                                                         SizedBox(
@@ -1473,7 +1573,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                       }
                                   }
                                 }),
-                            if(widget.mode=="Subject")StreamBuilder<List<UnitsConvertor>>(
+                            if(widget.mode=="Subject")
+                              StreamBuilder<List<UnitsConvertor>>(
                                 stream: readUnits(widget.ID),
                                 builder: (context, snapshot) {
                                   final Units = snapshot.data;

@@ -22,6 +22,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String Reg = "";
+  String RegID = "";
+  String Year = "";
+  String YearID = "";
+  String Class = "";
   @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: Colors.black,
@@ -307,8 +312,13 @@ class _HomePageState extends State<HomePage> {
                         child: Row(
                           children: [
                             Text(
-                              "Regulation : R-20",
+                              "Regulation : ${Reg}",
                               style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
+                            ),
+
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10,left: 3),
+                              child: Text("(${Year})",style: TextStyle(color: Colors.white),),
                             ),
                             Spacer(),
                             InkWell(
@@ -346,7 +356,7 @@ class _HomePageState extends State<HomePage> {
                                           border: Border.all(
                                               color: Colors.white
                                                   .withOpacity(
-                                                  0.1)),
+                                                  0.5)),
                                           borderRadius:
                                           BorderRadius
                                               .circular(20),
@@ -366,12 +376,97 @@ class _HomePageState extends State<HomePage> {
                                                       fontSize:
                                                       22,
                                                       fontWeight:
-                                                      FontWeight.w300,
-                                                      color: Colors.blue),
+                                                      FontWeight.w500,
+                                                      color: Colors.orange),
                                                 ),
                                               ),
                                             ),
+                                            StreamBuilder<List<RegulationConvertor>>(
+                                                stream: readRegulation(),
+                                                builder: (context, snapshot) {
+                                                  final user = snapshot.data;
+                                                  switch (snapshot.connectionState) {
+                                                    case ConnectionState.waiting:
+                                                      return const Center(
+                                                          child: CircularProgressIndicator(
+                                                            strokeWidth: 0.3,
+                                                            color: Colors.cyan,
+                                                          ));
+                                                    default:
+                                                      if (snapshot.hasError) {
+                                                        return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                                      } else {
+                                                        return ListView.separated(
+                                                            physics: const BouncingScrollPhysics(),
+                                                            shrinkWrap: true,
+                                                            itemCount: user!.length,
+                                                            itemBuilder: (context, int index) {
+                                                              final SubjectsData = user[index];
+                                                              return Column(
+                                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.only(left: 10,bottom: 5),
+                                                                    child: Text("${SubjectsData.heading}",style: TextStyle(color: Colors.white,fontSize: 30),),
+                                                                  ),
+                                                                  StreamBuilder<List<RegulationYearConvertor>>(
+                                                                      stream: readRegulationYear(SubjectsData.id),
+                                                                      builder: (context, snapshot) {
+                                                                        final user1 = snapshot.data;
+                                                                        switch (snapshot.connectionState) {
+                                                                          case ConnectionState.waiting:
+                                                                            return const Center(
+                                                                                child: CircularProgressIndicator(
+                                                                                  strokeWidth: 0.3,
+                                                                                  color: Colors.cyan,
+                                                                                ));
+                                                                          default:
+                                                                            if (snapshot.hasError) {
+                                                                              return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                                                            } else {
+                                                                              return ListView.separated(
+                                                                                  physics: const BouncingScrollPhysics(),
+                                                                                  shrinkWrap: true,
+                                                                                  itemCount: user1!.length,
+                                                                                  itemBuilder: (context, int index) {
+                                                                                    final SubjectsData1 = user1[index];
+                                                                                    return InkWell(
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.only(left: 25),
+                                                                                        child: Text("${SubjectsData1.heading}",style: TextStyle(color: Colors.white,fontSize: 20),),
+                                                                                      ),
+                                                                                      onTap: (){
+                                                                                        setState(() {
+                                                                                          Reg = SubjectsData.heading;
+                                                                                          RegID = SubjectsData.id;
 
+                                                                                          Year = SubjectsData1.heading;
+                                                                                          YearID = SubjectsData1.id;
+                                                                                        });
+                                                                                        Navigator.pop(context);
+                                                                                      },
+                                                                                    );
+                                                                                  },
+                                                                                  separatorBuilder: (context, index) => const SizedBox(
+                                                                                    height: 1,
+                                                                                  ));
+                                                                            }
+                                                                        }
+                                                                      }),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.only(left: 10,right: 10),
+                                                                    child: Divider(color: Colors.white,thickness: 0.3,),
+                                                                  )
+                                                                ],
+                                                              );
+                                                            },
+                                                            separatorBuilder: (context, index) => const SizedBox(
+                                                              height: 1,
+                                                            ));
+                                                      }
+                                                  }
+                                                }),
                                             const SizedBox(
                                               height: 10,
                                             )
@@ -384,9 +479,7 @@ class _HomePageState extends State<HomePage> {
                               },
                             ),
 
-                            SizedBox(
-                              width: 20,
-                            ),
+                            SizedBox(width: 20),
                           ],
                         ),
                       ),
@@ -399,7 +492,62 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(
                         height: 10,
                       ),
-                      Row(
+                      if(RegID.isNotEmpty && YearID.isNotEmpty)Padding(
+                        padding: const EdgeInsets.only(left: 20,right: 8,bottom: 8),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Text("Time Tables :",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+                            ),
+                            StreamBuilder<List<RegulationYearClassConvertor>>(
+                                stream: readRegulationYearClass(id: RegID,id1: YearID),
+                                builder: (context, snapshot) {
+                                  final user= snapshot.data;
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.waiting:
+                                      return const Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 0.3,
+                                            color: Colors.cyan,
+                                          ));
+                                    default:
+                                      if (snapshot.hasError) {
+                                        return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                      } else {
+                                        return SizedBox(
+                                          height: 70,
+                                          child: ListView.separated(
+                                              physics: const BouncingScrollPhysics(),
+                                              shrinkWrap: true,
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: user!.length,
+                                              itemBuilder: (context, int index) {
+                                                final classess = user[index];
+                                                return InkWell(
+                                                  child: Container(
+                                                    width: 70,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(40),
+                                                        image: DecorationImage(image: NetworkImage(""),fit: BoxFit.fill)
+                                                    ),
+                                                    child: Center(child: Text("${classess.heading}")),
+                                                  ),
+
+                                                );
+                                              },
+                                              separatorBuilder: (context, index) => const SizedBox(
+                                                height: 1,
+                                              )),
+                                        );
+                                      }
+                                  }
+                                }),
+                          ],
+                        ),
+                      ),
+                      if(RegID.isNotEmpty && YearID.isNotEmpty)Row(
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 20),
@@ -428,7 +576,7 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(width: 20,)
                         ],
                       ),
-                      Padding(
+                      if(RegID.isNotEmpty && YearID.isNotEmpty)Padding(
                         padding: const EdgeInsets.only(top: 10, left: 20, right: 10,bottom: 5),
                         child: StreamBuilder<List<FlashConvertor>>(
                             stream: readFlashNews(),
@@ -743,9 +891,30 @@ class _HomePageState extends State<HomePage> {
                                   }
                               }
                             }),
-                      ),
+                      )
+                      else Center(child: Column(
+                        children: [
+                          Text("Regulation and Year is Not Selected for Subjects",style: TextStyle(color: Colors.white),),
+                          InkWell(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white54,
+                                border: Border.all(color: Colors.white),
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                child: Text("see more"),
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) =>  Subjects()));
+                            },
+                          ),
+                        ],
+                      )),
                       //Lab Subjects
-                      StreamBuilder<List<LabSubjectsConvertor>>(
+                      if(RegID.isNotEmpty && YearID.isNotEmpty)StreamBuilder<List<LabSubjectsConvertor>>(
                         stream: readLabSubjects(),
                         builder: (context, snapshot) {
                           final Subjects = snapshot.data;
@@ -1011,44 +1180,6 @@ class _HomePageState extends State<HomePage> {
                           }
                         },
                       ),
-                      //Books
-                      //Book based on Branch
-                      // Row(
-                      //   children: [
-                      //     Padding(
-                      //       padding: const EdgeInsets.only(left: 20, top: 20, bottom: 5),
-                      //       child: Text(
-                      //         "Based on ECE",
-                      //         style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
-                      //       ),
-                      //     ),
-                      //     Spacer(),
-                      //     if (userId() == "gmail.com")
-                      //       InkWell(
-                      //         child: Container(
-                      //           decoration: BoxDecoration(
-                      //             borderRadius: BorderRadius.circular(15),
-                      //             color: Colors.white.withOpacity(0.5),
-                      //             border: Border.all(color: Colors.white),
-                      //           ),
-                      //           child: Padding(
-                      //             padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                      //             child: Text("+Add"),
-                      //           ),
-                      //         ),
-                      //         onTap: () {
-                      //           Navigator.push(context, MaterialPageRoute(builder: (context) => BooksCreator()));
-                      //         },
-                      //       ),
-                      //     SizedBox(
-                      //       width: 10,
-                      //     ),
-                      //
-                      //     SizedBox(
-                      //       width: 20,
-                      //     ),
-                      //   ],
-                      // ),
                       Padding(
                         padding: const EdgeInsets.only(
                           top: 10,
@@ -1091,6 +1222,26 @@ class _HomePageState extends State<HomePage> {
                                                   style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
                                                 ),
                                                 Spacer(),
+                                                if (userId() == "gmail.com")
+                                                  InkWell(
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(15),
+                                                        color: Colors.white.withOpacity(0.5),
+                                                        border: Border.all(color: Colors.white),
+                                                      ),
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                                        child: Text("+Add"),
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => BooksCreator()));
+                                                    },
+                                                  ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
                                                 InkWell(
                                                     child: Container(
                                                       decoration: BoxDecoration(
@@ -1356,6 +1507,72 @@ class HomeUpdateConvertor {
   Map<String, dynamic> toJson() => {"id": id, "heading": heading, "date": date, "photoUrl": photoUrl,"link":link};
 
   static HomeUpdateConvertor fromJson(Map<String, dynamic> json) => HomeUpdateConvertor(link:json["link"],id: json['id'], heading: json["heading"], date: json["date"], photoUrl: json["photoUrl"]);
+}
+
+
+Stream<List<RegulationConvertor>> readRegulation() =>
+    FirebaseFirestore.instance.collection('ECE').doc("regulation").collection("regulation").orderBy("heading",descending: true).snapshots().map((snapshot) => snapshot.docs.map((doc) => RegulationConvertor.fromJson(doc.data())).toList());
+
+Future createRegulation({required String heading}) async {
+  final docflash = FirebaseFirestore.instance.collection("ECE").doc("regulation").collection("regulation").doc();
+  final flash = RegulationConvertor(id: docflash.id, heading: heading);
+  final json = flash.toJson();
+  await docflash.set(json);
+}
+
+class RegulationConvertor {
+  String id;
+  final String heading;
+
+  RegulationConvertor({this.id = "", required this.heading});
+
+  Map<String, dynamic> toJson() => {"id": id, "heading": heading};
+
+  static RegulationConvertor fromJson(Map<String, dynamic> json) => RegulationConvertor(id: json['id'], heading: json["heading"]);
+}
+
+
+
+Stream<List<RegulationYearConvertor>> readRegulationYear(String id) =>
+    FirebaseFirestore.instance.collection('ECE').doc("regulation").collection("regulation").doc(id).collection("year").orderBy("heading",descending: true).snapshots().map((snapshot) => snapshot.docs.map((doc) => RegulationYearConvertor.fromJson(doc.data())).toList());
+
+Future createClassRegulation({required String heading}) async {
+  final docflash = FirebaseFirestore.instance.collection("ECE").doc("regulation").collection("regulation").doc();
+  final flash = RegulationYearConvertor(id: docflash.id, heading: heading);
+  final json = flash.toJson();
+  await docflash.set(json);
+}
+
+class RegulationYearConvertor {
+  String id;
+  final String heading;
+
+  RegulationYearConvertor({this.id = "", required this.heading});
+
+  Map<String, dynamic> toJson() => {"id": id, "heading": heading};
+
+  static RegulationYearConvertor fromJson(Map<String, dynamic> json) => RegulationYearConvertor(id: json['id'], heading: json["heading"]);
+}
+
+Stream<List<RegulationYearClassConvertor>> readRegulationYearClass({required String id,required String id1}) =>
+    FirebaseFirestore.instance.collection('ECE').doc("regulation").collection("regulation").doc(id).collection("year").doc(id1).collection("class").orderBy("heading",descending: true).snapshots().map((snapshot) => snapshot.docs.map((doc) => RegulationYearClassConvertor.fromJson(doc.data())).toList());
+
+Future createClassRegulationClass({required String heading}) async {
+  final docflash = FirebaseFirestore.instance.collection("ECE").doc("regulation").collection("regulation").doc();
+  final flash = RegulationYearConvertor(id: docflash.id, heading: heading);
+  final json = flash.toJson();
+  await docflash.set(json);
+}
+
+class RegulationYearClassConvertor {
+  String id;
+  final String heading;
+
+  RegulationYearClassConvertor({this.id = "", required this.heading});
+
+  Map<String, dynamic> toJson() => {"id": id, "heading": heading};
+
+  static RegulationYearClassConvertor fromJson(Map<String, dynamic> json) => RegulationYearClassConvertor(id: json['id'], heading: json["heading"]);
 }
 
 Stream<List<BranchNewConvertor>> readBranchNew() =>
