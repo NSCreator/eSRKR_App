@@ -193,7 +193,7 @@ class _NewsCreatorState extends State<NewsCreator> {
               onTap: () async {
                 final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
                 File file = File(pickedFile!.path);
-                final Reference ref = storage.ref().child('ece/news/${DateTime.now().toString()}');
+                final Reference ref = storage.ref().child('ece/news/${DateTime.now().toString()}.image');
                 final TaskSnapshot task = await ref.putFile(file);
                 final String url = await task.ref.getDownloadURL();
                 PhotoUrlController.text = url;

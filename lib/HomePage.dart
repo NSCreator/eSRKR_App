@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:srkr_study_app/SubPages.dart';
 import 'package:srkr_study_app/settings.dart';
@@ -18,7 +19,7 @@ import 'favorites.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
+import 'package:http/http.dart' as http;
 import 'net.dart';
 
 class HomePage extends StatefulWidget {
@@ -27,11 +28,47 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final FirebaseStorage storage = FirebaseStorage.instance;
+  String folderPath = "";
+
+  Future<void> getPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    setState(() {
+      folderPath = '${directory.path}/';
+    });
+
+  }
+ downloadImage(String photoUrl) async {
+   final Uri uri = Uri.parse(photoUrl);
+   final String fileName = uri.pathSegments.last;
+   var name = fileName.split("/").last;
+
+    final ref = FirebaseStorage.instance.ref().child(fileName);
+    final url = await ref.getDownloadURL();
+    final response = await http.get(Uri.parse(url));
+    final documentDirectory = await getApplicationDocumentsDirectory();
+    final newDirectory = Directory('${documentDirectory.path}/ece_news');
+    if (!await newDirectory.exists()) {
+     await newDirectory.create(recursive: true);
+     final file = File('${newDirectory.path}/${name}');
+     await file.writeAsBytes(response.bodyBytes);
+     showToast(file.path);
+   }else{
+     showToast("failed to create folder");
+   }
+
+  }
   String Reg = "";
   String RegID = "";
   String Year = "";
   String YearID = "";
   String Class = "";
+  @override
+  void initState() {
+    // TODO: implement initState
+    getPath();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: Colors.black,
@@ -260,44 +297,72 @@ class _HomePageState extends State<HomePage> {
                                           BranchNews.length,
                                           (int index) {
                                             final BranchNew = BranchNews[index];
-                                            return InkWell(
-                                              child: Container(
-                                                width: double.infinity,
-
-                                                margin: const EdgeInsets.all(4.0),
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(15),
-                                                  color: Colors.black.withOpacity(0.4),
-                                                  border: Border.all(color: Colors.grey),
-                                                  image: DecorationImage(
-                                                    image: NetworkImage(
-                                                      BranchNew.photoUrl,
-                                                    ),
-                                                    fit: BoxFit.cover,
-                                                  ),
+                                            final Uri uri = Uri.parse(BranchNew.photoUrl);
+                                            final String fileName = uri.pathSegments.last;
+                                            var name = fileName.split("/").last;
+                                            final file = File("${folderPath}/ece_news/$name");
+                                            if (file.existsSync()) {
+                                              return InkWell(child:Image.file(file),
+                                                onTap: () async {
+                                                      _BranchNewsBottomSheet(context, BranchNew);
+                                                    },
+                                                    onLongPress: (){
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
+                                                    },
+                                              );
+                                            } else {
+                                              downloadImage(BranchNew.photoUrl);
+                                              return InkWell(
+                                                child: CachedNetworkImage(
+                                                  imageUrl: BranchNew.photoUrl,
+                                                  placeholder: (context, url) => CircularProgressIndicator(),
+                                                  errorWidget: (context, url, error) => Icon(Icons.error),
                                                 ),
-                                                child: Align(
-                                                  alignment: Alignment.bottomLeft,
-                                                  child: Container(
+                                                  onTap: () async {
+                                                    // _BranchNewsBottomSheet(context, BranchNew);
 
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.black.withOpacity(0.5),
-                                                        borderRadius: BorderRadius.circular(10)
-                                                      ),
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.all(3.0),
-                                                        child: Text(BranchNew.heading,style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
-                                                      )),
-                                                ),
-                                              ),
-                                              onTap: () async {
-                                                _BranchNewsBottomSheet(context, BranchNew);
-                                              },
-                                              onLongPress: (){
-                                                Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
-                                              },
-                                            );
-                                          },
+                                                  },
+                                                      onLongPress: (){
+                                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
+                                                      },
+                                              );
+                                            }
+                                            //   InkWell(
+                                            //   child: Container(
+                                            //     width: double.infinity,
+                                            //
+                                            //     margin: const EdgeInsets.all(4.0),
+                                            //     decoration: BoxDecoration(
+                                            //       borderRadius: BorderRadius.circular(15),
+                                            //       color: Colors.black.withOpacity(0.4),
+                                            //       border: Border.all(color: Colors.grey),
+                                            //       image: DecorationImage(
+                                            //         image: ImageWidget(""),
+                                            //         fit: BoxFit.cover,
+                                            //       ),
+                                            //     ),
+                                            //     child: Align(
+                                            //       alignment: Alignment.bottomLeft,
+                                            //       child: Container(
+                                            //
+                                            //           decoration: BoxDecoration(
+                                            //               color: Colors.black.withOpacity(0.5),
+                                            //             borderRadius: BorderRadius.circular(10)
+                                            //           ),
+                                            //           child: Padding(
+                                            //             padding: const EdgeInsets.all(3.0),
+                                            //             child: Text(BranchNew.heading,style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+                                            //           )),
+                                            //     ),
+                                            //   ),
+                                            //   onTap: () async {
+                                            //     _BranchNewsBottomSheet(context, BranchNew);
+                                            //   },
+                                            //   onLongPress: (){
+                                            //     Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
+                                            //   },
+                                            // );
+                                          }
                                         ),
                                         //Slider Container properties
                                         options: CarouselOptions(
@@ -1492,9 +1557,13 @@ class _HomePageState extends State<HomePage> {
   splitDate(String date){
     var out = date.split(":");
    return out[0];
+
  }
 
+
+
 }
+
 
 Stream<List<HomeUpdateConvertor>> readHomeUpdate() =>
     FirebaseFirestore.instance.collection('ECE').doc("update").collection("update").orderBy("date",descending: true).snapshots().map((snapshot) => snapshot.docs.map((doc) => HomeUpdateConvertor.fromJson(doc.data())).toList());
@@ -2011,7 +2080,7 @@ void _BranchNewsBottomSheet(BuildContext context, BranchNewConvertor data) {
                                   ),
                                 )),
                             onTap: ()async {
-                           Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageGrid()));
+                           Navigator.push(context, MaterialPageRoute(builder: (context)=>FirebaseImageDownloader(imageUrl: 'pngtree-golden-sparkling-ring.png',)));
                             },
                           ),
                           SizedBox(

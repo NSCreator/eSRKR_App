@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:new_version/new_version.dart';
 import 'TextField.dart';
+import 'add subjects.dart';
 import 'auth_page.dart';
 
 int currentIndex = 0;
@@ -399,6 +400,24 @@ class _settingsState extends State<settings> {
                                   ),
                                 ),
                               ],
+                            ),
+                          ),
+                          Center(
+                            child: InkWell(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.white.withOpacity(0.1),
+                                  border: Border.all(color: Colors.white.withOpacity(0.3)),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Text("Saved Images ( In App )",style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.w500),),
+                                ),
+                              ),
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) =>  unseenImages()));
+                              },
                             ),
                           ),
                           Padding(
