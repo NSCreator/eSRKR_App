@@ -1,94 +1,66 @@
-// ignore_for_file: camel_case_types
-import 'package:url_launcher/url_launcher.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-class notification extends StatefulWidget {
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:srkr_study_app/HomePage.dart';
 
+class ImageGrid extends StatefulWidget {
   @override
-  State<notification> createState() => _notificationState();
+  _ImageGridState createState() => _ImageGridState();
 }
 
-class _notificationState extends State<notification> {
-  int TabCurrentIndex = 0;
+class _ImageGridState extends State<ImageGrid> {
+  List<String> _imagePaths = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImages();
+  }
+
+  Future<void> _loadImages() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final folderPath = '${directory.path}/';
+    showToast(folderPath);
+    final files = Directory(folderPath).listSync();
+
+    setState(() {
+      _imagePaths = files.where((file) => file.path.endsWith('.png')||file.path.endsWith('.jpg')).map((file) => file.path).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return  Container(
-      decoration: const BoxDecoration(
-          color: Colors.black
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Image Grid'),
       ),
-      child: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 35, right: 35,top: 5),
-                  child: Container(
-                    height: 45,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.white.withOpacity(0.15),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(3),
-                      child: TabBar(
-                          indicator: BoxDecoration(
-                              color: Colors.cyan,
-                              borderRadius: BorderRadius.circular(15)),
-                          onTap: (index) {
-                            setState(() {
-                              TabCurrentIndex = index;
-                            });
-                          },
-                          tabs: [
-                            Tab(text: "Branch"),
-                            Tab(text: "College"),
-                          ]),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 3,),
-
-
-              ],
+      body: _imagePaths.isEmpty
+          ? Center(
+        child: CircularProgressIndicator(),
+      )
+          : ListView.separated(
+        scrollDirection: Axis.vertical,
+        itemCount: _imagePaths.length,
+        itemBuilder: (BuildContext context, int index) => Column(
+          children: [
+            SizedBox(
+              height: 100,
+              width: 100,
+              child: Image.file(
+                File(_imagePaths[index]),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
+            Text(_imagePaths[index])
+          ],
+        ),
+        shrinkWrap: true,
+        separatorBuilder: (context, index) => const SizedBox(
+          width: 9,
         ),
       ),
     );
   }
-
-
 }
 
-
-class addSubjects {
-  String name, lastdate, description, regulation, pdfs, units;
-
-  addSubjects(
-      {required this.name,
-        required this.description,
-        required this.lastdate,
-        required this.regulation,
-        required this.pdfs,
-        required this.units});
-
-  static addSubjects fromJson(json) => addSubjects(
-    name: json['name'],
-    description: json['description'],
-    regulation: json['regulation'],
-    pdfs: json['pdfs'],
-    units: json['units'],
-    lastdate: json['updated'],
-  );
-}
-
-
-_externalLaunchUrl(String url) async {
-  final Uri urlIn = Uri.parse(url);
-  if (!await launchUrl(urlIn,mode: LaunchMode.externalApplication)) throw 'Could not launch $urlIn';
-}

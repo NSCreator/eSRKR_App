@@ -1,8 +1,10 @@
 // ignore_for_file: camel_case_types, non_constant_identifier_names, must_be_immutable, import_of_legacy_library_into_null_safe
 import 'dart:async';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:srkr_study_app/SubPages.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'package:srkr_study_app/srkr_page.dart';
@@ -11,8 +13,11 @@ import 'TextField.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../SubPages.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'add subjects.dart';
 import 'favorites.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'net.dart';
 
@@ -64,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => homePage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => SRKRPage()));
                       }),
                   SizedBox(width: 20,)
                 ],
@@ -287,6 +292,9 @@ class _HomePageState extends State<HomePage> {
                                               ),
                                               onTap: () async {
                                                 _BranchNewsBottomSheet(context, BranchNew);
+                                              },
+                                              onLongPress: (){
+                                                Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
                                               },
                                             );
                                           },
@@ -1878,20 +1886,22 @@ void _BooksBottomSheet(BuildContext context, BooksConvertor data) {
 void _BranchNewsBottomSheet(BuildContext context, BranchNewConvertor data) {
 
   showModalBottomSheet(
-    backgroundColor: Colors.black54,
+    backgroundColor: Colors.black.withOpacity(0.8),
     context: context,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
       top: Radius.circular(30),
-    )),
+    ),
+    ),
     builder: (context) => DraggableScrollableSheet(
         initialChildSize: 0.4,
-        maxChildSize: 0.9,
+        maxChildSize: 0.63,
         minChildSize: 0.32,
         expand: false,
         builder: (context, scrollController) {
           return SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             controller: scrollController,
             child: Stack(
               alignment: AlignmentDirectional.topCenter,
@@ -1907,35 +1917,45 @@ void _BranchNewsBottomSheet(BuildContext context, BranchNewConvertor data) {
                       borderRadius: BorderRadius.circular(5),
                       color: Colors.white60,
                     ),
+                    child: Center(child: Text("ECE News",style: TextStyle(color: Colors.black,fontSize: 8,fontWeight: FontWeight.w500),)),
                   ),
                 ),
                 Container(
+
                   decoration: BoxDecoration(
+
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(30.0),
                       topRight: Radius.circular(30.0),
                     ),
+
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      const SizedBox(
-                        height: 10,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15,top: 5,bottom: 5),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 25,
+                              width: 25,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                image: DecorationImage(
+                                  image: AssetImage("assets/ece image 64x64.png"),
+                                      ),
+                              ),
+                            ),
+                            Text(" ${data.heading}", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                          ],
+                        ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white.withOpacity(0.15),
-                            border: Border.all(color: Colors.white),
-                          ),
-                          height: 190,
-                          width: double.infinity,
-                          child: Image.network(
-                            data.photoUrl,
-                            fit: BoxFit.fill,
-                          ),
+                        padding: const EdgeInsets.only(left: 5, right: 5),
+                        child: Image.file(
+                          File("/data/user/0/com.nimmalasujith.esrkr/app_flutter/logo.png"),
+                          height: 200,
                         ),
                       ),
                       Row(
@@ -1955,10 +1975,6 @@ void _BranchNewsBottomSheet(BuildContext context, BranchNewConvertor data) {
                       ),
                       const SizedBox(
                         height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: Text("Name : ${data.heading}", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600)),
                       ),
                       const SizedBox(
                         height: 10,
@@ -1995,17 +2011,15 @@ void _BranchNewsBottomSheet(BuildContext context, BranchNewConvertor data) {
                                   ),
                                 )),
                             onTap: ()async {
-
-
-
-
+                           Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageGrid()));
                             },
                           ),
                           SizedBox(
                             width: 30,
                           ),
                         ],
-                      )
+                      ),
+                      SizedBox(height: 30,)
                     ]),
                   ),
                 )
@@ -2014,8 +2028,26 @@ void _BranchNewsBottomSheet(BuildContext context, BranchNewConvertor data) {
           );
         }),
   );
-
-
 }
+
+class ImageZoom extends StatefulWidget {
+  String url;
+  ImageZoom({Key? key,required this.url}) : super(key: key);
+
+  @override
+  State<ImageZoom> createState() => _ImageZoomState();
+}
+
+class _ImageZoomState extends State<ImageZoom> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+          child: PhotoView(imageProvider: NetworkImage(widget.url),
+          ),
+        ));
+  }
+}
+
 
 
