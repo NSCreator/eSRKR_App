@@ -513,8 +513,6 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                       border: InputBorder.none,
                       hintText: 'Description or Full name',
                     ),
-                    //autovalidateMode: AutovalidateMode.onUserInteraction,
-                    //validator: (value) => value != null && value.length < 6 ? "Enter min. 6 characters" : null,
                   ),
                 ),
               ),
@@ -576,7 +574,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
               onTap: () async {
                 final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
                 File file = File(pickedFile!.path);
-                final Reference ref = storage.ref().child('ece/news/${DateTime.now().toString()}');
+                final Reference ref = storage.ref().child('ece/${widget.mode}/${DateTime.now().toString()}.firebase');
                 final TaskSnapshot task = await ref.putFile(file);
                 final String url = await task.ref.getDownloadURL();
                 PhotoUrlController.text = url;
