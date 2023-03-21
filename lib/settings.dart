@@ -12,6 +12,7 @@ import 'package:new_version/new_version.dart';
 import 'TextField.dart';
 import 'add subjects.dart';
 import 'auth_page.dart';
+import 'colorsConstant.dart';
 
 int currentIndex = 0;
 String branchTitle = "none";

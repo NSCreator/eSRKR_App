@@ -938,7 +938,12 @@ class _LabSubjectsState extends State<LabSubjects> {
     }
 
   }
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    getPath();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1045,6 +1050,7 @@ class _LabSubjectsState extends State<LabSubjects> {
                                       padding: const EdgeInsets.only(bottom: 5, left: 5, right: 5),
                                       child: Column(
                                         children: [
+
                                           InkWell(
                                             child: Container(
                                               width: double.infinity,

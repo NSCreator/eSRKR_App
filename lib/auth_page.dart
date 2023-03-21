@@ -376,7 +376,7 @@ class _LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(
             builder: (context) =>  mainPage(
-                  showHome: false
+                  showHome: false,
                 )));
   }
 

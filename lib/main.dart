@@ -34,7 +34,8 @@ final navigatorKey = GlobalKey<NavigatorState>();
 class MyApp extends StatelessWidget {
   final bool showHome;
 
-  const MyApp({
+
+   MyApp({
     Key? key,
     required this.showHome,
   }) : super(key: key);
@@ -58,11 +59,13 @@ class MyApp extends StatelessWidget {
 
 class mainPage extends StatelessWidget {
   final bool showHome;
+
 //  final bool isAuth;
 
-  const mainPage({
+   mainPage({
     Key? key,
     required this.showHome,
+
 //    required this.isAuth,
   }) : super(key: key);
 

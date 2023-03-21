@@ -7,8 +7,15 @@ import 'HomePage.dart';
 import 'settings.dart';
 
 //TODO intro page
-class initial_branch extends StatelessWidget {
+class initial_branch extends StatefulWidget {
   const initial_branch({Key? key}) : super(key: key);
+
+  @override
+  State<initial_branch> createState() => _initial_branchState();
+}
+
+class _initial_branchState extends State<initial_branch> {
+  late SharedPreferences prefs;
 
   @override
   Widget build(BuildContext context) {
@@ -55,10 +62,14 @@ class initial_branch extends StatelessWidget {
                                                 child: Image.network(
                                                   branch.imageUrl,
                                                 ))),
-                                        onTap: () => _showSecondPage(
+                                        onTap: () async {
+                                          prefs = await SharedPreferences.getInstance();
+                                          prefs.setString("regulation", "ECE");
+
+                                          _showSecondPage(
                                           context,
                                           branch.imageUrl,
-                                        ),
+                                        );}
                                       ),
                                       const SizedBox(
                                         width: 30,
@@ -116,7 +127,6 @@ class initial_branch extends StatelessWidget {
           },
         ));
   }
-
 }
 
 class BranchApi {
