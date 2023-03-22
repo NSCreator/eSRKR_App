@@ -1533,6 +1533,44 @@ class allBooks extends StatefulWidget {
 }
 
 class _allBooksState extends State<allBooks> {
+  String folderPath = "";
+
+  Future<void> getPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    setState(() {
+      folderPath = '${directory.path}/';
+    });
+
+  }
+  downloadImage(String photoUrl,String path) async {
+    final Uri uri = Uri.parse(photoUrl);
+    final String fileName = uri.pathSegments.last;
+    var name = fileName.split("/").last;
+
+    final ref = FirebaseStorage.instance.ref().child(fileName);
+    final url = await ref.getDownloadURL();
+    final response = await http.get(Uri.parse(url));
+    final documentDirectory = await getApplicationDocumentsDirectory();
+    final newDirectory = Directory('${documentDirectory.path}/$path');
+    if (!await newDirectory.exists()) {
+      await newDirectory.create(recursive: true);
+      final file = File('${newDirectory.path}/${name}');
+      await file.writeAsBytes(response.bodyBytes);
+      showToast(file.path);
+    }else{
+      final file = File('${newDirectory.path}/${name}');
+      await file.writeAsBytes(response.bodyBytes);
+      showToast(file.path);
+    }
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getPath();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1601,148 +1639,293 @@ class _allBooksState extends State<allBooks> {
                         if (snapshot.hasError) {
                           return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
                         } else {
-                          return ListView.separated(
+                          return ListView.builder(
                               physics: const BouncingScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: Books!.length,
-                              itemBuilder: (BuildContext context, int index) => InkWell(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Colors.white.withOpacity(0.5),
-                                      border: Border.all(color: Colors.white),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Row(
+                              itemBuilder: (BuildContext context, int index){
+                                final Uri uri = Uri.parse(Books[index].photoUrl);
+                                final String fileName = uri.pathSegments.last;
+                                var name = fileName.split("/").last;
+                                final file = File("${folderPath}/ece_books/$name");
+                                if (file.existsSync()) {
+                                  return InkWell(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(15),
+                                          color: Colors.black.withOpacity(0.3),
+                                          border: Border.all(color: Colors.white.withOpacity(0.3)),
+                                        ),
+                                        child: Column(
                                           children: [
-                                            Padding(
-                                              padding: const EdgeInsets.all(5.0),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(15),
-                                                  color: Colors.white.withOpacity(0.5),
-                                                  border: Border.all(color: Colors.white),
-                                                ),
-                                                child: Image.network(
-                                                  Books[index].photoUrl,
-                                                  fit: BoxFit.fill,
-                                                ),
-                                                height: 135,
-                                                width: 90,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Container(
-                                                child: SingleChildScrollView(
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(Books[index].heading),
-                                                      Text(Books[index].Author),
-                                                      Text(Books[index].edition),
-                                                      Text(Books[index].description),
-                                                      SizedBox(
-                                                        height: 8,
+                                            Row(
+                                              children: [
+                                                Flexible(
+                                                  flex:2,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(1.0),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(15),
+                                                        color: Colors.white.withOpacity(0.5),
+                                                        border: Border.all(color: Colors.white),
+                                                        image: DecorationImage(image: FileImage(file),fit: BoxFit.fill)
                                                       ),
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(left: 8),
-                                                        child: InkWell(
-                                                          child: Container(
-                                                              decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(15),
-                                                                color: Colors.white.withOpacity(0.5),
-                                                                border: Border.all(color: Colors.white),
+                                                      height: 125,
+                                                      width: 90,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Flexible(
+                                                  flex: 4,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 8,top: 3,bottom: 3,right: 3),
+                                                    child: Container(
+                                                      child: SingleChildScrollView(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text(Books[index].heading,style: TextStyle(color: Colors.orange,fontWeight: FontWeight.w500,fontSize: 18),maxLines: 1,),
+                                                            Text(Books[index].Author,style: TextStyle(color: Colors.lightBlueAccent,fontWeight: FontWeight.w500,fontSize: 13),maxLines: 1,),
+                                                            Text(Books[index].edition,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w300,fontSize: 14),maxLines: 1,),
+                                                            Text(Books[index].description,maxLines: 2,style: TextStyle(color: Colors.white.withOpacity(0.8),fontWeight: FontWeight.w500,fontSize: 15)),
+                                                            SizedBox(
+                                                              height: 8,
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets.only(left: 8),
+                                                              child: InkWell(
+                                                                child: Container(
+                                                                    decoration: BoxDecoration(
+                                                                      borderRadius: BorderRadius.circular(15),
+                                                                      color: Colors.white.withOpacity(0.5),
+                                                                      border: Border.all(color: Colors.white),
+                                                                    ),
+                                                                    child: Padding(
+                                                                      padding: const EdgeInsets.all(8.0),
+                                                                      child: Text("Download"),
+                                                                    )),
                                                               ),
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.all(8.0),
-                                                                child: Text("Download"),
-                                                              )),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
-                                                    ],
+                                                    ),
                                                   ),
                                                 ),
+
+                                              ],
+                                            ),
+                                            if (userId() == "gmail.com")
+                                              Row(
+                                                children: [
+                                                  Spacer(),
+                                                  InkWell(
+                                                    child: Chip(
+                                                      elevation: 20,
+                                                      backgroundColor: Colors.black,
+                                                      avatar: CircleAvatar(
+                                                          backgroundColor: Colors.black45,
+                                                          child: Icon(
+                                                            Icons.edit_outlined,
+                                                          )),
+                                                      label: Text(
+                                                        "Edit",
+                                                        style: TextStyle(color: Colors.white),
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => BooksCreator(
+                                                                id: Books[index].id,
+                                                                heading: Books[index].heading,
+                                                                description: Books[index].description,
+                                                                Edition: Books[index].edition,
+                                                                Link: Books[index].link,
+                                                                Author: Books[index].Author,
+                                                                photoUrl: Books[index].photoUrl,
+                                                              )));
+                                                    },
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  InkWell(
+                                                    child: Chip(
+                                                      elevation: 20,
+                                                      backgroundColor: Colors.black,
+                                                      avatar: CircleAvatar(
+                                                          backgroundColor: Colors.black45,
+                                                          child: Icon(
+                                                            Icons.delete_rounded,
+                                                          )),
+                                                      label: Text(
+                                                        "Delete",
+                                                        style: TextStyle(color: Colors.white),
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      FirebaseFirestore.instance.collection("ECE").doc("Books").collection("CoreBooks").doc(Books[index].id).delete();
+                                                    },
+                                                  ),
+                                                  Spacer()
+                                                ],
                                               ),
-                                            ),
-                                            SizedBox(
-                                              width: 20,
-                                            ),
+                                            if ((index + 1) % 3 == 0) CustomBannerAd01(),
                                           ],
                                         ),
-                                        if (userId() == "gmail.com")
-                                          Row(
-                                            children: [
-                                              Spacer(),
-                                              InkWell(
-                                                child: Chip(
-                                                  elevation: 20,
-                                                  backgroundColor: Colors.black,
-                                                  avatar: CircleAvatar(
-                                                      backgroundColor: Colors.black45,
-                                                      child: Icon(
-                                                        Icons.edit_outlined,
-                                                      )),
-                                                  label: Text(
-                                                    "Edit",
-                                                    style: TextStyle(color: Colors.white),
-                                                  ),
-                                                ),
-                                                onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) => BooksCreator(
-                                                            id: Books[index].id,
-                                                            heading: Books[index].heading,
-                                                            description: Books[index].description,
-                                                            Edition: Books[index].edition,
-                                                            Link: Books[index].link,
-                                                            Author: Books[index].Author,
-                                                            photoUrl: Books[index].photoUrl,
-                                                          )));
-                                                },
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              InkWell(
-                                                child: Chip(
-                                                  elevation: 20,
-                                                  backgroundColor: Colors.black,
-                                                  avatar: CircleAvatar(
-                                                      backgroundColor: Colors.black45,
-                                                      child: Icon(
-                                                        Icons.delete_rounded,
-                                                      )),
-                                                  label: Text(
-                                                    "Delete",
-                                                    style: TextStyle(color: Colors.white),
-                                                  ),
-                                                ),
-                                                onTap: () {
-                                                  FirebaseFirestore.instance.collection("ECE").doc("Books").collection("CoreBooks").doc(Books[index].id).delete();
-                                                },
-                                              ),
-                                              Spacer()
-                                            ],
-                                          ),
-                                        if ((index + 1) % 3 == 0) CustomBannerAd01(),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                onTap: () {
-                                  _launchUrl(Books[index].link);
-                                },
-                              ),
-                              separatorBuilder: (context, index) => const SizedBox(
-                                height: 15,
-                              ));
+                                    onTap: () {
+                                      _launchUrl(Books[index].link);
+                                    },
+                                  );
+                                } else {
+                                  downloadImage(Books[index].photoUrl,"ece_books");
+                                  return InkWell(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(15),
+                                          color: Colors.white.withOpacity(0.5),
+                                          border: Border.all(color: Colors.white),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(5.0),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      color: Colors.white.withOpacity(0.5),
+                                                      border: Border.all(color: Colors.white),
+                                                    ),
+                                                    child: Image.network(
+                                                      Books[index].photoUrl,
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                    height: 135,
+                                                    width: 90,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Container(
+                                                    child: SingleChildScrollView(
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(Books[index].heading),
+                                                          Text(Books[index].Author),
+                                                          Text(Books[index].edition),
+                                                          Text(Books[index].description),
+                                                          SizedBox(
+                                                            height: 8,
+                                                          ),
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(left: 8),
+                                                            child: InkWell(
+                                                              child: Container(
+                                                                  decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.circular(15),
+                                                                    color: Colors.white.withOpacity(0.5),
+                                                                    border: Border.all(color: Colors.white),
+                                                                  ),
+                                                                  child: Padding(
+                                                                    padding: const EdgeInsets.all(8.0),
+                                                                    child: Text("Download"),
+                                                                  )),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 20,
+                                                ),
+                                              ],
+                                            ),
+                                            if (userId() == "gmail.com")
+                                              Row(
+                                                children: [
+                                                  Spacer(),
+                                                  InkWell(
+                                                    child: Chip(
+                                                      elevation: 20,
+                                                      backgroundColor: Colors.black,
+                                                      avatar: CircleAvatar(
+                                                          backgroundColor: Colors.black45,
+                                                          child: Icon(
+                                                            Icons.edit_outlined,
+                                                          )),
+                                                      label: Text(
+                                                        "Edit",
+                                                        style: TextStyle(color: Colors.white),
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => BooksCreator(
+                                                                id: Books[index].id,
+                                                                heading: Books[index].heading,
+                                                                description: Books[index].description,
+                                                                Edition: Books[index].edition,
+                                                                Link: Books[index].link,
+                                                                Author: Books[index].Author,
+                                                                photoUrl: Books[index].photoUrl,
+                                                              )));
+                                                    },
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  InkWell(
+                                                    child: Chip(
+                                                      elevation: 20,
+                                                      backgroundColor: Colors.black,
+                                                      avatar: CircleAvatar(
+                                                          backgroundColor: Colors.black45,
+                                                          child: Icon(
+                                                            Icons.delete_rounded,
+                                                          )),
+                                                      label: Text(
+                                                        "Delete",
+                                                        style: TextStyle(color: Colors.white),
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      FirebaseFirestore.instance.collection("ECE").doc("Books").collection("CoreBooks").doc(Books[index].id).delete();
+                                                    },
+                                                  ),
+                                                  Spacer()
+                                                ],
+                                              ),
+                                            if ((index + 1) % 3 == 0) CustomBannerAd01(),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      _launchUrl(Books[index].link);
+                                    },
+                                  );
+                                }
+
+                              },
+                             );
                         }
                     }
                   }),

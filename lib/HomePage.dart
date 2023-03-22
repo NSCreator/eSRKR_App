@@ -2378,149 +2378,301 @@ class _HomePageState extends State<HomePage> {
                                                 final Uri uri = Uri.parse(Books[index].photoUrl);
                                                 final String fileName = uri.pathSegments.last;
                                                 var name = fileName.split("/").last;
-                                                final file = File("${folderPath}/ece_news/$name");
-                                                return InkWell(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(15),
-                                                    color: Colors.black.withOpacity(0.3),
-                                                    // border: Border.all(color: Colors.white),
-                                                  ),
-                                                  child: Row(
-                                                    children: [
-                                                      Container(
+                                                final file = File("${folderPath}/ece_books/$name");
+                                                if (file.existsSync()) {
+                                                  return InkWell(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(left: 10),
+                                                      child: Container(
                                                         decoration: BoxDecoration(
                                                           borderRadius: BorderRadius.circular(15),
-                                                          color: Colors.black.withOpacity(0.4),
-                                                          image: DecorationImage(
-                                                            image: NetworkImage(
-                                                              Books[index].photoUrl,
-                                                            ),
-                                                            fit: BoxFit.cover,
-                                                          ),
+                                                          color: Colors.black.withOpacity(0.3),
+                                                          // border: Border.all(color: Colors.white),
                                                         ),
-                                                        height: 140,
-                                                        width: 90,
-                                                      ),
-                                                      Padding(
-                                                        padding: const EdgeInsets.all(8.0),
-                                                        child: Container(
-                                                          width: 100,
-                                                          child: SingleChildScrollView(
-                                                            child: Column(
-                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Text(
-                                                                  Books[index].heading,
-                                                                  maxLines: 2,
-                                                                  overflow: TextOverflow.ellipsis,
-                                                                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
+                                                        child: Row(
+                                                          children: [
+
+                                                            Container(
+                                                              decoration: BoxDecoration(
+                                                                borderRadius: BorderRadius.circular(15),
+                                                                color: Colors.black.withOpacity(0.4),
+                                                                image: DecorationImage(
+                                                                  image: FileImage(file),
+                                                                  fit: BoxFit.cover,
                                                                 ),
-                                                                Text(
-                                                                  Books[index].Author,
-                                                                  maxLines: 1,
-                                                                  overflow: TextOverflow.ellipsis,
-                                                                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
-                                                                ),
-                                                                Text(
-                                                                  Books[index].edition,
-                                                                  maxLines: 1,
-                                                                  overflow: TextOverflow.ellipsis,
-                                                                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
-                                                                ),
-                                                                Text(
-                                                                  Books[index].description,
-                                                                  maxLines: 1,
-                                                                  overflow: TextOverflow.ellipsis,
-                                                                  style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.white),
-                                                                ),
-                                                                SizedBox(height: 5,),
-                                                                Row(
-                                                                  children: [
-                                                                    InkWell(
-                                                                      child: StreamBuilder<DocumentSnapshot>(
-                                                                        stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).snapshots(),
-                                                                        builder: (context, snapshot) {
-                                                                          if (snapshot.hasData) {
-                                                                            if (snapshot.data!.exists) {
-                                                                              return const Icon(
-                                                                                  Icons.library_add_check,
-                                                                                  size: 26, color: Colors.cyanAccent
-                                                                              );
-                                                                            } else {
-                                                                              return const Icon(
-                                                                                Icons.library_add_outlined,
-                                                                                size: 26,
-                                                                                color: Colors.cyanAccent,
-                                                                              );
-                                                                            }
-                                                                          } else {
-                                                                            return const Icon(
-                                                                              Icons.library_add_outlined,
-                                                                              size: 26,
-                                                                              color: Colors.cyanAccent,
-                                                                            );
-                                                                          }
-                                                                        },
+                                                              ),
+                                                              height: 140,
+                                                              width: 90,
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: Container(
+                                                                width: 100,
+                                                                child: SingleChildScrollView(
+                                                                  child: Column(
+                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                    children: [
+                                                                      Text(
+                                                                        Books[index].heading,
+                                                                        maxLines: 2,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
                                                                       ),
-                                                                      onTap: () async{
-                                                                        try {
-                                                                          await FirebaseFirestore
-                                                                              .instance
-                                                                              .collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id)
-                                                                              .get()
-                                                                              .then((docSnapshot) {
-                                                                            if (docSnapshot.exists) {
-                                                                              FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).delete();
-                                                                              showToast("Removed from saved list");
-                                                                            } else {
-                                                                              FavouriteBooksSubjects(description:Books[index].description,heading: Books[index].heading,link: Books[index].link,photoUrl: Books[index].photoUrl,Author: Books[index].Author,edition: Books[index].edition,date: Books[index].date, id: Books[index].id );
-                                                                              showToast("${Books[index].heading} in favorites");                                                            }
-                                                                          });
-                                                                        } catch (e) {
-                                                                          print(e);
-                                                                        }
-
-                                                                      },
-                                                                    ),
-
-                                                                    InkWell(
-                                                                        child: Container(
-                                                                          decoration: BoxDecoration(
-                                                                            borderRadius: BorderRadius.circular(15),
-                                                                            color: Colors.white.withOpacity(0.5),
-                                                                            border: Border.all(color: Colors.white),
-                                                                          ),
-                                                                          child: Padding(
-                                                                            padding: const EdgeInsets.only(left: 1, right: 5, top: 2, bottom: 2),
-                                                                            child: Row(
-                                                                              children: [
-                                                                                Text("Open"),
-                                                                                Icon(Icons.open_in_new)
-                                                                              ],
+                                                                      Text(
+                                                                        Books[index].Author,
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+                                                                      ),
+                                                                      Text(
+                                                                        Books[index].edition,
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+                                                                      ),
+                                                                      Text(
+                                                                        Books[index].description,
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.white),
+                                                                      ),
+                                                                      SizedBox(height: 5,),
+                                                                      Row(
+                                                                        children: [
+                                                                          InkWell(
+                                                                            child: StreamBuilder<DocumentSnapshot>(
+                                                                              stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).snapshots(),
+                                                                              builder: (context, snapshot) {
+                                                                                if (snapshot.hasData) {
+                                                                                  if (snapshot.data!.exists) {
+                                                                                    return const Icon(
+                                                                                        Icons.library_add_check,
+                                                                                        size: 26, color: Colors.cyanAccent
+                                                                                    );
+                                                                                  } else {
+                                                                                    return const Icon(
+                                                                                      Icons.library_add_outlined,
+                                                                                      size: 26,
+                                                                                      color: Colors.cyanAccent,
+                                                                                    );
+                                                                                  }
+                                                                                } else {
+                                                                                  return const Icon(
+                                                                                    Icons.library_add_outlined,
+                                                                                    size: 26,
+                                                                                    color: Colors.cyanAccent,
+                                                                                  );
+                                                                                }
+                                                                              },
                                                                             ),
+                                                                            onTap: () async{
+                                                                              try {
+                                                                                await FirebaseFirestore
+                                                                                    .instance
+                                                                                    .collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id)
+                                                                                    .get()
+                                                                                    .then((docSnapshot) {
+                                                                                  if (docSnapshot.exists) {
+                                                                                    FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).delete();
+                                                                                    showToast("Removed from saved list");
+                                                                                  } else {
+                                                                                    FavouriteBooksSubjects(description:Books[index].description,heading: Books[index].heading,link: Books[index].link,photoUrl: Books[index].photoUrl,Author: Books[index].Author,edition: Books[index].edition,date: Books[index].date, id: Books[index].id );
+                                                                                    showToast("${Books[index].heading} in favorites");                                                            }
+                                                                                });
+                                                                              } catch (e) {
+                                                                                print(e);
+                                                                              }
+
+                                                                            },
                                                                           ),
-                                                                        ),
-                                                                        onTap: () {}
-                                                                    ),
-                                                                  ],
+
+                                                                          InkWell(
+                                                                              child: Container(
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(15),
+                                                                                  color: Colors.white.withOpacity(0.5),
+                                                                                  border: Border.all(color: Colors.white),
+                                                                                ),
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.only(left: 1, right: 5, top: 2, bottom: 2),
+                                                                                  child: Row(
+                                                                                    children: [
+                                                                                      Text("Open"),
+                                                                                      Icon(Icons.open_in_new)
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              onTap: () {}
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                              ],
+                                                              ),
                                                             ),
-                                                          ),
+                                                            SizedBox(
+                                                              width: 20,
+                                                            )
+                                                          ],
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        width: 20,
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                onTap: () async {
-                                                  _BooksBottomSheet(context, Books[index]);
-                                                },
-                                              );
+                                                    ),
+                                                    onTap: () async {
+                                                      _BooksBottomSheet(context, Books[index],file);
+                                                    },
+                                                  );
+                                                } else {
+                                                  downloadImage(Books[index].photoUrl,"ece_books");
+                                                  return InkWell(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(left: 10),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(15),
+                                                          color: Colors.black.withOpacity(0.3),
+                                                          // border: Border.all(color: Colors.white),
+                                                        ),
+                                                        child: Row(
+                                                          children: [
+
+                                                            Container(
+                                                              decoration: BoxDecoration(
+                                                                borderRadius: BorderRadius.circular(15),
+                                                                color: Colors.black.withOpacity(0.4),
+                                                              ),
+                                                              height: 140,
+                                                              width: 90,
+                                                              child: CachedNetworkImage(
+                                                                imageUrl: Books[index].photoUrl,
+                                                                placeholder: (context, url) => CircularProgressIndicator(),
+                                                                errorWidget: (context, url, error) => Icon(Icons.error),
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: Container(
+                                                                width: 100,
+                                                                child: SingleChildScrollView(
+                                                                  child: Column(
+                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                    children: [
+                                                                      Text(
+                                                                        Books[index].heading,
+                                                                        maxLines: 2,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
+                                                                      ),
+                                                                      Text(
+                                                                        Books[index].Author,
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+                                                                      ),
+                                                                      Text(
+                                                                        Books[index].edition,
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+                                                                      ),
+                                                                      Text(
+                                                                        Books[index].description,
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.white),
+                                                                      ),
+                                                                      SizedBox(height: 5,),
+                                                                      Row(
+                                                                        children: [
+                                                                          InkWell(
+                                                                            child: StreamBuilder<DocumentSnapshot>(
+                                                                              stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).snapshots(),
+                                                                              builder: (context, snapshot) {
+                                                                                if (snapshot.hasData) {
+                                                                                  if (snapshot.data!.exists) {
+                                                                                    return const Icon(
+                                                                                        Icons.library_add_check,
+                                                                                        size: 26, color: Colors.cyanAccent
+                                                                                    );
+                                                                                  } else {
+                                                                                    return const Icon(
+                                                                                      Icons.library_add_outlined,
+                                                                                      size: 26,
+                                                                                      color: Colors.cyanAccent,
+                                                                                    );
+                                                                                  }
+                                                                                } else {
+                                                                                  return const Icon(
+                                                                                    Icons.library_add_outlined,
+                                                                                    size: 26,
+                                                                                    color: Colors.cyanAccent,
+                                                                                  );
+                                                                                }
+                                                                              },
+                                                                            ),
+                                                                            onTap: () async{
+                                                                              try {
+                                                                                await FirebaseFirestore
+                                                                                    .instance
+                                                                                    .collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id)
+                                                                                    .get()
+                                                                                    .then((docSnapshot) {
+                                                                                  if (docSnapshot.exists) {
+                                                                                    FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).delete();
+                                                                                    showToast("Removed from saved list");
+                                                                                  } else {
+                                                                                    FavouriteBooksSubjects(description:Books[index].description,heading: Books[index].heading,link: Books[index].link,photoUrl: Books[index].photoUrl,Author: Books[index].Author,edition: Books[index].edition,date: Books[index].date, id: Books[index].id );
+                                                                                    showToast("${Books[index].heading} in favorites");                                                            }
+                                                                                });
+                                                                              } catch (e) {
+                                                                                print(e);
+                                                                              }
+
+                                                                            },
+                                                                          ),
+
+                                                                          InkWell(
+                                                                              child: Container(
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(15),
+                                                                                  color: Colors.white.withOpacity(0.5),
+                                                                                  border: Border.all(color: Colors.white),
+                                                                                ),
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.only(left: 1, right: 5, top: 2, bottom: 2),
+                                                                                  child: Row(
+                                                                                    children: [
+                                                                                      Text("Open"),
+                                                                                      Icon(Icons.open_in_new)
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              onTap: () {}
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 20,
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    onTap: () async {
+                                                      _BooksBottomSheet(context, Books[index],file);
+                                                    },
+                                                  );
+                                                }
+
                                                 },
                                               shrinkWrap: true,
                                               separatorBuilder: (context, index) => const SizedBox(
@@ -2650,16 +2802,16 @@ Stream<List<BranchNewConvertor>> readBranchNew() =>
 
 Future createBranchNew({required String heading, required String description, required String Date, required String photoUrl}) async {
   final docflash = FirebaseFirestore.instance.collection("ECE").doc("ECENews").collection("ECENews").doc();
-  final flash = BranchNewConvertor(id: docflash.id, heading: heading, photoUrl: photoUrl, description: description, Date: Date);
+  final flash = BranchNewConvertor(id: docflash.id, heading: heading, photoUrl: photoUrl, description: description, Date: Date,link: "");
   final json = flash.toJson();
   await docflash.set(json);
 }
 
 class BranchNewConvertor {
   String id;
-  final String heading, photoUrl, description, Date;
+  final String heading, photoUrl, description, Date,link;
 
-  BranchNewConvertor({this.id = "", required this.heading, required this.photoUrl, required this.description, required this.Date});
+  BranchNewConvertor({this.id = "", required this.heading, required this.photoUrl, required this.description, required this.Date,required this.link});
 
   Map<String, dynamic> toJson() => {
     "id": id,
@@ -2667,10 +2819,11 @@ class BranchNewConvertor {
     "Photo Url": photoUrl,
     "Description": description,
     "Date": Date,
+    "link":link
   };
 
   static BranchNewConvertor fromJson(Map<String, dynamic> json) =>
-      BranchNewConvertor(id: json['id'], heading: json["Heading"], photoUrl: json["Photo Url"], description: json["Description"], Date: json["Date"]);
+      BranchNewConvertor(id: json['id'], heading: json["Heading"], photoUrl: json["Photo Url"], description: json["Description"], Date: json["Date"],link: json['link']);
 }
 
 Stream<List<FlashConvertor>> readFlashNews() => FirebaseFirestore.instance
@@ -2788,7 +2941,7 @@ _LaunchUrl(String url) async {
     throw 'Could not launch $urlIn';
   }
 }
-void _BooksBottomSheet(BuildContext context, BooksConvertor data) {
+void _BooksBottomSheet(BuildContext context, BooksConvertor data,File file) {
   showModalBottomSheet(
     backgroundColor: Colors.black54,
     context: context,
@@ -2799,7 +2952,7 @@ void _BooksBottomSheet(BuildContext context, BooksConvertor data) {
         )),
     builder: (context) => DraggableScrollableSheet(
         initialChildSize: 0.4,
-        maxChildSize: 0.9,
+        maxChildSize: 0.55,
         minChildSize: 0.32,
         expand: false,
         builder: (context, scrollController) {
@@ -2833,27 +2986,24 @@ void _BooksBottomSheet(BuildContext context, BooksConvertor data) {
                           width: 20,
                         ),
                         Flexible(
-                          flex: 1,
+                          flex: 2,
                           fit: FlexFit.tight,
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
                               color: Colors.white.withOpacity(0.3),
                               border: Border.all(color: Colors.white),
+                              image: DecorationImage(image: FileImage(file),fit: BoxFit.fill)
                             ),
                             height: 130,
-                            width: 100,
-                            child: Image.network(
-                              data.photoUrl,
-                              fit: BoxFit.fill,
-                            ),
+
                           ),
                         ),
                         SizedBox(
-                          width: 25,
+                          width: 5,
                         ),
                         Flexible(
-                          flex: 3,
+                          flex: 5,
                           //fit: FlexFit.tight,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -2863,9 +3013,9 @@ void _BooksBottomSheet(BuildContext context, BooksConvertor data) {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Container(
                                   child: Text(
-                                    'Name : ${data.heading}',
+                                    '${data.heading}',
                                     overflow: TextOverflow.clip,
-                                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
+                                    style: TextStyle(color: Colors.orange, fontSize: 20, fontWeight: FontWeight.w500),
                                   ),
                                 ),
                               ),
@@ -2892,48 +3042,82 @@ void _BooksBottomSheet(BuildContext context, BooksConvertor data) {
                       children: [
                         Spacer(),
                         Text(
-                          "date${data.date}",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
+                          "Date : ${data.date}",
+                          style: TextStyle(color: Colors.white.withOpacity(0.6), fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      "Description : ${data.description}",
-                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400),
+                    Text("Description : \n",
+                        style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Text(
+                        "       ${data.description}",
+                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400),
+                      ),
                     ),
                     SizedBox(
                       height: 10,
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5,bottom: 10),
+                      child: Text(
+                        "Download options : ",
+                        style: TextStyle(color: Colors.tealAccent, fontSize: 20, fontWeight: FontWeight.w900),
+                      ),
+                    ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Spacer(),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 30),
-                          child: InkWell(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(color: Colors.white),
-                                color: Colors.white.withOpacity(0.5),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Download Book",
-                                  style: TextStyle(color: Colors.cyanAccent),
-                                ),
+                        InkWell(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.white.withOpacity(0.3)),
+                                color: Colors.black.withOpacity(0.5)
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.download_outlined,color: Colors.white,),
+                                  Text("Download",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+                                ],
                               ),
                             ),
-                            onTap: () {
-                              _LaunchUrl(data.link);
-                            },
                           ),
-                        )
+                          onTap: (){
+                            showToast("Downloaded");
+                          },
+                        ),
+                        SizedBox(width: 20,),
+                        InkWell(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.white.withOpacity(0.3)),
+                                color: Colors.black.withOpacity(0.5)
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.save,color: Colors.white,),
+                                  Text("Save",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+                                ],
+                              ),
+                            ),
+                          ),
+                          onTap: (){
+                            showToast("Saved in app");
+                          },
+                        ),
                       ],
-                    )
+                    ),
                   ]),
                 )
               ],
