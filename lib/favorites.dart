@@ -1,8 +1,11 @@
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'SubPages.dart';
@@ -16,6 +19,25 @@ class favorites extends StatefulWidget {
 }
 
 class _favoritesState extends State<favorites> {
+  String folderPath = "";
+
+  Future<void> getPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    setState(() {
+      folderPath = '${directory.path}/';
+
+
+
+    });
+
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    getPath();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,6 +95,10 @@ class _favoritesState extends State<favorites> {
                                                 itemCount: Favourites.length,
                                                 itemBuilder: (context, int index) {
                                                   final Favourite = Favourites[index];
+                                                  final Uri uri = Uri.parse(Favourite.photoUrl);
+                                                  final String fileName = uri.pathSegments.last;
+                                                  var name = fileName.split("/").last;
+                                                  final file = File("${folderPath}/ece_subjects/$name");
                                                   return InkWell(
                                                     child: Container(
                                                       width: double.infinity,
@@ -88,9 +114,7 @@ class _favoritesState extends State<favorites> {
                                                                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                                                 color: Colors.redAccent,
                                                                 image: DecorationImage(
-                                                                  image: NetworkImage(
-                                                                    Favourite.photoUrl,
-                                                                  ),
+                                                                  image: FileImage(file),
                                                                   fit: BoxFit.cover,
                                                                 ),
                                                               ),
@@ -401,6 +425,10 @@ class _favoritesState extends State<favorites> {
                                                 itemCount: Favourites.length,
                                                 itemBuilder: (context, int index) {
                                                   final Favourite = Favourites[index];
+                                                  final Uri uri = Uri.parse(Favourite.photoUrl);
+                                                  final String fileName = uri.pathSegments.last;
+                                                  var name = fileName.split("/").last;
+                                                  final file = File("${folderPath}/ece_labsubjects/$name");
                                                   return InkWell(
                                                     child: Container(
                                                       width: double.infinity,
@@ -416,9 +444,7 @@ class _favoritesState extends State<favorites> {
                                                                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                                                 color: Colors.redAccent,
                                                                 image: DecorationImage(
-                                                                  image: NetworkImage(
-                                                                    Favourite.photoUrl,
-                                                                  ),
+                                                                  image: FileImage(file),
                                                                   fit: BoxFit.cover,
                                                                 ),
                                                               ),
@@ -1139,9 +1165,9 @@ Stream<List<FavouriteBooksConvertor>> readFavouriteBooks() => FirebaseFirestore.
     .snapshots()
     .map((snapshot) => snapshot.docs.map((doc) => FavouriteBooksConvertor.fromJson(doc.data())).toList());
 
-Future FavouriteBooksSubjects({required String heading, required String description, required String link, required String photoUrl, required String edition, required String Author, required String date}) async {
-  final docBook = FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.email!).collection("FavouriteBooks").doc();
-  final flash = FavouriteBooksConvertor(id: docBook.id, heading: heading, link: link, description: description, photoUrl: photoUrl, Author: Author, edition: edition, date: date);
+Future FavouriteBooksSubjects({required String id,required String heading, required String description, required String link, required String photoUrl, required String edition, required String Author, required String date}) async {
+  final docBook = FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.email!).collection("FavouriteBooks").doc(id);
+  final flash = FavouriteBooksConvertor(id: id, heading: heading, link: link, description: description, photoUrl: photoUrl, Author: Author, edition: edition, date: date);
   final json = flash.toJson();
   await docBook.set(json);
 }

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:srkr_study_app/SubPages.dart';
@@ -414,7 +413,7 @@ class _HomePageState extends State<HomePage> {
                                             if (file.existsSync()) {
                                               return InkWell(child:Image.file(file),
                                                 onTap: () async {
-                                                  _BranchNewsBottomSheet(context, BranchNew);
+                                                  _BranchNewsBottomSheet(context, BranchNew,file);
                                                 },
                                                 onLongPress: (){
                                                   Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
@@ -785,7 +784,7 @@ class _HomePageState extends State<HomePage> {
                                           final SubjectsData = Favourites[index];
                                           if(SubjectsData.regulation
                                               .toString()
-                                              .startsWith("3"))
+                                              .startsWith("r20-1 year 1 sem"))
                                           {
                                             final Uri uri = Uri.parse(SubjectsData.PhotoUrl);
                                             final String fileName = uri.pathSegments.last;
@@ -1639,7 +1638,7 @@ class _HomePageState extends State<HomePage> {
                                             final LabSubjectsData = Subjects[index];
                                             if(LabSubjectsData.regulation
                                                 .toString()
-                                                .startsWith("3")){
+                                                .startsWith("r20-1 year 1 sem")){
 
                                               final Uri uri = Uri.parse(LabSubjectsData.PhotoUrl);
                                               final String fileName = uri.pathSegments.last;
@@ -2307,6 +2306,7 @@ class _HomePageState extends State<HomePage> {
                                   if (snapshot.hasError) {
                                     return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
                                   } else {
+
                                     if (Books!.length < 1) {
                                       return Center(
                                         child: Padding(
@@ -2363,7 +2363,7 @@ class _HomePageState extends State<HomePage> {
                                                       ),
                                                     ),
                                                     onTap: () {
-                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => Books()));
+                                                       Navigator.push(context, MaterialPageRoute(builder: (context) => allBooks()));
                                                     }),
                                                 SizedBox(width: 20,)
                                               ],
@@ -2374,7 +2374,12 @@ class _HomePageState extends State<HomePage> {
                                             child: ListView.separated(
                                               scrollDirection: Axis.horizontal,
                                               itemCount: Books.length,
-                                              itemBuilder: (BuildContext context, int index) => InkWell(
+                                              itemBuilder: (BuildContext context, int index) {
+                                                final Uri uri = Uri.parse(Books[index].photoUrl);
+                                                final String fileName = uri.pathSegments.last;
+                                                var name = fileName.split("/").last;
+                                                final file = File("${folderPath}/ece_news/$name");
+                                                return InkWell(
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(15),
@@ -2434,100 +2439,52 @@ class _HomePageState extends State<HomePage> {
                                                                 Row(
                                                                   children: [
                                                                     InkWell(
-                                                                      child: Padding(
-                                                                        padding: const EdgeInsets.only(left: 2,right: 2),
-                                                                        child: Icon(Icons.library_add_outlined,color: Colors.white,size:30,),
-                                                                      ),
-                                                                      onTap: (){
-                                                                        showDialog(
-                                                                          context: context,
-                                                                          builder: (context) {
-                                                                            return Dialog(
-                                                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                                                              elevation: 16,
-                                                                              child: Container(
-                                                                                decoration: BoxDecoration(
-                                                                                  border: Border.all(color: Colors.tealAccent),
-                                                                                  borderRadius: BorderRadius.circular(20),
-                                                                                ),
-                                                                                child: ListView(
-                                                                                  shrinkWrap: true,
-                                                                                  children: <Widget>[
-                                                                                    SizedBox(height: 10),
-                                                                                    SizedBox(height: 5),
-                                                                                    Padding(
-                                                                                      padding: const EdgeInsets.only(left: 15),
-                                                                                      child: Text(
-                                                                                        "Do you want Add to Favourites",
-                                                                                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 18),
-                                                                                      ),
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      height: 5,
-                                                                                    ),
-                                                                                    Center(
-                                                                                      child: Row(
-                                                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                        children: [
-                                                                                          Spacer(),
-                                                                                          InkWell(
-                                                                                            child: Container(
-                                                                                              decoration: BoxDecoration(
-                                                                                                color: Colors.black26,
-                                                                                                border: Border.all(color: Colors.black),
-                                                                                                borderRadius: BorderRadius.circular(25),
-                                                                                              ),
-                                                                                              child: Padding(
-                                                                                                padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-                                                                                                child: Text("Back"),
-                                                                                              ),
-                                                                                            ),
-                                                                                            onTap: () {
-                                                                                              Navigator.pop(context);
-                                                                                            },
-                                                                                          ),
-                                                                                          SizedBox(
-                                                                                            width: 10,
-                                                                                          ),
-                                                                                          InkWell(
-                                                                                            child: Container(
-                                                                                              decoration: BoxDecoration(
-                                                                                                color: Colors.red,
-                                                                                                border: Border.all(color: Colors.black),
-                                                                                                borderRadius: BorderRadius.circular(25),
-                                                                                              ),
-                                                                                              child: Padding(
-                                                                                                padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-                                                                                                child: Text(
-                                                                                                  "Add + ",
-                                                                                                  style: TextStyle(color: Colors.white),
-                                                                                                ),
-                                                                                              ),
-                                                                                            ),
-                                                                                            onTap: () {
-                                                                                              FavouriteBooksSubjects(description:Books[index].description,heading: Books[index].heading,link: Books[index].link,photoUrl: Books[index].photoUrl,Author: Books[index].Author,edition: Books[index].edition,date: Books[index].date );
-                                                                                              showToast("${Books[index].heading} in favorites");
-                                                                                              Navigator.pop(context);
-                                                                                            },
-                                                                                          ),
-                                                                                          SizedBox(
-                                                                                            width: 20,
-                                                                                          ),
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      height: 10,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
+                                                                      child: StreamBuilder<DocumentSnapshot>(
+                                                                        stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).snapshots(),
+                                                                        builder: (context, snapshot) {
+                                                                          if (snapshot.hasData) {
+                                                                            if (snapshot.data!.exists) {
+                                                                              return const Icon(
+                                                                                  Icons.library_add_check,
+                                                                                  size: 26, color: Colors.cyanAccent
+                                                                              );
+                                                                            } else {
+                                                                              return const Icon(
+                                                                                Icons.library_add_outlined,
+                                                                                size: 26,
+                                                                                color: Colors.cyanAccent,
+                                                                              );
+                                                                            }
+                                                                          } else {
+                                                                            return const Icon(
+                                                                              Icons.library_add_outlined,
+                                                                              size: 26,
+                                                                              color: Colors.cyanAccent,
                                                                             );
-                                                                          },
-                                                                        );
+                                                                          }
+                                                                        },
+                                                                      ),
+                                                                      onTap: () async{
+                                                                        try {
+                                                                          await FirebaseFirestore
+                                                                              .instance
+                                                                              .collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id)
+                                                                              .get()
+                                                                              .then((docSnapshot) {
+                                                                            if (docSnapshot.exists) {
+                                                                              FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).delete();
+                                                                              showToast("Removed from saved list");
+                                                                            } else {
+                                                                              FavouriteBooksSubjects(description:Books[index].description,heading: Books[index].heading,link: Books[index].link,photoUrl: Books[index].photoUrl,Author: Books[index].Author,edition: Books[index].edition,date: Books[index].date, id: Books[index].id );
+                                                                              showToast("${Books[index].heading} in favorites");                                                            }
+                                                                          });
+                                                                        } catch (e) {
+                                                                          print(e);
+                                                                        }
+
                                                                       },
                                                                     ),
+
                                                                     InkWell(
                                                                         child: Container(
                                                                           decoration: BoxDecoration(
@@ -2563,7 +2520,8 @@ class _HomePageState extends State<HomePage> {
                                                 onTap: () async {
                                                   _BooksBottomSheet(context, Books[index]);
                                                 },
-                                              ),
+                                              );
+                                                },
                                               shrinkWrap: true,
                                               separatorBuilder: (context, index) => const SizedBox(
                                                 width: 9,
@@ -2725,7 +2683,7 @@ Stream<List<FlashConvertor>> readFlashNews() => FirebaseFirestore.instance
 
 Future createSubjects({required String heading, required String description, required String date, required String PhotoUrl,required String regulation}) async {
   final docflash = FirebaseFirestore.instance.collection("ECE").doc("Subjects").collection("Subjects").doc();
-  final flash = FlashConvertor(id: docflash.id, heading: heading, PhotoUrl: PhotoUrl, description: description, Date: date,like:0,regulation: regulation);
+  final flash = FlashConvertor(id: docflash.id, heading: heading, PhotoUrl: PhotoUrl, description: description, Date: date,regulation: regulation);
   final json = flash.toJson();
   await docflash.set(json);
 }
@@ -2733,8 +2691,7 @@ Future createSubjects({required String heading, required String description, req
 class FlashConvertor {
   String id;
   final String heading, PhotoUrl, description, Date,regulation;
-  final int like;
-  FlashConvertor({this.id = "", required this.regulation,required this.heading, required this.PhotoUrl, required this.description, required this.Date,required this.like});
+  FlashConvertor({this.id = "", required this.regulation,required this.heading, required this.PhotoUrl, required this.description, required this.Date});
 
   Map<String, dynamic> toJson() => {
     "id": id,
@@ -2742,12 +2699,11 @@ class FlashConvertor {
     "Date": Date,
     "Description": description,
     "Photo Url": PhotoUrl,
-    "like":like,
     "regulation":regulation
   };
 
   static FlashConvertor fromJson(Map<String, dynamic> json) =>
-      FlashConvertor(id: json['id'],regulation:json["regulation"],like: json["like"],heading: json["Heading"], PhotoUrl: json["Photo Url"], description: json["Description"], Date: json["Date"]);
+      FlashConvertor(id: json['id'],regulation:json["regulation"],heading: json["Heading"], PhotoUrl: json["Photo Url"], description: json["Description"], Date: json["Date"]);
 }
 
 Stream<List<LabSubjectsConvertor>> readLabSubjects() => FirebaseFirestore.instance
@@ -2987,7 +2943,7 @@ void _BooksBottomSheet(BuildContext context, BooksConvertor data) {
   );
 }
 
-void _BranchNewsBottomSheet(BuildContext context, BranchNewConvertor data) {
+void _BranchNewsBottomSheet(BuildContext context, BranchNewConvertor data,File file) {
 
   showModalBottomSheet(
     backgroundColor: Colors.black.withOpacity(0.8),
@@ -3051,16 +3007,14 @@ void _BranchNewsBottomSheet(BuildContext context, BranchNewConvertor data) {
                                 ),
                               ),
                             ),
-                            Text(" ${data.heading}", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                            if(data.heading.isNotEmpty)Text(" ${data.heading}", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400))
+                            else Text(" ECE (SRKR)", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
                           ],
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 5, right: 5),
-                        child: Image.file(
-                          File("/data/user/0/com.nimmalasujith.esrkr/app_flutter/logo.png"),
-                          height: 200,
-                        ),
+                        child:Image.file(file)
                       ),
                       Row(
                         children: [
@@ -3090,36 +3044,59 @@ void _BranchNewsBottomSheet(BuildContext context, BranchNewConvertor data) {
                       SizedBox(
                         height: 10,
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15,bottom: 10),
+                        child: Text(
+                          "Download options : ",
+                          style: TextStyle(color: Colors.tealAccent, fontSize: 20, fontWeight: FontWeight.w900),
+                        ),
+                      ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Text(
-                            "Download Image : ",
-                            style: TextStyle(color: Colors.tealAccent, fontSize: 20, fontWeight: FontWeight.w900),
-                          ),
-                          Spacer(),
                           InkWell(
                             child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Colors.lightBlueAccent.withOpacity(0.3),
-                                  border: Border.all(color: Colors.white),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.white.withOpacity(0.3)),
+                                  color: Colors.black.withOpacity(0.5)
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.download_outlined,color: Colors.white,),
+                                    Text("Download",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+                                  ],
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 3, bottom: 3, left: 8, right: 8),
-                                  child: Text(
-                                    "Download",
-                                    style: TextStyle(color: Colors.cyan),
-                                  ),
-                                )),
-                            onTap: ()async {
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>FirebaseImageDownloader(imageUrl: 'pngtree-golden-sparkling-ring.png',)));
+                              ),
+                            ),
+                            onTap: (){
+                              showToast("Downloaded");
                             },
                           ),
-                          SizedBox(
-                            width: 30,
+                          SizedBox(width: 20,),
+                          InkWell(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.white.withOpacity(0.3)),
+                                  color: Colors.black.withOpacity(0.5)
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.save,color: Colors.white,),
+                                    Text("Save",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            onTap: (){
+                              showToast("Saved in app");
+                            },
                           ),
                         ],
                       ),

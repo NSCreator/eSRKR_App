@@ -22,7 +22,6 @@ Future main() async {
   final prefs = await SharedPreferences.getInstance();
   await Firebase.initializeApp();
   final showHome = prefs.getBool('showHome') ?? false;
-  WidgetsFlutterBinding.ensureInitialized();
   await MobileAds.instance.initialize();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(MyApp(showHome: showHome));

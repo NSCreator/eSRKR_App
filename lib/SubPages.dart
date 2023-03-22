@@ -27,6 +27,21 @@ class NewsPage extends StatefulWidget {
 
 class _NewsPageState extends State<NewsPage> {
   final FirebaseStorage storage = FirebaseStorage.instance;
+  String folderPath = "";
+
+  Future<void> getPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    setState(() {
+      folderPath = '${directory.path}/';
+    });
+
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    getPath();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,6 +116,10 @@ class _NewsPageState extends State<NewsPage> {
                                 itemCount: BranchNews!.length,
                                 itemBuilder: (context, int index) {
                                   final BranchNew = BranchNews[index];
+                                  final Uri uri = Uri.parse(BranchNew.photoUrl);
+                                  final String fileName = uri.pathSegments.last;
+                                  var name = fileName.split("/").last;
+                                  final file = File("${folderPath}/ece_news/$name");
                                   return InkWell(
                                     child: Column(
                                       children: [
@@ -117,18 +136,27 @@ class _NewsPageState extends State<NewsPage> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Padding(
+                                                padding: const EdgeInsets.only(top: 8,left: 8,bottom: 2),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      height: 25,
+                                                      width: 25,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(15),
+                                                        image: DecorationImage(
+                                                          image: AssetImage("assets/ece image 64x64.png"),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    if(BranchNew.heading.isNotEmpty)Text(" ${BranchNew.heading}", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400))
+                                                    else Text(" ECE (SRKR)", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
                                                   padding: const EdgeInsets.all(5.0),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white38,
-                                                      borderRadius: BorderRadius.circular(15),
-                                                      border: Border.all(color: Colors.white),
-                                                    ),
-                                                    child: Image.network(
-                                                      BranchNew.photoUrl,
-                                                      fit: BoxFit.fill,
-                                                    ),
-                                                  )),
+                                                  child:Image.file(file)),
                                               Row(
                                                 children: [
                                                   Spacer(),
@@ -141,11 +169,7 @@ class _NewsPageState extends State<NewsPage> {
                                                   ),
                                                 ],
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(left: 15),
-                                                child: Text(BranchNew.heading, style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w500)),
-                                              ),
-                                              Padding(
+                                              if(BranchNew.description.isNotEmpty)Padding(
                                                 padding: const EdgeInsets.only(left: 25, top: 5, bottom: 5),
                                                 child: Text(BranchNew.description, style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w300)),
                                               ),
@@ -1501,14 +1525,14 @@ class _LabSubjectsState extends State<LabSubjects> {
   }
 }
 
-class Books extends StatefulWidget {
-  const Books({Key? key}) : super(key: key);
+class allBooks extends StatefulWidget {
+  const allBooks({Key? key}) : super(key: key);
 
   @override
-  State<Books> createState() => _BooksState();
+  State<allBooks> createState() => _allBooksState();
 }
 
-class _BooksState extends State<Books> {
+class _allBooksState extends State<allBooks> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1761,45 +1785,49 @@ class subjectUnitsData extends StatefulWidget {
 
 class _subjectUnitsDataState extends State<subjectUnitsData> {
   bool isReadMore = false;
+  String folderPath = "";
+  File file  = File("");
 
+  Future<void> getPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final Uri uri = Uri.parse(widget.photoUrl);
+    final String fileName = uri.pathSegments.last;
+    var name = fileName.split("/").last;
+    setState(() {
+      folderPath = '${directory.path}/';
+      if(widget.mode == "Subjects") {
+        file = File("${folderPath}/ece_subjects/$name");
+      }else{
+        file = File("${folderPath}/ece_labsubjects/$name");
+      }
+    });
+
+  }
   @override
-  Widget build(BuildContext context) => Scaffold(
-        extendBody: true,
-        extendBodyBehindAppBar: true,
-        backgroundColor: Colors.black,
-        body: Container(
-          decoration: BoxDecoration(
+  void initState() {
+    // TODO: implement initState
+    getPath();
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) =>Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.black,
+      body: Container(
+        decoration: BoxDecoration(
             image: DecorationImage(image: NetworkImage("https://i.pinimg.com/736x/01/c7/f7/01c7f72511cc6ce7858e65b45d4f8c9c.jpg"),fit: BoxFit.fill)
-          ),
-          child: Container(
-            color: Colors.black.withOpacity(0.9),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: InkWell(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[500],
-                              borderRadius: BorderRadius.circular(15),
-                              border: Border.all(color: Colors.white),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                              child: Text("<-- Back"),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
-                      Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+        ),
+        child: Container(
+          color: Colors.black.withOpacity(0.9),
+          child: SafeArea(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.grey[500],
@@ -1808,325 +1836,344 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                            child: Text(widget.name),
+                            child: Text("<-- Back"),
                           ),
                         ),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
                       ),
-                      Spacer(),
-                      if (userId() == "gmail.com")
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10),
-                          child: InkWell(
-                            child: Chip(
-                              elevation: 20,
-                              backgroundColor: Colors.white38,
-                              avatar: CircleAvatar(
-                                  backgroundColor: Colors.black,
-                                  child: Icon(
-                                    Icons.add,
-                                  )),
-                              label: Text(
-                                "ADD",
-                                style: TextStyle(color: Colors.black),
-                              ),
+                    ),
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[500],
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: Colors.white),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                          child: Text(widget.name),
+                        ),
+                      ),
+                    ),
+                    Spacer(),
+                    if (userId() == "gmail.com")
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: InkWell(
+                          child: Chip(
+                            elevation: 20,
+                            backgroundColor: Colors.white38,
+                            avatar: CircleAvatar(
+                                backgroundColor: Colors.black,
+                                child: Icon(
+                                  Icons.add,
+                                )),
+                            label: Text(
+                              "ADD",
+                              style: TextStyle(color: Colors.black),
                             ),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => UnitsCreator(
-                                        id: widget.ID,
-                                        mode: widget.mode,
-                                      )));
-                            },
                           ),
-                        )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Flexible(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UnitsCreator(
+                                      id: widget.ID,
+                                      mode: widget.mode,
+                                    )));
+                          },
+                        ),
+                      )
+                  ],
+                ),
+                Row(
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        height: 100,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18),
+                            image: DecorationImage(image:FileImage(file),fit: BoxFit.fill )
+                        ),
+                      ),
+                    ),
+                    Flexible(
                         flex: 1,
-                        child: Container(
-                          height: 100,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(18),
-                            image: DecorationImage(image:NetworkImage(widget.photoUrl),fit: BoxFit.fill )
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Text(widget.name,style: TextStyle(fontSize: 23,color: Colors.white),),
+                              Text(widget.fullName,style: TextStyle(fontSize: 15,color: Colors.white),),
+                            ],
                           ),
-                        ),
-                      ),
-                      Flexible(
-                          flex: 1,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                Text(widget.name,style: TextStyle(fontSize: 23,color: Colors.white),),
-                                Text(widget.fullName,style: TextStyle(fontSize: 15,color: Colors.white),),
-                              ],
-                            ),
-                          )),
+                        )),
 
-                    ],
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Padding(
-                        padding: const EdgeInsets.all(3.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10,top: 20,bottom: 3),
-                              child: Text("Units",style: TextStyle(fontSize: 30,color: Colors.white),),
-                            ),
-                            StreamBuilder<List<UnitsConvertor>>(
-                                stream: readUnits(widget.ID),
-                                builder: (context, snapshot) {
-                                  final Units = snapshot.data;
-                                  switch (snapshot.connectionState) {
-                                    case ConnectionState.waiting:
-                                      return const Center(
-                                          child: CircularProgressIndicator(
-                                        strokeWidth: 0.3,
-                                        color: Colors.cyan,
-                                      ));
-                                    default:
-                                      if (snapshot.hasError) {
-                                        return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                                      } else {
-                                        return Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: ListView.separated(
-                                                physics: const BouncingScrollPhysics(),
-                                                shrinkWrap: true,
-                                                itemCount: Units!.length,
-                                                itemBuilder: (context, int index) {
-                                                  final unit = Units[index];
-                                                  return SizedBox(
-                                                    child: Column(
-                                                      children: [
-                                                        Container(
-                                                          width: double.infinity,
-                                                          decoration: BoxDecoration(
-                                                            borderRadius: BorderRadius.circular(20),
-                                                            color: Colors.white.withOpacity(0.07),
-                                                            border: Border.all(color: Colors.white.withOpacity(0.1)),
-                                                          ),
-                                                          child: Padding(
-                                                            padding: const EdgeInsets.only(left: 15, top: 8, bottom: 8, right: 8),
-                                                            child: Column(
-                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Text(
-                                                                  unit.heading,
-                                                                  style: const TextStyle(
-                                                                    fontSize: 18.0,
-                                                                    color: Colors.white,
-                                                                    fontWeight: FontWeight.w500,
-                                                                  ),
+                  ],
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(3.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10,top: 20,bottom: 3),
+                            child: Text("Units",style: TextStyle(fontSize: 30,color: Colors.white),),
+                          ),
+                          StreamBuilder<List<UnitsConvertor>>(
+                              stream: readUnits(widget.ID),
+                              builder: (context, snapshot) {
+                                final Units = snapshot.data;
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                    return const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 0.3,
+                                          color: Colors.cyan,
+                                        ));
+                                  default:
+                                    if (snapshot.hasError) {
+                                      return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                    } else {
+                                      return Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: ListView.separated(
+                                              physics: const BouncingScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: Units!.length,
+                                              itemBuilder: (context, int index) {
+                                                final unit = Units[index];
+                                                return SizedBox(
+                                                  child: Column(
+                                                    children: [
+                                                      Container(
+                                                        width: double.infinity,
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(20),
+                                                          color: Colors.white.withOpacity(0.07),
+                                                          border: Border.all(color: Colors.white.withOpacity(0.1)),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.only(left: 15, top: 8, bottom: 8, right: 8),
+                                                          child: Column(
+                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Text(
+                                                                unit.heading,
+                                                                style: const TextStyle(
+                                                                  fontSize: 18.0,
+                                                                  color: Colors.white,
+                                                                  fontWeight: FontWeight.w500,
                                                                 ),
-                                                                Row(
-                                                                  children: [
-                                                                    Flexible(
-                                                                      child: Container(
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  Flexible(
+                                                                    child: Container(
                                                                         child: buildText(unit.description)
-                                                                      ),
-                                                                      flex: 4,
                                                                     ),
-                                                                    Flexible(
-                                                                      child: Column(
-                                                                        children: [
-                                                                          InkWell(
-                                                                            child: Container(
-                                                                              decoration: BoxDecoration(
-                                                                                borderRadius: BorderRadius.circular(15),
-                                                                                color: Colors.white.withOpacity(0.5),
-                                                                                border: Border.all(color: Colors.white),
-                                                                              ),
-                                                                              child: Row(
-                                                                                children: [
-                                                                                  Text("  Open"),
-                                                                                  Icon(Icons.open_in_new)
-                                                                                ],
-                                                                              ),
+                                                                    flex: 4,
+                                                                  ),
+                                                                  Flexible(
+                                                                    child: Column(
+                                                                      children: [
+                                                                        InkWell(
+                                                                          child: Container(
+                                                                            decoration: BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(15),
+                                                                              color: Colors.white.withOpacity(0.5),
+                                                                              border: Border.all(color: Colors.white),
                                                                             ),
-                                                                              onTap: (){
-                                                                                _launchUrl(unit.PDFLink);
-                                                                              },
+                                                                            child: Row(
+                                                                              children: [
+                                                                                Text("  Open"),
+                                                                                Icon(Icons.open_in_new)
+                                                                              ],
+                                                                            ),
                                                                           ),
-                                                                          // SizedBox(height: 3,),
-                                                                          // Container(
-                                                                          //   decoration: BoxDecoration(
-                                                                          //     borderRadius: BorderRadius.circular(15),
-                                                                          //     color: Colors.white.withOpacity(0.5),
-                                                                          //     border: Border.all(color: Colors.white),
-                                                                          //   ),
-                                                                          //   child: Row(
-                                                                          //     children: [
-                                                                          //       Text("  Download"),
-                                                                          //       Icon(Icons.download_outlined)
-                                                                          //     ],
-                                                                          //   ),
-                                                                          // )
-                                                                        ],
-                                                                      ),
-                                                                      flex: 1,
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                                // const Padding(
-                                                                //   padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-                                                                //   child: Text(
-                                                                //     'Download PDF :',
-                                                                //     style: TextStyle(
-                                                                //       fontSize: 13.0,
-                                                                //       color: Colors.white70,
-                                                                //       fontWeight: FontWeight.w700,
-                                                                //     ),
-                                                                //   ),
-                                                                // ),
-                                                                // Padding(
-                                                                //   padding: const EdgeInsets.only(left: 10, right: 60),
-                                                                //   child: InkWell(
-                                                                //     child: Container(
-                                                                //       decoration: BoxDecoration(
-                                                                //         borderRadius: BorderRadius.circular(12),
-                                                                //         color: const Color.fromRGBO(0, 2, 10, 0.5),
-                                                                //       ),
-                                                                //       child: Column(
-                                                                //         children: [
-                                                                //           Padding(
-                                                                //             padding: const EdgeInsets.only(left: 30),
-                                                                //             child: Row(
-                                                                //               children: [
-                                                                //                 Column(
-                                                                //                   children: [
-                                                                //                     Text(
-                                                                //                       unit.PDFName,
-                                                                //                       style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
-                                                                //                     ),
-                                                                //                     Padding(
-                                                                //                       padding: const EdgeInsets.only(bottom: 3),
-                                                                //                       child: Text(
-                                                                //                         'Size : ${unit.PDFSize}',
-                                                                //                         style: const TextStyle(
-                                                                //                           fontSize: 10.0,
-                                                                //                           color: Colors.white60,
-                                                                //                           fontWeight: FontWeight.bold,
-                                                                //                         ),
-                                                                //                       ),
-                                                                //                     ),
-                                                                //                   ],
-                                                                //                 ),
-                                                                //                 const Spacer(),
-                                                                //                 const Padding(
-                                                                //                   padding: EdgeInsets.only(right: 20),
-                                                                //                   child: Icon(
-                                                                //                     Icons.download_for_offline_outlined,
-                                                                //                     color: Colors.white54,
-                                                                //                   ),
-                                                                //                 ),
-                                                                //               ],
-                                                                //             ),
-                                                                //           ),
-                                                                //         ],
-                                                                //       ),
-                                                                //     ),
-                                                                //     onTap: () {
-                                                                //       _launchUrl(unit.PDFLink);
-                                                                //     },
-                                                                //   ),
-                                                                // ),
-                                                                // Row(
-                                                                //   children: [
-                                                                //     Spacer(),
-                                                                //     Padding(
-                                                                //       padding: const EdgeInsets.only(right: 10, top: 5, bottom: 5),
-                                                                //       child: Text(unit.Date),
-                                                                //     ),
-                                                                //   ],
-                                                                // ),
-                                                                // if (userId() == "gmail.com")
-                                                                //   Row(
-                                                                //     children: [
-                                                                //       InkWell(
-                                                                //         child: Chip(
-                                                                //           elevation: 20,
-                                                                //           backgroundColor: Colors.black,
-                                                                //           avatar: CircleAvatar(
-                                                                //               backgroundColor: Colors.black45,
-                                                                //               child: Icon(
-                                                                //                 Icons.edit_outlined,
-                                                                //               )),
-                                                                //           label: Text(
-                                                                //             "Edit",
-                                                                //             style: TextStyle(color: Colors.white),
-                                                                //           ),
-                                                                //         ),
-                                                                //         onTap: () {
-                                                                //           Navigator.push(
-                                                                //               context,
-                                                                //               MaterialPageRoute(
-                                                                //                   builder: (context) => UnitsCreator(
-                                                                //                         mode: widget.mode,
-                                                                //                         UnitId: widget.ID,
-                                                                //                         id: unit.id,
-                                                                //                         Heading: unit.heading,
-                                                                //                         Description: unit.description,
-                                                                //                         PDFName: unit.PDFName,
-                                                                //                         PDFSize: unit.PDFSize,
-                                                                //                         PDFUrl: unit.PDFLink,
-                                                                //                       )));
-                                                                //         },
-                                                                //       ),
-                                                                //       InkWell(
-                                                                //         child: Chip(
-                                                                //           elevation: 20,
-                                                                //           backgroundColor: Colors.black,
-                                                                //           avatar: CircleAvatar(
-                                                                //               backgroundColor: Colors.black45,
-                                                                //               child: Icon(
-                                                                //                 Icons.delete_rounded,
-                                                                //               )),
-                                                                //           label: Text(
-                                                                //             "Delete",
-                                                                //             style: TextStyle(color: Colors.white),
-                                                                //           ),
-                                                                //         ),
-                                                                //         onTap: () {
-                                                                //           final deleteFlashNews = FirebaseFirestore.instance
-                                                                //               .collection('ECE')
-                                                                //               .doc(widget.mode)
-                                                                //               .collection(widget.mode)
-                                                                //               .doc(widget.ID)
-                                                                //               .collection("Units")
-                                                                //               .doc(unit.id);
-                                                                //           deleteFlashNews.delete();
-                                                                //         },
-                                                                //       ),
-                                                                //     ],
-                                                                //   )
-                                                              ],
-                                                            ),
+                                                                          onTap: (){
+                                                                            _launchUrl(unit.PDFLink);
+                                                                          },
+                                                                        ),
+                                                                        // SizedBox(height: 3,),
+                                                                        // Container(
+                                                                        //   decoration: BoxDecoration(
+                                                                        //     borderRadius: BorderRadius.circular(15),
+                                                                        //     color: Colors.white.withOpacity(0.5),
+                                                                        //     border: Border.all(color: Colors.white),
+                                                                        //   ),
+                                                                        //   child: Row(
+                                                                        //     children: [
+                                                                        //       Text("  Download"),
+                                                                        //       Icon(Icons.download_outlined)
+                                                                        //     ],
+                                                                        //   ),
+                                                                        // )
+                                                                      ],
+                                                                    ),
+                                                                    flex: 1,
+                                                                  )
+                                                                ],
+                                                              ),
+                                                              // const Padding(
+                                                              //   padding: EdgeInsets.only(top: 8, left: 8, right: 8),
+                                                              //   child: Text(
+                                                              //     'Download PDF :',
+                                                              //     style: TextStyle(
+                                                              //       fontSize: 13.0,
+                                                              //       color: Colors.white70,
+                                                              //       fontWeight: FontWeight.w700,
+                                                              //     ),
+                                                              //   ),
+                                                              // ),
+                                                              // Padding(
+                                                              //   padding: const EdgeInsets.only(left: 10, right: 60),
+                                                              //   child: InkWell(
+                                                              //     child: Container(
+                                                              //       decoration: BoxDecoration(
+                                                              //         borderRadius: BorderRadius.circular(12),
+                                                              //         color: const Color.fromRGBO(0, 2, 10, 0.5),
+                                                              //       ),
+                                                              //       child: Column(
+                                                              //         children: [
+                                                              //           Padding(
+                                                              //             padding: const EdgeInsets.only(left: 30),
+                                                              //             child: Row(
+                                                              //               children: [
+                                                              //                 Column(
+                                                              //                   children: [
+                                                              //                     Text(
+                                                              //                       unit.PDFName,
+                                                              //                       style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+                                                              //                     ),
+                                                              //                     Padding(
+                                                              //                       padding: const EdgeInsets.only(bottom: 3),
+                                                              //                       child: Text(
+                                                              //                         'Size : ${unit.PDFSize}',
+                                                              //                         style: const TextStyle(
+                                                              //                           fontSize: 10.0,
+                                                              //                           color: Colors.white60,
+                                                              //                           fontWeight: FontWeight.bold,
+                                                              //                         ),
+                                                              //                       ),
+                                                              //                     ),
+                                                              //                   ],
+                                                              //                 ),
+                                                              //                 const Spacer(),
+                                                              //                 const Padding(
+                                                              //                   padding: EdgeInsets.only(right: 20),
+                                                              //                   child: Icon(
+                                                              //                     Icons.download_for_offline_outlined,
+                                                              //                     color: Colors.white54,
+                                                              //                   ),
+                                                              //                 ),
+                                                              //               ],
+                                                              //             ),
+                                                              //           ),
+                                                              //         ],
+                                                              //       ),
+                                                              //     ),
+                                                              //     onTap: () {
+                                                              //       _launchUrl(unit.PDFLink);
+                                                              //     },
+                                                              //   ),
+                                                              // ),
+                                                              // Row(
+                                                              //   children: [
+                                                              //     Spacer(),
+                                                              //     Padding(
+                                                              //       padding: const EdgeInsets.only(right: 10, top: 5, bottom: 5),
+                                                              //       child: Text(unit.Date),
+                                                              //     ),
+                                                              //   ],
+                                                              // ),
+                                                              // if (userId() == "gmail.com")
+                                                              //   Row(
+                                                              //     children: [
+                                                              //       InkWell(
+                                                              //         child: Chip(
+                                                              //           elevation: 20,
+                                                              //           backgroundColor: Colors.black,
+                                                              //           avatar: CircleAvatar(
+                                                              //               backgroundColor: Colors.black45,
+                                                              //               child: Icon(
+                                                              //                 Icons.edit_outlined,
+                                                              //               )),
+                                                              //           label: Text(
+                                                              //             "Edit",
+                                                              //             style: TextStyle(color: Colors.white),
+                                                              //           ),
+                                                              //         ),
+                                                              //         onTap: () {
+                                                              //           Navigator.push(
+                                                              //               context,
+                                                              //               MaterialPageRoute(
+                                                              //                   builder: (context) => UnitsCreator(
+                                                              //                         mode: widget.mode,
+                                                              //                         UnitId: widget.ID,
+                                                              //                         id: unit.id,
+                                                              //                         Heading: unit.heading,
+                                                              //                         Description: unit.description,
+                                                              //                         PDFName: unit.PDFName,
+                                                              //                         PDFSize: unit.PDFSize,
+                                                              //                         PDFUrl: unit.PDFLink,
+                                                              //                       )));
+                                                              //         },
+                                                              //       ),
+                                                              //       InkWell(
+                                                              //         child: Chip(
+                                                              //           elevation: 20,
+                                                              //           backgroundColor: Colors.black,
+                                                              //           avatar: CircleAvatar(
+                                                              //               backgroundColor: Colors.black45,
+                                                              //               child: Icon(
+                                                              //                 Icons.delete_rounded,
+                                                              //               )),
+                                                              //           label: Text(
+                                                              //             "Delete",
+                                                              //             style: TextStyle(color: Colors.white),
+                                                              //           ),
+                                                              //         ),
+                                                              //         onTap: () {
+                                                              //           final deleteFlashNews = FirebaseFirestore.instance
+                                                              //               .collection('ECE')
+                                                              //               .doc(widget.mode)
+                                                              //               .collection(widget.mode)
+                                                              //               .doc(widget.ID)
+                                                              //               .collection("Units")
+                                                              //               .doc(unit.id);
+                                                              //           deleteFlashNews.delete();
+                                                              //         },
+                                                              //       ),
+                                                              //     ],
+                                                              //   )
+                                                            ],
                                                           ),
                                                         ),
-                                                        if ((index + 1) % 2 == 0) CustomBannerAd01(),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                                separatorBuilder: (context, index) => const SizedBox(
-                                                      height: 5,
-                                                    )));
-                                      }
-                                  }
-                                }),
-                            if(widget.mode=="Subject")
-                              StreamBuilder<List<UnitsConvertor>>(
+                                                      ),
+                                                      if ((index + 1) % 2 == 0) CustomBannerAd01(),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              separatorBuilder: (context, index) => const SizedBox(
+                                                height: 5,
+                                              )));
+                                    }
+                                }
+                              }),
+                          if(widget.mode=="Subject")
+                            StreamBuilder<List<UnitsConvertor>>(
                                 stream: readUnits(widget.ID),
                                 builder: (context, snapshot) {
                                   final Units = snapshot.data;
@@ -2223,114 +2270,115 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                       }
                                   }
                                 }),
-                            StreamBuilder<List<UnitsConvertor>>(
-                                stream: readUnits(widget.ID),
-                                builder: (context, snapshot) {
-                                  final Units = snapshot.data;
-                                  switch (snapshot.connectionState) {
-                                    case ConnectionState.waiting:
-                                      return const Center(
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 0.3,
-                                            color: Colors.cyan,
-                                          ));
-                                    default:
-                                      if (snapshot.hasError) {
-                                        return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                                      } else {
-                                        return Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 10,top: 20,bottom: 8),
-                                              child: Text("Syllabus and Papers",style: TextStyle(fontSize: 30,color: Colors.white),),
-                                            ),
-                                            Container(
-                                              height: 168,
-                                              child: ListView.builder(
-                                                physics: BouncingScrollPhysics(),
-                                                shrinkWrap: true,
-                                                itemCount: Units!.length,
-                                                scrollDirection: Axis.horizontal,
-                                                itemBuilder: (BuildContext context, int index) {
-                                                  final SubjectsData = Units[index];
-                                                  return InkWell(
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.only(left: 10),
-                                                      child: Container(
-                                                        width: 130,
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.white.withOpacity(0.25),
-                                                          borderRadius: BorderRadius.circular(15),
-                                                        ),
-                                                        child: Column(
-                                                          children: [
-                                                            Container(
-                                                              height: 155,
-                                                              alignment: Alignment.center,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors.black54,
-                                                                  borderRadius: BorderRadius.circular(15),
-                                                                  image:  DecorationImage(
-                                                                    image: NetworkImage(
-                                                                      "SubjectsData.photoUrl",
-                                                                    ),
-                                                                    fit: BoxFit.cover,
-                                                                  )
-                                                              ),
-                                                              child: Align(
-                                                                alignment: Alignment.bottomLeft,
-                                                                child: Container(
-                                                                  decoration: BoxDecoration(
-                                                                    color: Colors.black.withOpacity(0.4),
-                                                                    borderRadius: BorderRadius.circular(15),
-
+                          StreamBuilder<List<UnitsConvertor>>(
+                              stream: readUnits(widget.ID),
+                              builder: (context, snapshot) {
+                                final Units = snapshot.data;
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                    return const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 0.3,
+                                          color: Colors.cyan,
+                                        ));
+                                  default:
+                                    if (snapshot.hasError) {
+                                      return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                    } else {
+                                      return Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 10,top: 20,bottom: 8),
+                                            child: Text("Syllabus and Papers",style: TextStyle(fontSize: 30,color: Colors.white),),
+                                          ),
+                                          Container(
+                                            height: 168,
+                                            child: ListView.builder(
+                                              physics: BouncingScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: Units!.length,
+                                              scrollDirection: Axis.horizontal,
+                                              itemBuilder: (BuildContext context, int index) {
+                                                final SubjectsData = Units[index];
+                                                return InkWell(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 10),
+                                                    child: Container(
+                                                      width: 130,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white.withOpacity(0.25),
+                                                        borderRadius: BorderRadius.circular(15),
+                                                      ),
+                                                      child: Column(
+                                                        children: [
+                                                          Container(
+                                                            height: 155,
+                                                            alignment: Alignment.center,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.black54,
+                                                                borderRadius: BorderRadius.circular(15),
+                                                                image:  DecorationImage(
+                                                                  image: NetworkImage(
+                                                                    "SubjectsData.photoUrl",
                                                                   ),
-                                                                  child: Padding(
-                                                                    padding:  const EdgeInsets.all(4.0),
-                                                                    child: Text(SubjectsData.heading,style: const TextStyle(fontWeight: FontWeight.w400,fontSize: 16,color: Colors.white), maxLines: 2,
-                                                                      overflow: TextOverflow.ellipsis,),
-                                                                  ),
-                                                                ),
-
-                                                              ),
+                                                                  fit: BoxFit.cover,
+                                                                )
                                                             ),
-                                                            Padding(
-                                                              padding:  const EdgeInsets.only(left: 10,right: 10),
-                                                              child: Text("by {SubjectsData.creator}",style: const TextStyle(fontWeight: FontWeight.w400,fontSize: 11,color: Color.fromRGBO(164, 209, 245,1)),
-                                                                maxLines: 1,
+                                                            child: Align(
+                                                              alignment: Alignment.bottomLeft,
+                                                              child: Container(
+                                                                decoration: BoxDecoration(
+                                                                  color: Colors.black.withOpacity(0.4),
+                                                                  borderRadius: BorderRadius.circular(15),
 
+                                                                ),
+                                                                child: Padding(
+                                                                  padding:  const EdgeInsets.all(4.0),
+                                                                  child: Text(SubjectsData.heading,style: const TextStyle(fontWeight: FontWeight.w400,fontSize: 16,color: Colors.white), maxLines: 2,
+                                                                    overflow: TextOverflow.ellipsis,),
+                                                                ),
                                                               ),
-                                                            )
-                                                          ],
-                                                        ),
+
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:  const EdgeInsets.only(left: 10,right: 10),
+                                                            child: Text("by {SubjectsData.creator}",style: const TextStyle(fontWeight: FontWeight.w400,fontSize: 11,color: Color.fromRGBO(164, 209, 245,1)),
+                                                              maxLines: 1,
+
+                                                            ),
+                                                          )
+                                                        ],
                                                       ),
                                                     ),
-                                                    onTap: () async {
+                                                  ),
+                                                  onTap: () async {
 
-                                                    },
-                                                  );
-                                                },
+                                                  },
+                                                );
+                                              },
 
-                                              ),
                                             ),
-                                          ],
-                                        );
-                                      }
-                                  }
-                                }),
-                          ],
-                        ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                }
+                              }),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
-      );
+      ),
+    );
+
   Widget buildText(String text){
     final maxLines = isReadMore ? null :2;
     final overflow = isReadMore?TextOverflow.visible:TextOverflow.ellipsis;
