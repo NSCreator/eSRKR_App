@@ -47,7 +47,7 @@ class _settingsState extends State<settings> {
     super.initState();
     getStringValuesSF();
     final newVersion = NewVersion(
-      androidId: "",
+      androidId: "https://play.google.com/store/apps/details?id=com.nimmalasujith.esrkr",
     );
     advancedStatusCheck(newVersion);
   }
@@ -207,7 +207,7 @@ class _settingsState extends State<settings> {
                                                   padding: const EdgeInsets.only(left: 15),
                                                   child: Text(
                                                     "Do you want Log Out",
-                                                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 18),
+                                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18),
                                                   ),
                                                 ),
                                                 SizedBox(
@@ -223,12 +223,12 @@ class _settingsState extends State<settings> {
                                                         child: Container(
                                                           decoration: BoxDecoration(
                                                             color: Colors.black26,
-                                                            border: Border.all(color: Colors.black),
+                                                            border: Border.all(color: Colors.white.withOpacity(0.3)),
                                                             borderRadius: BorderRadius.circular(25),
                                                           ),
                                                           child: Padding(
                                                             padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-                                                            child: Text("Back"),
+                                                            child: Text("Back",style: TextStyle(color: Colors.white),),
                                                           ),
                                                         ),
                                                         onTap: () {
@@ -248,7 +248,7 @@ class _settingsState extends State<settings> {
                                                           child: Padding(
                                                             padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
                                                             child: Text(
-                                                              "Delete",
+                                                              "Log Out",
                                                               style: TextStyle(color: Colors.white),
                                                             ),
                                                           ),

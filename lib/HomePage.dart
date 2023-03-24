@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srkr_study_app/SubPages.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'package:srkr_study_app/srkr_page.dart';
@@ -26,48 +27,32 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final FirebaseStorage storage = FirebaseStorage.instance;
+  final InputController = TextEditingController();
+  bool showHome = false;
   String folderPath = "";
 
   Future<void> getPath() async {
     final directory = await getApplicationDocumentsDirectory();
     setState(() {
       folderPath = '${directory.path}/';
+
     });
 
   }
-  downloadImage(String photoUrl,String path) async {
-    final Uri uri = Uri.parse(photoUrl);
-    final String fileName = uri.pathSegments.last;
-    var name = fileName.split("/").last;
 
-    final ref = FirebaseStorage.instance.ref().child(fileName);
-    final url = await ref.getDownloadURL();
-    final response = await http.get(Uri.parse(url));
-    final documentDirectory = await getApplicationDocumentsDirectory();
-    final newDirectory = Directory('${documentDirectory.path}/$path');
-    if (!await newDirectory.exists()) {
-      await newDirectory.create(recursive: true);
-      final file = File('${newDirectory.path}/${name}');
-      await file.writeAsBytes(response.bodyBytes);
-      showToast(file.path);
-    }else{
-      final file = File('${newDirectory.path}/${name}');
-      await file.writeAsBytes(response.bodyBytes);
-      showToast(file.path);
-    }
+  @override
+  void dispose() {
+    InputController.dispose();
 
+    super.dispose();
   }
-  String Reg = "";
-  String RegID = "";
-  String Year = "";
-  String YearID = "";
-  String Class = "";
+
   @override
   void initState() {
     // TODO: implement initState
     getPath();
     super.initState();
+
   }
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -81,611 +66,70 @@ class _HomePageState extends State<HomePage> {
       child: Container(
         color: Colors.black.withOpacity(0.8),
         child: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(height: 10,),
-              Row(
-                children: [
-                  Flexible(
-                    child: Center(
-                        child: Text(
-                          "ECE",
-                          style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.w500 ),
-                        )),
-                    flex: 5,
-                  ),
-
-                  InkWell(
-                      child: Container(
-                        height: 35,
-                        width: 80,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: Colors.white.withOpacity(0.7),
-                            image: DecorationImage(image: NetworkImage("https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/logo.png?alt=media&token=f008662e-2638-4990-a010-2081c2f4631b"),fit: BoxFit.fill)
+          // child: StreamBuilder<DocumentSnapshot>(
+          //   stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).snapshots(),
+          //   builder: (BuildContext  context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          //     if (snapshot.hasData) {
+          //       final a = snapshot.data!["id"].toString();
+          //       if (true) {
+          //         return Container(child: Text(a),);
+          //       } else {
+          //         return Container();
+          //       }
+          //     } else {
+          //       return Container();
+          //     }
+          //   },
+          // ),
+          child: StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance.collection("user").doc(fullUserId()).snapshots(),
+            builder: (context, mainsnapshot) {
+              if (mainsnapshot.connectionState == 200){
+                return CircularProgressIndicator();
+              }
+              else if (mainsnapshot.hasData) {
+                return Column(
+                  children: [
+                    SizedBox(height: 10,),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Center(
+                              child: Text(
+                                "ECE",
+                                style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.w500 ),
+                              )),
+                          flex: 5,
                         ),
-                      ),
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SRKRPage()));
-                      }),
-                  SizedBox(width: 20,)
-                ],
-              ),
-              Divider(thickness: 1,color: Colors.white,),
-              Expanded(
-                child: SingleChildScrollView(
-                  physics:const BouncingScrollPhysics(),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      StreamBuilder<List<HomeUpdateConvertor>>(
-                          stream: readHomeUpdate(),
-                          builder: (context, snapshot) {
-                            final HomeUpdates = snapshot.data;
-                            switch (snapshot.connectionState) {
-                              case ConnectionState.waiting:
-                                return const Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 0.3,
-                                      color: Colors.cyan,
-                                    ));
-                              default:
-                                if (snapshot.hasError) {
-                                  return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                                } else {
-                                  if (HomeUpdates!.length == 0) {
-                                    return Container();
-                                  } else
-                                    return Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(left: 10, bottom: 10),
-                                          child: Text(
-                                            "Updates",
-                                            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500, color: Colors.white),
-                                          ),
-                                        ),
 
-                                        Padding(
-                                          padding: const EdgeInsets.only(left: 20, right: 10),
-                                          child: ListView.separated(
-                                              physics: const BouncingScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: HomeUpdates.length,
-                                              itemBuilder: (context, int index) {
-                                                final HomeUpdate = HomeUpdates[index];
-                                                final Uri uri = Uri.parse(HomeUpdate.photoUrl);
-                                                final String fileName = uri.pathSegments.last;
-                                                var name = fileName.split("/").last;
-                                                final file = File("${folderPath}/ece_updates/$name");
-                                                if (file.existsSync()) {
-                                                  return
-                                                    InkWell(
-                                                      child: Row(
-                                                        children: [
-                                                          Column(
-                                                            children: [
-                                                              Container(
-                                                                width: 30,
-                                                                height: 30,
-                                                                decoration: BoxDecoration(
-                                                                  borderRadius: BorderRadius.circular(15),
-                                                                  image: DecorationImage(
-                                                                    image:FileImage(file) ,
-                                                                    // image: NetworkImage(
-                                                                    //   HomeUpdate.photoUrl,
-                                                                    // ),
-                                                                    fit: BoxFit.cover,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Text(splitDate(HomeUpdate.date),style: TextStyle(color: Colors.white,fontSize: 8),)
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.all(5.0),
-                                                              child: Container(
-                                                                  child: Text(
-                                                                    HomeUpdate.heading,
-                                                                    style: const TextStyle(
-                                                                      fontSize: 15.0,
-                                                                      color: Color.fromRGBO(204, 207, 222, 1),
-                                                                      fontWeight: FontWeight.w400,
-                                                                    ),
-                                                                  )
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                      onTap: (){
-                                                        if(HomeUpdate.link.length>0){
-                                                          _ExternalLaunchUrl(HomeUpdate.link);
-                                                        }else{
-                                                          showToast("No Link");
-                                                        }
-                                                      },
-                                                    );
-
-                                                } else {
-                                                  downloadImage(HomeUpdate.photoUrl,"ece_updates");
-                                                  return
-                                                    InkWell(
-                                                      child: Row(
-                                                        children: [
-                                                          Column(
-                                                            children: [
-                                                              Container(
-                                                                width: 30,
-                                                                height: 30,
-                                                                child: CachedNetworkImage(
-                                                                  imageUrl: HomeUpdate.photoUrl,
-                                                                  placeholder: (context, url) => CircularProgressIndicator(),
-                                                                  errorWidget: (context, url, error) => Icon(Icons.error),
-                                                                ),
-                                                              ),
-                                                              Text(splitDate(HomeUpdate.date),style: TextStyle(color: Colors.white,fontSize: 8),)
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.all(5.0),
-                                                              child: Container(
-                                                                  child: Text(
-                                                                    HomeUpdate.heading,
-                                                                    style: const TextStyle(
-                                                                      fontSize: 15.0,
-                                                                      color: Color.fromRGBO(204, 207, 222, 1),
-                                                                      fontWeight: FontWeight.w400,
-                                                                    ),
-                                                                  )
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                      onTap: (){
-                                                        if(HomeUpdate.link.length>0){
-                                                          _ExternalLaunchUrl(HomeUpdate.link);
-                                                        }else{
-                                                          showToast("No Link");
-                                                        }
-                                                      },
-                                                    );
-
-                                                }
-                                                // return InkWell(
-                                                //   child: Row(
-                                                //     children: [
-                                                //       Column(
-                                                //         children: [
-                                                //           Container(
-                                                //             width: 30,
-                                                //             height: 30,
-                                                //             decoration: BoxDecoration(
-                                                //               borderRadius: BorderRadius.circular(15),
-                                                //               image: DecorationImage(
-                                                //                 image: ,
-                                                //                 // image: NetworkImage(
-                                                //                 //   HomeUpdate.photoUrl,
-                                                //                 // ),
-                                                //                 fit: BoxFit.cover,
-                                                //               ),
-                                                //             ),
-                                                //           ),
-                                                //           Text(splitDate(HomeUpdate.date),style: TextStyle(color: Colors.white,fontSize: 8),)
-                                                //         ],
-                                                //       ),
-                                                //       SizedBox(
-                                                //         width: 5,
-                                                //       ),
-                                                //       Expanded(
-                                                //         child: Padding(
-                                                //           padding: const EdgeInsets.all(5.0),
-                                                //           child: Container(
-                                                //             child: Text(
-                                                //                 HomeUpdate.heading,
-                                                //               style: const TextStyle(
-                                                //                 fontSize: 15.0,
-                                                //                 color: Color.fromRGBO(204, 207, 222, 1),
-                                                //                 fontWeight: FontWeight.w400,
-                                                //               ),
-                                                //             )
-                                                //           ),
-                                                //         ),
-                                                //       )
-                                                //     ],
-                                                //   ),
-                                                // onTap: (){
-                                                //     if(HomeUpdate.link.length>0){
-                                                //       _ExternalLaunchUrl(HomeUpdate.link);
-                                                //     }else{
-                                                //       showToast("No Link");
-                                                //     }
-                                                // },
-                                                // );
-                                              },
-                                              separatorBuilder: (context, index) => const SizedBox(
-                                                height: 5,
-                                              )),
-                                        ),
-                                      ],
-                                    );
-                                }
-                            }
-                          }),
-                      //Branch News
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10,top: 15),
-                        child: Row(
-                          children: [
-                            Text(
-                              "ECE News",
-                              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500, color: Colors.white),
-                            ),
-                            Spacer(),
-                            if (userId() == "gmail.com")
-                              Padding(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Colors.white.withOpacity(0.5),
-                                    border: Border.all(color: Colors.white),
-                                  ),
-                                  child: InkWell(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                      child: Text("+Add"),
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => NewsCreator()));
-                                    },
-                                  ),
-                                ),
+                        InkWell(
+                            child: Container(
+                              height: 35,
+                              width: 80,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.white.withOpacity(0.7),
+                                  image: DecorationImage(image: NetworkImage("https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/logo.png?alt=media&token=f008662e-2638-4990-a010-2081c2f4631b"),fit: BoxFit.fill)
                               ),
-                            InkWell(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[500],
-                                  borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(color: Colors.white),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                  child: Text("see more"),
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => NewsPage()));
-                              },
                             ),
-                            SizedBox(
-                              width: 20,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      StreamBuilder<List<BranchNewConvertor>>(
-                          stream: readBranchNew(),
-                          builder: (context, snapshot) {
-                            final BranchNews = snapshot.data;
-                            switch (snapshot.connectionState) {
-                              case ConnectionState.waiting:
-                                return const Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 0.3,
-                                      color: Colors.cyan,
-                                    ));
-                              default:
-                                if (snapshot.hasError) {
-                                  return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                                } else {
-                                  if (BranchNews!.length == 0) {
-                                    return Center(
-                                        child: Text(
-                                          "No ECE News",
-                                          style: TextStyle(color: Colors.lightBlueAccent),
-                                        ));
-                                  } else
-                                    return CarouselSlider(
-                                      items: List.generate(
-                                          BranchNews.length,
-                                              (int index) {
-                                            final BranchNew = BranchNews[index];
-                                            final Uri uri = Uri.parse(BranchNew.photoUrl);
-                                            final String fileName = uri.pathSegments.last;
-                                            var name = fileName.split("/").last;
-                                            final file = File("${folderPath}/ece_news/$name");
-                                            if (file.existsSync()) {
-                                              return InkWell(child:Image.file(file),
-                                                onTap: () async {
-                                                  _BranchNewsBottomSheet(context, BranchNew,file);
-                                                },
-                                                onLongPress: (){
-                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
-                                                },
-                                              );
-                                            } else {
-                                              downloadImage(BranchNew.photoUrl,"ece_news");
-                                              return InkWell(
-                                                child: CachedNetworkImage(
-                                                  imageUrl: BranchNew.photoUrl,
-                                                  placeholder: (context, url) => CircularProgressIndicator(),
-                                                  errorWidget: (context, url, error) => Icon(Icons.error),
-                                                ),
-                                                onTap: () async {
-                                                  // _BranchNewsBottomSheet(context, BranchNew);
-
-                                                },
-                                                onLongPress: (){
-                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
-                                                },
-                                              );
-                                            }
-                                            //   InkWell(
-                                            //   child: Container(
-                                            //     width: double.infinity,
-                                            //
-                                            //     margin: const EdgeInsets.all(4.0),
-                                            //     decoration: BoxDecoration(
-                                            //       borderRadius: BorderRadius.circular(15),
-                                            //       color: Colors.black.withOpacity(0.4),
-                                            //       border: Border.all(color: Colors.grey),
-                                            //       image: DecorationImage(
-                                            //         image: ImageWidget(""),
-                                            //         fit: BoxFit.cover,
-                                            //       ),
-                                            //     ),
-                                            //     child: Align(
-                                            //       alignment: Alignment.bottomLeft,
-                                            //       child: Container(
-                                            //
-                                            //           decoration: BoxDecoration(
-                                            //               color: Colors.black.withOpacity(0.5),
-                                            //             borderRadius: BorderRadius.circular(10)
-                                            //           ),
-                                            //           child: Padding(
-                                            //             padding: const EdgeInsets.all(3.0),
-                                            //             child: Text(BranchNew.heading,style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
-                                            //           )),
-                                            //     ),
-                                            //   ),
-                                            //   onTap: () async {
-                                            //     _BranchNewsBottomSheet(context, BranchNew);
-                                            //   },
-                                            //   onLongPress: (){
-                                            //     Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
-                                            //   },
-                                            // );
-                                          }
-                                      ),
-                                      //Slider Container properties
-                                      options: CarouselOptions(
-                                        viewportFraction: 0.85,
-                                        enlargeCenterPage: true,
-                                        height: 210,
-                                        autoPlayAnimationDuration: Duration(milliseconds: 1800),
-                                        autoPlay: true,
-                                      ),
-                                    );
-                                }
-                            }
-                          }),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      //Subjects
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10, top: 3),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Regulation : ${Reg}",
-                              style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
-                            ),
-
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10,left: 3),
-                              child: Text("(${Year})",style: TextStyle(color: Colors.white),),
-                            ),
-                            Spacer(),
-                            InkWell(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Colors.red.withOpacity(1),
-                                  border: Border.all(color: Colors.white),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                  child: Text(
-                                    "Change",
-                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return Dialog(
-                                      backgroundColor: Colors
-                                          .black
-                                          .withOpacity(0.1),
-                                      shape:
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius
-                                              .circular(
-                                              20)),
-                                      elevation: 16,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Colors.white
-                                                  .withOpacity(
-                                                  0.5)),
-                                          borderRadius:
-                                          BorderRadius
-                                              .circular(20),
-                                        ),
-                                        child: ListView(
-                                          physics: BouncingScrollPhysics(),
-                                          shrinkWrap: true,
-                                          children: <Widget>[
-                                            const Center(
-                                              child: Padding(
-                                                padding:
-                                                EdgeInsets
-                                                    .all(8.0),
-                                                child: Text(
-                                                  "Add to Other Projects",
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                      22,
-                                                      fontWeight:
-                                                      FontWeight.w500,
-                                                      color: Colors.orange),
-                                                ),
-                                              ),
-                                            ),
-                                            StreamBuilder<List<RegulationConvertor>>(
-                                                stream: readRegulation(),
-                                                builder: (context, snapshot) {
-                                                  final user = snapshot.data;
-                                                  switch (snapshot.connectionState) {
-                                                    case ConnectionState.waiting:
-                                                      return const Center(
-                                                          child: CircularProgressIndicator(
-                                                            strokeWidth: 0.3,
-                                                            color: Colors.cyan,
-                                                          ));
-                                                    default:
-                                                      if (snapshot.hasError) {
-                                                        return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                                                      } else {
-                                                        return ListView.separated(
-                                                            physics: const BouncingScrollPhysics(),
-                                                            shrinkWrap: true,
-                                                            itemCount: user!.length,
-                                                            itemBuilder: (context, int index) {
-                                                              final SubjectsData = user[index];
-                                                              return Column(
-                                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(left: 10,bottom: 5),
-                                                                    child: Text("${SubjectsData.heading}",style: TextStyle(color: Colors.white,fontSize: 30),),
-                                                                  ),
-                                                                  StreamBuilder<List<RegulationYearConvertor>>(
-                                                                      stream: readRegulationYear(SubjectsData.id),
-                                                                      builder: (context, snapshot) {
-                                                                        final user1 = snapshot.data;
-                                                                        switch (snapshot.connectionState) {
-                                                                          case ConnectionState.waiting:
-                                                                            return const Center(
-                                                                                child: CircularProgressIndicator(
-                                                                                  strokeWidth: 0.3,
-                                                                                  color: Colors.cyan,
-                                                                                ));
-                                                                          default:
-                                                                            if (snapshot.hasError) {
-                                                                              return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                                                                            } else {
-                                                                              return ListView.separated(
-                                                                                  physics: const BouncingScrollPhysics(),
-                                                                                  shrinkWrap: true,
-                                                                                  itemCount: user1!.length,
-                                                                                  itemBuilder: (context, int index) {
-                                                                                    final SubjectsData1 = user1[index];
-                                                                                    return InkWell(
-                                                                                      child: Padding(
-                                                                                        padding: const EdgeInsets.only(left: 25),
-                                                                                        child: Text("${SubjectsData1.heading}",style: TextStyle(color: Colors.white,fontSize: 20),),
-                                                                                      ),
-                                                                                      onTap: (){
-                                                                                        setState(() {
-                                                                                          Reg = SubjectsData.heading;
-                                                                                          RegID = SubjectsData.id;
-
-                                                                                          Year = SubjectsData1.heading;
-                                                                                          YearID = SubjectsData1.id;
-                                                                                        });
-                                                                                        Navigator.pop(context);
-                                                                                      },
-                                                                                    );
-                                                                                  },
-                                                                                  separatorBuilder: (context, index) => const SizedBox(
-                                                                                    height: 1,
-                                                                                  ));
-                                                                            }
-                                                                        }
-                                                                      }),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(left: 10,right: 10),
-                                                                    child: Divider(color: Colors.white,thickness: 0.3,),
-                                                                  )
-                                                                ],
-                                                              );
-                                                            },
-                                                            separatorBuilder: (context, index) => const SizedBox(
-                                                              height: 1,
-                                                            ));
-                                                      }
-                                                  }
-                                                }),
-                                            const SizedBox(
-                                              height: 10,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-
-                            SizedBox(width: 20),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: Divider(
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      if(RegID.isNotEmpty && YearID.isNotEmpty)Padding(
-                        padding: const EdgeInsets.only(left: 20,right: 8,bottom: 8),
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => SRKRPage()));
+                            }),
+                        SizedBox(width: 20,)
+                      ],
+                    ),
+                    Divider(thickness: 1,color: Colors.white,),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics:const BouncingScrollPhysics(),
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 10),
-                              child: Text("Time Tables :",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
-                            ),
-                            StreamBuilder<List<RegulationYearClassConvertor>>(
-                                stream: readRegulationYearClass(id: RegID,id1: YearID),
+                            StreamBuilder<List<HomeUpdateConvertor>>(
+                                stream: readHomeUpdate(),
                                 builder: (context, snapshot) {
-                                  final user= snapshot.data;
+                                  final HomeUpdates = snapshot.data;
                                   switch (snapshot.connectionState) {
                                     case ConnectionState.waiting:
                                       return const Center(
@@ -697,958 +141,757 @@ class _HomePageState extends State<HomePage> {
                                       if (snapshot.hasError) {
                                         return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
                                       } else {
-                                        return SizedBox(
-                                          height: 70,
-                                          child: ListView.separated(
-                                              physics: const BouncingScrollPhysics(),
-                                              shrinkWrap: true,
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: user!.length,
-                                              itemBuilder: (context, int index) {
-                                                final classess = user[index];
-                                                return InkWell(
-                                                  child: Container(
-                                                    width: 70,
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius: BorderRadius.circular(40),
-                                                        image: DecorationImage(image: NetworkImage(""),fit: BoxFit.fill)
-                                                    ),
-                                                    child: Center(child: Text("${classess.heading}")),
-                                                  ),
+                                        if (HomeUpdates!.length == 0) {
+                                          return Container();
+                                        } else
+                                          return Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 10, bottom: 10),
+                                                child: Text(
+                                                  "Updates",
+                                                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500, color: Colors.white),
+                                                ),
+                                              ),
 
-                                                );
-                                              },
-                                              separatorBuilder: (context, index) => const SizedBox(
-                                                height: 1,
-                                              )),
-                                        );
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 20, right: 10),
+                                                child: ListView.separated(
+                                                    physics: const BouncingScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    itemCount: HomeUpdates.length,
+                                                    itemBuilder: (context, int index) {
+                                                      final HomeUpdate = HomeUpdates[index];
+                                                      final Uri uri = Uri.parse(HomeUpdate.photoUrl);
+                                                      final String fileName = uri.pathSegments.last;
+                                                      var name = fileName.split("/").last;
+                                                      final file = File("${folderPath}/ece_updates/$name");
+                                                      if (file.existsSync()) {
+                                                        return
+                                                          InkWell(
+                                                            child: Row(
+                                                              children: [
+                                                                Column(
+                                                                  children: [
+                                                                    Container(
+                                                                      width: 30,
+                                                                      height: 30,
+                                                                      decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.circular(15),
+                                                                        image: DecorationImage(
+                                                                          image:FileImage(file) ,
+                                                                          fit: BoxFit.cover,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Text(splitDate(HomeUpdate.date),style: TextStyle(color: Colors.white,fontSize: 8),)
+                                                                  ],
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Expanded(
+                                                                  child: Padding(
+                                                                    padding: const EdgeInsets.all(5.0),
+                                                                    child: Container(
+                                                                        child: Text(
+                                                                          HomeUpdate.heading,
+                                                                          style: const TextStyle(
+                                                                            fontSize: 15.0,
+                                                                            color: Color.fromRGBO(204, 207, 222, 1),
+                                                                            fontWeight: FontWeight.w400,
+                                                                          ),
+                                                                        )
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
+                                                            onTap: (){
+                                                              if(HomeUpdate.link.length>0){
+                                                                _ExternalLaunchUrl(HomeUpdate.link);
+                                                              }else{
+                                                                showToast("No Link");
+                                                              }
+                                                            },
+                                                          );
+
+                                                      } else {
+                                                        download(HomeUpdate.photoUrl,"ece_updates");
+                                                        return
+                                                          InkWell(
+                                                            child: Row(
+                                                              children: [
+                                                                Column(
+                                                                  children: [
+                                                                    Container(
+                                                                      width: 30,
+                                                                      height: 30,
+                                                                      child: CachedNetworkImage(
+                                                                        imageUrl: HomeUpdate.photoUrl,
+                                                                        placeholder: (context, url) => CircularProgressIndicator(),
+                                                                        errorWidget: (context, url, error) => Icon(Icons.error),
+                                                                      ),
+                                                                    ),
+                                                                    Text(splitDate(HomeUpdate.date),style: TextStyle(color: Colors.white,fontSize: 8),)
+                                                                  ],
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Expanded(
+                                                                  child: Padding(
+                                                                    padding: const EdgeInsets.all(5.0),
+                                                                    child: Container(
+                                                                        child: Text(
+                                                                          HomeUpdate.heading,
+                                                                          style: const TextStyle(
+                                                                            fontSize: 15.0,
+                                                                            color: Color.fromRGBO(204, 207, 222, 1),
+                                                                            fontWeight: FontWeight.w400,
+                                                                          ),
+                                                                        )
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
+                                                            onTap: (){
+                                                              if(HomeUpdate.link.length>0){
+                                                                _ExternalLaunchUrl(HomeUpdate.link);
+                                                              }else{
+                                                                showToast("No Link");
+                                                              }
+                                                            },
+                                                          );
+
+                                                      }
+                                                      // return InkWell(
+                                                      //   child: Row(
+                                                      //     children: [
+                                                      //       Column(
+                                                      //         children: [
+                                                      //           Container(
+                                                      //             width: 30,
+                                                      //             height: 30,
+                                                      //             decoration: BoxDecoration(
+                                                      //               borderRadius: BorderRadius.circular(15),
+                                                      //               image: DecorationImage(
+                                                      //                 image: ,
+                                                      //                 // image: NetworkImage(
+                                                      //                 //   HomeUpdate.photoUrl,
+                                                      //                 // ),
+                                                      //                 fit: BoxFit.cover,
+                                                      //               ),
+                                                      //             ),
+                                                      //           ),
+                                                      //           Text(splitDate(HomeUpdate.date),style: TextStyle(color: Colors.white,fontSize: 8),)
+                                                      //         ],
+                                                      //       ),
+                                                      //       SizedBox(
+                                                      //         width: 5,
+                                                      //       ),
+                                                      //       Expanded(
+                                                      //         child: Padding(
+                                                      //           padding: const EdgeInsets.all(5.0),
+                                                      //           child: Container(
+                                                      //             child: Text(
+                                                      //                 HomeUpdate.heading,
+                                                      //               style: const TextStyle(
+                                                      //                 fontSize: 15.0,
+                                                      //                 color: Color.fromRGBO(204, 207, 222, 1),
+                                                      //                 fontWeight: FontWeight.w400,
+                                                      //               ),
+                                                      //             )
+                                                      //           ),
+                                                      //         ),
+                                                      //       )
+                                                      //     ],
+                                                      //   ),
+                                                      // onTap: (){
+                                                      //     if(HomeUpdate.link.length>0){
+                                                      //       _ExternalLaunchUrl(HomeUpdate.link);
+                                                      //     }else{
+                                                      //       showToast("No Link");
+                                                      //     }
+                                                      // },
+                                                      // );
+                                                    },
+                                                    separatorBuilder: (context, index) => const SizedBox(
+                                                      height: 5,
+                                                    )),
+                                              ),
+                                            ],
+                                          );
                                       }
                                   }
                                 }),
-                          ],
-                        ),
-                      ),
-                      if(RegID.isNotEmpty && YearID.isNotEmpty)Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: Text(
-                              "Subjects",
-                              style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                          Spacer(),
-                          InkWell(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white54,
-                                border: Border.all(color: Colors.white),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                child: Text("see more"),
-                              ),
-                            ),
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) =>  Subjects()));
-                            },
-                          ),
-                          SizedBox(width: 20,)
-                        ],
-                      ),
-                      if(RegID.isNotEmpty && YearID.isNotEmpty)Padding(
-                        padding: const EdgeInsets.only(top: 10, left: 20, right: 10,bottom: 5),
-                        child: StreamBuilder<List<FlashConvertor>>(
-                            stream: readFlashNews(),
-                            builder: (context, snapshot) {
-                              final Favourites = snapshot.data;
-                              switch (snapshot.connectionState) {
-                                case ConnectionState.waiting:
-                                  return const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 0.3,
-                                        color: Colors.cyan,
-                                      ));
-                                default:
-                                  if (snapshot.hasError) {
-                                    return Center(child: Text("Error"));
-                                  } else {
-                                    if (Favourites!.length > 0)
-                                      return ListView.builder(
-                                        physics: const BouncingScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemCount: Favourites.length,
-                                        itemBuilder: (context, int index) {
-                                          final SubjectsData = Favourites[index];
-                                          if(SubjectsData.regulation
-                                              .toString()
-                                              .startsWith("r20-1 year 1 sem"))
-                                          {
-                                            final Uri uri = Uri.parse(SubjectsData.PhotoUrl);
-                                            final String fileName = uri.pathSegments.last;
-                                            var name = fileName.split("/").last;
-                                            final file = File("${folderPath}/ece_subjects/$name");
-                                            if (file.existsSync()) {
-                                              return  InkWell(
-                                                child: Container(
-                                                  width: double.infinity,
-                                                  decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.all(Radius.circular(10))),
-                                                  child: SingleChildScrollView(
-                                                    physics: const BouncingScrollPhysics(),
-                                                    child: Row(
-                                                      children: [
-                                                        Container(
-                                                          width: 90.0,
-                                                          height: 70.0,
-                                                          decoration: BoxDecoration(
-                                                            borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                                            color: Colors.redAccent,
-                                                            image: DecorationImage(
-                                                              image: FileImage(file) ,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 10,
-                                                        ),
-
-                                                        Expanded(
-                                                            child: Column(
-                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    Text(
-                                                                      SubjectsData.heading,
-                                                                      style: const TextStyle(
-                                                                        fontSize: 20.0,
-                                                                        color: Colors.white,
-                                                                        fontWeight: FontWeight.w600,
-                                                                      ),
-                                                                    ),
-                                                                    Spacer(),
-                                                                    InkWell(
-                                                                      child: StreamBuilder<DocumentSnapshot>(
-                                                                        stream: FirebaseFirestore.instance.collection('ECE')
-                                                                            .doc("Subjects")
-                                                                            .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
-                                                                        builder: (context, snapshot) {
-                                                                          if (snapshot.hasData) {
-                                                                            if (snapshot.data!.exists) {
-                                                                              return const Icon(Icons.favorite,color: Colors.red,size: 26,);
-                                                                            } else {
-                                                                              return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
-                                                                            }
-                                                                          } else {
-                                                                            return Container();
-                                                                          }
-                                                                        },
-                                                                      ),
-                                                                      onTap:
-                                                                          ()async {
-
-                                                                        try {
-                                                                          await FirebaseFirestore.instance.
-                                                                          collection('ECE')
-                                                                              .doc("Subjects")
-                                                                              .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                                                              .get()
-                                                                              .then((docSnapshot) {
-                                                                            if (docSnapshot.exists) {
-                                                                              FirebaseFirestore.instance.
-                                                                              collection('ECE')
-                                                                                  .doc("Subjects")
-                                                                                  .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                                                                  .delete();
-                                                                              showToast("Unliked");
-                                                                            } else {
-                                                                              FirebaseFirestore.instance.
-                                                                              collection('ECE')
-                                                                                  .doc("Subjects")
-                                                                                  .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                                                                  .set({"id": fullUserId()});
-                                                                              showToast("Liked");
-                                                                            }
-                                                                          });
-                                                                        } catch (e) {
-                                                                          print(e);
-                                                                        }
-                                                                      },
-                                                                    ),
-                                                                    StreamBuilder<QuerySnapshot>(
-                                                                      stream: FirebaseFirestore.instance
-                                                                          .collection('ECE')
-                                                                          .doc("Subjects")
-                                                                          .collection("Subjects").doc(SubjectsData.id).collection("likes")
-                                                                          .snapshots(),
-                                                                      builder: (context, snapshot) {
-                                                                        if (snapshot.hasData) {
-                                                                          return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
-                                                                        } else {
-                                                                          return const Text("0");
-                                                                        }
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(width: 5,),
-                                                                    InkWell(
-                                                                      child: StreamBuilder<DocumentSnapshot>(
-                                                                        stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
-                                                                        builder: (context, snapshot) {
-                                                                          if (snapshot.hasData) {
-                                                                            if (snapshot.data!.exists) {
-                                                                              return const Icon(
-                                                                                  Icons.library_add_check,
-                                                                                  size: 26, color: Colors.cyanAccent
-                                                                              );
-                                                                            } else {
-                                                                              return const Icon(
-                                                                                Icons.library_add_outlined,
-                                                                                size: 26,
-                                                                                color: Colors.cyanAccent,
-                                                                              );
-                                                                            }
-                                                                          } else {
-                                                                            return Container();
-                                                                          }
-                                                                        },
-                                                                      ),
-                                                                      onTap: () async{
-                                                                        try {
-                                                                          await FirebaseFirestore
-                                                                              .instance
-                                                                              .collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id)
-                                                                              .get()
-                                                                              .then((docSnapshot) {
-                                                                            if (docSnapshot.exists) {
-                                                                              FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
-                                                                              showToast("Removed from saved list");
-                                                                            } else {
-                                                                              FavouriteSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
-                                                                              showToast("${SubjectsData.heading} in favorites");                                                                  }
-                                                                          });
-                                                                        } catch (e) {
-                                                                          print(
-                                                                              e);
-                                                                        }
-
-                                                                      },
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 2,
-                                                                ),
-                                                                Text(
-                                                                  SubjectsData.description,
-                                                                  style: const TextStyle(
-                                                                    fontSize: 13.0,
-                                                                    color: Color.fromRGBO(204, 207, 222, 1),
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 1,
-                                                                ),
-                                                                Text(
-                                                                  'Added :${SubjectsData.Date}',
-                                                                  style: const TextStyle(
-                                                                    fontSize: 9.0,
-                                                                    color: Colors.white60,
-                                                                    //   fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                                if (userId() == "gmail.com")
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(right: 10),
-                                                                    child: Container(
-                                                                      decoration: BoxDecoration(
-                                                                        borderRadius: BorderRadius.circular(15),
-                                                                        color: Colors.black.withOpacity(0.3),
-                                                                        border: Border.all(color: Colors.white.withOpacity(0.5)),
-                                                                      ),
-                                                                      width: 70,
-                                                                      child: InkWell(
-                                                                        child: Row(
-                                                                          children: [
-                                                                            SizedBox(width: 5,),
-                                                                            Icon(Icons.edit,color: Colors.white,),
-                                                                            Padding(
-                                                                              padding: const EdgeInsets.only(left: 3, right: 3),
-                                                                              child: Text("Edit",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 18),),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        onTap: () {
-                                                                          Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: SubjectsData.id,heading: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl,mode:"Subjects" ,)));
-                                                                        },
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                              ],
-                                                            ))
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                onTap: () async {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) => subjectUnitsData(
-                                                            ID: SubjectsData.id,
-                                                            mode: "Subjects",
-                                                            name: SubjectsData.heading,
-                                                            fullName: SubjectsData.description,
-                                                            photoUrl: SubjectsData.PhotoUrl,
-                                                          )));
-                                                },
-                                                // onLongPress: () async {
-                                                //   SharedPreferences prefs = await SharedPreferences.getInstance();
-                                                //   String? SelectedSubjects = prefs.getString('addSubjects') ?? null;
-                                                //   print(SelectedSubjects);
-                                                //   if (SelectedSubjects != null) {
-                                                //     final body = jsonDecode(SelectedSubjects);
-                                                //     subjects = body.map<SearchAddedSubjects>(SearchAddedSubjects.fromJson).toList();
-                                                //   }
-                                                //   print(subjects);
-                                                //   final person = subjects.where((element) => element.name == SubjectsData.heading);
-                                                //   if (person.isEmpty) {
-                                                //     subjects.add(SearchAddedSubjects(
-                                                //         name: SubjectsData.heading, description: SubjectsData.description, date: SubjectsData.Date, id: SubjectsData.id, photoUrl: SubjectsData.PhotoUrl));
-                                                //   } else {
-                                                //     showToast("${SubjectsData.heading} is already added");
-                                                //   }
-                                                //   print(subjects);
-                                                //   prefs.setString('addSubjects', jsonEncode(subjects));
-                                                //   print(jsonEncode(subjects));
-                                                //   showToast("${SubjectsData.heading} is Added");
-                                                // },
-                                              );
-
-
-                                            } else {
-                                              downloadImage(SubjectsData.PhotoUrl,"ece_subjects");
-                                              return InkWell(
-                                                child: Container(
-                                                  width: double.infinity,
-                                                  decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.all(Radius.circular(10))),
-                                                  child: SingleChildScrollView(
-                                                    physics: const BouncingScrollPhysics(),
-                                                    child: Row(
-                                                      children: [
-                                                        Container(
-                                                          width: 90.0,
-                                                          height: 70.0,
-                                                          child:CachedNetworkImage(
-                                                            imageUrl: SubjectsData.PhotoUrl,
-                                                            placeholder: (context, url) => CircularProgressIndicator(),
-                                                            errorWidget: (context, url, error) => Icon(Icons.error),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 10,
-                                                        ),
-
-                                                        Expanded(
-                                                            child: Column(
-                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    Text(
-                                                                      SubjectsData.heading,
-                                                                      style: const TextStyle(
-                                                                        fontSize: 20.0,
-                                                                        color: Colors.white,
-                                                                        fontWeight: FontWeight.w600,
-                                                                      ),
-                                                                    ),
-                                                                    Spacer(),
-                                                                    InkWell(
-                                                                      child: StreamBuilder<DocumentSnapshot>(
-                                                                        stream: FirebaseFirestore.instance.collection('ECE')
-                                                                            .doc("Subjects")
-                                                                            .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
-                                                                        builder: (context, snapshot) {
-                                                                          if (snapshot.hasData) {
-                                                                            if (snapshot.data!.exists) {
-                                                                              return const Icon(Icons.favorite,color: Colors.red,size: 26,);
-                                                                            } else {
-                                                                              return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
-                                                                            }
-                                                                          } else {
-                                                                            return Container();
-                                                                          }
-                                                                        },
-                                                                      ),
-                                                                      onTap:
-                                                                          ()async {
-
-                                                                        try {
-                                                                          await FirebaseFirestore.instance.
-                                                                          collection('ECE')
-                                                                              .doc("Subjects")
-                                                                              .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                                                              .get()
-                                                                              .then((docSnapshot) {
-                                                                            if (docSnapshot.exists) {
-                                                                              FirebaseFirestore.instance.
-                                                                              collection('ECE')
-                                                                                  .doc("Subjects")
-                                                                                  .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                                                                  .delete();
-                                                                              showToast("Unliked");
-                                                                            } else {
-                                                                              FirebaseFirestore.instance.
-                                                                              collection('ECE')
-                                                                                  .doc("Subjects")
-                                                                                  .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                                                                  .set({"id": fullUserId()});
-                                                                              showToast("Liked");
-                                                                            }
-                                                                          });
-                                                                        } catch (e) {
-                                                                          print(e);
-                                                                        }
-                                                                      },
-                                                                    ),
-                                                                    StreamBuilder<QuerySnapshot>(
-                                                                      stream: FirebaseFirestore.instance
-                                                                          .collection('ECE')
-                                                                          .doc("Subjects")
-                                                                          .collection("Subjects").doc(SubjectsData.id).collection("likes")
-                                                                          .snapshots(),
-                                                                      builder: (context, snapshot) {
-                                                                        if (snapshot.hasData) {
-                                                                          return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
-                                                                        } else {
-                                                                          return const Text("0");
-                                                                        }
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(width: 5,),
-                                                                    InkWell(
-                                                                      child: StreamBuilder<DocumentSnapshot>(
-                                                                        stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
-                                                                        builder: (context, snapshot) {
-                                                                          if (snapshot.hasData) {
-                                                                            if (snapshot.data!.exists) {
-                                                                              return const Icon(
-                                                                                  Icons.library_add_check,
-                                                                                  size: 26, color: Colors.cyanAccent
-                                                                              );
-                                                                            } else {
-                                                                              return const Icon(
-                                                                                Icons.library_add_outlined,
-                                                                                size: 26,
-                                                                                color: Colors.cyanAccent,
-                                                                              );
-                                                                            }
-                                                                          } else {
-                                                                            return Container();
-                                                                          }
-                                                                        },
-                                                                      ),
-                                                                      onTap: () async{
-                                                                        try {
-                                                                          await FirebaseFirestore
-                                                                              .instance
-                                                                              .collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id)
-                                                                              .get()
-                                                                              .then((docSnapshot) {
-                                                                            if (docSnapshot.exists) {
-                                                                              FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
-                                                                              showToast("Removed from saved list");
-                                                                            } else {
-                                                                              FavouriteSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
-                                                                              showToast("${SubjectsData.heading} in favorites");                                                                  }
-                                                                          });
-                                                                        } catch (e) {
-                                                                          print(
-                                                                              e);
-                                                                        }
-
-                                                                      },
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 2,
-                                                                ),
-                                                                Text(
-                                                                  SubjectsData.description,
-                                                                  style: const TextStyle(
-                                                                    fontSize: 13.0,
-                                                                    color: Color.fromRGBO(204, 207, 222, 1),
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 1,
-                                                                ),
-                                                                Text(
-                                                                  'Added :${SubjectsData.Date}',
-                                                                  style: const TextStyle(
-                                                                    fontSize: 9.0,
-                                                                    color: Colors.white60,
-                                                                    //   fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                                if (userId() == "gmail.com")
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(right: 10),
-                                                                    child: Container(
-                                                                      decoration: BoxDecoration(
-                                                                        borderRadius: BorderRadius.circular(15),
-                                                                        color: Colors.black.withOpacity(0.3),
-                                                                        border: Border.all(color: Colors.white.withOpacity(0.5)),
-                                                                      ),
-                                                                      width: 70,
-                                                                      child: InkWell(
-                                                                        child: Row(
-                                                                          children: [
-                                                                            SizedBox(width: 5,),
-                                                                            Icon(Icons.edit,color: Colors.white,),
-                                                                            Padding(
-                                                                              padding: const EdgeInsets.only(left: 3, right: 3),
-                                                                              child: Text("Edit",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 18),),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        onTap: () {
-                                                                          Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: SubjectsData.id,heading: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl,mode:"Subjects" ,)));
-                                                                        },
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                              ],
-                                                            ))
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                onTap: () async {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) => subjectUnitsData(
-                                                            ID: SubjectsData.id,
-                                                            mode: "Subjects",
-                                                            name: SubjectsData.heading,
-                                                            fullName: SubjectsData.description,
-                                                            photoUrl: SubjectsData.PhotoUrl,
-                                                          )));
-                                                },
-                                                // onLongPress: () async {
-                                                //   SharedPreferences prefs = await SharedPreferences.getInstance();
-                                                //   String? SelectedSubjects = prefs.getString('addSubjects') ?? null;
-                                                //   print(SelectedSubjects);
-                                                //   if (SelectedSubjects != null) {
-                                                //     final body = jsonDecode(SelectedSubjects);
-                                                //     subjects = body.map<SearchAddedSubjects>(SearchAddedSubjects.fromJson).toList();
-                                                //   }
-                                                //   print(subjects);
-                                                //   final person = subjects.where((element) => element.name == SubjectsData.heading);
-                                                //   if (person.isEmpty) {
-                                                //     subjects.add(SearchAddedSubjects(
-                                                //         name: SubjectsData.heading, description: SubjectsData.description, date: SubjectsData.Date, id: SubjectsData.id, photoUrl: SubjectsData.PhotoUrl));
-                                                //   } else {
-                                                //     showToast("${SubjectsData.heading} is already added");
-                                                //   }
-                                                //   print(subjects);
-                                                //   prefs.setString('addSubjects', jsonEncode(subjects));
-                                                //   print(jsonEncode(subjects));
-                                                //   showToast("${SubjectsData.heading} is Added");
-                                                // },
-                                              );
-
-
-
-
-                                            }
-                                            //   return Padding(
-                                            //   padding: const EdgeInsets.only(top: 3),
-                                            //   child: InkWell(
-                                            //     child: Container(
-                                            //       width: double.infinity,
-                                            //       decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.all(Radius.circular(10))),
-                                            //       child: SingleChildScrollView(
-                                            //         physics: const BouncingScrollPhysics(),
-                                            //         child: Row(
-                                            //           children: [
-                                            //             Container(
-                                            //               width: 90.0,
-                                            //               height: 70.0,
-                                            //               decoration: BoxDecoration(
-                                            //                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                            //                 color: Colors.black.withOpacity(0.8),
-                                            //                 image: DecorationImage(
-                                            //                   image: NetworkImage(
-                                            //                     SubjectsData.PhotoUrl,
-                                            //                   ),
-                                            //                   fit: BoxFit.cover,
-                                            //                 ),
-                                            //               ),
-                                            //             ),
-                                            //             const SizedBox(
-                                            //               width: 10,
-                                            //             ),
-                                            //             Expanded(
-                                            //                 child: Column(
-                                            //               mainAxisAlignment: MainAxisAlignment.center,
-                                            //               crossAxisAlignment: CrossAxisAlignment.start,
-                                            //               children: [
-                                            //                 Row(
-                                            //                   children: [
-                                            //                     Text(
-                                            //                       SubjectsData.heading,
-                                            //                       style: const TextStyle(
-                                            //                         fontSize: 20.0,
-                                            //                         color: Colors.white,
-                                            //                         fontWeight: FontWeight.w600,
-                                            //                       ),
-                                            //                     ),
-                                            //                     Spacer(),
-                                            //                     InkWell(
-                                            //                       child: StreamBuilder<DocumentSnapshot>(
-                                            //                         stream: FirebaseFirestore.instance.collection('ECE')
-                                            //                           .doc("Subjects")
-                                            //                           .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
-                                            //                         builder: (context, snapshot) {
-                                            //                           if (snapshot.hasData) {
-                                            //                             if (snapshot.data!.exists) {
-                                            //                               return const Icon(Icons.favorite,color: Colors.red,size: 26,);
-                                            //                             } else {
-                                            //                               return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
-                                            //                             }
-                                            //                           } else {
-                                            //                             return Container();
-                                            //                           }
-                                            //                         },
-                                            //                       ),
-                                            //                       onTap:
-                                            //                           ()async {
-                                            //
-                                            //                         try {
-                                            //                           await FirebaseFirestore.instance.
-                                            //                           collection('ECE')
-                                            //                               .doc("Subjects")
-                                            //                               .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                            //                               .get()
-                                            //                               .then((docSnapshot) {
-                                            //                             if (docSnapshot.exists) {
-                                            //                               FirebaseFirestore.instance.
-                                            //                               collection('ECE')
-                                            //                                   .doc("Subjects")
-                                            //                                   .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                            //                                   .delete();
-                                            //                               showToast("Unliked");
-                                            //                             } else {
-                                            //                               FirebaseFirestore.instance.
-                                            //                               collection('ECE')
-                                            //                                   .doc("Subjects")
-                                            //                                   .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                            //                                   .set({"id": fullUserId()});
-                                            //                               showToast("Liked");
-                                            //                             }
-                                            //                           });
-                                            //                         } catch (e) {
-                                            //                           print(e);
-                                            //                         }
-                                            //                       },
-                                            //                     ),
-                                            //                     StreamBuilder<QuerySnapshot>(
-                                            //                       stream: FirebaseFirestore.instance
-                                            //                           .collection('ECE')
-                                            //                           .doc("Subjects")
-                                            //                           .collection("Subjects").doc(SubjectsData.id).collection("likes")
-                                            //                           .snapshots(),
-                                            //                       builder: (context, snapshot) {
-                                            //                         if (snapshot.hasData) {
-                                            //                           return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
-                                            //                         } else {
-                                            //                           return const Text("0");
-                                            //                         }
-                                            //                       },
-                                            //                     ),
-                                            //                     SizedBox(width: 5,),
-                                            //
-                                            //                     InkWell(
-                                            //                       child: StreamBuilder<DocumentSnapshot>(
-                                            //                         stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
-                                            //                         builder: (context, snapshot) {
-                                            //                           if (snapshot.hasData) {
-                                            //                             if (snapshot.data!.exists) {
-                                            //                               return const Icon(
-                                            //                                   Icons.library_add_check,
-                                            //                                   size: 26, color: Colors.cyanAccent
-                                            //                               );
-                                            //                             } else {
-                                            //                               return const Icon(
-                                            //                                 Icons.library_add_outlined,
-                                            //                                 size: 26,
-                                            //                                 color: Colors.cyanAccent,
-                                            //                               );
-                                            //                             }
-                                            //                           } else {
-                                            //                             return Container();
-                                            //                           }
-                                            //                         },
-                                            //                       ),
-                                            //                       onTap: () async{
-                                            //                         try {
-                                            //                           await FirebaseFirestore
-                                            //                               .instance
-                                            //                               .collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id)
-                                            //                               .get()
-                                            //                               .then((docSnapshot) {
-                                            //                             if (docSnapshot.exists) {
-                                            //                               FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
-                                            //                               showToast("Removed from saved list");
-                                            //                             } else {
-                                            //                               FavouriteSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
-                                            //                               showToast("${SubjectsData.heading} in favorites");                                                                  }
-                                            //                           });
-                                            //                         } catch (e) {
-                                            //                           print(
-                                            //                               e);
-                                            //                         }
-                                            //
-                                            //                       },
-                                            //                     ),
-                                            //                   ],
-                                            //                 ),
-                                            //                 SizedBox(
-                                            //                   height: 2,
-                                            //                 ),
-                                            //                 Text(
-                                            //                   SubjectsData.description,
-                                            //                   style: const TextStyle(
-                                            //                     fontSize: 13.0,
-                                            //                     color: Color.fromRGBO(204, 207, 222, 1),
-                                            //                   ),
-                                            //                 ),
-                                            //                 SizedBox(
-                                            //                   height: 1,
-                                            //                 ),
-                                            //                 Text(
-                                            //                   'Added :${SubjectsData.Date}',
-                                            //                   style: const TextStyle(
-                                            //                     fontSize: 9.0,
-                                            //                     color: Colors.white60,
-                                            //                     //   fontWeight: FontWeight.bold,
-                                            //                   ),
-                                            //                 ),
-                                            //               ],
-                                            //             ))
-                                            //           ],
-                                            //         ),
-                                            //       ),
-                                            //     ),
-                                            //     onTap: () {
-                                            //       Navigator.push(
-                                            //           context,
-                                            //           MaterialPageRoute(
-                                            //               builder: (context) => subjectUnitsData(
-                                            //                     ID: SubjectsData.id,
-                                            //                     mode: "Subjects",
-                                            //                 name: SubjectsData.heading,
-                                            //                 fullName: SubjectsData.description,
-                                            //                 photoUrl: SubjectsData.PhotoUrl,
-                                            //                   )));
-                                            //     },
-                                            //   ),
-                                            // );
-                                          }
-                                          else{
-                                            return Container();
-                                          }
-                                        },
-                                      );
-                                    else
-                                      return InkWell(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(color: Colors.tealAccent),
-                                              borderRadius: BorderRadius.circular(20),
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text("No Subjects are Liked"),
-                                            ),
+                            //Branch News
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10,top: 15),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "ECE News",
+                                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500, color: Colors.white),
+                                  ),
+                                  Spacer(),
+                                  if (userId() == "gmail.com")
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(15),
+                                          color: Colors.white.withOpacity(0.5),
+                                          border: Border.all(color: Colors.white),
+                                        ),
+                                        child: InkWell(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                            child: Text("+Add"),
                                           ),
                                           onTap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return Dialog(
-                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                                  elevation: 16,
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(color: Colors.tealAccent),
-                                                      borderRadius: BorderRadius.circular(20),
-                                                    ),
-                                                    child: ListView(
-                                                      shrinkWrap: true,
-                                                      children: <Widget>[
-                                                        SizedBox(height: 10),
-                                                        Center(
-                                                            child: Text(
-                                                              'Note',
-                                                              style: TextStyle(color: Colors.black87, fontSize: 20),
-                                                            )),
-                                                        Divider(
-                                                          color: Colors.tealAccent,
-                                                        ),
-                                                        SizedBox(height: 5),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(left: 15),
-                                                          child: Text("1. Click on 'See More' option"),
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(left: 15),
-                                                          child: Text("2. Long Press on Subject u need to add as important"),
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(left: 15),
-                                                          child: Text("3. Restart the application"),
-                                                        ),
-                                                        Divider(
-                                                          color: Colors.tealAccent,
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(left: 15),
-                                                          child: Text("1. Long Press on Subject u need to remove as important"),
-                                                        ),
-                                                        Divider(
-                                                          color: Colors.tealAccent,
-                                                        ),
-                                                        Center(
-                                                          child: InkWell(
-                                                            child: Container(
-                                                              decoration: BoxDecoration(
-                                                                color: Colors.black26,
-                                                                border: Border.all(color: Colors.black),
-                                                                borderRadius: BorderRadius.circular(25),
-                                                              ),
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-                                                                child: Text("Back"),
-                                                              ),
-                                                            ),
-                                                            onTap: () {
-                                                              Navigator.pop(context);
-                                                            },
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          });
-                                  }
-                              }
-                            }),
-                      )
-                      else Center(child: Column(
-                        children: [
-                          Text("Regulation and Year is Not Selected for Subjects",style: TextStyle(color: Colors.white),),
-                          InkWell(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white54,
-                                border: Border.all(color: Colors.white),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                child: Text("see more"),
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) => NewsCreator()));
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  InkWell(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[500],
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(color: Colors.white),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                        child: Text("see more"),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => NewsPage()));
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                ],
                               ),
                             ),
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) =>  Subjects()));
-                            },
-                          ),
-                        ],
-                      )),
-                      //Lab Subjects
-                      if(RegID.isNotEmpty && YearID.isNotEmpty)StreamBuilder<List<LabSubjectsConvertor>>(
-                        stream: readLabSubjects(),
-                        builder: (context, snapshot) {
-                          final Subjects = snapshot.data;
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting:
-                              return const Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 0.3,
-                                    color: Colors.cyan,
-                                  ));
-                            default:
-                              if (snapshot.hasError) {
-                                return Text("Error with fireBase");
-                              } else {
-                                if (Subjects!.length > 0)
-                                  return Padding(
-                                    padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10, right: 10),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "Lab Subjects",
-                                              style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
-                                            ),
-                                            Spacer(),
-                                            InkWell(
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white54,
-                                                  border: Border.all(color: Colors.white),
-                                                  borderRadius: BorderRadius.circular(25),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                                  child: Text("see more"),
-                                                ),
-                                              ),
-                                              onTap: () {
-                                                Navigator.push(context, MaterialPageRoute(builder: (context) => const LabSubjects()));
-                                              },
-                                            ),
-                                            SizedBox(width: 10,)
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        ListView.builder(
-                                          physics: const BouncingScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemCount: Subjects.length,
-                                          itemBuilder: (context, int index) {
-                                            final LabSubjectsData = Subjects[index];
-                                            if(LabSubjectsData.regulation
-                                                .toString()
-                                                .startsWith("r20-1 year 1 sem")){
+                            SizedBox(
+                              height: 10,
+                            ),
+                            StreamBuilder<List<BranchNewConvertor>>(
+                                stream: readBranchNew(),
+                                builder: (context, snapshot) {
+                                  final BranchNews = snapshot.data;
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.waiting:
+                                      return const Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 0.3,
+                                            color: Colors.cyan,
+                                          ));
+                                    default:
+                                      if (snapshot.hasError) {
+                                        return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                      } else {
+                                        if (BranchNews!.length == 0) {
+                                          return Center(
+                                              child: Text(
+                                                "No ECE News",
+                                                style: TextStyle(color: Colors.lightBlueAccent),
+                                              ));
+                                        } else
+                                          return CarouselSlider(
+                                            items: List.generate(
+                                                BranchNews.length,
+                                                    (int index) {
+                                                  final BranchNew = BranchNews[index];
+                                                  final Uri uri = Uri.parse(BranchNew.photoUrl);
+                                                  final String fileName = uri.pathSegments.last;
+                                                  var name = fileName.split("/").last;
+                                                  final file = File("${folderPath}/ece_news/$name");
+                                                  if (file.existsSync()) {
+                                                    return InkWell(child:Image.file(file),
+                                                      onTap: () async {
+                                                        _BranchNewsBottomSheet(context, BranchNew,file);
+                                                      },
+                                                      onLongPress: (){
+                                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
+                                                      },
+                                                    );
+                                                  } else {
+                                                    download(BranchNew.photoUrl,"ece_news");
+                                                    return InkWell(
+                                                      child: CachedNetworkImage(
+                                                        imageUrl: BranchNew.photoUrl,
+                                                        placeholder: (context, url) => CircularProgressIndicator(),
+                                                        errorWidget: (context, url, error) => Icon(Icons.error),
+                                                      ),
+                                                      onTap: () async {
+                                                        // _BranchNewsBottomSheet(context, BranchNew);
 
-                                              final Uri uri = Uri.parse(LabSubjectsData.PhotoUrl);
-                                              final String fileName = uri.pathSegments.last;
-                                              var name = fileName.split("/").last;
-                                              final file = File("${folderPath}/ece_labsubjects/$name");
-                                              if (file.existsSync()) {
-                                                return
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(bottom: 5, left: 5, right: 5),
-                                                    child: InkWell(
+                                                      },
+                                                      onLongPress: (){
+                                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
+                                                      },
+                                                    );
+                                                  }
+
+                                                }
+                                            ),
+                                            //Slider Container properties
+                                            options: CarouselOptions(
+                                              viewportFraction: 0.85,
+                                              enlargeCenterPage: true,
+                                              height: 210,
+                                              autoPlayAnimationDuration: Duration(milliseconds: 1800),
+                                              autoPlay: true,
+                                            ),
+                                          );
+                                      }
+                                  }
+                                }),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            //Subjects
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10, top: 3),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Regulation : ",
+                                    style: TextStyle(color: Colors.orange, fontSize: 25, fontWeight: FontWeight.w500),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: Text("${mainsnapshot.data!["reg"].toString()}", style: TextStyle(color: Colors.orangeAccent, fontSize: 18, fontWeight: FontWeight.w500),),
+                                  ),
+                                  Spacer(),
+                                  InkWell(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color: Colors.red.withOpacity(1),
+                                        border: Border.all(color: Colors.white),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                        child: Text(
+                                          "Change",
+                                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog(
+                                            backgroundColor: Colors
+                                                .black
+                                                .withOpacity(0.1),
+                                            shape:
+                                            RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    20)),
+                                            elevation: 16,
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.white
+                                                        .withOpacity(
+                                                        0.5)),
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(20),
+                                              ),
+                                              child: ListView(
+                                                physics: BouncingScrollPhysics(),
+                                                shrinkWrap: true,
+                                                children: <Widget>[
+                                                  const Center(
+                                                    child: Padding(
+                                                      padding:
+                                                      EdgeInsets
+                                                          .all(8.0),
+                                                      child: Text(
+                                                        "Select Regulation and Year",
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                            22,
+                                                            fontWeight:
+                                                            FontWeight.w500,
+                                                            color: Colors.orange),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  StreamBuilder<List<RegulationConvertor>>(
+                                                      stream: readRegulation(),
+                                                      builder: (context, snapshot) {
+                                                        final user = snapshot.data;
+                                                        switch (snapshot.connectionState) {
+                                                          case ConnectionState.waiting:
+                                                            return const Center(
+                                                                child: CircularProgressIndicator(
+                                                                  strokeWidth: 0.3,
+                                                                  color: Colors.cyan,
+                                                                ));
+                                                          default:
+                                                            if (snapshot.hasError) {
+                                                              return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                                            } else {
+                                                              return ListView.separated(
+                                                                  physics: const BouncingScrollPhysics(),
+                                                                  shrinkWrap: true,
+                                                                  itemCount: user!.length,
+                                                                  itemBuilder: (context, int index) {
+                                                                    final SubjectsData = user[index];
+                                                                    return Column(
+                                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                      children: [
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.only(left: 10,bottom: 5),
+                                                                          child: Row(
+                                                                            children: [
+                                                                              Text("${SubjectsData.heading}",style: TextStyle(color: Colors.white,fontSize: 30),),
+                                                                              SizedBox(width: 10,),
+                                                                              InkWell(
+                                                                                child: Container(
+                                                                                  decoration: BoxDecoration(
+                                                                                    borderRadius: BorderRadius.circular(10),
+                                                                                    color: Colors.white
+                                                                                  ),
+                                                                                  child: Row(
+                                                                                    children: [
+                                                                                      Text(" ADD",style: TextStyle(color: Colors.redAccent,fontSize: 20),),
+                                                                                      Icon(Icons.add,color: Colors.red,),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                                onTap: (){
+                                                                                  showDialog(
+                                                                                    context: context,
+                                                                                    builder: (context) {
+                                                                                      return Dialog(
+                                                                                        backgroundColor: Colors
+                                                                                            .black
+                                                                                            .withOpacity(0.1),
+                                                                                        shape:
+                                                                                        RoundedRectangleBorder(
+                                                                                            borderRadius:
+                                                                                            BorderRadius
+                                                                                                .circular(
+                                                                                                20)),
+                                                                                        elevation: 16,
+                                                                                        child: Container(
+                                                                                          decoration: BoxDecoration(
+                                                                                            border: Border.all(
+                                                                                                color: Colors.white
+                                                                                                    .withOpacity(
+                                                                                                    0.5)),
+                                                                                            borderRadius:
+                                                                                            BorderRadius
+                                                                                                .circular(20),
+                                                                                          ),
+                                                                                          child: ListView(
+                                                                                            physics: BouncingScrollPhysics(),
+                                                                                            shrinkWrap: true,
+                                                                                            children: <Widget>[
+                                                                                              Padding(
+                                                                                                padding: const EdgeInsets.only(left: 10,top:5,bottom: 5),
+                                                                                                child: Text("x year x sem",style: TextStyle(color: Colors.white,fontSize: 30),),
+                                                                                              ),
+                                                                                              Padding(
+                                                                                                padding: const EdgeInsets.only(left: 10, bottom: 3, right: 10),
+                                                                                                child: Container(
+                                                                                                  decoration: BoxDecoration(
+                                                                                                    color: Colors.grey[200],
+                                                                                                    border: Border.all(color: Colors.white),
+                                                                                                    borderRadius: BorderRadius.circular(14),
+                                                                                                  ),
+                                                                                                  child: Padding(
+                                                                                                    padding: const EdgeInsets.only(left: 20),
+                                                                                                    child: TextFormField(
+                                                                                                      //obscureText: true,
+                                                                                                      controller: InputController,
+                                                                                                      textInputAction: TextInputAction.next,
+                                                                                                      decoration: InputDecoration(
+                                                                                                        border: InputBorder.none,
+                                                                                                        hintText: 'Description or Full name',
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                              InkWell(
+                                                                                                child: Container(
+                                                                                                  decoration: BoxDecoration(
+                                                                                                    borderRadius: BorderRadius.circular(5)
+                                                                                                  ),
+                                                                                                  child: Text("Create",style: TextStyle(color: Colors.white),),
+                                                                                                ),
+                                                                                                onTap: (){
+                                                                                                  FirebaseFirestore.instance
+                                                                                                      .collection("ECE")
+                                                                                                      .doc("regulation").collection("regulation").doc(SubjectsData.id).collection("year").doc(getID()).set(
+                                                                                                      {
+                                                                                                        "id":getTime(),
+                                                                                                        "heading":InputController.text.trim()
+                                                                                                      });
+                                                                                                  Navigator.pop(context);
+                                                                                                },
+
+                                                                                              )
+                                                                                            ],
+                                                                                          ),
+                                                                                        ),
+                                                                                      );
+                                                                                    },
+                                                                                  );
+                                                                                },
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                        StreamBuilder<List<RegulationYearConvertor>>(
+                                                                            stream: readRegulationYear(SubjectsData.id),
+                                                                            builder: (context, snapshot) {
+                                                                              final user1 = snapshot.data;
+                                                                              switch (snapshot.connectionState) {
+                                                                                case ConnectionState.waiting:
+                                                                                  return const Center(
+                                                                                      child: CircularProgressIndicator(
+                                                                                        strokeWidth: 0.3,
+                                                                                        color: Colors.cyan,
+                                                                                      ));
+                                                                                default:
+                                                                                  if (snapshot.hasError) {
+                                                                                    return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                                                                  } else {
+                                                                                    return ListView.separated(
+                                                                                        physics: const BouncingScrollPhysics(),
+                                                                                        shrinkWrap: true,
+                                                                                        itemCount: user1!.length,
+                                                                                        itemBuilder: (context, int index) {
+                                                                                          final SubjectsData1 = user1[index];
+                                                                                          return InkWell(
+                                                                                            child: Padding(
+                                                                                              padding: const EdgeInsets.only(left: 25),
+                                                                                              child: Text("${SubjectsData1.heading}",style: TextStyle(color: Colors.white,fontSize: 20),),
+                                                                                            ),
+                                                                                            onTap: (){
+                                                                                              FirebaseFirestore.instance.collection("user").doc(fullUserId()).update({"YearId":SubjectsData1.id,"regId":SubjectsData.id,"reg":"${SubjectsData.heading}-${SubjectsData1.heading}"});
+
+                                                                                              Navigator.pop(context);
+                                                                                            },
+                                                                                            onLongPress: (){
+                                                                                              if(userId() == "gmail.com")FirebaseFirestore.instance
+                                                                                                  .collection("ECE")
+                                                                                                  .doc("regulation").collection("regulation").doc(SubjectsData.id).collection("year").doc(SubjectsData1.id).delete();
+                                                                                            },
+                                                                                          );
+                                                                                        },
+                                                                                        separatorBuilder: (context, index) => const SizedBox(
+                                                                                          height: 1,
+                                                                                        ));
+                                                                                  }
+                                                                              }
+                                                                            }),
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.only(left: 10,right: 10),
+                                                                          child: Divider(color: Colors.white,thickness: 0.3,),
+                                                                        )
+                                                                      ],
+                                                                    );
+                                                                  },
+                                                                  separatorBuilder: (context, index) => const SizedBox(
+                                                                    height: 1,
+                                                                  ));
+                                                            }
+                                                        }
+                                                      }),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+
+                                  SizedBox(width: 20),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20, right: 20),
+                              child: Divider(
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            if(mainsnapshot.data!["reg"].toString().isNotEmpty)Padding(
+                              padding: const EdgeInsets.only(left: 20,right: 8,bottom: 8),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: Text("Time Table :",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+                                  ),
+                                  StreamBuilder<List<TimeTableConvertor>>(
+                                      stream: readTimeTable(id: mainsnapshot.data!["regId"].toString(),id1: mainsnapshot.data!["YearId"].toString()),
+                                      builder: (context, snapshot) {
+                                        final user= snapshot.data;
+                                        switch (snapshot.connectionState) {
+                                          case ConnectionState.waiting:
+                                            return const Center(
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 0.3,
+                                                  color: Colors.cyan,
+                                                ));
+                                          default:
+                                            if (snapshot.hasError) {
+                                              return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                            } else {
+                                              return SizedBox(
+                                                height: 74,
+                                                child: ListView.separated(
+                                                    physics: const BouncingScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    scrollDirection: Axis.horizontal,
+                                                    itemCount: user!.length,
+                                                    itemBuilder: (context, int index) {
+                                                      final classess = user[index];
+                                                      final Uri uri = Uri.parse(classess.photoUrl);
+                                                      final String fileName = uri.pathSegments.last;
+                                                      var name = fileName.split("/").last;
+                                                      final file = File("${folderPath}/ece_timetable/$name");
+                                                      if (file.existsSync()) {
+                                                        return InkWell(
+                                                          child: Column(
+                                                            children: [
+                                                              Container(
+                                                                height: 60,
+                                                                width: 70,
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors.white,
+                                                                    borderRadius: BorderRadius.circular(40),
+                                                                    image: DecorationImage(image: FileImage(file),fit: BoxFit.fill)
+                                                                ),
+
+                                                              ),
+                                                              Center(child: Text("${classess.heading}",style: TextStyle(color: Colors.white),))
+                                                            ],
+                                                          ),
+                                                          onTap: (){
+                                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom( url: classess.photoUrl,)));
+                                                          },
+                                                        );
+
+                                                      } else {
+                                                        download(classess.photoUrl,"ece_timetable");
+
+                                                        return InkWell(
+                                                          child: Container(
+                                                            width: 70,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.white,
+                                                                borderRadius: BorderRadius.circular(40),
+                                                                image: DecorationImage(image: NetworkImage(classess.photoUrl),fit: BoxFit.fill)
+                                                            ),
+                                                            child: Center(child: Text("${classess.heading}")),
+                                                          ),
+
+                                                        );
+                                                      }
+
+                                                    },
+                                                    separatorBuilder: (context, index) => const SizedBox(
+                                                      height: 1,
+                                                    )),
+                                              );
+                                            }
+                                        }
+                                      }),
+                                ],
+                              ),
+                            ),
+                            if(mainsnapshot.data!["reg"].toString().isNotEmpty)Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child: Text(
+                                    "Subjects",
+                                    style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                                Spacer(),
+                                InkWell(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white54,
+                                      border: Border.all(color: Colors.white),
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                      child: Text("see more"),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  Subjects()));
+                                  },
+                                ),
+                                SizedBox(width: 20,)
+                              ],
+                            ),
+                            if(mainsnapshot.data!["reg"].toString().isNotEmpty)Padding(
+                              padding: const EdgeInsets.only(top: 10, left: 20, right: 10,bottom: 5),
+                              child: StreamBuilder<List<FlashConvertor>>(
+                                  stream: readFlashNews(),
+                                  builder: (context, snapshot) {
+                                    final Favourites = snapshot.data;
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.waiting:
+                                        return const Center(
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 0.3,
+                                              color: Colors.cyan,
+                                            ));
+                                      default:
+                                        if (snapshot.hasError) {
+                                          return Center(child: Text("Error"));
+                                        } else {
+                                          if (Favourites!.length > 0)
+                                            return ListView.builder(
+                                              physics: const BouncingScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: Favourites.length,
+                                              itemBuilder: (context, int index) {
+                                                final SubjectsData = Favourites[index];
+                                                if(SubjectsData.regulation
+                                                    .toString()
+                                                    .startsWith(mainsnapshot.data!["reg"].toString()))
+                                                {
+                                                  final Uri uri = Uri.parse(SubjectsData.PhotoUrl);
+                                                  final String fileName = uri.pathSegments.last;
+                                                  var name = fileName.split("/").last;
+                                                  final file = File("${folderPath}/ece_subjects/$name");
+                                                  if (file.existsSync()) {
+                                                    return  InkWell(
                                                       child: Container(
                                                         width: double.infinity,
                                                         decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -1663,7 +906,7 @@ class _HomePageState extends State<HomePage> {
                                                                   borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                                                   color: Colors.redAccent,
                                                                   image: DecorationImage(
-                                                                    image: FileImage(file),
+                                                                    image: FileImage(file) ,
                                                                     fit: BoxFit.cover,
                                                                   ),
                                                                 ),
@@ -1671,6 +914,7 @@ class _HomePageState extends State<HomePage> {
                                                               const SizedBox(
                                                                 width: 10,
                                                               ),
+
                                                               Expanded(
                                                                   child: Column(
                                                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -1679,7 +923,7 @@ class _HomePageState extends State<HomePage> {
                                                                       Row(
                                                                         children: [
                                                                           Text(
-                                                                            LabSubjectsData.heading,
+                                                                            SubjectsData.heading,
                                                                             style: const TextStyle(
                                                                               fontSize: 20.0,
                                                                               color: Colors.white,
@@ -1690,8 +934,8 @@ class _HomePageState extends State<HomePage> {
                                                                           InkWell(
                                                                             child: StreamBuilder<DocumentSnapshot>(
                                                                               stream: FirebaseFirestore.instance.collection('ECE')
-                                                                                  .doc("LabSubjects")
-                                                                                  .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+                                                                                  .doc("Subjects")
+                                                                                  .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
                                                                               builder: (context, snapshot) {
                                                                                 if (snapshot.hasData) {
                                                                                   if (snapshot.data!.exists) {
@@ -1710,22 +954,22 @@ class _HomePageState extends State<HomePage> {
                                                                               try {
                                                                                 await FirebaseFirestore.instance.
                                                                                 collection('ECE')
-                                                                                    .doc("LabSubjects")
-                                                                                    .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                    .doc("Subjects")
+                                                                                    .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
                                                                                     .get()
                                                                                     .then((docSnapshot) {
                                                                                   if (docSnapshot.exists) {
                                                                                     FirebaseFirestore.instance.
                                                                                     collection('ECE')
-                                                                                        .doc("LabSubjects")
-                                                                                        .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                        .doc("Subjects")
+                                                                                        .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
                                                                                         .delete();
                                                                                     showToast("Unliked");
                                                                                   } else {
                                                                                     FirebaseFirestore.instance.
                                                                                     collection('ECE')
-                                                                                        .doc("LabSubjects")
-                                                                                        .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                        .doc("Subjects")
+                                                                                        .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
                                                                                         .set({"id": fullUserId()});
                                                                                     showToast("Liked");
                                                                                   }
@@ -1738,8 +982,8 @@ class _HomePageState extends State<HomePage> {
                                                                           StreamBuilder<QuerySnapshot>(
                                                                             stream: FirebaseFirestore.instance
                                                                                 .collection('ECE')
-                                                                                .doc("LabSubjects")
-                                                                                .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes")
+                                                                                .doc("Subjects")
+                                                                                .collection("Subjects").doc(SubjectsData.id).collection("likes")
                                                                                 .snapshots(),
                                                                             builder: (context, snapshot) {
                                                                               if (snapshot.hasData) {
@@ -1752,7 +996,7 @@ class _HomePageState extends State<HomePage> {
                                                                           SizedBox(width: 5,),
                                                                           InkWell(
                                                                             child: StreamBuilder<DocumentSnapshot>(
-                                                                              stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).snapshots(),
+                                                                              stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
                                                                               builder: (context, snapshot) {
                                                                                 if (snapshot.hasData) {
                                                                                   if (snapshot.data!.exists) {
@@ -1776,15 +1020,15 @@ class _HomePageState extends State<HomePage> {
                                                                               try {
                                                                                 await FirebaseFirestore
                                                                                     .instance
-                                                                                    .collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id)
+                                                                                    .collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id)
                                                                                     .get()
                                                                                     .then((docSnapshot) {
                                                                                   if (docSnapshot.exists) {
-                                                                                    FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
+                                                                                    FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
                                                                                     showToast("Removed from saved list");
                                                                                   } else {
-                                                                                    FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
-                                                                                    showToast("${LabSubjectsData.heading} in favorites");                                                         }
+                                                                                    FavouriteSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
+                                                                                    showToast("${SubjectsData.heading} in favorites");                                                                  }
                                                                                 });
                                                                               } catch (e) {
                                                                                 print(
@@ -1793,14 +1037,13 @@ class _HomePageState extends State<HomePage> {
 
                                                                             },
                                                                           ),
-                                                                          SizedBox(width: 10,)
                                                                         ],
                                                                       ),
                                                                       SizedBox(
                                                                         height: 2,
                                                                       ),
                                                                       Text(
-                                                                        LabSubjectsData.description,
+                                                                        SubjectsData.description,
                                                                         style: const TextStyle(
                                                                           fontSize: 13.0,
                                                                           color: Color.fromRGBO(204, 207, 222, 1),
@@ -1810,7 +1053,7 @@ class _HomePageState extends State<HomePage> {
                                                                         height: 1,
                                                                       ),
                                                                       Text(
-                                                                        'Added :${LabSubjectsData.Date}',
+                                                                        'Added :${SubjectsData.Date}',
                                                                         style: const TextStyle(
                                                                           fontSize: 9.0,
                                                                           color: Colors.white60,
@@ -1823,16 +1066,23 @@ class _HomePageState extends State<HomePage> {
                                                                           child: Container(
                                                                             decoration: BoxDecoration(
                                                                               borderRadius: BorderRadius.circular(15),
-                                                                              color: Colors.white.withOpacity(0.5),
-                                                                              border: Border.all(color: Colors.white),
+                                                                              color: Colors.black.withOpacity(0.3),
+                                                                              border: Border.all(color: Colors.white.withOpacity(0.5)),
                                                                             ),
+                                                                            width: 70,
                                                                             child: InkWell(
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                                                                child: Text("+Add"),
+                                                                              child: Row(
+                                                                                children: [
+                                                                                  SizedBox(width: 5,),
+                                                                                  Icon(Icons.edit,color: Colors.white,),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.only(left: 3, right: 3),
+                                                                                    child: Text("Edit",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 18),),
+                                                                                  ),
+                                                                                ],
                                                                               ),
                                                                               onTap: () {
-                                                                                Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: LabSubjectsData.id,heading: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl,mode:"LabSubjects" ,)));
+                                                                                Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: SubjectsData.id,heading: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl,mode:"Subjects" ,)));
                                                                               },
                                                                             ),
                                                                           ),
@@ -1848,25 +1098,40 @@ class _HomePageState extends State<HomePage> {
                                                             context,
                                                             MaterialPageRoute(
                                                                 builder: (context) => subjectUnitsData(
-                                                                  ID: LabSubjectsData.id,
-                                                                  mode: "LabSubjects",
-                                                                  name: LabSubjectsData.heading,
-                                                                  fullName: LabSubjectsData.description,
-                                                                  photoUrl: LabSubjectsData.PhotoUrl,
+                                                                  ID: SubjectsData.id,
+                                                                  mode: "Subjects",
+                                                                  name: SubjectsData.heading,
+                                                                  fullName: SubjectsData.description,
+                                                                  photoUrl: SubjectsData.PhotoUrl,
                                                                 )));
                                                       },
-                                                      onLongPress: (){
-                                                        FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
-                                                      },
-                                                    ),
-                                                  );
+                                                      // onLongPress: () async {
+                                                      //   SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                      //   String? SelectedSubjects = prefs.getString('addSubjects') ?? null;
+                                                      //   print(SelectedSubjects);
+                                                      //   if (SelectedSubjects != null) {
+                                                      //     final body = jsonDecode(SelectedSubjects);
+                                                      //     subjects = body.map<SearchAddedSubjects>(SearchAddedSubjects.fromJson).toList();
+                                                      //   }
+                                                      //   print(subjects);
+                                                      //   final person = subjects.where((element) => element.name == SubjectsData.heading);
+                                                      //   if (person.isEmpty) {
+                                                      //     subjects.add(SearchAddedSubjects(
+                                                      //         name: SubjectsData.heading, description: SubjectsData.description, date: SubjectsData.Date, id: SubjectsData.id, photoUrl: SubjectsData.PhotoUrl));
+                                                      //   } else {
+                                                      //     showToast("${SubjectsData.heading} is already added");
+                                                      //   }
+                                                      //   print(subjects);
+                                                      //   prefs.setString('addSubjects', jsonEncode(subjects));
+                                                      //   print(jsonEncode(subjects));
+                                                      //   showToast("${SubjectsData.heading} is Added");
+                                                      // },
+                                                    );
 
-                                              } else {
-                                                downloadImage(LabSubjectsData.PhotoUrl,"ece_labsubjects");
-                                                return
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(bottom: 5, left: 5, right: 5),
-                                                    child: InkWell(
+
+                                                  } else {
+                                                    download(SubjectsData.PhotoUrl,"ece_subjects");
+                                                    return InkWell(
                                                       child: Container(
                                                         width: double.infinity,
                                                         decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -1877,15 +1142,16 @@ class _HomePageState extends State<HomePage> {
                                                               Container(
                                                                 width: 90.0,
                                                                 height: 70.0,
-                                                                child: CachedNetworkImage(
-                                                                  imageUrl: LabSubjectsData.PhotoUrl,
+                                                                child:CachedNetworkImage(
+                                                                  imageUrl: SubjectsData.PhotoUrl,
                                                                   placeholder: (context, url) => CircularProgressIndicator(),
-                                                                  errorWidget: (context, url, error) => Icon(Icons.error,color: Colors.red,),
+                                                                  errorWidget: (context, url, error) => Icon(Icons.error),
                                                                 ),
                                                               ),
                                                               const SizedBox(
                                                                 width: 10,
                                                               ),
+
                                                               Expanded(
                                                                   child: Column(
                                                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -1894,7 +1160,7 @@ class _HomePageState extends State<HomePage> {
                                                                       Row(
                                                                         children: [
                                                                           Text(
-                                                                            LabSubjectsData.heading,
+                                                                            SubjectsData.heading,
                                                                             style: const TextStyle(
                                                                               fontSize: 20.0,
                                                                               color: Colors.white,
@@ -1905,8 +1171,8 @@ class _HomePageState extends State<HomePage> {
                                                                           InkWell(
                                                                             child: StreamBuilder<DocumentSnapshot>(
                                                                               stream: FirebaseFirestore.instance.collection('ECE')
-                                                                                  .doc("LabSubjects")
-                                                                                  .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+                                                                                  .doc("Subjects")
+                                                                                  .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
                                                                               builder: (context, snapshot) {
                                                                                 if (snapshot.hasData) {
                                                                                   if (snapshot.data!.exists) {
@@ -1925,22 +1191,22 @@ class _HomePageState extends State<HomePage> {
                                                                               try {
                                                                                 await FirebaseFirestore.instance.
                                                                                 collection('ECE')
-                                                                                    .doc("LabSubjects")
-                                                                                    .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                    .doc("Subjects")
+                                                                                    .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
                                                                                     .get()
                                                                                     .then((docSnapshot) {
                                                                                   if (docSnapshot.exists) {
                                                                                     FirebaseFirestore.instance.
                                                                                     collection('ECE')
-                                                                                        .doc("LabSubjects")
-                                                                                        .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                        .doc("Subjects")
+                                                                                        .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
                                                                                         .delete();
                                                                                     showToast("Unliked");
                                                                                   } else {
                                                                                     FirebaseFirestore.instance.
                                                                                     collection('ECE')
-                                                                                        .doc("LabSubjects")
-                                                                                        .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                        .doc("Subjects")
+                                                                                        .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
                                                                                         .set({"id": fullUserId()});
                                                                                     showToast("Liked");
                                                                                   }
@@ -1953,8 +1219,8 @@ class _HomePageState extends State<HomePage> {
                                                                           StreamBuilder<QuerySnapshot>(
                                                                             stream: FirebaseFirestore.instance
                                                                                 .collection('ECE')
-                                                                                .doc("LabSubjects")
-                                                                                .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes")
+                                                                                .doc("Subjects")
+                                                                                .collection("Subjects").doc(SubjectsData.id).collection("likes")
                                                                                 .snapshots(),
                                                                             builder: (context, snapshot) {
                                                                               if (snapshot.hasData) {
@@ -1967,7 +1233,7 @@ class _HomePageState extends State<HomePage> {
                                                                           SizedBox(width: 5,),
                                                                           InkWell(
                                                                             child: StreamBuilder<DocumentSnapshot>(
-                                                                              stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).snapshots(),
+                                                                              stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
                                                                               builder: (context, snapshot) {
                                                                                 if (snapshot.hasData) {
                                                                                   if (snapshot.data!.exists) {
@@ -1991,15 +1257,15 @@ class _HomePageState extends State<HomePage> {
                                                                               try {
                                                                                 await FirebaseFirestore
                                                                                     .instance
-                                                                                    .collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id)
+                                                                                    .collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id)
                                                                                     .get()
                                                                                     .then((docSnapshot) {
                                                                                   if (docSnapshot.exists) {
-                                                                                    FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
+                                                                                    FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
                                                                                     showToast("Removed from saved list");
                                                                                   } else {
-                                                                                    FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
-                                                                                    showToast("${LabSubjectsData.heading} in favorites");                                                         }
+                                                                                    FavouriteSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
+                                                                                    showToast("${SubjectsData.heading} in favorites");                                                                  }
                                                                                 });
                                                                               } catch (e) {
                                                                                 print(
@@ -2008,14 +1274,13 @@ class _HomePageState extends State<HomePage> {
 
                                                                             },
                                                                           ),
-                                                                          SizedBox(width: 10,)
                                                                         ],
                                                                       ),
                                                                       SizedBox(
                                                                         height: 2,
                                                                       ),
                                                                       Text(
-                                                                        LabSubjectsData.description,
+                                                                        SubjectsData.description,
                                                                         style: const TextStyle(
                                                                           fontSize: 13.0,
                                                                           color: Color.fromRGBO(204, 207, 222, 1),
@@ -2025,7 +1290,7 @@ class _HomePageState extends State<HomePage> {
                                                                         height: 1,
                                                                       ),
                                                                       Text(
-                                                                        'Added :${LabSubjectsData.Date}',
+                                                                        'Added :${SubjectsData.Date}',
                                                                         style: const TextStyle(
                                                                           fontSize: 9.0,
                                                                           color: Colors.white60,
@@ -2038,16 +1303,23 @@ class _HomePageState extends State<HomePage> {
                                                                           child: Container(
                                                                             decoration: BoxDecoration(
                                                                               borderRadius: BorderRadius.circular(15),
-                                                                              color: Colors.white.withOpacity(0.5),
-                                                                              border: Border.all(color: Colors.white),
+                                                                              color: Colors.black.withOpacity(0.3),
+                                                                              border: Border.all(color: Colors.white.withOpacity(0.5)),
                                                                             ),
+                                                                            width: 70,
                                                                             child: InkWell(
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                                                                child: Text("+Add"),
+                                                                              child: Row(
+                                                                                children: [
+                                                                                  SizedBox(width: 5,),
+                                                                                  Icon(Icons.edit,color: Colors.white,),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.only(left: 3, right: 3),
+                                                                                    child: Text("Edit",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 18),),
+                                                                                  ),
+                                                                                ],
                                                                               ),
                                                                               onTap: () {
-                                                                                Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: LabSubjectsData.id,heading: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl,mode:"LabSubjects" ,)));
+                                                                                Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: SubjectsData.id,heading: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl,mode:"Subjects" ,)));
                                                                               },
                                                                             ),
                                                                           ),
@@ -2063,638 +1335,4087 @@ class _HomePageState extends State<HomePage> {
                                                             context,
                                                             MaterialPageRoute(
                                                                 builder: (context) => subjectUnitsData(
-                                                                  ID: LabSubjectsData.id,
-                                                                  mode: "LabSubjects",
-                                                                  name: LabSubjectsData.heading,
-                                                                  fullName: LabSubjectsData.description,
-                                                                  photoUrl: LabSubjectsData.PhotoUrl,
+                                                                  ID: SubjectsData.id,
+                                                                  mode: "Subjects",
+                                                                  name: SubjectsData.heading,
+                                                                  fullName: SubjectsData.description,
+                                                                  photoUrl: SubjectsData.PhotoUrl,
                                                                 )));
                                                       },
-                                                      onLongPress: (){
-                                                        FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
-                                                      },
-                                                    ),
-                                                  );
+                                                      // onLongPress: () async {
+                                                      //   SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                      //   String? SelectedSubjects = prefs.getString('addSubjects') ?? null;
+                                                      //   print(SelectedSubjects);
+                                                      //   if (SelectedSubjects != null) {
+                                                      //     final body = jsonDecode(SelectedSubjects);
+                                                      //     subjects = body.map<SearchAddedSubjects>(SearchAddedSubjects.fromJson).toList();
+                                                      //   }
+                                                      //   print(subjects);
+                                                      //   final person = subjects.where((element) => element.name == SubjectsData.heading);
+                                                      //   if (person.isEmpty) {
+                                                      //     subjects.add(SearchAddedSubjects(
+                                                      //         name: SubjectsData.heading, description: SubjectsData.description, date: SubjectsData.Date, id: SubjectsData.id, photoUrl: SubjectsData.PhotoUrl));
+                                                      //   } else {
+                                                      //     showToast("${SubjectsData.heading} is already added");
+                                                      //   }
+                                                      //   print(subjects);
+                                                      //   prefs.setString('addSubjects', jsonEncode(subjects));
+                                                      //   print(jsonEncode(subjects));
+                                                      //   showToast("${SubjectsData.heading} is Added");
+                                                      // },
+                                                    );
 
-                                              }
-                                              //   return Padding(
-                                              //       padding: const EdgeInsets.only(top: 3),
-                                              //       child: InkWell(
-                                              //   child: Container(
-                                              //       width: double.infinity,
-                                              //       decoration: BoxDecoration(color: Colors.white.withOpacity(0.07), borderRadius: BorderRadius.all(Radius.circular(10))),
-                                              //       child: SingleChildScrollView(
-                                              //         physics: const BouncingScrollPhysics(),
-                                              //         child: Row(
-                                              //           children: [
-                                              //             Container(
-                                              //               width: 90.0,
-                                              //               height: 70.0,
-                                              //               decoration: BoxDecoration(
-                                              //                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                              //                 color: Colors.black.withOpacity(0.6),
-                                              //                 image: DecorationImage(
-                                              //                   image: NetworkImage(
-                                              //                     SubjectsData.PhotoUrl,
-                                              //                   ),
-                                              //                   fit: BoxFit.cover,
-                                              //                 ),
-                                              //               ),
-                                              //             ),
-                                              //             const SizedBox(
-                                              //               width: 10,
-                                              //             ),
-                                              //             Expanded(
-                                              //                 child: Column(
-                                              //               mainAxisAlignment: MainAxisAlignment.center,
-                                              //               crossAxisAlignment: CrossAxisAlignment.start,
-                                              //               children: [
-                                              //                 Row(
-                                              //                   children: [
-                                              //                     Text(
-                                              //                       SubjectsData.heading,
-                                              //                       style: const TextStyle(
-                                              //                         fontSize: 20.0,
-                                              //                         color: Colors.white,
-                                              //                         fontWeight: FontWeight.w600,
-                                              //                       ),
-                                              //                     ),
-                                              //                     Spacer(),
-                                              //                     InkWell(
-                                              //                       child: StreamBuilder<DocumentSnapshot>(
-                                              //                         stream: FirebaseFirestore.instance.collection('ECE')
-                                              //                             .doc("LabSubjects")
-                                              //                             .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
-                                              //                         builder: (context, snapshot) {
-                                              //                           if (snapshot.hasData) {
-                                              //                             if (snapshot.data!.exists) {
-                                              //                               return const Icon(Icons.favorite,color: Colors.red,size: 26,);
-                                              //                             } else {
-                                              //                               return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
-                                              //                             }
-                                              //                           } else {
-                                              //                             return Container();
-                                              //                           }
-                                              //                         },
-                                              //                       ),
-                                              //                       onTap:
-                                              //                           ()async {
-                                              //
-                                              //                         try {
-                                              //                           await FirebaseFirestore.instance.
-                                              //                           collection('ECE')
-                                              //                               .doc("LabSubjects")
-                                              //                               .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                              //                               .get()
-                                              //                               .then((docSnapshot) {
-                                              //                             if (docSnapshot.exists) {
-                                              //                               FirebaseFirestore.instance.
-                                              //                               collection('ECE')
-                                              //                                   .doc("LabSubjects")
-                                              //                                   .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                              //                                   .delete();
-                                              //                               showToast("Unliked");
-                                              //                             } else {
-                                              //                               FirebaseFirestore.instance.
-                                              //                               collection('ECE')
-                                              //                                   .doc("LabSubjects")
-                                              //                                   .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                              //                                   .set({"id": fullUserId()});
-                                              //                               showToast("Liked");
-                                              //                             }
-                                              //                           });
-                                              //                         } catch (e) {
-                                              //                           print(e);
-                                              //                         }
-                                              //                       },
-                                              //                     ),
-                                              //                     StreamBuilder<QuerySnapshot>(
-                                              //                       stream: FirebaseFirestore.instance
-                                              //                           .collection('ECE')
-                                              //                           .doc("LabSubjects")
-                                              //                           .collection("LabSubjects").doc(SubjectsData.id).collection("likes")
-                                              //                           .snapshots(),
-                                              //                       builder: (context, snapshot) {
-                                              //                         if (snapshot.hasData) {
-                                              //                           return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
-                                              //                         } else {
-                                              //                           return const Text("0");
-                                              //                         }
-                                              //                       },
-                                              //                     ),
-                                              //                     SizedBox(width: 5,),
-                                              //
-                                              //                     InkWell(
-                                              //                       child: StreamBuilder<DocumentSnapshot>(
-                                              //                         stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(SubjectsData.id).snapshots(),
-                                              //                         builder: (context, snapshot) {
-                                              //                           if (snapshot.hasData) {
-                                              //                             if (snapshot.data!.exists) {
-                                              //                               return const Icon(
-                                              //                                   Icons.library_add_check,
-                                              //                                   size: 26, color: Colors.cyanAccent
-                                              //                               );
-                                              //                             } else {
-                                              //                               return const Icon(
-                                              //                                 Icons.library_add_outlined,
-                                              //                                 size: 26,
-                                              //                                 color: Colors.cyanAccent,
-                                              //                               );
-                                              //                             }
-                                              //                           } else {
-                                              //                             return Container();
-                                              //                           }
-                                              //                         },
-                                              //                       ),
-                                              //                       onTap: () async{
-                                              //                         try {
-                                              //                           await FirebaseFirestore
-                                              //                               .instance
-                                              //                               .collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(SubjectsData.id)
-                                              //                               .get()
-                                              //                               .then((docSnapshot) {
-                                              //                             if (docSnapshot.exists) {
-                                              //                               FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(SubjectsData.id).delete();
-                                              //                               showToast("Removed from saved list");
-                                              //                             } else {
-                                              //                               FavouriteLabSubjectsSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
-                                              //                               showToast("${SubjectsData.heading} in favorites");                                                         }
-                                              //                           });
-                                              //                         } catch (e) {
-                                              //                           print(
-                                              //                               e);
-                                              //                         }
-                                              //
-                                              //                       },
-                                              //                     ),
-                                              //
-                                              //                   ],
-                                              //                 ),
-                                              //                 SizedBox(
-                                              //                   height: 2,
-                                              //                 ),
-                                              //                 Text(
-                                              //                   SubjectsData.description,
-                                              //                   style: const TextStyle(
-                                              //                     fontSize: 13.0,
-                                              //                     color: Color.fromRGBO(204, 207, 222, 1),
-                                              //                   ),
-                                              //                 ),
-                                              //                 SizedBox(
-                                              //                   height: 1,
-                                              //                 ),
-                                              //                 Text(
-                                              //                   'Added :${SubjectsData.Date}',
-                                              //                   style: const TextStyle(
-                                              //                     fontSize: 9.0,
-                                              //                     color: Colors.white60,
-                                              //                     //   fontWeight: FontWeight.bold,
-                                              //                   ),
-                                              //                 ),
-                                              //               ],
-                                              //             ))
-                                              //           ],
-                                              //         ),
-                                              //       ),
-                                              //   ),
-                                              //   onTap: () {
-                                              //       Navigator.push(
-                                              //           context,
-                                              //           MaterialPageRoute(
-                                              //               builder: (context) => subjectUnitsData(
-                                              //                     ID: SubjectsData.id,
-                                              //                     mode: "LabSubjects",
-                                              //                     name: SubjectsData.heading,
-                                              //                 photoUrl: SubjectsData.PhotoUrl,
-                                              //                 fullName: SubjectsData.description,
-                                              //
-                                              //                   )));
-                                              //   },
-                                              // ),
-                                              //     );
-                                            }
-                                            else{
-                                              return Container();
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                else
-                                  return Center(child: Text("No Lab Subjects For Your Regulation"));
-                              }
-                          }
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 10,
-                        ),
-                        child: StreamBuilder<List<BooksConvertor>>(
-                            stream: ReadBook(),
-                            builder: (context, snapshot) {
-                              final Books = snapshot.data;
-                              switch (snapshot.connectionState) {
-                                case ConnectionState.waiting:
-                                  return const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 0.3,
-                                        color: Colors.cyan,
-                                      ));
-                                default:
-                                  if (snapshot.hasError) {
-                                    return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                                  } else {
 
-                                    if (Books!.length < 1) {
-                                      return Center(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            "No ECE Books",
-                                            style: TextStyle(color: Colors.blue),
-                                          ),
-                                        ),
-                                      );
-                                    } else
-                                      return Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 10, bottom: 10),
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  "Based on ECE",
-                                                  style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
+
+
+                                                  }
+                                                  //   return Padding(
+                                                  //   padding: const EdgeInsets.only(top: 3),
+                                                  //   child: InkWell(
+                                                  //     child: Container(
+                                                  //       width: double.infinity,
+                                                  //       decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                                  //       child: SingleChildScrollView(
+                                                  //         physics: const BouncingScrollPhysics(),
+                                                  //         child: Row(
+                                                  //           children: [
+                                                  //             Container(
+                                                  //               width: 90.0,
+                                                  //               height: 70.0,
+                                                  //               decoration: BoxDecoration(
+                                                  //                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                                  //                 color: Colors.black.withOpacity(0.8),
+                                                  //                 image: DecorationImage(
+                                                  //                   image: NetworkImage(
+                                                  //                     SubjectsData.PhotoUrl,
+                                                  //                   ),
+                                                  //                   fit: BoxFit.cover,
+                                                  //                 ),
+                                                  //               ),
+                                                  //             ),
+                                                  //             const SizedBox(
+                                                  //               width: 10,
+                                                  //             ),
+                                                  //             Expanded(
+                                                  //                 child: Column(
+                                                  //               mainAxisAlignment: MainAxisAlignment.center,
+                                                  //               crossAxisAlignment: CrossAxisAlignment.start,
+                                                  //               children: [
+                                                  //                 Row(
+                                                  //                   children: [
+                                                  //                     Text(
+                                                  //                       SubjectsData.heading,
+                                                  //                       style: const TextStyle(
+                                                  //                         fontSize: 20.0,
+                                                  //                         color: Colors.white,
+                                                  //                         fontWeight: FontWeight.w600,
+                                                  //                       ),
+                                                  //                     ),
+                                                  //                     Spacer(),
+                                                  //                     InkWell(
+                                                  //                       child: StreamBuilder<DocumentSnapshot>(
+                                                  //                         stream: FirebaseFirestore.instance.collection('ECE')
+                                                  //                           .doc("Subjects")
+                                                  //                           .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+                                                  //                         builder: (context, snapshot) {
+                                                  //                           if (snapshot.hasData) {
+                                                  //                             if (snapshot.data!.exists) {
+                                                  //                               return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+                                                  //                             } else {
+                                                  //                               return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+                                                  //                             }
+                                                  //                           } else {
+                                                  //                             return Container();
+                                                  //                           }
+                                                  //                         },
+                                                  //                       ),
+                                                  //                       onTap:
+                                                  //                           ()async {
+                                                  //
+                                                  //                         try {
+                                                  //                           await FirebaseFirestore.instance.
+                                                  //                           collection('ECE')
+                                                  //                               .doc("Subjects")
+                                                  //                               .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+                                                  //                               .get()
+                                                  //                               .then((docSnapshot) {
+                                                  //                             if (docSnapshot.exists) {
+                                                  //                               FirebaseFirestore.instance.
+                                                  //                               collection('ECE')
+                                                  //                                   .doc("Subjects")
+                                                  //                                   .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+                                                  //                                   .delete();
+                                                  //                               showToast("Unliked");
+                                                  //                             } else {
+                                                  //                               FirebaseFirestore.instance.
+                                                  //                               collection('ECE')
+                                                  //                                   .doc("Subjects")
+                                                  //                                   .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+                                                  //                                   .set({"id": fullUserId()});
+                                                  //                               showToast("Liked");
+                                                  //                             }
+                                                  //                           });
+                                                  //                         } catch (e) {
+                                                  //                           print(e);
+                                                  //                         }
+                                                  //                       },
+                                                  //                     ),
+                                                  //                     StreamBuilder<QuerySnapshot>(
+                                                  //                       stream: FirebaseFirestore.instance
+                                                  //                           .collection('ECE')
+                                                  //                           .doc("Subjects")
+                                                  //                           .collection("Subjects").doc(SubjectsData.id).collection("likes")
+                                                  //                           .snapshots(),
+                                                  //                       builder: (context, snapshot) {
+                                                  //                         if (snapshot.hasData) {
+                                                  //                           return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
+                                                  //                         } else {
+                                                  //                           return const Text("0");
+                                                  //                         }
+                                                  //                       },
+                                                  //                     ),
+                                                  //                     SizedBox(width: 5,),
+                                                  //
+                                                  //                     InkWell(
+                                                  //                       child: StreamBuilder<DocumentSnapshot>(
+                                                  //                         stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
+                                                  //                         builder: (context, snapshot) {
+                                                  //                           if (snapshot.hasData) {
+                                                  //                             if (snapshot.data!.exists) {
+                                                  //                               return const Icon(
+                                                  //                                   Icons.library_add_check,
+                                                  //                                   size: 26, color: Colors.cyanAccent
+                                                  //                               );
+                                                  //                             } else {
+                                                  //                               return const Icon(
+                                                  //                                 Icons.library_add_outlined,
+                                                  //                                 size: 26,
+                                                  //                                 color: Colors.cyanAccent,
+                                                  //                               );
+                                                  //                             }
+                                                  //                           } else {
+                                                  //                             return Container();
+                                                  //                           }
+                                                  //                         },
+                                                  //                       ),
+                                                  //                       onTap: () async{
+                                                  //                         try {
+                                                  //                           await FirebaseFirestore
+                                                  //                               .instance
+                                                  //                               .collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id)
+                                                  //                               .get()
+                                                  //                               .then((docSnapshot) {
+                                                  //                             if (docSnapshot.exists) {
+                                                  //                               FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
+                                                  //                               showToast("Removed from saved list");
+                                                  //                             } else {
+                                                  //                               FavouriteSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
+                                                  //                               showToast("${SubjectsData.heading} in favorites");                                                                  }
+                                                  //                           });
+                                                  //                         } catch (e) {
+                                                  //                           print(
+                                                  //                               e);
+                                                  //                         }
+                                                  //
+                                                  //                       },
+                                                  //                     ),
+                                                  //                   ],
+                                                  //                 ),
+                                                  //                 SizedBox(
+                                                  //                   height: 2,
+                                                  //                 ),
+                                                  //                 Text(
+                                                  //                   SubjectsData.description,
+                                                  //                   style: const TextStyle(
+                                                  //                     fontSize: 13.0,
+                                                  //                     color: Color.fromRGBO(204, 207, 222, 1),
+                                                  //                   ),
+                                                  //                 ),
+                                                  //                 SizedBox(
+                                                  //                   height: 1,
+                                                  //                 ),
+                                                  //                 Text(
+                                                  //                   'Added :${SubjectsData.Date}',
+                                                  //                   style: const TextStyle(
+                                                  //                     fontSize: 9.0,
+                                                  //                     color: Colors.white60,
+                                                  //                     //   fontWeight: FontWeight.bold,
+                                                  //                   ),
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ))
+                                                  //           ],
+                                                  //         ),
+                                                  //       ),
+                                                  //     ),
+                                                  //     onTap: () {
+                                                  //       Navigator.push(
+                                                  //           context,
+                                                  //           MaterialPageRoute(
+                                                  //               builder: (context) => subjectUnitsData(
+                                                  //                     ID: SubjectsData.id,
+                                                  //                     mode: "Subjects",
+                                                  //                 name: SubjectsData.heading,
+                                                  //                 fullName: SubjectsData.description,
+                                                  //                 photoUrl: SubjectsData.PhotoUrl,
+                                                  //                   )));
+                                                  //     },
+                                                  //   ),
+                                                  // );
+                                                }
+                                                else{
+                                                  return Container();
+                                                }
+                                              },
+                                            );
+                                          else
+                                            return InkWell(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(color: Colors.tealAccent),
+                                                    borderRadius: BorderRadius.circular(20),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(8.0),
+                                                    child: Text("No Subjects are Liked"),
+                                                  ),
                                                 ),
-                                                Spacer(),
-                                                if (userId() == "gmail.com")
+                                                onTap: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return Dialog(
+                                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                        elevation: 16,
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                            border: Border.all(color: Colors.tealAccent),
+                                                            borderRadius: BorderRadius.circular(20),
+                                                          ),
+                                                          child: ListView(
+                                                            shrinkWrap: true,
+                                                            children: <Widget>[
+                                                              SizedBox(height: 10),
+                                                              Center(
+                                                                  child: Text(
+                                                                    'Note',
+                                                                    style: TextStyle(color: Colors.black87, fontSize: 20),
+                                                                  )),
+                                                              Divider(
+                                                                color: Colors.tealAccent,
+                                                              ),
+                                                              SizedBox(height: 5),
+                                                              Padding(
+                                                                padding: const EdgeInsets.only(left: 15),
+                                                                child: Text("1. Click on 'See More' option"),
+                                                              ),
+                                                              Padding(
+                                                                padding: const EdgeInsets.only(left: 15),
+                                                                child: Text("2. Long Press on Subject u need to add as important"),
+                                                              ),
+                                                              Padding(
+                                                                padding: const EdgeInsets.only(left: 15),
+                                                                child: Text("3. Restart the application"),
+                                                              ),
+                                                              Divider(
+                                                                color: Colors.tealAccent,
+                                                              ),
+                                                              Padding(
+                                                                padding: const EdgeInsets.only(left: 15),
+                                                                child: Text("1. Long Press on Subject u need to remove as important"),
+                                                              ),
+                                                              Divider(
+                                                                color: Colors.tealAccent,
+                                                              ),
+                                                              Center(
+                                                                child: InkWell(
+                                                                  child: Container(
+                                                                    decoration: BoxDecoration(
+                                                                      color: Colors.black26,
+                                                                      border: Border.all(color: Colors.black),
+                                                                      borderRadius: BorderRadius.circular(25),
+                                                                    ),
+                                                                    child: Padding(
+                                                                      padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+                                                                      child: Text("Back"),
+                                                                    ),
+                                                                  ),
+                                                                  onTap: () {
+                                                                    Navigator.pop(context);
+                                                                  },
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                });
+                                        }
+                                    }
+                                  }),
+                            )
+                            else Center(child: Column(
+                              children: [
+                                Text("Regulation and Year is Not Selected for Subjects",style: TextStyle(color: Colors.white),),
+                                InkWell(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white54,
+                                      border: Border.all(color: Colors.white),
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                      child: Text("see more"),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  Subjects()));
+                                  },
+                                ),
+                              ],
+                            )),
+                            //Lab Subjects
+                            if(mainsnapshot.data!["reg"].toString().isNotEmpty)StreamBuilder<List<LabSubjectsConvertor>>(
+                              stream: readLabSubjects(),
+                              builder: (context, snapshot) {
+                                final Subjects = snapshot.data;
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                    return const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 0.3,
+                                          color: Colors.cyan,
+                                        ));
+                                  default:
+                                    if (snapshot.hasError) {
+                                      return Text("Error with fireBase");
+                                    } else {
+                                      if (Subjects!.length > 0)
+                                        return Padding(
+                                          padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10, right: 10),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Lab Subjects",
+                                                    style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
+                                                  ),
+                                                  Spacer(),
                                                   InkWell(
                                                     child: Container(
                                                       decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.circular(15),
-                                                        color: Colors.white.withOpacity(0.5),
+                                                        color: Colors.white54,
                                                         border: Border.all(color: Colors.white),
+                                                        borderRadius: BorderRadius.circular(25),
                                                       ),
                                                       child: Padding(
                                                         padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                                        child: Text("+Add"),
+                                                        child: Text("see more"),
                                                       ),
                                                     ),
                                                     onTap: () {
-                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => BooksCreator()));
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LabSubjects()));
                                                     },
                                                   ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                InkWell(
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.circular(15),
-                                                        color: Colors.white.withOpacity(0.5),
-                                                        border: Border.all(color: Colors.white),
-                                                      ),
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                                        child: Text("See More"),
-                                                      ),
-                                                    ),
-                                                    onTap: () {
-                                                       Navigator.push(context, MaterialPageRoute(builder: (context) => allBooks()));
-                                                    }),
-                                                SizedBox(width: 20,)
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 140,
-                                            child: ListView.separated(
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: Books.length,
-                                              itemBuilder: (BuildContext context, int index) {
-                                                final Uri uri = Uri.parse(Books[index].photoUrl);
-                                                final String fileName = uri.pathSegments.last;
-                                                var name = fileName.split("/").last;
-                                                final file = File("${folderPath}/ece_books/$name");
-                                                if (file.existsSync()) {
-                                                  return InkWell(
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.only(left: 10),
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(15),
-                                                          color: Colors.black.withOpacity(0.3),
-                                                          // border: Border.all(color: Colors.white),
-                                                        ),
-                                                        child: Row(
-                                                          children: [
-
-                                                            Container(
-                                                              decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(15),
-                                                                color: Colors.black.withOpacity(0.4),
-                                                                image: DecorationImage(
-                                                                  image: FileImage(file),
-                                                                  fit: BoxFit.cover,
-                                                                ),
-                                                              ),
-                                                              height: 140,
-                                                              width: 90,
-                                                            ),
-                                                            Padding(
-                                                              padding: const EdgeInsets.all(8.0),
-                                                              child: Container(
-                                                                width: 100,
-                                                                child: SingleChildScrollView(
-                                                                  child: Column(
-                                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    children: [
-                                                                      Text(
-                                                                        Books[index].heading,
-                                                                        maxLines: 2,
-                                                                        overflow: TextOverflow.ellipsis,
-                                                                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
-                                                                      ),
-                                                                      Text(
-                                                                        Books[index].Author,
-                                                                        maxLines: 1,
-                                                                        overflow: TextOverflow.ellipsis,
-                                                                        style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
-                                                                      ),
-                                                                      Text(
-                                                                        Books[index].edition,
-                                                                        maxLines: 1,
-                                                                        overflow: TextOverflow.ellipsis,
-                                                                        style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
-                                                                      ),
-                                                                      Text(
-                                                                        Books[index].description,
-                                                                        maxLines: 1,
-                                                                        overflow: TextOverflow.ellipsis,
-                                                                        style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.white),
-                                                                      ),
-                                                                      SizedBox(height: 5,),
-                                                                      Row(
-                                                                        children: [
-                                                                          InkWell(
-                                                                            child: StreamBuilder<DocumentSnapshot>(
-                                                                              stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).snapshots(),
-                                                                              builder: (context, snapshot) {
-                                                                                if (snapshot.hasData) {
-                                                                                  if (snapshot.data!.exists) {
-                                                                                    return const Icon(
-                                                                                        Icons.library_add_check,
-                                                                                        size: 26, color: Colors.cyanAccent
-                                                                                    );
-                                                                                  } else {
-                                                                                    return const Icon(
-                                                                                      Icons.library_add_outlined,
-                                                                                      size: 26,
-                                                                                      color: Colors.cyanAccent,
-                                                                                    );
-                                                                                  }
-                                                                                } else {
-                                                                                  return const Icon(
-                                                                                    Icons.library_add_outlined,
-                                                                                    size: 26,
-                                                                                    color: Colors.cyanAccent,
-                                                                                  );
-                                                                                }
-                                                                              },
-                                                                            ),
-                                                                            onTap: () async{
-                                                                              try {
-                                                                                await FirebaseFirestore
-                                                                                    .instance
-                                                                                    .collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id)
-                                                                                    .get()
-                                                                                    .then((docSnapshot) {
-                                                                                  if (docSnapshot.exists) {
-                                                                                    FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).delete();
-                                                                                    showToast("Removed from saved list");
-                                                                                  } else {
-                                                                                    FavouriteBooksSubjects(description:Books[index].description,heading: Books[index].heading,link: Books[index].link,photoUrl: Books[index].photoUrl,Author: Books[index].Author,edition: Books[index].edition,date: Books[index].date, id: Books[index].id );
-                                                                                    showToast("${Books[index].heading} in favorites");                                                            }
-                                                                                });
-                                                                              } catch (e) {
-                                                                                print(e);
-                                                                              }
-
-                                                                            },
-                                                                          ),
-
-                                                                          InkWell(
-                                                                              child: Container(
-                                                                                decoration: BoxDecoration(
-                                                                                  borderRadius: BorderRadius.circular(15),
-                                                                                  color: Colors.white.withOpacity(0.5),
-                                                                                  border: Border.all(color: Colors.white),
-                                                                                ),
-                                                                                child: Padding(
-                                                                                  padding: const EdgeInsets.only(left: 1, right: 5, top: 2, bottom: 2),
-                                                                                  child: Row(
-                                                                                    children: [
-                                                                                      Text("Open"),
-                                                                                      Icon(Icons.open_in_new)
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              onTap: () {}
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 20,
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    onTap: () async {
-                                                      _BooksBottomSheet(context, Books[index],file);
-                                                    },
-                                                  );
-                                                } else {
-                                                  downloadImage(Books[index].photoUrl,"ece_books");
-                                                  return InkWell(
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.only(left: 10),
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(15),
-                                                          color: Colors.black.withOpacity(0.3),
-                                                          // border: Border.all(color: Colors.white),
-                                                        ),
-                                                        child: Row(
-                                                          children: [
-
-                                                            Container(
-                                                              decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(15),
-                                                                color: Colors.black.withOpacity(0.4),
-                                                              ),
-                                                              height: 140,
-                                                              width: 90,
-                                                              child: CachedNetworkImage(
-                                                                imageUrl: Books[index].photoUrl,
-                                                                placeholder: (context, url) => CircularProgressIndicator(),
-                                                                errorWidget: (context, url, error) => Icon(Icons.error),
-                                                              ),
-                                                            ),
-                                                            Padding(
-                                                              padding: const EdgeInsets.all(8.0),
-                                                              child: Container(
-                                                                width: 100,
-                                                                child: SingleChildScrollView(
-                                                                  child: Column(
-                                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    children: [
-                                                                      Text(
-                                                                        Books[index].heading,
-                                                                        maxLines: 2,
-                                                                        overflow: TextOverflow.ellipsis,
-                                                                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
-                                                                      ),
-                                                                      Text(
-                                                                        Books[index].Author,
-                                                                        maxLines: 1,
-                                                                        overflow: TextOverflow.ellipsis,
-                                                                        style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
-                                                                      ),
-                                                                      Text(
-                                                                        Books[index].edition,
-                                                                        maxLines: 1,
-                                                                        overflow: TextOverflow.ellipsis,
-                                                                        style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
-                                                                      ),
-                                                                      Text(
-                                                                        Books[index].description,
-                                                                        maxLines: 1,
-                                                                        overflow: TextOverflow.ellipsis,
-                                                                        style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.white),
-                                                                      ),
-                                                                      SizedBox(height: 5,),
-                                                                      Row(
-                                                                        children: [
-                                                                          InkWell(
-                                                                            child: StreamBuilder<DocumentSnapshot>(
-                                                                              stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).snapshots(),
-                                                                              builder: (context, snapshot) {
-                                                                                if (snapshot.hasData) {
-                                                                                  if (snapshot.data!.exists) {
-                                                                                    return const Icon(
-                                                                                        Icons.library_add_check,
-                                                                                        size: 26, color: Colors.cyanAccent
-                                                                                    );
-                                                                                  } else {
-                                                                                    return const Icon(
-                                                                                      Icons.library_add_outlined,
-                                                                                      size: 26,
-                                                                                      color: Colors.cyanAccent,
-                                                                                    );
-                                                                                  }
-                                                                                } else {
-                                                                                  return const Icon(
-                                                                                    Icons.library_add_outlined,
-                                                                                    size: 26,
-                                                                                    color: Colors.cyanAccent,
-                                                                                  );
-                                                                                }
-                                                                              },
-                                                                            ),
-                                                                            onTap: () async{
-                                                                              try {
-                                                                                await FirebaseFirestore
-                                                                                    .instance
-                                                                                    .collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id)
-                                                                                    .get()
-                                                                                    .then((docSnapshot) {
-                                                                                  if (docSnapshot.exists) {
-                                                                                    FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).delete();
-                                                                                    showToast("Removed from saved list");
-                                                                                  } else {
-                                                                                    FavouriteBooksSubjects(description:Books[index].description,heading: Books[index].heading,link: Books[index].link,photoUrl: Books[index].photoUrl,Author: Books[index].Author,edition: Books[index].edition,date: Books[index].date, id: Books[index].id );
-                                                                                    showToast("${Books[index].heading} in favorites");                                                            }
-                                                                                });
-                                                                              } catch (e) {
-                                                                                print(e);
-                                                                              }
-
-                                                                            },
-                                                                          ),
-
-                                                                          InkWell(
-                                                                              child: Container(
-                                                                                decoration: BoxDecoration(
-                                                                                  borderRadius: BorderRadius.circular(15),
-                                                                                  color: Colors.white.withOpacity(0.5),
-                                                                                  border: Border.all(color: Colors.white),
-                                                                                ),
-                                                                                child: Padding(
-                                                                                  padding: const EdgeInsets.only(left: 1, right: 5, top: 2, bottom: 2),
-                                                                                  child: Row(
-                                                                                    children: [
-                                                                                      Text("Open"),
-                                                                                      Icon(Icons.open_in_new)
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              onTap: () {}
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 20,
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    onTap: () async {
-                                                      _BooksBottomSheet(context, Books[index],file);
-                                                    },
-                                                  );
-                                                }
-
-                                                },
-                                              shrinkWrap: true,
-                                              separatorBuilder: (context, index) => const SizedBox(
-                                                width: 9,
+                                                  SizedBox(width: 10,)
+                                                ],
                                               ),
-                                            ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              ListView.builder(
+                                                physics: const BouncingScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: Subjects.length,
+                                                itemBuilder: (context, int index) {
+                                                  final LabSubjectsData = Subjects[index];
+                                                  if(LabSubjectsData.regulation
+                                                      .toString()
+                                                      .startsWith(mainsnapshot.data!["reg"].toString())){
+
+                                                    final Uri uri = Uri.parse(LabSubjectsData.PhotoUrl);
+                                                    final String fileName = uri.pathSegments.last;
+                                                    var name = fileName.split("/").last;
+                                                    final file = File("${folderPath}/ece_labsubjects/$name");
+                                                    if (file.existsSync()) {
+                                                      return
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(bottom: 5, left: 5, right: 5),
+                                                          child: InkWell(
+                                                            child: Container(
+                                                              width: double.infinity,
+                                                              decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                                              child: SingleChildScrollView(
+                                                                physics: const BouncingScrollPhysics(),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Container(
+                                                                      width: 90.0,
+                                                                      height: 70.0,
+                                                                      decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                                                        color: Colors.redAccent,
+                                                                        image: DecorationImage(
+                                                                          image: FileImage(file),
+                                                                          fit: BoxFit.cover,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      width: 10,
+                                                                    ),
+                                                                    Expanded(
+                                                                        child: Column(
+                                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  LabSubjectsData.heading,
+                                                                                  style: const TextStyle(
+                                                                                    fontSize: 20.0,
+                                                                                    color: Colors.white,
+                                                                                    fontWeight: FontWeight.w600,
+                                                                                  ),
+                                                                                ),
+                                                                                Spacer(),
+                                                                                InkWell(
+                                                                                  child: StreamBuilder<DocumentSnapshot>(
+                                                                                    stream: FirebaseFirestore.instance.collection('ECE')
+                                                                                        .doc("LabSubjects")
+                                                                                        .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+                                                                                    builder: (context, snapshot) {
+                                                                                      if (snapshot.hasData) {
+                                                                                        if (snapshot.data!.exists) {
+                                                                                          return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+                                                                                        } else {
+                                                                                          return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+                                                                                        }
+                                                                                      } else {
+                                                                                        return Container();
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  onTap:
+                                                                                      ()async {
+
+                                                                                    try {
+                                                                                      await FirebaseFirestore.instance.
+                                                                                      collection('ECE')
+                                                                                          .doc("LabSubjects")
+                                                                                          .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                          .get()
+                                                                                          .then((docSnapshot) {
+                                                                                        if (docSnapshot.exists) {
+                                                                                          FirebaseFirestore.instance.
+                                                                                          collection('ECE')
+                                                                                              .doc("LabSubjects")
+                                                                                              .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                              .delete();
+                                                                                          showToast("Unliked");
+                                                                                        } else {
+                                                                                          FirebaseFirestore.instance.
+                                                                                          collection('ECE')
+                                                                                              .doc("LabSubjects")
+                                                                                              .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                              .set({"id": fullUserId()});
+                                                                                          showToast("Liked");
+                                                                                        }
+                                                                                      });
+                                                                                    } catch (e) {
+                                                                                      print(e);
+                                                                                    }
+                                                                                  },
+                                                                                ),
+                                                                                StreamBuilder<QuerySnapshot>(
+                                                                                  stream: FirebaseFirestore.instance
+                                                                                      .collection('ECE')
+                                                                                      .doc("LabSubjects")
+                                                                                      .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes")
+                                                                                      .snapshots(),
+                                                                                  builder: (context, snapshot) {
+                                                                                    if (snapshot.hasData) {
+                                                                                      return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
+                                                                                    } else {
+                                                                                      return const Text("0");
+                                                                                    }
+                                                                                  },
+                                                                                ),
+                                                                                SizedBox(width: 5,),
+                                                                                InkWell(
+                                                                                  child: StreamBuilder<DocumentSnapshot>(
+                                                                                    stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).snapshots(),
+                                                                                    builder: (context, snapshot) {
+                                                                                      if (snapshot.hasData) {
+                                                                                        if (snapshot.data!.exists) {
+                                                                                          return const Icon(
+                                                                                              Icons.library_add_check,
+                                                                                              size: 26, color: Colors.cyanAccent
+                                                                                          );
+                                                                                        } else {
+                                                                                          return const Icon(
+                                                                                            Icons.library_add_outlined,
+                                                                                            size: 26,
+                                                                                            color: Colors.cyanAccent,
+                                                                                          );
+                                                                                        }
+                                                                                      } else {
+                                                                                        return Container();
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  onTap: () async{
+                                                                                    try {
+                                                                                      await FirebaseFirestore
+                                                                                          .instance
+                                                                                          .collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id)
+                                                                                          .get()
+                                                                                          .then((docSnapshot) {
+                                                                                        if (docSnapshot.exists) {
+                                                                                          FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
+                                                                                          showToast("Removed from saved list");
+                                                                                        } else {
+                                                                                          FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
+                                                                                          showToast("${LabSubjectsData.heading} in favorites");                                                         }
+                                                                                      });
+                                                                                    } catch (e) {
+                                                                                      print(
+                                                                                          e);
+                                                                                    }
+
+                                                                                  },
+                                                                                ),
+                                                                                SizedBox(width: 10,)
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 2,
+                                                                            ),
+                                                                            Text(
+                                                                              LabSubjectsData.description,
+                                                                              style: const TextStyle(
+                                                                                fontSize: 13.0,
+                                                                                color: Color.fromRGBO(204, 207, 222, 1),
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 1,
+                                                                            ),
+                                                                            Text(
+                                                                              'Added :${LabSubjectsData.Date}',
+                                                                              style: const TextStyle(
+                                                                                fontSize: 9.0,
+                                                                                color: Colors.white60,
+                                                                                //   fontWeight: FontWeight.bold,
+                                                                              ),
+                                                                            ),
+                                                                            if (userId() == "gmail.com")
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.only(right: 10),
+                                                                                child: Container(
+                                                                                  decoration: BoxDecoration(
+                                                                                    borderRadius: BorderRadius.circular(15),
+                                                                                    color: Colors.white.withOpacity(0.5),
+                                                                                    border: Border.all(color: Colors.white),
+                                                                                  ),
+                                                                                  child: InkWell(
+                                                                                    child: Padding(
+                                                                                      padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                                                                      child: Text("+Add"),
+                                                                                    ),
+                                                                                    onTap: () {
+                                                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: LabSubjectsData.id,heading: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl,mode:"LabSubjects" ,)));
+                                                                                    },
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                          ],
+                                                                        ))
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            onTap: () async {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => subjectUnitsData(
+                                                                        ID: LabSubjectsData.id,
+                                                                        mode: "LabSubjects",
+                                                                        name: LabSubjectsData.heading,
+                                                                        fullName: LabSubjectsData.description,
+                                                                        photoUrl: LabSubjectsData.PhotoUrl,
+                                                                      )));
+                                                            },
+                                                            onLongPress: (){
+                                                              FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
+                                                            },
+                                                          ),
+                                                        );
+
+                                                    } else {
+                                                      download(LabSubjectsData.PhotoUrl,"ece_labsubjects");
+                                                      return
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(bottom: 5, left: 5, right: 5),
+                                                          child: InkWell(
+                                                            child: Container(
+                                                              width: double.infinity,
+                                                              decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                                              child: SingleChildScrollView(
+                                                                physics: const BouncingScrollPhysics(),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Container(
+                                                                      width: 90.0,
+                                                                      height: 70.0,
+                                                                      child: CachedNetworkImage(
+                                                                        imageUrl: LabSubjectsData.PhotoUrl,
+                                                                        placeholder: (context, url) => CircularProgressIndicator(),
+                                                                        errorWidget: (context, url, error) => Icon(Icons.error,color: Colors.red,),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      width: 10,
+                                                                    ),
+                                                                    Expanded(
+                                                                        child: Column(
+                                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  LabSubjectsData.heading,
+                                                                                  style: const TextStyle(
+                                                                                    fontSize: 20.0,
+                                                                                    color: Colors.white,
+                                                                                    fontWeight: FontWeight.w600,
+                                                                                  ),
+                                                                                ),
+                                                                                Spacer(),
+                                                                                InkWell(
+                                                                                  child: StreamBuilder<DocumentSnapshot>(
+                                                                                    stream: FirebaseFirestore.instance.collection('ECE')
+                                                                                        .doc("LabSubjects")
+                                                                                        .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+                                                                                    builder: (context, snapshot) {
+                                                                                      if (snapshot.hasData) {
+                                                                                        if (snapshot.data!.exists) {
+                                                                                          return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+                                                                                        } else {
+                                                                                          return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+                                                                                        }
+                                                                                      } else {
+                                                                                        return Container();
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  onTap:
+                                                                                      ()async {
+
+                                                                                    try {
+                                                                                      await FirebaseFirestore.instance.
+                                                                                      collection('ECE')
+                                                                                          .doc("LabSubjects")
+                                                                                          .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                          .get()
+                                                                                          .then((docSnapshot) {
+                                                                                        if (docSnapshot.exists) {
+                                                                                          FirebaseFirestore.instance.
+                                                                                          collection('ECE')
+                                                                                              .doc("LabSubjects")
+                                                                                              .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                              .delete();
+                                                                                          showToast("Unliked");
+                                                                                        } else {
+                                                                                          FirebaseFirestore.instance.
+                                                                                          collection('ECE')
+                                                                                              .doc("LabSubjects")
+                                                                                              .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+                                                                                              .set({"id": fullUserId()});
+                                                                                          showToast("Liked");
+                                                                                        }
+                                                                                      });
+                                                                                    } catch (e) {
+                                                                                      print(e);
+                                                                                    }
+                                                                                  },
+                                                                                ),
+                                                                                StreamBuilder<QuerySnapshot>(
+                                                                                  stream: FirebaseFirestore.instance
+                                                                                      .collection('ECE')
+                                                                                      .doc("LabSubjects")
+                                                                                      .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes")
+                                                                                      .snapshots(),
+                                                                                  builder: (context, snapshot) {
+                                                                                    if (snapshot.hasData) {
+                                                                                      return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
+                                                                                    } else {
+                                                                                      return const Text("0");
+                                                                                    }
+                                                                                  },
+                                                                                ),
+                                                                                SizedBox(width: 5,),
+                                                                                InkWell(
+                                                                                  child: StreamBuilder<DocumentSnapshot>(
+                                                                                    stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).snapshots(),
+                                                                                    builder: (context, snapshot) {
+                                                                                      if (snapshot.hasData) {
+                                                                                        if (snapshot.data!.exists) {
+                                                                                          return const Icon(
+                                                                                              Icons.library_add_check,
+                                                                                              size: 26, color: Colors.cyanAccent
+                                                                                          );
+                                                                                        } else {
+                                                                                          return const Icon(
+                                                                                            Icons.library_add_outlined,
+                                                                                            size: 26,
+                                                                                            color: Colors.cyanAccent,
+                                                                                          );
+                                                                                        }
+                                                                                      } else {
+                                                                                        return Container();
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  onTap: () async{
+                                                                                    try {
+                                                                                      await FirebaseFirestore
+                                                                                          .instance
+                                                                                          .collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id)
+                                                                                          .get()
+                                                                                          .then((docSnapshot) {
+                                                                                        if (docSnapshot.exists) {
+                                                                                          FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
+                                                                                          showToast("Removed from saved list");
+                                                                                        } else {
+                                                                                          FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
+                                                                                          showToast("${LabSubjectsData.heading} in favorites");                                                         }
+                                                                                      });
+                                                                                    } catch (e) {
+                                                                                      print(
+                                                                                          e);
+                                                                                    }
+
+                                                                                  },
+                                                                                ),
+                                                                                SizedBox(width: 10,)
+                                                                              ],
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 2,
+                                                                            ),
+                                                                            Text(
+                                                                              LabSubjectsData.description,
+                                                                              style: const TextStyle(
+                                                                                fontSize: 13.0,
+                                                                                color: Color.fromRGBO(204, 207, 222, 1),
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 1,
+                                                                            ),
+                                                                            Text(
+                                                                              'Added :${LabSubjectsData.Date}',
+                                                                              style: const TextStyle(
+                                                                                fontSize: 9.0,
+                                                                                color: Colors.white60,
+                                                                                //   fontWeight: FontWeight.bold,
+                                                                              ),
+                                                                            ),
+                                                                            if (userId() == "gmail.com")
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.only(right: 10),
+                                                                                child: Container(
+                                                                                  decoration: BoxDecoration(
+                                                                                    borderRadius: BorderRadius.circular(15),
+                                                                                    color: Colors.white.withOpacity(0.5),
+                                                                                    border: Border.all(color: Colors.white),
+                                                                                  ),
+                                                                                  child: InkWell(
+                                                                                    child: Padding(
+                                                                                      padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                                                                      child: Text("+Add"),
+                                                                                    ),
+                                                                                    onTap: () {
+                                                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: LabSubjectsData.id,heading: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl,mode:"LabSubjects" ,)));
+                                                                                    },
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                          ],
+                                                                        ))
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            onTap: () async {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => subjectUnitsData(
+                                                                        ID: LabSubjectsData.id,
+                                                                        mode: "LabSubjects",
+                                                                        name: LabSubjectsData.heading,
+                                                                        fullName: LabSubjectsData.description,
+                                                                        photoUrl: LabSubjectsData.PhotoUrl,
+                                                                      )));
+                                                            },
+                                                            onLongPress: (){
+                                                              FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
+                                                            },
+                                                          ),
+                                                        );
+
+                                                    }
+                                                    //   return Padding(
+                                                    //       padding: const EdgeInsets.only(top: 3),
+                                                    //       child: InkWell(
+                                                    //   child: Container(
+                                                    //       width: double.infinity,
+                                                    //       decoration: BoxDecoration(color: Colors.white.withOpacity(0.07), borderRadius: BorderRadius.all(Radius.circular(10))),
+                                                    //       child: SingleChildScrollView(
+                                                    //         physics: const BouncingScrollPhysics(),
+                                                    //         child: Row(
+                                                    //           children: [
+                                                    //             Container(
+                                                    //               width: 90.0,
+                                                    //               height: 70.0,
+                                                    //               decoration: BoxDecoration(
+                                                    //                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                                    //                 color: Colors.black.withOpacity(0.6),
+                                                    //                 image: DecorationImage(
+                                                    //                   image: NetworkImage(
+                                                    //                     SubjectsData.PhotoUrl,
+                                                    //                   ),
+                                                    //                   fit: BoxFit.cover,
+                                                    //                 ),
+                                                    //               ),
+                                                    //             ),
+                                                    //             const SizedBox(
+                                                    //               width: 10,
+                                                    //             ),
+                                                    //             Expanded(
+                                                    //                 child: Column(
+                                                    //               mainAxisAlignment: MainAxisAlignment.center,
+                                                    //               crossAxisAlignment: CrossAxisAlignment.start,
+                                                    //               children: [
+                                                    //                 Row(
+                                                    //                   children: [
+                                                    //                     Text(
+                                                    //                       SubjectsData.heading,
+                                                    //                       style: const TextStyle(
+                                                    //                         fontSize: 20.0,
+                                                    //                         color: Colors.white,
+                                                    //                         fontWeight: FontWeight.w600,
+                                                    //                       ),
+                                                    //                     ),
+                                                    //                     Spacer(),
+                                                    //                     InkWell(
+                                                    //                       child: StreamBuilder<DocumentSnapshot>(
+                                                    //                         stream: FirebaseFirestore.instance.collection('ECE')
+                                                    //                             .doc("LabSubjects")
+                                                    //                             .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+                                                    //                         builder: (context, snapshot) {
+                                                    //                           if (snapshot.hasData) {
+                                                    //                             if (snapshot.data!.exists) {
+                                                    //                               return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+                                                    //                             } else {
+                                                    //                               return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+                                                    //                             }
+                                                    //                           } else {
+                                                    //                             return Container();
+                                                    //                           }
+                                                    //                         },
+                                                    //                       ),
+                                                    //                       onTap:
+                                                    //                           ()async {
+                                                    //
+                                                    //                         try {
+                                                    //                           await FirebaseFirestore.instance.
+                                                    //                           collection('ECE')
+                                                    //                               .doc("LabSubjects")
+                                                    //                               .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+                                                    //                               .get()
+                                                    //                               .then((docSnapshot) {
+                                                    //                             if (docSnapshot.exists) {
+                                                    //                               FirebaseFirestore.instance.
+                                                    //                               collection('ECE')
+                                                    //                                   .doc("LabSubjects")
+                                                    //                                   .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+                                                    //                                   .delete();
+                                                    //                               showToast("Unliked");
+                                                    //                             } else {
+                                                    //                               FirebaseFirestore.instance.
+                                                    //                               collection('ECE')
+                                                    //                                   .doc("LabSubjects")
+                                                    //                                   .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+                                                    //                                   .set({"id": fullUserId()});
+                                                    //                               showToast("Liked");
+                                                    //                             }
+                                                    //                           });
+                                                    //                         } catch (e) {
+                                                    //                           print(e);
+                                                    //                         }
+                                                    //                       },
+                                                    //                     ),
+                                                    //                     StreamBuilder<QuerySnapshot>(
+                                                    //                       stream: FirebaseFirestore.instance
+                                                    //                           .collection('ECE')
+                                                    //                           .doc("LabSubjects")
+                                                    //                           .collection("LabSubjects").doc(SubjectsData.id).collection("likes")
+                                                    //                           .snapshots(),
+                                                    //                       builder: (context, snapshot) {
+                                                    //                         if (snapshot.hasData) {
+                                                    //                           return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
+                                                    //                         } else {
+                                                    //                           return const Text("0");
+                                                    //                         }
+                                                    //                       },
+                                                    //                     ),
+                                                    //                     SizedBox(width: 5,),
+                                                    //
+                                                    //                     InkWell(
+                                                    //                       child: StreamBuilder<DocumentSnapshot>(
+                                                    //                         stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(SubjectsData.id).snapshots(),
+                                                    //                         builder: (context, snapshot) {
+                                                    //                           if (snapshot.hasData) {
+                                                    //                             if (snapshot.data!.exists) {
+                                                    //                               return const Icon(
+                                                    //                                   Icons.library_add_check,
+                                                    //                                   size: 26, color: Colors.cyanAccent
+                                                    //                               );
+                                                    //                             } else {
+                                                    //                               return const Icon(
+                                                    //                                 Icons.library_add_outlined,
+                                                    //                                 size: 26,
+                                                    //                                 color: Colors.cyanAccent,
+                                                    //                               );
+                                                    //                             }
+                                                    //                           } else {
+                                                    //                             return Container();
+                                                    //                           }
+                                                    //                         },
+                                                    //                       ),
+                                                    //                       onTap: () async{
+                                                    //                         try {
+                                                    //                           await FirebaseFirestore
+                                                    //                               .instance
+                                                    //                               .collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(SubjectsData.id)
+                                                    //                               .get()
+                                                    //                               .then((docSnapshot) {
+                                                    //                             if (docSnapshot.exists) {
+                                                    //                               FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(SubjectsData.id).delete();
+                                                    //                               showToast("Removed from saved list");
+                                                    //                             } else {
+                                                    //                               FavouriteLabSubjectsSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
+                                                    //                               showToast("${SubjectsData.heading} in favorites");                                                         }
+                                                    //                           });
+                                                    //                         } catch (e) {
+                                                    //                           print(
+                                                    //                               e);
+                                                    //                         }
+                                                    //
+                                                    //                       },
+                                                    //                     ),
+                                                    //
+                                                    //                   ],
+                                                    //                 ),
+                                                    //                 SizedBox(
+                                                    //                   height: 2,
+                                                    //                 ),
+                                                    //                 Text(
+                                                    //                   SubjectsData.description,
+                                                    //                   style: const TextStyle(
+                                                    //                     fontSize: 13.0,
+                                                    //                     color: Color.fromRGBO(204, 207, 222, 1),
+                                                    //                   ),
+                                                    //                 ),
+                                                    //                 SizedBox(
+                                                    //                   height: 1,
+                                                    //                 ),
+                                                    //                 Text(
+                                                    //                   'Added :${SubjectsData.Date}',
+                                                    //                   style: const TextStyle(
+                                                    //                     fontSize: 9.0,
+                                                    //                     color: Colors.white60,
+                                                    //                     //   fontWeight: FontWeight.bold,
+                                                    //                   ),
+                                                    //                 ),
+                                                    //               ],
+                                                    //             ))
+                                                    //           ],
+                                                    //         ),
+                                                    //       ),
+                                                    //   ),
+                                                    //   onTap: () {
+                                                    //       Navigator.push(
+                                                    //           context,
+                                                    //           MaterialPageRoute(
+                                                    //               builder: (context) => subjectUnitsData(
+                                                    //                     ID: SubjectsData.id,
+                                                    //                     mode: "LabSubjects",
+                                                    //                     name: SubjectsData.heading,
+                                                    //                 photoUrl: SubjectsData.PhotoUrl,
+                                                    //                 fullName: SubjectsData.description,
+                                                    //
+                                                    //                   )));
+                                                    //   },
+                                                    // ),
+                                                    //     );
+                                                  }
+                                                  else{
+                                                    return Container();
+                                                  }
+                                                },
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      );
-                                  }
-                              }
-                            }),
+                                        );
+                                      else
+                                        return Center(child: Text("No Lab Subjects For Your Regulation"));
+                                    }
+                                }
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: 10,
+                              ),
+                              child: StreamBuilder<List<BooksConvertor>>(
+                                  stream: ReadBook(),
+                                  builder: (context, snapshot) {
+                                    final Books = snapshot.data;
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.waiting:
+                                        return const Center(
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 0.3,
+                                              color: Colors.cyan,
+                                            ));
+                                      default:
+                                        if (snapshot.hasError) {
+                                          return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                        } else {
+
+                                          if (Books!.length < 1) {
+                                            return Center(
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "No ECE Books",
+                                                  style: TextStyle(color: Colors.blue),
+                                                ),
+                                              ),
+                                            );
+                                          } else
+                                            return Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left: 10, bottom: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        "Based on ECE",
+                                                        style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
+                                                      ),
+                                                      Spacer(),
+                                                      if (userId() == "gmail.com")
+                                                        InkWell(
+                                                          child: Container(
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(15),
+                                                              color: Colors.white.withOpacity(0.5),
+                                                              border: Border.all(color: Colors.white),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                                              child: Text("+Add"),
+                                                            ),
+                                                          ),
+                                                          onTap: () {
+                                                            Navigator.push(context, MaterialPageRoute(builder: (context) => BooksCreator()));
+                                                          },
+                                                        ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      InkWell(
+                                                          child: Container(
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(15),
+                                                              color: Colors.white.withOpacity(0.5),
+                                                              border: Border.all(color: Colors.white),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                                              child: Text("See More"),
+                                                            ),
+                                                          ),
+                                                          onTap: () {
+                                                             Navigator.push(context, MaterialPageRoute(builder: (context) => allBooks()));
+                                                          }),
+                                                      SizedBox(width: 20,)
+                                                    ],
+                                                  ),
+                                                ),
+                                                Container(
+                                                  height: 140,
+                                                  child: ListView.separated(
+                                                    scrollDirection: Axis.horizontal,
+                                                    itemCount: Books.length,
+                                                    itemBuilder: (BuildContext context, int index) {
+                                                      final Uri uri = Uri.parse(Books[index].photoUrl);
+                                                      final String fileName = uri.pathSegments.last;
+                                                      var name = fileName.split("/").last;
+                                                      final file = File("${folderPath}/ece_books/$name");
+                                                      if (file.existsSync()) {
+                                                        return InkWell(
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.only(left: 10),
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                borderRadius: BorderRadius.circular(15),
+                                                                color: Colors.black.withOpacity(0.3),
+                                                                // border: Border.all(color: Colors.white),
+                                                              ),
+                                                              child: Row(
+                                                                children: [
+
+                                                                  Container(
+                                                                    decoration: BoxDecoration(
+                                                                      borderRadius: BorderRadius.circular(15),
+                                                                      color: Colors.black.withOpacity(0.4),
+                                                                      image: DecorationImage(
+                                                                        image: FileImage(file),
+                                                                        fit: BoxFit.cover,
+                                                                      ),
+                                                                    ),
+                                                                    height: 140,
+                                                                    width: 90,
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.all(8.0),
+                                                                    child: Container(
+                                                                      width: 100,
+                                                                      child: SingleChildScrollView(
+                                                                        child: Column(
+                                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Text(
+                                                                              Books[index].heading,
+                                                                              maxLines: 2,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
+                                                                            ),
+                                                                            Text(
+                                                                              Books[index].Author,
+                                                                              maxLines: 1,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+                                                                            ),
+                                                                            Text(
+                                                                              Books[index].edition,
+                                                                              maxLines: 1,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+                                                                            ),
+                                                                            Text(
+                                                                              Books[index].description,
+                                                                              maxLines: 1,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.white),
+                                                                            ),
+                                                                            SizedBox(height: 5,),
+                                                                            Row(
+                                                                              children: [
+                                                                                InkWell(
+                                                                                  child: StreamBuilder<DocumentSnapshot>(
+                                                                                    stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).snapshots(),
+                                                                                    builder: (context, snapshot) {
+                                                                                      if (snapshot.hasData) {
+                                                                                        if (snapshot.data!.exists) {
+                                                                                          return const Icon(
+                                                                                              Icons.library_add_check,
+                                                                                              size: 26, color: Colors.cyanAccent
+                                                                                          );
+                                                                                        } else {
+                                                                                          return const Icon(
+                                                                                            Icons.library_add_outlined,
+                                                                                            size: 26,
+                                                                                            color: Colors.cyanAccent,
+                                                                                          );
+                                                                                        }
+                                                                                      } else {
+                                                                                        return const Icon(
+                                                                                          Icons.library_add_outlined,
+                                                                                          size: 26,
+                                                                                          color: Colors.cyanAccent,
+                                                                                        );
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  onTap: () async{
+                                                                                    try {
+                                                                                      await FirebaseFirestore
+                                                                                          .instance
+                                                                                          .collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id)
+                                                                                          .get()
+                                                                                          .then((docSnapshot) {
+                                                                                        if (docSnapshot.exists) {
+                                                                                          FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).delete();
+                                                                                          showToast("Removed from saved list");
+                                                                                        } else {
+                                                                                          FavouriteBooksSubjects(description:Books[index].description,heading: Books[index].heading,link: Books[index].link,photoUrl: Books[index].photoUrl,Author: Books[index].Author,edition: Books[index].edition,date: Books[index].date, id: Books[index].id );
+                                                                                          showToast("${Books[index].heading} in favorites");                                                            }
+                                                                                      });
+                                                                                    } catch (e) {
+                                                                                      print(e);
+                                                                                    }
+
+                                                                                  },
+                                                                                ),
+
+                                                                                InkWell(
+                                                                                    child: Container(
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(15),
+                                                                                        color: Colors.white.withOpacity(0.5),
+                                                                                        border: Border.all(color: Colors.white),
+                                                                                      ),
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.only(left: 1, right: 5, top: 2, bottom: 2),
+                                                                                        child: Row(
+                                                                                          children: [
+                                                                                            Text("Open"),
+                                                                                            Icon(Icons.open_in_new)
+                                                                                          ],
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                    onTap: () {}
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 20,
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          onTap: () async {
+                                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>MyDownloadPage(fileUrl: Books[index].link,)));
+
+                                                            // _BooksBottomSheet(context, Books[index],file);
+                                                          },
+                                                        );
+                                                      } else {
+                                                        download(Books[index].photoUrl,"ece_books");
+                                                        return InkWell(
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.only(left: 10),
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                borderRadius: BorderRadius.circular(15),
+                                                                color: Colors.black.withOpacity(0.3),
+                                                                // border: Border.all(color: Colors.white),
+                                                              ),
+                                                              child: Row(
+                                                                children: [
+
+                                                                  Container(
+                                                                    decoration: BoxDecoration(
+                                                                      borderRadius: BorderRadius.circular(15),
+                                                                      color: Colors.black.withOpacity(0.4),
+                                                                    ),
+                                                                    height: 140,
+                                                                    width: 90,
+                                                                    child: CachedNetworkImage(
+                                                                      imageUrl: Books[index].photoUrl,
+                                                                      placeholder: (context, url) => CircularProgressIndicator(),
+                                                                      errorWidget: (context, url, error) => Icon(Icons.error),
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.all(8.0),
+                                                                    child: Container(
+                                                                      width: 100,
+                                                                      child: SingleChildScrollView(
+                                                                        child: Column(
+                                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Text(
+                                                                              Books[index].heading,
+                                                                              maxLines: 2,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
+                                                                            ),
+                                                                            Text(
+                                                                              Books[index].Author,
+                                                                              maxLines: 1,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+                                                                            ),
+                                                                            Text(
+                                                                              Books[index].edition,
+                                                                              maxLines: 1,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+                                                                            ),
+                                                                            Text(
+                                                                              Books[index].description,
+                                                                              maxLines: 1,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.white),
+                                                                            ),
+                                                                            SizedBox(height: 5,),
+                                                                            Row(
+                                                                              children: [
+                                                                                InkWell(
+                                                                                  child: StreamBuilder<DocumentSnapshot>(
+                                                                                    stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).snapshots(),
+                                                                                    builder: (context, snapshot) {
+                                                                                      if (snapshot.hasData) {
+                                                                                        if (snapshot.data!.exists) {
+                                                                                          return const Icon(
+                                                                                              Icons.library_add_check,
+                                                                                              size: 26, color: Colors.cyanAccent
+                                                                                          );
+                                                                                        } else {
+                                                                                          return const Icon(
+                                                                                            Icons.library_add_outlined,
+                                                                                            size: 26,
+                                                                                            color: Colors.cyanAccent,
+                                                                                          );
+                                                                                        }
+                                                                                      } else {
+                                                                                        return const Icon(
+                                                                                          Icons.library_add_outlined,
+                                                                                          size: 26,
+                                                                                          color: Colors.cyanAccent,
+                                                                                        );
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  onTap: () async{
+                                                                                    try {
+                                                                                      await FirebaseFirestore
+                                                                                          .instance
+                                                                                          .collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id)
+                                                                                          .get()
+                                                                                          .then((docSnapshot) {
+                                                                                        if (docSnapshot.exists) {
+                                                                                          FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).delete();
+                                                                                          showToast("Removed from saved list");
+                                                                                        } else {
+                                                                                          FavouriteBooksSubjects(description:Books[index].description,heading: Books[index].heading,link: Books[index].link,photoUrl: Books[index].photoUrl,Author: Books[index].Author,edition: Books[index].edition,date: Books[index].date, id: Books[index].id );
+                                                                                          showToast("${Books[index].heading} in favorites");                                                            }
+                                                                                      });
+                                                                                    } catch (e) {
+                                                                                      print(e);
+                                                                                    }
+
+                                                                                  },
+                                                                                ),
+
+                                                                                InkWell(
+                                                                                    child: Container(
+                                                                                      decoration: BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(15),
+                                                                                        color: Colors.white.withOpacity(0.5),
+                                                                                        border: Border.all(color: Colors.white),
+                                                                                      ),
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.only(left: 1, right: 5, top: 2, bottom: 2),
+                                                                                        child: Row(
+                                                                                          children: [
+                                                                                            Text("Open"),
+                                                                                            Icon(Icons.open_in_new)
+                                                                                          ],
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                    onTap: () {}
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 20,
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          onTap: () async {
+
+                                                            // _BooksBottomSheet(context, Books[index],file);
+                                                          },
+                                                        );
+                                                      }
+
+                                                      },
+                                                    shrinkWrap: true,
+                                                    separatorBuilder: (context, index) => const SizedBox(
+                                                      width: 9,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                        }
+                                    }
+                                  }),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        ),
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+                    ),
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            },
+          )
+          // child: Column(
+          //   children: [
+          //     Text(getRegulation()),
+          //     SizedBox(height: 10,),
+          //     Row(
+          //       children: [
+          //         Flexible(
+          //           child: Center(
+          //               child: Text(
+          //                 "ECE",
+          //                 style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.w500 ),
+          //               )),
+          //           flex: 5,
+          //         ),
+          //
+          //         InkWell(
+          //             child: Container(
+          //               height: 35,
+          //               width: 80,
+          //               decoration: BoxDecoration(
+          //                   borderRadius: BorderRadius.circular(5),
+          //                   color: Colors.white.withOpacity(0.7),
+          //                   image: DecorationImage(image: NetworkImage("https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/logo.png?alt=media&token=f008662e-2638-4990-a010-2081c2f4631b"),fit: BoxFit.fill)
+          //               ),
+          //             ),
+          //             onTap: () {
+          //               Navigator.push(context, MaterialPageRoute(builder: (context) => SRKRPage()));
+          //             }),
+          //         SizedBox(width: 20,)
+          //       ],
+          //     ),
+          //     Divider(thickness: 1,color: Colors.white,),
+          //     Expanded(
+          //       child: SingleChildScrollView(
+          //         physics:const BouncingScrollPhysics(),
+          //         child: Column(
+          //           mainAxisAlignment: MainAxisAlignment.start,
+          //           crossAxisAlignment: CrossAxisAlignment.start,
+          //           children: [
+          //             StreamBuilder<List<HomeUpdateConvertor>>(
+          //                 stream: readHomeUpdate(),
+          //                 builder: (context, snapshot) {
+          //                   final HomeUpdates = snapshot.data;
+          //                   switch (snapshot.connectionState) {
+          //                     case ConnectionState.waiting:
+          //                       return const Center(
+          //                           child: CircularProgressIndicator(
+          //                             strokeWidth: 0.3,
+          //                             color: Colors.cyan,
+          //                           ));
+          //                     default:
+          //                       if (snapshot.hasError) {
+          //                         return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+          //                       } else {
+          //                         if (HomeUpdates!.length == 0) {
+          //                           return Container();
+          //                         } else
+          //                           return Column(
+          //                             crossAxisAlignment: CrossAxisAlignment.start,
+          //                             mainAxisAlignment: MainAxisAlignment.start,
+          //                             children: [
+          //                               Padding(
+          //                                 padding: const EdgeInsets.only(left: 10, bottom: 10),
+          //                                 child: Text(
+          //                                   "Updates",
+          //                                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500, color: Colors.white),
+          //                                 ),
+          //                               ),
+          //
+          //                               Padding(
+          //                                 padding: const EdgeInsets.only(left: 20, right: 10),
+          //                                 child: ListView.separated(
+          //                                     physics: const BouncingScrollPhysics(),
+          //                                     shrinkWrap: true,
+          //                                     itemCount: HomeUpdates.length,
+          //                                     itemBuilder: (context, int index) {
+          //                                       final HomeUpdate = HomeUpdates[index];
+          //                                       final Uri uri = Uri.parse(HomeUpdate.photoUrl);
+          //                                       final String fileName = uri.pathSegments.last;
+          //                                       var name = fileName.split("/").last;
+          //                                       final file = File("${folderPath}/ece_updates/$name");
+          //                                       if (file.existsSync()) {
+          //                                         return
+          //                                           InkWell(
+          //                                             child: Row(
+          //                                               children: [
+          //                                                 Column(
+          //                                                   children: [
+          //                                                     Container(
+          //                                                       width: 30,
+          //                                                       height: 30,
+          //                                                       decoration: BoxDecoration(
+          //                                                         borderRadius: BorderRadius.circular(15),
+          //                                                         image: DecorationImage(
+          //                                                           image:FileImage(file) ,
+          //                                                           fit: BoxFit.cover,
+          //                                                         ),
+          //                                                       ),
+          //                                                     ),
+          //                                                     Text(splitDate(HomeUpdate.date),style: TextStyle(color: Colors.white,fontSize: 8),)
+          //                                                   ],
+          //                                                 ),
+          //                                                 SizedBox(
+          //                                                   width: 5,
+          //                                                 ),
+          //                                                 Expanded(
+          //                                                   child: Padding(
+          //                                                     padding: const EdgeInsets.all(5.0),
+          //                                                     child: Container(
+          //                                                         child: Text(
+          //                                                           HomeUpdate.heading,
+          //                                                           style: const TextStyle(
+          //                                                             fontSize: 15.0,
+          //                                                             color: Color.fromRGBO(204, 207, 222, 1),
+          //                                                             fontWeight: FontWeight.w400,
+          //                                                           ),
+          //                                                         )
+          //                                                     ),
+          //                                                   ),
+          //                                                 )
+          //                                               ],
+          //                                             ),
+          //                                             onTap: (){
+          //                                               if(HomeUpdate.link.length>0){
+          //                                                 _ExternalLaunchUrl(HomeUpdate.link);
+          //                                               }else{
+          //                                                 showToast("No Link");
+          //                                               }
+          //                                             },
+          //                                           );
+          //
+          //                                       } else {
+          //                                         downloadImage(HomeUpdate.photoUrl,"ece_updates");
+          //                                         return
+          //                                           InkWell(
+          //                                             child: Row(
+          //                                               children: [
+          //                                                 Column(
+          //                                                   children: [
+          //                                                     Container(
+          //                                                       width: 30,
+          //                                                       height: 30,
+          //                                                       child: CachedNetworkImage(
+          //                                                         imageUrl: HomeUpdate.photoUrl,
+          //                                                         placeholder: (context, url) => CircularProgressIndicator(),
+          //                                                         errorWidget: (context, url, error) => Icon(Icons.error),
+          //                                                       ),
+          //                                                     ),
+          //                                                     Text(splitDate(HomeUpdate.date),style: TextStyle(color: Colors.white,fontSize: 8),)
+          //                                                   ],
+          //                                                 ),
+          //                                                 SizedBox(
+          //                                                   width: 5,
+          //                                                 ),
+          //                                                 Expanded(
+          //                                                   child: Padding(
+          //                                                     padding: const EdgeInsets.all(5.0),
+          //                                                     child: Container(
+          //                                                         child: Text(
+          //                                                           HomeUpdate.heading,
+          //                                                           style: const TextStyle(
+          //                                                             fontSize: 15.0,
+          //                                                             color: Color.fromRGBO(204, 207, 222, 1),
+          //                                                             fontWeight: FontWeight.w400,
+          //                                                           ),
+          //                                                         )
+          //                                                     ),
+          //                                                   ),
+          //                                                 )
+          //                                               ],
+          //                                             ),
+          //                                             onTap: (){
+          //                                               if(HomeUpdate.link.length>0){
+          //                                                 _ExternalLaunchUrl(HomeUpdate.link);
+          //                                               }else{
+          //                                                 showToast("No Link");
+          //                                               }
+          //                                             },
+          //                                           );
+          //
+          //                                       }
+          //                                       // return InkWell(
+          //                                       //   child: Row(
+          //                                       //     children: [
+          //                                       //       Column(
+          //                                       //         children: [
+          //                                       //           Container(
+          //                                       //             width: 30,
+          //                                       //             height: 30,
+          //                                       //             decoration: BoxDecoration(
+          //                                       //               borderRadius: BorderRadius.circular(15),
+          //                                       //               image: DecorationImage(
+          //                                       //                 image: ,
+          //                                       //                 // image: NetworkImage(
+          //                                       //                 //   HomeUpdate.photoUrl,
+          //                                       //                 // ),
+          //                                       //                 fit: BoxFit.cover,
+          //                                       //               ),
+          //                                       //             ),
+          //                                       //           ),
+          //                                       //           Text(splitDate(HomeUpdate.date),style: TextStyle(color: Colors.white,fontSize: 8),)
+          //                                       //         ],
+          //                                       //       ),
+          //                                       //       SizedBox(
+          //                                       //         width: 5,
+          //                                       //       ),
+          //                                       //       Expanded(
+          //                                       //         child: Padding(
+          //                                       //           padding: const EdgeInsets.all(5.0),
+          //                                       //           child: Container(
+          //                                       //             child: Text(
+          //                                       //                 HomeUpdate.heading,
+          //                                       //               style: const TextStyle(
+          //                                       //                 fontSize: 15.0,
+          //                                       //                 color: Color.fromRGBO(204, 207, 222, 1),
+          //                                       //                 fontWeight: FontWeight.w400,
+          //                                       //               ),
+          //                                       //             )
+          //                                       //           ),
+          //                                       //         ),
+          //                                       //       )
+          //                                       //     ],
+          //                                       //   ),
+          //                                       // onTap: (){
+          //                                       //     if(HomeUpdate.link.length>0){
+          //                                       //       _ExternalLaunchUrl(HomeUpdate.link);
+          //                                       //     }else{
+          //                                       //       showToast("No Link");
+          //                                       //     }
+          //                                       // },
+          //                                       // );
+          //                                     },
+          //                                     separatorBuilder: (context, index) => const SizedBox(
+          //                                       height: 5,
+          //                                     )),
+          //                               ),
+          //                             ],
+          //                           );
+          //                       }
+          //                   }
+          //                 }),
+          //             //Branch News
+          //             Padding(
+          //               padding: const EdgeInsets.only(left: 10,top: 15),
+          //               child: Row(
+          //                 children: [
+          //                   Text(
+          //                     "ECE News",
+          //                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500, color: Colors.white),
+          //                   ),
+          //                   Spacer(),
+          //                   if (userId() == "gmail.com")
+          //                     Padding(
+          //                       padding: const EdgeInsets.only(right: 10),
+          //                       child: Container(
+          //                         decoration: BoxDecoration(
+          //                           borderRadius: BorderRadius.circular(15),
+          //                           color: Colors.white.withOpacity(0.5),
+          //                           border: Border.all(color: Colors.white),
+          //                         ),
+          //                         child: InkWell(
+          //                           child: Padding(
+          //                             padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+          //                             child: Text("+Add"),
+          //                           ),
+          //                           onTap: () {
+          //                             Navigator.push(context, MaterialPageRoute(builder: (context) => NewsCreator()));
+          //                           },
+          //                         ),
+          //                       ),
+          //                     ),
+          //                   InkWell(
+          //                     child: Container(
+          //                       decoration: BoxDecoration(
+          //                         color: Colors.grey[500],
+          //                         borderRadius: BorderRadius.circular(15),
+          //                         border: Border.all(color: Colors.white),
+          //                       ),
+          //                       child: Padding(
+          //                         padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+          //                         child: Text("see more"),
+          //                       ),
+          //                     ),
+          //                     onTap: () {
+          //                       Navigator.push(context, MaterialPageRoute(builder: (context) => NewsPage()));
+          //                     },
+          //                   ),
+          //                   SizedBox(
+          //                     width: 20,
+          //                   ),
+          //                 ],
+          //               ),
+          //             ),
+          //             SizedBox(
+          //               height: 10,
+          //             ),
+          //             StreamBuilder<List<BranchNewConvertor>>(
+          //                 stream: readBranchNew(),
+          //                 builder: (context, snapshot) {
+          //                   final BranchNews = snapshot.data;
+          //                   switch (snapshot.connectionState) {
+          //                     case ConnectionState.waiting:
+          //                       return const Center(
+          //                           child: CircularProgressIndicator(
+          //                             strokeWidth: 0.3,
+          //                             color: Colors.cyan,
+          //                           ));
+          //                     default:
+          //                       if (snapshot.hasError) {
+          //                         return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+          //                       } else {
+          //                         if (BranchNews!.length == 0) {
+          //                           return Center(
+          //                               child: Text(
+          //                                 "No ECE News",
+          //                                 style: TextStyle(color: Colors.lightBlueAccent),
+          //                               ));
+          //                         } else
+          //                           return CarouselSlider(
+          //                             items: List.generate(
+          //                                 BranchNews.length,
+          //                                     (int index) {
+          //                                   final BranchNew = BranchNews[index];
+          //                                   final Uri uri = Uri.parse(BranchNew.photoUrl);
+          //                                   final String fileName = uri.pathSegments.last;
+          //                                   var name = fileName.split("/").last;
+          //                                   final file = File("${folderPath}/ece_news/$name");
+          //                                   if (file.existsSync()) {
+          //                                     return InkWell(child:Image.file(file),
+          //                                       onTap: () async {
+          //                                         _BranchNewsBottomSheet(context, BranchNew,file);
+          //                                       },
+          //                                       onLongPress: (){
+          //                                         Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
+          //                                       },
+          //                                     );
+          //                                   } else {
+          //                                     downloadImage(BranchNew.photoUrl,"ece_news");
+          //                                     return InkWell(
+          //                                       child: CachedNetworkImage(
+          //                                         imageUrl: BranchNew.photoUrl,
+          //                                         placeholder: (context, url) => CircularProgressIndicator(),
+          //                                         errorWidget: (context, url, error) => Icon(Icons.error),
+          //                                       ),
+          //                                       onTap: () async {
+          //                                         // _BranchNewsBottomSheet(context, BranchNew);
+          //
+          //                                       },
+          //                                       onLongPress: (){
+          //                                         Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom(url: BranchNew.photoUrl)));
+          //                                       },
+          //                                     );
+          //                                   }
+          //
+          //                                 }
+          //                             ),
+          //                             //Slider Container properties
+          //                             options: CarouselOptions(
+          //                               viewportFraction: 0.85,
+          //                               enlargeCenterPage: true,
+          //                               height: 210,
+          //                               autoPlayAnimationDuration: Duration(milliseconds: 1800),
+          //                               autoPlay: true,
+          //                             ),
+          //                           );
+          //                       }
+          //                   }
+          //                 }),
+          //             SizedBox(
+          //               height: 15,
+          //             ),
+          //             //Subjects
+          //             Padding(
+          //               padding: const EdgeInsets.only(left: 10, top: 3),
+          //               child: Row(
+          //                 children: [
+          //                   Text(
+          //                     "Regulation : ${Reg}",
+          //                     style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
+          //                   ),
+          //
+          //                   Padding(
+          //                     padding: const EdgeInsets.only(top: 10,left: 3),
+          //                     child: Text("(${Year})",style: TextStyle(color: Colors.white),),
+          //                   ),
+          //                   Spacer(),
+          //                   InkWell(
+          //                     child: Container(
+          //                       decoration: BoxDecoration(
+          //                         borderRadius: BorderRadius.circular(15),
+          //                         color: Colors.red.withOpacity(1),
+          //                         border: Border.all(color: Colors.white),
+          //                       ),
+          //                       child: Padding(
+          //                         padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+          //                         child: Text(
+          //                           "Change",
+          //                           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.white),
+          //                         ),
+          //                       ),
+          //                     ),
+          //                     onTap: () {
+          //                       showDialog(
+          //                         context: context,
+          //                         builder: (context) {
+          //                           return Dialog(
+          //                             backgroundColor: Colors
+          //                                 .black
+          //                                 .withOpacity(0.1),
+          //                             shape:
+          //                             RoundedRectangleBorder(
+          //                                 borderRadius:
+          //                                 BorderRadius
+          //                                     .circular(
+          //                                     20)),
+          //                             elevation: 16,
+          //                             child: Container(
+          //                               decoration: BoxDecoration(
+          //                                 border: Border.all(
+          //                                     color: Colors.white
+          //                                         .withOpacity(
+          //                                         0.5)),
+          //                                 borderRadius:
+          //                                 BorderRadius
+          //                                     .circular(20),
+          //                               ),
+          //                               child: ListView(
+          //                                 physics: BouncingScrollPhysics(),
+          //                                 shrinkWrap: true,
+          //                                 children: <Widget>[
+          //                                   const Center(
+          //                                     child: Padding(
+          //                                       padding:
+          //                                       EdgeInsets
+          //                                           .all(8.0),
+          //                                       child: Text(
+          //                                         "Add to Other Projects",
+          //                                         style: TextStyle(
+          //                                             fontSize:
+          //                                             22,
+          //                                             fontWeight:
+          //                                             FontWeight.w500,
+          //                                             color: Colors.orange),
+          //                                       ),
+          //                                     ),
+          //                                   ),
+          //                                   StreamBuilder<List<RegulationConvertor>>(
+          //                                       stream: readRegulation(),
+          //                                       builder: (context, snapshot) {
+          //                                         final user = snapshot.data;
+          //                                         switch (snapshot.connectionState) {
+          //                                           case ConnectionState.waiting:
+          //                                             return const Center(
+          //                                                 child: CircularProgressIndicator(
+          //                                                   strokeWidth: 0.3,
+          //                                                   color: Colors.cyan,
+          //                                                 ));
+          //                                           default:
+          //                                             if (snapshot.hasError) {
+          //                                               return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+          //                                             } else {
+          //                                               return ListView.separated(
+          //                                                   physics: const BouncingScrollPhysics(),
+          //                                                   shrinkWrap: true,
+          //                                                   itemCount: user!.length,
+          //                                                   itemBuilder: (context, int index) {
+          //                                                     final SubjectsData = user[index];
+          //                                                     return Column(
+          //                                                       mainAxisAlignment: MainAxisAlignment.start,
+          //                                                       crossAxisAlignment: CrossAxisAlignment.start,
+          //                                                       children: [
+          //                                                         Padding(
+          //                                                           padding: const EdgeInsets.only(left: 10,bottom: 5),
+          //                                                           child: Text("${SubjectsData.heading}",style: TextStyle(color: Colors.white,fontSize: 30),),
+          //                                                         ),
+          //                                                         StreamBuilder<List<RegulationYearConvertor>>(
+          //                                                             stream: readRegulationYear(SubjectsData.id),
+          //                                                             builder: (context, snapshot) {
+          //                                                               final user1 = snapshot.data;
+          //                                                               switch (snapshot.connectionState) {
+          //                                                                 case ConnectionState.waiting:
+          //                                                                   return const Center(
+          //                                                                       child: CircularProgressIndicator(
+          //                                                                         strokeWidth: 0.3,
+          //                                                                         color: Colors.cyan,
+          //                                                                       ));
+          //                                                                 default:
+          //                                                                   if (snapshot.hasError) {
+          //                                                                     return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+          //                                                                   } else {
+          //                                                                     return ListView.separated(
+          //                                                                         physics: const BouncingScrollPhysics(),
+          //                                                                         shrinkWrap: true,
+          //                                                                         itemCount: user1!.length,
+          //                                                                         itemBuilder: (context, int index) {
+          //                                                                           final SubjectsData1 = user1[index];
+          //                                                                           return InkWell(
+          //                                                                             child: Padding(
+          //                                                                               padding: const EdgeInsets.only(left: 25),
+          //                                                                               child: Text("${SubjectsData1.heading}",style: TextStyle(color: Colors.white,fontSize: 20),),
+          //                                                                             ),
+          //                                                                             onTap: (){
+          //                                                                               setState(() {
+          //                                                                                 Reg = SubjectsData.heading;
+          //                                                                                 RegID = SubjectsData.id;
+          //
+          //                                                                                 Year = SubjectsData1.heading;
+          //                                                                                 YearID = SubjectsData1.id;
+          //                                                                               });
+          //                                                                               Navigator.pop(context);
+          //                                                                             },
+          //                                                                           );
+          //                                                                         },
+          //                                                                         separatorBuilder: (context, index) => const SizedBox(
+          //                                                                           height: 1,
+          //                                                                         ));
+          //                                                                   }
+          //                                                               }
+          //                                                             }),
+          //                                                         Padding(
+          //                                                           padding: const EdgeInsets.only(left: 10,right: 10),
+          //                                                           child: Divider(color: Colors.white,thickness: 0.3,),
+          //                                                         )
+          //                                                       ],
+          //                                                     );
+          //                                                   },
+          //                                                   separatorBuilder: (context, index) => const SizedBox(
+          //                                                     height: 1,
+          //                                                   ));
+          //                                             }
+          //                                         }
+          //                                       }),
+          //                                   const SizedBox(
+          //                                     height: 10,
+          //                                   )
+          //                                 ],
+          //                               ),
+          //                             ),
+          //                           );
+          //                         },
+          //                       );
+          //                     },
+          //                   ),
+          //
+          //                   SizedBox(width: 20),
+          //                 ],
+          //               ),
+          //             ),
+          //             Padding(
+          //               padding: const EdgeInsets.only(left: 20, right: 20),
+          //               child: Divider(
+          //                 color: Colors.white,
+          //               ),
+          //             ),
+          //             SizedBox(
+          //               height: 10,
+          //             ),
+          //             if(showHome)Padding(
+          //               padding: const EdgeInsets.only(left: 20,right: 8,bottom: 8),
+          //               child: Column(
+          //                 children: [
+          //                   Padding(
+          //                     padding: const EdgeInsets.only(bottom: 10),
+          //                     child: Text("Time Table :",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+          //                   ),
+          //                   StreamBuilder<List<TimeTableConvertor>>(
+          //                       stream: readTimeTable(id: RegID,id1: YearID),
+          //                       builder: (context, snapshot) {
+          //                         final user= snapshot.data;
+          //                         switch (snapshot.connectionState) {
+          //                           case ConnectionState.waiting:
+          //                             return const Center(
+          //                                 child: CircularProgressIndicator(
+          //                                   strokeWidth: 0.3,
+          //                                   color: Colors.cyan,
+          //                                 ));
+          //                           default:
+          //                             if (snapshot.hasError) {
+          //                               return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+          //                             } else {
+          //                               return SizedBox(
+          //                                 height: 74,
+          //                                 child: ListView.separated(
+          //                                     physics: const BouncingScrollPhysics(),
+          //                                     shrinkWrap: true,
+          //                                     scrollDirection: Axis.horizontal,
+          //                                     itemCount: user!.length,
+          //                                     itemBuilder: (context, int index) {
+          //                                       final classess = user[index];
+          //
+          //                                       final Uri uri = Uri.parse(classess.photoUrl);
+          //                                       final String fileName = uri.pathSegments.last;
+          //                                       var name = fileName.split("/").last;
+          //                                       final file = File("${folderPath}/ece_timetable/$name");
+          //                                       if (file.existsSync()) {
+          //                                         return InkWell(
+          //                                           child: Column(
+          //                                             children: [
+          //                                               Container(
+          //                                                 height: 60,
+          //                                                 width: 70,
+          //                                                 decoration: BoxDecoration(
+          //                                                     color: Colors.white,
+          //                                                     borderRadius: BorderRadius.circular(40),
+          //                                                     image: DecorationImage(image: FileImage(file),fit: BoxFit.fill)
+          //                                                 ),
+          //
+          //                                               ),
+          //                                               Center(child: Text("${classess.heading}",style: TextStyle(color: Colors.white),))
+          //                                             ],
+          //                                           ),
+          //                                           onTap: (){
+          //                                             Navigator.push(context, MaterialPageRoute(builder: (context)=>ImageZoom( url: classess.photoUrl,)));
+          //                                           },
+          //                                         );
+          //
+          //                                       } else {
+          //                                         downloadImage(classess.photoUrl,"ece_timetable");
+          //
+          //                                         return InkWell(
+          //                                           child: Container(
+          //                                             width: 70,
+          //                                             decoration: BoxDecoration(
+          //                                                 color: Colors.white,
+          //                                                 borderRadius: BorderRadius.circular(40),
+          //                                                 image: DecorationImage(image: NetworkImage(classess.photoUrl),fit: BoxFit.fill)
+          //                                             ),
+          //                                             child: Center(child: Text("${classess.heading}")),
+          //                                           ),
+          //
+          //                                         );
+          //                                       }
+          //
+          //                                     },
+          //                                     separatorBuilder: (context, index) => const SizedBox(
+          //                                       height: 1,
+          //                                     )),
+          //                               );
+          //                             }
+          //                         }
+          //                       }),
+          //                 ],
+          //               ),
+          //             ),
+          //             if(RegID.isNotEmpty && YearID.isNotEmpty)Row(
+          //               children: [
+          //                 Padding(
+          //                   padding: const EdgeInsets.only(left: 20),
+          //                   child: Text(
+          //                     "Subjects",
+          //                     style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
+          //                   ),
+          //                 ),
+          //                 Spacer(),
+          //                 InkWell(
+          //                   child: Container(
+          //                     decoration: BoxDecoration(
+          //                       color: Colors.white54,
+          //                       border: Border.all(color: Colors.white),
+          //                       borderRadius: BorderRadius.circular(25),
+          //                     ),
+          //                     child: Padding(
+          //                       padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+          //                       child: Text("see more"),
+          //                     ),
+          //                   ),
+          //                   onTap: () {
+          //                     Navigator.push(context, MaterialPageRoute(builder: (context) =>  Subjects()));
+          //                   },
+          //                 ),
+          //                 SizedBox(width: 20,)
+          //               ],
+          //             ),
+          //             if(RegID.isNotEmpty && YearID.isNotEmpty)Padding(
+          //               padding: const EdgeInsets.only(top: 10, left: 20, right: 10,bottom: 5),
+          //               child: StreamBuilder<List<FlashConvertor>>(
+          //                   stream: readFlashNews(),
+          //                   builder: (context, snapshot) {
+          //                     final Favourites = snapshot.data;
+          //                     switch (snapshot.connectionState) {
+          //                       case ConnectionState.waiting:
+          //                         return const Center(
+          //                             child: CircularProgressIndicator(
+          //                               strokeWidth: 0.3,
+          //                               color: Colors.cyan,
+          //                             ));
+          //                       default:
+          //                         if (snapshot.hasError) {
+          //                           return Center(child: Text("Error"));
+          //                         } else {
+          //                           if (Favourites!.length > 0)
+          //                             return ListView.builder(
+          //                               physics: const BouncingScrollPhysics(),
+          //                               shrinkWrap: true,
+          //                               itemCount: Favourites.length,
+          //                               itemBuilder: (context, int index) {
+          //                                 final SubjectsData = Favourites[index];
+          //                                 if(SubjectsData.regulation
+          //                                     .toString()
+          //                                     .startsWith("r20-1 year 1 sem"))
+          //                                 {
+          //                                   final Uri uri = Uri.parse(SubjectsData.PhotoUrl);
+          //                                   final String fileName = uri.pathSegments.last;
+          //                                   var name = fileName.split("/").last;
+          //                                   final file = File("${folderPath}/ece_subjects/$name");
+          //                                   if (file.existsSync()) {
+          //                                     return  InkWell(
+          //                                       child: Container(
+          //                                         width: double.infinity,
+          //                                         decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.all(Radius.circular(10))),
+          //                                         child: SingleChildScrollView(
+          //                                           physics: const BouncingScrollPhysics(),
+          //                                           child: Row(
+          //                                             children: [
+          //                                               Container(
+          //                                                 width: 90.0,
+          //                                                 height: 70.0,
+          //                                                 decoration: BoxDecoration(
+          //                                                   borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          //                                                   color: Colors.redAccent,
+          //                                                   image: DecorationImage(
+          //                                                     image: FileImage(file) ,
+          //                                                     fit: BoxFit.cover,
+          //                                                   ),
+          //                                                 ),
+          //                                               ),
+          //                                               const SizedBox(
+          //                                                 width: 10,
+          //                                               ),
+          //
+          //                                               Expanded(
+          //                                                   child: Column(
+          //                                                     mainAxisAlignment: MainAxisAlignment.center,
+          //                                                     crossAxisAlignment: CrossAxisAlignment.start,
+          //                                                     children: [
+          //                                                       Row(
+          //                                                         children: [
+          //                                                           Text(
+          //                                                             SubjectsData.heading,
+          //                                                             style: const TextStyle(
+          //                                                               fontSize: 20.0,
+          //                                                               color: Colors.white,
+          //                                                               fontWeight: FontWeight.w600,
+          //                                                             ),
+          //                                                           ),
+          //                                                           Spacer(),
+          //                                                           InkWell(
+          //                                                             child: StreamBuilder<DocumentSnapshot>(
+          //                                                               stream: FirebaseFirestore.instance.collection('ECE')
+          //                                                                   .doc("Subjects")
+          //                                                                   .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+          //                                                               builder: (context, snapshot) {
+          //                                                                 if (snapshot.hasData) {
+          //                                                                   if (snapshot.data!.exists) {
+          //                                                                     return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+          //                                                                   } else {
+          //                                                                     return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+          //                                                                   }
+          //                                                                 } else {
+          //                                                                   return Container();
+          //                                                                 }
+          //                                                               },
+          //                                                             ),
+          //                                                             onTap:
+          //                                                                 ()async {
+          //
+          //                                                               try {
+          //                                                                 await FirebaseFirestore.instance.
+          //                                                                 collection('ECE')
+          //                                                                     .doc("Subjects")
+          //                                                                     .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+          //                                                                     .get()
+          //                                                                     .then((docSnapshot) {
+          //                                                                   if (docSnapshot.exists) {
+          //                                                                     FirebaseFirestore.instance.
+          //                                                                     collection('ECE')
+          //                                                                         .doc("Subjects")
+          //                                                                         .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+          //                                                                         .delete();
+          //                                                                     showToast("Unliked");
+          //                                                                   } else {
+          //                                                                     FirebaseFirestore.instance.
+          //                                                                     collection('ECE')
+          //                                                                         .doc("Subjects")
+          //                                                                         .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+          //                                                                         .set({"id": fullUserId()});
+          //                                                                     showToast("Liked");
+          //                                                                   }
+          //                                                                 });
+          //                                                               } catch (e) {
+          //                                                                 print(e);
+          //                                                               }
+          //                                                             },
+          //                                                           ),
+          //                                                           StreamBuilder<QuerySnapshot>(
+          //                                                             stream: FirebaseFirestore.instance
+          //                                                                 .collection('ECE')
+          //                                                                 .doc("Subjects")
+          //                                                                 .collection("Subjects").doc(SubjectsData.id).collection("likes")
+          //                                                                 .snapshots(),
+          //                                                             builder: (context, snapshot) {
+          //                                                               if (snapshot.hasData) {
+          //                                                                 return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
+          //                                                               } else {
+          //                                                                 return const Text("0");
+          //                                                               }
+          //                                                             },
+          //                                                           ),
+          //                                                           SizedBox(width: 5,),
+          //                                                           InkWell(
+          //                                                             child: StreamBuilder<DocumentSnapshot>(
+          //                                                               stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
+          //                                                               builder: (context, snapshot) {
+          //                                                                 if (snapshot.hasData) {
+          //                                                                   if (snapshot.data!.exists) {
+          //                                                                     return const Icon(
+          //                                                                         Icons.library_add_check,
+          //                                                                         size: 26, color: Colors.cyanAccent
+          //                                                                     );
+          //                                                                   } else {
+          //                                                                     return const Icon(
+          //                                                                       Icons.library_add_outlined,
+          //                                                                       size: 26,
+          //                                                                       color: Colors.cyanAccent,
+          //                                                                     );
+          //                                                                   }
+          //                                                                 } else {
+          //                                                                   return Container();
+          //                                                                 }
+          //                                                               },
+          //                                                             ),
+          //                                                             onTap: () async{
+          //                                                               try {
+          //                                                                 await FirebaseFirestore
+          //                                                                     .instance
+          //                                                                     .collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id)
+          //                                                                     .get()
+          //                                                                     .then((docSnapshot) {
+          //                                                                   if (docSnapshot.exists) {
+          //                                                                     FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
+          //                                                                     showToast("Removed from saved list");
+          //                                                                   } else {
+          //                                                                     FavouriteSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
+          //                                                                     showToast("${SubjectsData.heading} in favorites");                                                                  }
+          //                                                                 });
+          //                                                               } catch (e) {
+          //                                                                 print(
+          //                                                                     e);
+          //                                                               }
+          //
+          //                                                             },
+          //                                                           ),
+          //                                                         ],
+          //                                                       ),
+          //                                                       SizedBox(
+          //                                                         height: 2,
+          //                                                       ),
+          //                                                       Text(
+          //                                                         SubjectsData.description,
+          //                                                         style: const TextStyle(
+          //                                                           fontSize: 13.0,
+          //                                                           color: Color.fromRGBO(204, 207, 222, 1),
+          //                                                         ),
+          //                                                       ),
+          //                                                       SizedBox(
+          //                                                         height: 1,
+          //                                                       ),
+          //                                                       Text(
+          //                                                         'Added :${SubjectsData.Date}',
+          //                                                         style: const TextStyle(
+          //                                                           fontSize: 9.0,
+          //                                                           color: Colors.white60,
+          //                                                           //   fontWeight: FontWeight.bold,
+          //                                                         ),
+          //                                                       ),
+          //                                                       if (userId() == "gmail.com")
+          //                                                         Padding(
+          //                                                           padding: const EdgeInsets.only(right: 10),
+          //                                                           child: Container(
+          //                                                             decoration: BoxDecoration(
+          //                                                               borderRadius: BorderRadius.circular(15),
+          //                                                               color: Colors.black.withOpacity(0.3),
+          //                                                               border: Border.all(color: Colors.white.withOpacity(0.5)),
+          //                                                             ),
+          //                                                             width: 70,
+          //                                                             child: InkWell(
+          //                                                               child: Row(
+          //                                                                 children: [
+          //                                                                   SizedBox(width: 5,),
+          //                                                                   Icon(Icons.edit,color: Colors.white,),
+          //                                                                   Padding(
+          //                                                                     padding: const EdgeInsets.only(left: 3, right: 3),
+          //                                                                     child: Text("Edit",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 18),),
+          //                                                                   ),
+          //                                                                 ],
+          //                                                               ),
+          //                                                               onTap: () {
+          //                                                                 Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: SubjectsData.id,heading: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl,mode:"Subjects" ,)));
+          //                                                               },
+          //                                                             ),
+          //                                                           ),
+          //                                                         ),
+          //                                                     ],
+          //                                                   ))
+          //                                             ],
+          //                                           ),
+          //                                         ),
+          //                                       ),
+          //                                       onTap: () async {
+          //                                         Navigator.push(
+          //                                             context,
+          //                                             MaterialPageRoute(
+          //                                                 builder: (context) => subjectUnitsData(
+          //                                                   ID: SubjectsData.id,
+          //                                                   mode: "Subjects",
+          //                                                   name: SubjectsData.heading,
+          //                                                   fullName: SubjectsData.description,
+          //                                                   photoUrl: SubjectsData.PhotoUrl,
+          //                                                 )));
+          //                                       },
+          //                                       // onLongPress: () async {
+          //                                       //   SharedPreferences prefs = await SharedPreferences.getInstance();
+          //                                       //   String? SelectedSubjects = prefs.getString('addSubjects') ?? null;
+          //                                       //   print(SelectedSubjects);
+          //                                       //   if (SelectedSubjects != null) {
+          //                                       //     final body = jsonDecode(SelectedSubjects);
+          //                                       //     subjects = body.map<SearchAddedSubjects>(SearchAddedSubjects.fromJson).toList();
+          //                                       //   }
+          //                                       //   print(subjects);
+          //                                       //   final person = subjects.where((element) => element.name == SubjectsData.heading);
+          //                                       //   if (person.isEmpty) {
+          //                                       //     subjects.add(SearchAddedSubjects(
+          //                                       //         name: SubjectsData.heading, description: SubjectsData.description, date: SubjectsData.Date, id: SubjectsData.id, photoUrl: SubjectsData.PhotoUrl));
+          //                                       //   } else {
+          //                                       //     showToast("${SubjectsData.heading} is already added");
+          //                                       //   }
+          //                                       //   print(subjects);
+          //                                       //   prefs.setString('addSubjects', jsonEncode(subjects));
+          //                                       //   print(jsonEncode(subjects));
+          //                                       //   showToast("${SubjectsData.heading} is Added");
+          //                                       // },
+          //                                     );
+          //
+          //
+          //                                   } else {
+          //                                     downloadImage(SubjectsData.PhotoUrl,"ece_subjects");
+          //                                     return InkWell(
+          //                                       child: Container(
+          //                                         width: double.infinity,
+          //                                         decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.all(Radius.circular(10))),
+          //                                         child: SingleChildScrollView(
+          //                                           physics: const BouncingScrollPhysics(),
+          //                                           child: Row(
+          //                                             children: [
+          //                                               Container(
+          //                                                 width: 90.0,
+          //                                                 height: 70.0,
+          //                                                 child:CachedNetworkImage(
+          //                                                   imageUrl: SubjectsData.PhotoUrl,
+          //                                                   placeholder: (context, url) => CircularProgressIndicator(),
+          //                                                   errorWidget: (context, url, error) => Icon(Icons.error),
+          //                                                 ),
+          //                                               ),
+          //                                               const SizedBox(
+          //                                                 width: 10,
+          //                                               ),
+          //
+          //                                               Expanded(
+          //                                                   child: Column(
+          //                                                     mainAxisAlignment: MainAxisAlignment.center,
+          //                                                     crossAxisAlignment: CrossAxisAlignment.start,
+          //                                                     children: [
+          //                                                       Row(
+          //                                                         children: [
+          //                                                           Text(
+          //                                                             SubjectsData.heading,
+          //                                                             style: const TextStyle(
+          //                                                               fontSize: 20.0,
+          //                                                               color: Colors.white,
+          //                                                               fontWeight: FontWeight.w600,
+          //                                                             ),
+          //                                                           ),
+          //                                                           Spacer(),
+          //                                                           InkWell(
+          //                                                             child: StreamBuilder<DocumentSnapshot>(
+          //                                                               stream: FirebaseFirestore.instance.collection('ECE')
+          //                                                                   .doc("Subjects")
+          //                                                                   .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+          //                                                               builder: (context, snapshot) {
+          //                                                                 if (snapshot.hasData) {
+          //                                                                   if (snapshot.data!.exists) {
+          //                                                                     return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+          //                                                                   } else {
+          //                                                                     return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+          //                                                                   }
+          //                                                                 } else {
+          //                                                                   return Container();
+          //                                                                 }
+          //                                                               },
+          //                                                             ),
+          //                                                             onTap:
+          //                                                                 ()async {
+          //
+          //                                                               try {
+          //                                                                 await FirebaseFirestore.instance.
+          //                                                                 collection('ECE')
+          //                                                                     .doc("Subjects")
+          //                                                                     .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+          //                                                                     .get()
+          //                                                                     .then((docSnapshot) {
+          //                                                                   if (docSnapshot.exists) {
+          //                                                                     FirebaseFirestore.instance.
+          //                                                                     collection('ECE')
+          //                                                                         .doc("Subjects")
+          //                                                                         .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+          //                                                                         .delete();
+          //                                                                     showToast("Unliked");
+          //                                                                   } else {
+          //                                                                     FirebaseFirestore.instance.
+          //                                                                     collection('ECE')
+          //                                                                         .doc("Subjects")
+          //                                                                         .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+          //                                                                         .set({"id": fullUserId()});
+          //                                                                     showToast("Liked");
+          //                                                                   }
+          //                                                                 });
+          //                                                               } catch (e) {
+          //                                                                 print(e);
+          //                                                               }
+          //                                                             },
+          //                                                           ),
+          //                                                           StreamBuilder<QuerySnapshot>(
+          //                                                             stream: FirebaseFirestore.instance
+          //                                                                 .collection('ECE')
+          //                                                                 .doc("Subjects")
+          //                                                                 .collection("Subjects").doc(SubjectsData.id).collection("likes")
+          //                                                                 .snapshots(),
+          //                                                             builder: (context, snapshot) {
+          //                                                               if (snapshot.hasData) {
+          //                                                                 return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
+          //                                                               } else {
+          //                                                                 return const Text("0");
+          //                                                               }
+          //                                                             },
+          //                                                           ),
+          //                                                           SizedBox(width: 5,),
+          //                                                           InkWell(
+          //                                                             child: StreamBuilder<DocumentSnapshot>(
+          //                                                               stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
+          //                                                               builder: (context, snapshot) {
+          //                                                                 if (snapshot.hasData) {
+          //                                                                   if (snapshot.data!.exists) {
+          //                                                                     return const Icon(
+          //                                                                         Icons.library_add_check,
+          //                                                                         size: 26, color: Colors.cyanAccent
+          //                                                                     );
+          //                                                                   } else {
+          //                                                                     return const Icon(
+          //                                                                       Icons.library_add_outlined,
+          //                                                                       size: 26,
+          //                                                                       color: Colors.cyanAccent,
+          //                                                                     );
+          //                                                                   }
+          //                                                                 } else {
+          //                                                                   return Container();
+          //                                                                 }
+          //                                                               },
+          //                                                             ),
+          //                                                             onTap: () async{
+          //                                                               try {
+          //                                                                 await FirebaseFirestore
+          //                                                                     .instance
+          //                                                                     .collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id)
+          //                                                                     .get()
+          //                                                                     .then((docSnapshot) {
+          //                                                                   if (docSnapshot.exists) {
+          //                                                                     FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
+          //                                                                     showToast("Removed from saved list");
+          //                                                                   } else {
+          //                                                                     FavouriteSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
+          //                                                                     showToast("${SubjectsData.heading} in favorites");                                                                  }
+          //                                                                 });
+          //                                                               } catch (e) {
+          //                                                                 print(
+          //                                                                     e);
+          //                                                               }
+          //
+          //                                                             },
+          //                                                           ),
+          //                                                         ],
+          //                                                       ),
+          //                                                       SizedBox(
+          //                                                         height: 2,
+          //                                                       ),
+          //                                                       Text(
+          //                                                         SubjectsData.description,
+          //                                                         style: const TextStyle(
+          //                                                           fontSize: 13.0,
+          //                                                           color: Color.fromRGBO(204, 207, 222, 1),
+          //                                                         ),
+          //                                                       ),
+          //                                                       SizedBox(
+          //                                                         height: 1,
+          //                                                       ),
+          //                                                       Text(
+          //                                                         'Added :${SubjectsData.Date}',
+          //                                                         style: const TextStyle(
+          //                                                           fontSize: 9.0,
+          //                                                           color: Colors.white60,
+          //                                                           //   fontWeight: FontWeight.bold,
+          //                                                         ),
+          //                                                       ),
+          //                                                       if (userId() == "gmail.com")
+          //                                                         Padding(
+          //                                                           padding: const EdgeInsets.only(right: 10),
+          //                                                           child: Container(
+          //                                                             decoration: BoxDecoration(
+          //                                                               borderRadius: BorderRadius.circular(15),
+          //                                                               color: Colors.black.withOpacity(0.3),
+          //                                                               border: Border.all(color: Colors.white.withOpacity(0.5)),
+          //                                                             ),
+          //                                                             width: 70,
+          //                                                             child: InkWell(
+          //                                                               child: Row(
+          //                                                                 children: [
+          //                                                                   SizedBox(width: 5,),
+          //                                                                   Icon(Icons.edit,color: Colors.white,),
+          //                                                                   Padding(
+          //                                                                     padding: const EdgeInsets.only(left: 3, right: 3),
+          //                                                                     child: Text("Edit",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 18),),
+          //                                                                   ),
+          //                                                                 ],
+          //                                                               ),
+          //                                                               onTap: () {
+          //                                                                 Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: SubjectsData.id,heading: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl,mode:"Subjects" ,)));
+          //                                                               },
+          //                                                             ),
+          //                                                           ),
+          //                                                         ),
+          //                                                     ],
+          //                                                   ))
+          //                                             ],
+          //                                           ),
+          //                                         ),
+          //                                       ),
+          //                                       onTap: () async {
+          //                                         Navigator.push(
+          //                                             context,
+          //                                             MaterialPageRoute(
+          //                                                 builder: (context) => subjectUnitsData(
+          //                                                   ID: SubjectsData.id,
+          //                                                   mode: "Subjects",
+          //                                                   name: SubjectsData.heading,
+          //                                                   fullName: SubjectsData.description,
+          //                                                   photoUrl: SubjectsData.PhotoUrl,
+          //                                                 )));
+          //                                       },
+          //                                       // onLongPress: () async {
+          //                                       //   SharedPreferences prefs = await SharedPreferences.getInstance();
+          //                                       //   String? SelectedSubjects = prefs.getString('addSubjects') ?? null;
+          //                                       //   print(SelectedSubjects);
+          //                                       //   if (SelectedSubjects != null) {
+          //                                       //     final body = jsonDecode(SelectedSubjects);
+          //                                       //     subjects = body.map<SearchAddedSubjects>(SearchAddedSubjects.fromJson).toList();
+          //                                       //   }
+          //                                       //   print(subjects);
+          //                                       //   final person = subjects.where((element) => element.name == SubjectsData.heading);
+          //                                       //   if (person.isEmpty) {
+          //                                       //     subjects.add(SearchAddedSubjects(
+          //                                       //         name: SubjectsData.heading, description: SubjectsData.description, date: SubjectsData.Date, id: SubjectsData.id, photoUrl: SubjectsData.PhotoUrl));
+          //                                       //   } else {
+          //                                       //     showToast("${SubjectsData.heading} is already added");
+          //                                       //   }
+          //                                       //   print(subjects);
+          //                                       //   prefs.setString('addSubjects', jsonEncode(subjects));
+          //                                       //   print(jsonEncode(subjects));
+          //                                       //   showToast("${SubjectsData.heading} is Added");
+          //                                       // },
+          //                                     );
+          //
+          //
+          //
+          //
+          //                                   }
+          //                                   //   return Padding(
+          //                                   //   padding: const EdgeInsets.only(top: 3),
+          //                                   //   child: InkWell(
+          //                                   //     child: Container(
+          //                                   //       width: double.infinity,
+          //                                   //       decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.all(Radius.circular(10))),
+          //                                   //       child: SingleChildScrollView(
+          //                                   //         physics: const BouncingScrollPhysics(),
+          //                                   //         child: Row(
+          //                                   //           children: [
+          //                                   //             Container(
+          //                                   //               width: 90.0,
+          //                                   //               height: 70.0,
+          //                                   //               decoration: BoxDecoration(
+          //                                   //                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          //                                   //                 color: Colors.black.withOpacity(0.8),
+          //                                   //                 image: DecorationImage(
+          //                                   //                   image: NetworkImage(
+          //                                   //                     SubjectsData.PhotoUrl,
+          //                                   //                   ),
+          //                                   //                   fit: BoxFit.cover,
+          //                                   //                 ),
+          //                                   //               ),
+          //                                   //             ),
+          //                                   //             const SizedBox(
+          //                                   //               width: 10,
+          //                                   //             ),
+          //                                   //             Expanded(
+          //                                   //                 child: Column(
+          //                                   //               mainAxisAlignment: MainAxisAlignment.center,
+          //                                   //               crossAxisAlignment: CrossAxisAlignment.start,
+          //                                   //               children: [
+          //                                   //                 Row(
+          //                                   //                   children: [
+          //                                   //                     Text(
+          //                                   //                       SubjectsData.heading,
+          //                                   //                       style: const TextStyle(
+          //                                   //                         fontSize: 20.0,
+          //                                   //                         color: Colors.white,
+          //                                   //                         fontWeight: FontWeight.w600,
+          //                                   //                       ),
+          //                                   //                     ),
+          //                                   //                     Spacer(),
+          //                                   //                     InkWell(
+          //                                   //                       child: StreamBuilder<DocumentSnapshot>(
+          //                                   //                         stream: FirebaseFirestore.instance.collection('ECE')
+          //                                   //                           .doc("Subjects")
+          //                                   //                           .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+          //                                   //                         builder: (context, snapshot) {
+          //                                   //                           if (snapshot.hasData) {
+          //                                   //                             if (snapshot.data!.exists) {
+          //                                   //                               return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+          //                                   //                             } else {
+          //                                   //                               return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+          //                                   //                             }
+          //                                   //                           } else {
+          //                                   //                             return Container();
+          //                                   //                           }
+          //                                   //                         },
+          //                                   //                       ),
+          //                                   //                       onTap:
+          //                                   //                           ()async {
+          //                                   //
+          //                                   //                         try {
+          //                                   //                           await FirebaseFirestore.instance.
+          //                                   //                           collection('ECE')
+          //                                   //                               .doc("Subjects")
+          //                                   //                               .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+          //                                   //                               .get()
+          //                                   //                               .then((docSnapshot) {
+          //                                   //                             if (docSnapshot.exists) {
+          //                                   //                               FirebaseFirestore.instance.
+          //                                   //                               collection('ECE')
+          //                                   //                                   .doc("Subjects")
+          //                                   //                                   .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+          //                                   //                                   .delete();
+          //                                   //                               showToast("Unliked");
+          //                                   //                             } else {
+          //                                   //                               FirebaseFirestore.instance.
+          //                                   //                               collection('ECE')
+          //                                   //                                   .doc("Subjects")
+          //                                   //                                   .collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+          //                                   //                                   .set({"id": fullUserId()});
+          //                                   //                               showToast("Liked");
+          //                                   //                             }
+          //                                   //                           });
+          //                                   //                         } catch (e) {
+          //                                   //                           print(e);
+          //                                   //                         }
+          //                                   //                       },
+          //                                   //                     ),
+          //                                   //                     StreamBuilder<QuerySnapshot>(
+          //                                   //                       stream: FirebaseFirestore.instance
+          //                                   //                           .collection('ECE')
+          //                                   //                           .doc("Subjects")
+          //                                   //                           .collection("Subjects").doc(SubjectsData.id).collection("likes")
+          //                                   //                           .snapshots(),
+          //                                   //                       builder: (context, snapshot) {
+          //                                   //                         if (snapshot.hasData) {
+          //                                   //                           return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
+          //                                   //                         } else {
+          //                                   //                           return const Text("0");
+          //                                   //                         }
+          //                                   //                       },
+          //                                   //                     ),
+          //                                   //                     SizedBox(width: 5,),
+          //                                   //
+          //                                   //                     InkWell(
+          //                                   //                       child: StreamBuilder<DocumentSnapshot>(
+          //                                   //                         stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
+          //                                   //                         builder: (context, snapshot) {
+          //                                   //                           if (snapshot.hasData) {
+          //                                   //                             if (snapshot.data!.exists) {
+          //                                   //                               return const Icon(
+          //                                   //                                   Icons.library_add_check,
+          //                                   //                                   size: 26, color: Colors.cyanAccent
+          //                                   //                               );
+          //                                   //                             } else {
+          //                                   //                               return const Icon(
+          //                                   //                                 Icons.library_add_outlined,
+          //                                   //                                 size: 26,
+          //                                   //                                 color: Colors.cyanAccent,
+          //                                   //                               );
+          //                                   //                             }
+          //                                   //                           } else {
+          //                                   //                             return Container();
+          //                                   //                           }
+          //                                   //                         },
+          //                                   //                       ),
+          //                                   //                       onTap: () async{
+          //                                   //                         try {
+          //                                   //                           await FirebaseFirestore
+          //                                   //                               .instance
+          //                                   //                               .collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id)
+          //                                   //                               .get()
+          //                                   //                               .then((docSnapshot) {
+          //                                   //                             if (docSnapshot.exists) {
+          //                                   //                               FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
+          //                                   //                               showToast("Removed from saved list");
+          //                                   //                             } else {
+          //                                   //                               FavouriteSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
+          //                                   //                               showToast("${SubjectsData.heading} in favorites");                                                                  }
+          //                                   //                           });
+          //                                   //                         } catch (e) {
+          //                                   //                           print(
+          //                                   //                               e);
+          //                                   //                         }
+          //                                   //
+          //                                   //                       },
+          //                                   //                     ),
+          //                                   //                   ],
+          //                                   //                 ),
+          //                                   //                 SizedBox(
+          //                                   //                   height: 2,
+          //                                   //                 ),
+          //                                   //                 Text(
+          //                                   //                   SubjectsData.description,
+          //                                   //                   style: const TextStyle(
+          //                                   //                     fontSize: 13.0,
+          //                                   //                     color: Color.fromRGBO(204, 207, 222, 1),
+          //                                   //                   ),
+          //                                   //                 ),
+          //                                   //                 SizedBox(
+          //                                   //                   height: 1,
+          //                                   //                 ),
+          //                                   //                 Text(
+          //                                   //                   'Added :${SubjectsData.Date}',
+          //                                   //                   style: const TextStyle(
+          //                                   //                     fontSize: 9.0,
+          //                                   //                     color: Colors.white60,
+          //                                   //                     //   fontWeight: FontWeight.bold,
+          //                                   //                   ),
+          //                                   //                 ),
+          //                                   //               ],
+          //                                   //             ))
+          //                                   //           ],
+          //                                   //         ),
+          //                                   //       ),
+          //                                   //     ),
+          //                                   //     onTap: () {
+          //                                   //       Navigator.push(
+          //                                   //           context,
+          //                                   //           MaterialPageRoute(
+          //                                   //               builder: (context) => subjectUnitsData(
+          //                                   //                     ID: SubjectsData.id,
+          //                                   //                     mode: "Subjects",
+          //                                   //                 name: SubjectsData.heading,
+          //                                   //                 fullName: SubjectsData.description,
+          //                                   //                 photoUrl: SubjectsData.PhotoUrl,
+          //                                   //                   )));
+          //                                   //     },
+          //                                   //   ),
+          //                                   // );
+          //                                 }
+          //                                 else{
+          //                                   return Container();
+          //                                 }
+          //                               },
+          //                             );
+          //                           else
+          //                             return InkWell(
+          //                                 child: Container(
+          //                                   decoration: BoxDecoration(
+          //                                     border: Border.all(color: Colors.tealAccent),
+          //                                     borderRadius: BorderRadius.circular(20),
+          //                                   ),
+          //                                   child: Padding(
+          //                                     padding: const EdgeInsets.all(8.0),
+          //                                     child: Text("No Subjects are Liked"),
+          //                                   ),
+          //                                 ),
+          //                                 onTap: () {
+          //                                   showDialog(
+          //                                     context: context,
+          //                                     builder: (context) {
+          //                                       return Dialog(
+          //                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          //                                         elevation: 16,
+          //                                         child: Container(
+          //                                           decoration: BoxDecoration(
+          //                                             border: Border.all(color: Colors.tealAccent),
+          //                                             borderRadius: BorderRadius.circular(20),
+          //                                           ),
+          //                                           child: ListView(
+          //                                             shrinkWrap: true,
+          //                                             children: <Widget>[
+          //                                               SizedBox(height: 10),
+          //                                               Center(
+          //                                                   child: Text(
+          //                                                     'Note',
+          //                                                     style: TextStyle(color: Colors.black87, fontSize: 20),
+          //                                                   )),
+          //                                               Divider(
+          //                                                 color: Colors.tealAccent,
+          //                                               ),
+          //                                               SizedBox(height: 5),
+          //                                               Padding(
+          //                                                 padding: const EdgeInsets.only(left: 15),
+          //                                                 child: Text("1. Click on 'See More' option"),
+          //                                               ),
+          //                                               Padding(
+          //                                                 padding: const EdgeInsets.only(left: 15),
+          //                                                 child: Text("2. Long Press on Subject u need to add as important"),
+          //                                               ),
+          //                                               Padding(
+          //                                                 padding: const EdgeInsets.only(left: 15),
+          //                                                 child: Text("3. Restart the application"),
+          //                                               ),
+          //                                               Divider(
+          //                                                 color: Colors.tealAccent,
+          //                                               ),
+          //                                               Padding(
+          //                                                 padding: const EdgeInsets.only(left: 15),
+          //                                                 child: Text("1. Long Press on Subject u need to remove as important"),
+          //                                               ),
+          //                                               Divider(
+          //                                                 color: Colors.tealAccent,
+          //                                               ),
+          //                                               Center(
+          //                                                 child: InkWell(
+          //                                                   child: Container(
+          //                                                     decoration: BoxDecoration(
+          //                                                       color: Colors.black26,
+          //                                                       border: Border.all(color: Colors.black),
+          //                                                       borderRadius: BorderRadius.circular(25),
+          //                                                     ),
+          //                                                     child: Padding(
+          //                                                       padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+          //                                                       child: Text("Back"),
+          //                                                     ),
+          //                                                   ),
+          //                                                   onTap: () {
+          //                                                     Navigator.pop(context);
+          //                                                   },
+          //                                                 ),
+          //                                               ),
+          //                                               SizedBox(
+          //                                                 height: 10,
+          //                                               ),
+          //                                             ],
+          //                                           ),
+          //                                         ),
+          //                                       );
+          //                                     },
+          //                                   );
+          //                                 });
+          //                         }
+          //                     }
+          //                   }),
+          //             )
+          //             else Center(child: Column(
+          //               children: [
+          //                 Text("Regulation and Year is Not Selected for Subjects",style: TextStyle(color: Colors.white),),
+          //                 InkWell(
+          //                   child: Container(
+          //                     decoration: BoxDecoration(
+          //                       color: Colors.white54,
+          //                       border: Border.all(color: Colors.white),
+          //                       borderRadius: BorderRadius.circular(25),
+          //                     ),
+          //                     child: Padding(
+          //                       padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+          //                       child: Text("see more"),
+          //                     ),
+          //                   ),
+          //                   onTap: () {
+          //                     Navigator.push(context, MaterialPageRoute(builder: (context) =>  Subjects()));
+          //                   },
+          //                 ),
+          //               ],
+          //             )),
+          //             //Lab Subjects
+          //             if(RegID.isNotEmpty && YearID.isNotEmpty)StreamBuilder<List<LabSubjectsConvertor>>(
+          //               stream: readLabSubjects(),
+          //               builder: (context, snapshot) {
+          //                 final Subjects = snapshot.data;
+          //                 switch (snapshot.connectionState) {
+          //                   case ConnectionState.waiting:
+          //                     return const Center(
+          //                         child: CircularProgressIndicator(
+          //                           strokeWidth: 0.3,
+          //                           color: Colors.cyan,
+          //                         ));
+          //                   default:
+          //                     if (snapshot.hasError) {
+          //                       return Text("Error with fireBase");
+          //                     } else {
+          //                       if (Subjects!.length > 0)
+          //                         return Padding(
+          //                           padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10, right: 10),
+          //                           child: Column(
+          //                             children: [
+          //                               Row(
+          //                                 children: [
+          //                                   Text(
+          //                                     "Lab Subjects",
+          //                                     style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
+          //                                   ),
+          //                                   Spacer(),
+          //                                   InkWell(
+          //                                     child: Container(
+          //                                       decoration: BoxDecoration(
+          //                                         color: Colors.white54,
+          //                                         border: Border.all(color: Colors.white),
+          //                                         borderRadius: BorderRadius.circular(25),
+          //                                       ),
+          //                                       child: Padding(
+          //                                         padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+          //                                         child: Text("see more"),
+          //                                       ),
+          //                                     ),
+          //                                     onTap: () {
+          //                                       Navigator.push(context, MaterialPageRoute(builder: (context) => const LabSubjects()));
+          //                                     },
+          //                                   ),
+          //                                   SizedBox(width: 10,)
+          //                                 ],
+          //                               ),
+          //                               SizedBox(
+          //                                 height: 10,
+          //                               ),
+          //                               ListView.builder(
+          //                                 physics: const BouncingScrollPhysics(),
+          //                                 shrinkWrap: true,
+          //                                 itemCount: Subjects.length,
+          //                                 itemBuilder: (context, int index) {
+          //                                   final LabSubjectsData = Subjects[index];
+          //                                   if(LabSubjectsData.regulation
+          //                                       .toString()
+          //                                       .startsWith("r20-1 year 1 sem")){
+          //
+          //                                     final Uri uri = Uri.parse(LabSubjectsData.PhotoUrl);
+          //                                     final String fileName = uri.pathSegments.last;
+          //                                     var name = fileName.split("/").last;
+          //                                     final file = File("${folderPath}/ece_labsubjects/$name");
+          //                                     if (file.existsSync()) {
+          //                                       return
+          //                                         Padding(
+          //                                           padding: const EdgeInsets.only(bottom: 5, left: 5, right: 5),
+          //                                           child: InkWell(
+          //                                             child: Container(
+          //                                               width: double.infinity,
+          //                                               decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.all(Radius.circular(10))),
+          //                                               child: SingleChildScrollView(
+          //                                                 physics: const BouncingScrollPhysics(),
+          //                                                 child: Row(
+          //                                                   children: [
+          //                                                     Container(
+          //                                                       width: 90.0,
+          //                                                       height: 70.0,
+          //                                                       decoration: BoxDecoration(
+          //                                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          //                                                         color: Colors.redAccent,
+          //                                                         image: DecorationImage(
+          //                                                           image: FileImage(file),
+          //                                                           fit: BoxFit.cover,
+          //                                                         ),
+          //                                                       ),
+          //                                                     ),
+          //                                                     const SizedBox(
+          //                                                       width: 10,
+          //                                                     ),
+          //                                                     Expanded(
+          //                                                         child: Column(
+          //                                                           mainAxisAlignment: MainAxisAlignment.center,
+          //                                                           crossAxisAlignment: CrossAxisAlignment.start,
+          //                                                           children: [
+          //                                                             Row(
+          //                                                               children: [
+          //                                                                 Text(
+          //                                                                   LabSubjectsData.heading,
+          //                                                                   style: const TextStyle(
+          //                                                                     fontSize: 20.0,
+          //                                                                     color: Colors.white,
+          //                                                                     fontWeight: FontWeight.w600,
+          //                                                                   ),
+          //                                                                 ),
+          //                                                                 Spacer(),
+          //                                                                 InkWell(
+          //                                                                   child: StreamBuilder<DocumentSnapshot>(
+          //                                                                     stream: FirebaseFirestore.instance.collection('ECE')
+          //                                                                         .doc("LabSubjects")
+          //                                                                         .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+          //                                                                     builder: (context, snapshot) {
+          //                                                                       if (snapshot.hasData) {
+          //                                                                         if (snapshot.data!.exists) {
+          //                                                                           return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+          //                                                                         } else {
+          //                                                                           return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+          //                                                                         }
+          //                                                                       } else {
+          //                                                                         return Container();
+          //                                                                       }
+          //                                                                     },
+          //                                                                   ),
+          //                                                                   onTap:
+          //                                                                       ()async {
+          //
+          //                                                                     try {
+          //                                                                       await FirebaseFirestore.instance.
+          //                                                                       collection('ECE')
+          //                                                                           .doc("LabSubjects")
+          //                                                                           .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+          //                                                                           .get()
+          //                                                                           .then((docSnapshot) {
+          //                                                                         if (docSnapshot.exists) {
+          //                                                                           FirebaseFirestore.instance.
+          //                                                                           collection('ECE')
+          //                                                                               .doc("LabSubjects")
+          //                                                                               .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+          //                                                                               .delete();
+          //                                                                           showToast("Unliked");
+          //                                                                         } else {
+          //                                                                           FirebaseFirestore.instance.
+          //                                                                           collection('ECE')
+          //                                                                               .doc("LabSubjects")
+          //                                                                               .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+          //                                                                               .set({"id": fullUserId()});
+          //                                                                           showToast("Liked");
+          //                                                                         }
+          //                                                                       });
+          //                                                                     } catch (e) {
+          //                                                                       print(e);
+          //                                                                     }
+          //                                                                   },
+          //                                                                 ),
+          //                                                                 StreamBuilder<QuerySnapshot>(
+          //                                                                   stream: FirebaseFirestore.instance
+          //                                                                       .collection('ECE')
+          //                                                                       .doc("LabSubjects")
+          //                                                                       .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes")
+          //                                                                       .snapshots(),
+          //                                                                   builder: (context, snapshot) {
+          //                                                                     if (snapshot.hasData) {
+          //                                                                       return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
+          //                                                                     } else {
+          //                                                                       return const Text("0");
+          //                                                                     }
+          //                                                                   },
+          //                                                                 ),
+          //                                                                 SizedBox(width: 5,),
+          //                                                                 InkWell(
+          //                                                                   child: StreamBuilder<DocumentSnapshot>(
+          //                                                                     stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).snapshots(),
+          //                                                                     builder: (context, snapshot) {
+          //                                                                       if (snapshot.hasData) {
+          //                                                                         if (snapshot.data!.exists) {
+          //                                                                           return const Icon(
+          //                                                                               Icons.library_add_check,
+          //                                                                               size: 26, color: Colors.cyanAccent
+          //                                                                           );
+          //                                                                         } else {
+          //                                                                           return const Icon(
+          //                                                                             Icons.library_add_outlined,
+          //                                                                             size: 26,
+          //                                                                             color: Colors.cyanAccent,
+          //                                                                           );
+          //                                                                         }
+          //                                                                       } else {
+          //                                                                         return Container();
+          //                                                                       }
+          //                                                                     },
+          //                                                                   ),
+          //                                                                   onTap: () async{
+          //                                                                     try {
+          //                                                                       await FirebaseFirestore
+          //                                                                           .instance
+          //                                                                           .collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id)
+          //                                                                           .get()
+          //                                                                           .then((docSnapshot) {
+          //                                                                         if (docSnapshot.exists) {
+          //                                                                           FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
+          //                                                                           showToast("Removed from saved list");
+          //                                                                         } else {
+          //                                                                           FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
+          //                                                                           showToast("${LabSubjectsData.heading} in favorites");                                                         }
+          //                                                                       });
+          //                                                                     } catch (e) {
+          //                                                                       print(
+          //                                                                           e);
+          //                                                                     }
+          //
+          //                                                                   },
+          //                                                                 ),
+          //                                                                 SizedBox(width: 10,)
+          //                                                               ],
+          //                                                             ),
+          //                                                             SizedBox(
+          //                                                               height: 2,
+          //                                                             ),
+          //                                                             Text(
+          //                                                               LabSubjectsData.description,
+          //                                                               style: const TextStyle(
+          //                                                                 fontSize: 13.0,
+          //                                                                 color: Color.fromRGBO(204, 207, 222, 1),
+          //                                                               ),
+          //                                                             ),
+          //                                                             SizedBox(
+          //                                                               height: 1,
+          //                                                             ),
+          //                                                             Text(
+          //                                                               'Added :${LabSubjectsData.Date}',
+          //                                                               style: const TextStyle(
+          //                                                                 fontSize: 9.0,
+          //                                                                 color: Colors.white60,
+          //                                                                 //   fontWeight: FontWeight.bold,
+          //                                                               ),
+          //                                                             ),
+          //                                                             if (userId() == "gmail.com")
+          //                                                               Padding(
+          //                                                                 padding: const EdgeInsets.only(right: 10),
+          //                                                                 child: Container(
+          //                                                                   decoration: BoxDecoration(
+          //                                                                     borderRadius: BorderRadius.circular(15),
+          //                                                                     color: Colors.white.withOpacity(0.5),
+          //                                                                     border: Border.all(color: Colors.white),
+          //                                                                   ),
+          //                                                                   child: InkWell(
+          //                                                                     child: Padding(
+          //                                                                       padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+          //                                                                       child: Text("+Add"),
+          //                                                                     ),
+          //                                                                     onTap: () {
+          //                                                                       Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: LabSubjectsData.id,heading: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl,mode:"LabSubjects" ,)));
+          //                                                                     },
+          //                                                                   ),
+          //                                                                 ),
+          //                                                               ),
+          //                                                           ],
+          //                                                         ))
+          //                                                   ],
+          //                                                 ),
+          //                                               ),
+          //                                             ),
+          //                                             onTap: () async {
+          //                                               Navigator.push(
+          //                                                   context,
+          //                                                   MaterialPageRoute(
+          //                                                       builder: (context) => subjectUnitsData(
+          //                                                         ID: LabSubjectsData.id,
+          //                                                         mode: "LabSubjects",
+          //                                                         name: LabSubjectsData.heading,
+          //                                                         fullName: LabSubjectsData.description,
+          //                                                         photoUrl: LabSubjectsData.PhotoUrl,
+          //                                                       )));
+          //                                             },
+          //                                             onLongPress: (){
+          //                                               FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
+          //                                             },
+          //                                           ),
+          //                                         );
+          //
+          //                                     } else {
+          //                                       downloadImage(LabSubjectsData.PhotoUrl,"ece_labsubjects");
+          //                                       return
+          //                                         Padding(
+          //                                           padding: const EdgeInsets.only(bottom: 5, left: 5, right: 5),
+          //                                           child: InkWell(
+          //                                             child: Container(
+          //                                               width: double.infinity,
+          //                                               decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.all(Radius.circular(10))),
+          //                                               child: SingleChildScrollView(
+          //                                                 physics: const BouncingScrollPhysics(),
+          //                                                 child: Row(
+          //                                                   children: [
+          //                                                     Container(
+          //                                                       width: 90.0,
+          //                                                       height: 70.0,
+          //                                                       child: CachedNetworkImage(
+          //                                                         imageUrl: LabSubjectsData.PhotoUrl,
+          //                                                         placeholder: (context, url) => CircularProgressIndicator(),
+          //                                                         errorWidget: (context, url, error) => Icon(Icons.error,color: Colors.red,),
+          //                                                       ),
+          //                                                     ),
+          //                                                     const SizedBox(
+          //                                                       width: 10,
+          //                                                     ),
+          //                                                     Expanded(
+          //                                                         child: Column(
+          //                                                           mainAxisAlignment: MainAxisAlignment.center,
+          //                                                           crossAxisAlignment: CrossAxisAlignment.start,
+          //                                                           children: [
+          //                                                             Row(
+          //                                                               children: [
+          //                                                                 Text(
+          //                                                                   LabSubjectsData.heading,
+          //                                                                   style: const TextStyle(
+          //                                                                     fontSize: 20.0,
+          //                                                                     color: Colors.white,
+          //                                                                     fontWeight: FontWeight.w600,
+          //                                                                   ),
+          //                                                                 ),
+          //                                                                 Spacer(),
+          //                                                                 InkWell(
+          //                                                                   child: StreamBuilder<DocumentSnapshot>(
+          //                                                                     stream: FirebaseFirestore.instance.collection('ECE')
+          //                                                                         .doc("LabSubjects")
+          //                                                                         .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+          //                                                                     builder: (context, snapshot) {
+          //                                                                       if (snapshot.hasData) {
+          //                                                                         if (snapshot.data!.exists) {
+          //                                                                           return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+          //                                                                         } else {
+          //                                                                           return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+          //                                                                         }
+          //                                                                       } else {
+          //                                                                         return Container();
+          //                                                                       }
+          //                                                                     },
+          //                                                                   ),
+          //                                                                   onTap:
+          //                                                                       ()async {
+          //
+          //                                                                     try {
+          //                                                                       await FirebaseFirestore.instance.
+          //                                                                       collection('ECE')
+          //                                                                           .doc("LabSubjects")
+          //                                                                           .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+          //                                                                           .get()
+          //                                                                           .then((docSnapshot) {
+          //                                                                         if (docSnapshot.exists) {
+          //                                                                           FirebaseFirestore.instance.
+          //                                                                           collection('ECE')
+          //                                                                               .doc("LabSubjects")
+          //                                                                               .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+          //                                                                               .delete();
+          //                                                                           showToast("Unliked");
+          //                                                                         } else {
+          //                                                                           FirebaseFirestore.instance.
+          //                                                                           collection('ECE')
+          //                                                                               .doc("LabSubjects")
+          //                                                                               .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId())
+          //                                                                               .set({"id": fullUserId()});
+          //                                                                           showToast("Liked");
+          //                                                                         }
+          //                                                                       });
+          //                                                                     } catch (e) {
+          //                                                                       print(e);
+          //                                                                     }
+          //                                                                   },
+          //                                                                 ),
+          //                                                                 StreamBuilder<QuerySnapshot>(
+          //                                                                   stream: FirebaseFirestore.instance
+          //                                                                       .collection('ECE')
+          //                                                                       .doc("LabSubjects")
+          //                                                                       .collection("LabSubjects").doc(LabSubjectsData.id).collection("likes")
+          //                                                                       .snapshots(),
+          //                                                                   builder: (context, snapshot) {
+          //                                                                     if (snapshot.hasData) {
+          //                                                                       return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
+          //                                                                     } else {
+          //                                                                       return const Text("0");
+          //                                                                     }
+          //                                                                   },
+          //                                                                 ),
+          //                                                                 SizedBox(width: 5,),
+          //                                                                 InkWell(
+          //                                                                   child: StreamBuilder<DocumentSnapshot>(
+          //                                                                     stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).snapshots(),
+          //                                                                     builder: (context, snapshot) {
+          //                                                                       if (snapshot.hasData) {
+          //                                                                         if (snapshot.data!.exists) {
+          //                                                                           return const Icon(
+          //                                                                               Icons.library_add_check,
+          //                                                                               size: 26, color: Colors.cyanAccent
+          //                                                                           );
+          //                                                                         } else {
+          //                                                                           return const Icon(
+          //                                                                             Icons.library_add_outlined,
+          //                                                                             size: 26,
+          //                                                                             color: Colors.cyanAccent,
+          //                                                                           );
+          //                                                                         }
+          //                                                                       } else {
+          //                                                                         return Container();
+          //                                                                       }
+          //                                                                     },
+          //                                                                   ),
+          //                                                                   onTap: () async{
+          //                                                                     try {
+          //                                                                       await FirebaseFirestore
+          //                                                                           .instance
+          //                                                                           .collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id)
+          //                                                                           .get()
+          //                                                                           .then((docSnapshot) {
+          //                                                                         if (docSnapshot.exists) {
+          //                                                                           FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
+          //                                                                           showToast("Removed from saved list");
+          //                                                                         } else {
+          //                                                                           FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
+          //                                                                           showToast("${LabSubjectsData.heading} in favorites");                                                         }
+          //                                                                       });
+          //                                                                     } catch (e) {
+          //                                                                       print(
+          //                                                                           e);
+          //                                                                     }
+          //
+          //                                                                   },
+          //                                                                 ),
+          //                                                                 SizedBox(width: 10,)
+          //                                                               ],
+          //                                                             ),
+          //                                                             SizedBox(
+          //                                                               height: 2,
+          //                                                             ),
+          //                                                             Text(
+          //                                                               LabSubjectsData.description,
+          //                                                               style: const TextStyle(
+          //                                                                 fontSize: 13.0,
+          //                                                                 color: Color.fromRGBO(204, 207, 222, 1),
+          //                                                               ),
+          //                                                             ),
+          //                                                             SizedBox(
+          //                                                               height: 1,
+          //                                                             ),
+          //                                                             Text(
+          //                                                               'Added :${LabSubjectsData.Date}',
+          //                                                               style: const TextStyle(
+          //                                                                 fontSize: 9.0,
+          //                                                                 color: Colors.white60,
+          //                                                                 //   fontWeight: FontWeight.bold,
+          //                                                               ),
+          //                                                             ),
+          //                                                             if (userId() == "gmail.com")
+          //                                                               Padding(
+          //                                                                 padding: const EdgeInsets.only(right: 10),
+          //                                                                 child: Container(
+          //                                                                   decoration: BoxDecoration(
+          //                                                                     borderRadius: BorderRadius.circular(15),
+          //                                                                     color: Colors.white.withOpacity(0.5),
+          //                                                                     border: Border.all(color: Colors.white),
+          //                                                                   ),
+          //                                                                   child: InkWell(
+          //                                                                     child: Padding(
+          //                                                                       padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+          //                                                                       child: Text("+Add"),
+          //                                                                     ),
+          //                                                                     onTap: () {
+          //                                                                       Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectsCreator(Id: LabSubjectsData.id,heading: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl,mode:"LabSubjects" ,)));
+          //                                                                     },
+          //                                                                   ),
+          //                                                                 ),
+          //                                                               ),
+          //                                                           ],
+          //                                                         ))
+          //                                                   ],
+          //                                                 ),
+          //                                               ),
+          //                                             ),
+          //                                             onTap: () async {
+          //                                               Navigator.push(
+          //                                                   context,
+          //                                                   MaterialPageRoute(
+          //                                                       builder: (context) => subjectUnitsData(
+          //                                                         ID: LabSubjectsData.id,
+          //                                                         mode: "LabSubjects",
+          //                                                         name: LabSubjectsData.heading,
+          //                                                         fullName: LabSubjectsData.description,
+          //                                                         photoUrl: LabSubjectsData.PhotoUrl,
+          //                                                       )));
+          //                                             },
+          //                                             onLongPress: (){
+          //                                               FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id,name: LabSubjectsData.heading,description: LabSubjectsData.description,photoUrl: LabSubjectsData.PhotoUrl);
+          //                                             },
+          //                                           ),
+          //                                         );
+          //
+          //                                     }
+          //                                     //   return Padding(
+          //                                     //       padding: const EdgeInsets.only(top: 3),
+          //                                     //       child: InkWell(
+          //                                     //   child: Container(
+          //                                     //       width: double.infinity,
+          //                                     //       decoration: BoxDecoration(color: Colors.white.withOpacity(0.07), borderRadius: BorderRadius.all(Radius.circular(10))),
+          //                                     //       child: SingleChildScrollView(
+          //                                     //         physics: const BouncingScrollPhysics(),
+          //                                     //         child: Row(
+          //                                     //           children: [
+          //                                     //             Container(
+          //                                     //               width: 90.0,
+          //                                     //               height: 70.0,
+          //                                     //               decoration: BoxDecoration(
+          //                                     //                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          //                                     //                 color: Colors.black.withOpacity(0.6),
+          //                                     //                 image: DecorationImage(
+          //                                     //                   image: NetworkImage(
+          //                                     //                     SubjectsData.PhotoUrl,
+          //                                     //                   ),
+          //                                     //                   fit: BoxFit.cover,
+          //                                     //                 ),
+          //                                     //               ),
+          //                                     //             ),
+          //                                     //             const SizedBox(
+          //                                     //               width: 10,
+          //                                     //             ),
+          //                                     //             Expanded(
+          //                                     //                 child: Column(
+          //                                     //               mainAxisAlignment: MainAxisAlignment.center,
+          //                                     //               crossAxisAlignment: CrossAxisAlignment.start,
+          //                                     //               children: [
+          //                                     //                 Row(
+          //                                     //                   children: [
+          //                                     //                     Text(
+          //                                     //                       SubjectsData.heading,
+          //                                     //                       style: const TextStyle(
+          //                                     //                         fontSize: 20.0,
+          //                                     //                         color: Colors.white,
+          //                                     //                         fontWeight: FontWeight.w600,
+          //                                     //                       ),
+          //                                     //                     ),
+          //                                     //                     Spacer(),
+          //                                     //                     InkWell(
+          //                                     //                       child: StreamBuilder<DocumentSnapshot>(
+          //                                     //                         stream: FirebaseFirestore.instance.collection('ECE')
+          //                                     //                             .doc("LabSubjects")
+          //                                     //                             .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+          //                                     //                         builder: (context, snapshot) {
+          //                                     //                           if (snapshot.hasData) {
+          //                                     //                             if (snapshot.data!.exists) {
+          //                                     //                               return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+          //                                     //                             } else {
+          //                                     //                               return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+          //                                     //                             }
+          //                                     //                           } else {
+          //                                     //                             return Container();
+          //                                     //                           }
+          //                                     //                         },
+          //                                     //                       ),
+          //                                     //                       onTap:
+          //                                     //                           ()async {
+          //                                     //
+          //                                     //                         try {
+          //                                     //                           await FirebaseFirestore.instance.
+          //                                     //                           collection('ECE')
+          //                                     //                               .doc("LabSubjects")
+          //                                     //                               .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+          //                                     //                               .get()
+          //                                     //                               .then((docSnapshot) {
+          //                                     //                             if (docSnapshot.exists) {
+          //                                     //                               FirebaseFirestore.instance.
+          //                                     //                               collection('ECE')
+          //                                     //                                   .doc("LabSubjects")
+          //                                     //                                   .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+          //                                     //                                   .delete();
+          //                                     //                               showToast("Unliked");
+          //                                     //                             } else {
+          //                                     //                               FirebaseFirestore.instance.
+          //                                     //                               collection('ECE')
+          //                                     //                                   .doc("LabSubjects")
+          //                                     //                                   .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
+          //                                     //                                   .set({"id": fullUserId()});
+          //                                     //                               showToast("Liked");
+          //                                     //                             }
+          //                                     //                           });
+          //                                     //                         } catch (e) {
+          //                                     //                           print(e);
+          //                                     //                         }
+          //                                     //                       },
+          //                                     //                     ),
+          //                                     //                     StreamBuilder<QuerySnapshot>(
+          //                                     //                       stream: FirebaseFirestore.instance
+          //                                     //                           .collection('ECE')
+          //                                     //                           .doc("LabSubjects")
+          //                                     //                           .collection("LabSubjects").doc(SubjectsData.id).collection("likes")
+          //                                     //                           .snapshots(),
+          //                                     //                       builder: (context, snapshot) {
+          //                                     //                         if (snapshot.hasData) {
+          //                                     //                           return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
+          //                                     //                         } else {
+          //                                     //                           return const Text("0");
+          //                                     //                         }
+          //                                     //                       },
+          //                                     //                     ),
+          //                                     //                     SizedBox(width: 5,),
+          //                                     //
+          //                                     //                     InkWell(
+          //                                     //                       child: StreamBuilder<DocumentSnapshot>(
+          //                                     //                         stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(SubjectsData.id).snapshots(),
+          //                                     //                         builder: (context, snapshot) {
+          //                                     //                           if (snapshot.hasData) {
+          //                                     //                             if (snapshot.data!.exists) {
+          //                                     //                               return const Icon(
+          //                                     //                                   Icons.library_add_check,
+          //                                     //                                   size: 26, color: Colors.cyanAccent
+          //                                     //                               );
+          //                                     //                             } else {
+          //                                     //                               return const Icon(
+          //                                     //                                 Icons.library_add_outlined,
+          //                                     //                                 size: 26,
+          //                                     //                                 color: Colors.cyanAccent,
+          //                                     //                               );
+          //                                     //                             }
+          //                                     //                           } else {
+          //                                     //                             return Container();
+          //                                     //                           }
+          //                                     //                         },
+          //                                     //                       ),
+          //                                     //                       onTap: () async{
+          //                                     //                         try {
+          //                                     //                           await FirebaseFirestore
+          //                                     //                               .instance
+          //                                     //                               .collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(SubjectsData.id)
+          //                                     //                               .get()
+          //                                     //                               .then((docSnapshot) {
+          //                                     //                             if (docSnapshot.exists) {
+          //                                     //                               FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(SubjectsData.id).delete();
+          //                                     //                               showToast("Removed from saved list");
+          //                                     //                             } else {
+          //                                     //                               FavouriteLabSubjectsSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
+          //                                     //                               showToast("${SubjectsData.heading} in favorites");                                                         }
+          //                                     //                           });
+          //                                     //                         } catch (e) {
+          //                                     //                           print(
+          //                                     //                               e);
+          //                                     //                         }
+          //                                     //
+          //                                     //                       },
+          //                                     //                     ),
+          //                                     //
+          //                                     //                   ],
+          //                                     //                 ),
+          //                                     //                 SizedBox(
+          //                                     //                   height: 2,
+          //                                     //                 ),
+          //                                     //                 Text(
+          //                                     //                   SubjectsData.description,
+          //                                     //                   style: const TextStyle(
+          //                                     //                     fontSize: 13.0,
+          //                                     //                     color: Color.fromRGBO(204, 207, 222, 1),
+          //                                     //                   ),
+          //                                     //                 ),
+          //                                     //                 SizedBox(
+          //                                     //                   height: 1,
+          //                                     //                 ),
+          //                                     //                 Text(
+          //                                     //                   'Added :${SubjectsData.Date}',
+          //                                     //                   style: const TextStyle(
+          //                                     //                     fontSize: 9.0,
+          //                                     //                     color: Colors.white60,
+          //                                     //                     //   fontWeight: FontWeight.bold,
+          //                                     //                   ),
+          //                                     //                 ),
+          //                                     //               ],
+          //                                     //             ))
+          //                                     //           ],
+          //                                     //         ),
+          //                                     //       ),
+          //                                     //   ),
+          //                                     //   onTap: () {
+          //                                     //       Navigator.push(
+          //                                     //           context,
+          //                                     //           MaterialPageRoute(
+          //                                     //               builder: (context) => subjectUnitsData(
+          //                                     //                     ID: SubjectsData.id,
+          //                                     //                     mode: "LabSubjects",
+          //                                     //                     name: SubjectsData.heading,
+          //                                     //                 photoUrl: SubjectsData.PhotoUrl,
+          //                                     //                 fullName: SubjectsData.description,
+          //                                     //
+          //                                     //                   )));
+          //                                     //   },
+          //                                     // ),
+          //                                     //     );
+          //                                   }
+          //                                   else{
+          //                                     return Container();
+          //                                   }
+          //                                 },
+          //                               ),
+          //                             ],
+          //                           ),
+          //                         );
+          //                       else
+          //                         return Center(child: Text("No Lab Subjects For Your Regulation"));
+          //                     }
+          //                 }
+          //               },
+          //             ),
+          //             Padding(
+          //               padding: const EdgeInsets.only(
+          //                 top: 10,
+          //               ),
+          //               child: StreamBuilder<List<BooksConvertor>>(
+          //                   stream: ReadBook(),
+          //                   builder: (context, snapshot) {
+          //                     final Books = snapshot.data;
+          //                     switch (snapshot.connectionState) {
+          //                       case ConnectionState.waiting:
+          //                         return const Center(
+          //                             child: CircularProgressIndicator(
+          //                               strokeWidth: 0.3,
+          //                               color: Colors.cyan,
+          //                             ));
+          //                       default:
+          //                         if (snapshot.hasError) {
+          //                           return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+          //                         } else {
+          //
+          //                           if (Books!.length < 1) {
+          //                             return Center(
+          //                               child: Padding(
+          //                                 padding: const EdgeInsets.all(8.0),
+          //                                 child: Text(
+          //                                   "No ECE Books",
+          //                                   style: TextStyle(color: Colors.blue),
+          //                                 ),
+          //                               ),
+          //                             );
+          //                           } else
+          //                             return Column(
+          //                               crossAxisAlignment: CrossAxisAlignment.start,
+          //                               children: [
+          //                                 Padding(
+          //                                   padding: const EdgeInsets.only(left: 10, bottom: 10),
+          //                                   child: Row(
+          //                                     children: [
+          //                                       Text(
+          //                                         "Based on ECE",
+          //                                         style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
+          //                                       ),
+          //                                       Spacer(),
+          //                                       if (userId() == "gmail.com")
+          //                                         InkWell(
+          //                                           child: Container(
+          //                                             decoration: BoxDecoration(
+          //                                               borderRadius: BorderRadius.circular(15),
+          //                                               color: Colors.white.withOpacity(0.5),
+          //                                               border: Border.all(color: Colors.white),
+          //                                             ),
+          //                                             child: Padding(
+          //                                               padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+          //                                               child: Text("+Add"),
+          //                                             ),
+          //                                           ),
+          //                                           onTap: () {
+          //                                             Navigator.push(context, MaterialPageRoute(builder: (context) => BooksCreator()));
+          //                                           },
+          //                                         ),
+          //                                       SizedBox(
+          //                                         width: 10,
+          //                                       ),
+          //                                       InkWell(
+          //                                           child: Container(
+          //                                             decoration: BoxDecoration(
+          //                                               borderRadius: BorderRadius.circular(15),
+          //                                               color: Colors.white.withOpacity(0.5),
+          //                                               border: Border.all(color: Colors.white),
+          //                                             ),
+          //                                             child: Padding(
+          //                                               padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+          //                                               child: Text("See More"),
+          //                                             ),
+          //                                           ),
+          //                                           onTap: () {
+          //                                              Navigator.push(context, MaterialPageRoute(builder: (context) => allBooks()));
+          //                                           }),
+          //                                       SizedBox(width: 20,)
+          //                                     ],
+          //                                   ),
+          //                                 ),
+          //                                 Container(
+          //                                   height: 140,
+          //                                   child: ListView.separated(
+          //                                     scrollDirection: Axis.horizontal,
+          //                                     itemCount: Books.length,
+          //                                     itemBuilder: (BuildContext context, int index) {
+          //                                       final Uri uri = Uri.parse(Books[index].photoUrl);
+          //                                       final String fileName = uri.pathSegments.last;
+          //                                       var name = fileName.split("/").last;
+          //                                       final file = File("${folderPath}/ece_books/$name");
+          //                                       if (file.existsSync()) {
+          //                                         return InkWell(
+          //                                           child: Padding(
+          //                                             padding: const EdgeInsets.only(left: 10),
+          //                                             child: Container(
+          //                                               decoration: BoxDecoration(
+          //                                                 borderRadius: BorderRadius.circular(15),
+          //                                                 color: Colors.black.withOpacity(0.3),
+          //                                                 // border: Border.all(color: Colors.white),
+          //                                               ),
+          //                                               child: Row(
+          //                                                 children: [
+          //
+          //                                                   Container(
+          //                                                     decoration: BoxDecoration(
+          //                                                       borderRadius: BorderRadius.circular(15),
+          //                                                       color: Colors.black.withOpacity(0.4),
+          //                                                       image: DecorationImage(
+          //                                                         image: FileImage(file),
+          //                                                         fit: BoxFit.cover,
+          //                                                       ),
+          //                                                     ),
+          //                                                     height: 140,
+          //                                                     width: 90,
+          //                                                   ),
+          //                                                   Padding(
+          //                                                     padding: const EdgeInsets.all(8.0),
+          //                                                     child: Container(
+          //                                                       width: 100,
+          //                                                       child: SingleChildScrollView(
+          //                                                         child: Column(
+          //                                                           mainAxisAlignment: MainAxisAlignment.start,
+          //                                                           crossAxisAlignment: CrossAxisAlignment.start,
+          //                                                           children: [
+          //                                                             Text(
+          //                                                               Books[index].heading,
+          //                                                               maxLines: 2,
+          //                                                               overflow: TextOverflow.ellipsis,
+          //                                                               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
+          //                                                             ),
+          //                                                             Text(
+          //                                                               Books[index].Author,
+          //                                                               maxLines: 1,
+          //                                                               overflow: TextOverflow.ellipsis,
+          //                                                               style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+          //                                                             ),
+          //                                                             Text(
+          //                                                               Books[index].edition,
+          //                                                               maxLines: 1,
+          //                                                               overflow: TextOverflow.ellipsis,
+          //                                                               style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+          //                                                             ),
+          //                                                             Text(
+          //                                                               Books[index].description,
+          //                                                               maxLines: 1,
+          //                                                               overflow: TextOverflow.ellipsis,
+          //                                                               style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.white),
+          //                                                             ),
+          //                                                             SizedBox(height: 5,),
+          //                                                             Row(
+          //                                                               children: [
+          //                                                                 InkWell(
+          //                                                                   child: StreamBuilder<DocumentSnapshot>(
+          //                                                                     stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).snapshots(),
+          //                                                                     builder: (context, snapshot) {
+          //                                                                       if (snapshot.hasData) {
+          //                                                                         if (snapshot.data!.exists) {
+          //                                                                           return const Icon(
+          //                                                                               Icons.library_add_check,
+          //                                                                               size: 26, color: Colors.cyanAccent
+          //                                                                           );
+          //                                                                         } else {
+          //                                                                           return const Icon(
+          //                                                                             Icons.library_add_outlined,
+          //                                                                             size: 26,
+          //                                                                             color: Colors.cyanAccent,
+          //                                                                           );
+          //                                                                         }
+          //                                                                       } else {
+          //                                                                         return const Icon(
+          //                                                                           Icons.library_add_outlined,
+          //                                                                           size: 26,
+          //                                                                           color: Colors.cyanAccent,
+          //                                                                         );
+          //                                                                       }
+          //                                                                     },
+          //                                                                   ),
+          //                                                                   onTap: () async{
+          //                                                                     try {
+          //                                                                       await FirebaseFirestore
+          //                                                                           .instance
+          //                                                                           .collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id)
+          //                                                                           .get()
+          //                                                                           .then((docSnapshot) {
+          //                                                                         if (docSnapshot.exists) {
+          //                                                                           FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).delete();
+          //                                                                           showToast("Removed from saved list");
+          //                                                                         } else {
+          //                                                                           FavouriteBooksSubjects(description:Books[index].description,heading: Books[index].heading,link: Books[index].link,photoUrl: Books[index].photoUrl,Author: Books[index].Author,edition: Books[index].edition,date: Books[index].date, id: Books[index].id );
+          //                                                                           showToast("${Books[index].heading} in favorites");                                                            }
+          //                                                                       });
+          //                                                                     } catch (e) {
+          //                                                                       print(e);
+          //                                                                     }
+          //
+          //                                                                   },
+          //                                                                 ),
+          //
+          //                                                                 InkWell(
+          //                                                                     child: Container(
+          //                                                                       decoration: BoxDecoration(
+          //                                                                         borderRadius: BorderRadius.circular(15),
+          //                                                                         color: Colors.white.withOpacity(0.5),
+          //                                                                         border: Border.all(color: Colors.white),
+          //                                                                       ),
+          //                                                                       child: Padding(
+          //                                                                         padding: const EdgeInsets.only(left: 1, right: 5, top: 2, bottom: 2),
+          //                                                                         child: Row(
+          //                                                                           children: [
+          //                                                                             Text("Open"),
+          //                                                                             Icon(Icons.open_in_new)
+          //                                                                           ],
+          //                                                                         ),
+          //                                                                       ),
+          //                                                                     ),
+          //                                                                     onTap: () {}
+          //                                                                 ),
+          //                                                               ],
+          //                                                             ),
+          //                                                           ],
+          //                                                         ),
+          //                                                       ),
+          //                                                     ),
+          //                                                   ),
+          //                                                   SizedBox(
+          //                                                     width: 20,
+          //                                                   )
+          //                                                 ],
+          //                                               ),
+          //                                             ),
+          //                                           ),
+          //                                           onTap: () async {
+          //                                             Navigator.push(context, MaterialPageRoute(builder: (context)=>MyDownloadPage(fileUrl: Books[index].link,)));
+          //
+          //                                             // _BooksBottomSheet(context, Books[index],file);
+          //                                           },
+          //                                         );
+          //                                       } else {
+          //                                         downloadImage(Books[index].photoUrl,"ece_books");
+          //                                         return InkWell(
+          //                                           child: Padding(
+          //                                             padding: const EdgeInsets.only(left: 10),
+          //                                             child: Container(
+          //                                               decoration: BoxDecoration(
+          //                                                 borderRadius: BorderRadius.circular(15),
+          //                                                 color: Colors.black.withOpacity(0.3),
+          //                                                 // border: Border.all(color: Colors.white),
+          //                                               ),
+          //                                               child: Row(
+          //                                                 children: [
+          //
+          //                                                   Container(
+          //                                                     decoration: BoxDecoration(
+          //                                                       borderRadius: BorderRadius.circular(15),
+          //                                                       color: Colors.black.withOpacity(0.4),
+          //                                                     ),
+          //                                                     height: 140,
+          //                                                     width: 90,
+          //                                                     child: CachedNetworkImage(
+          //                                                       imageUrl: Books[index].photoUrl,
+          //                                                       placeholder: (context, url) => CircularProgressIndicator(),
+          //                                                       errorWidget: (context, url, error) => Icon(Icons.error),
+          //                                                     ),
+          //                                                   ),
+          //                                                   Padding(
+          //                                                     padding: const EdgeInsets.all(8.0),
+          //                                                     child: Container(
+          //                                                       width: 100,
+          //                                                       child: SingleChildScrollView(
+          //                                                         child: Column(
+          //                                                           mainAxisAlignment: MainAxisAlignment.start,
+          //                                                           crossAxisAlignment: CrossAxisAlignment.start,
+          //                                                           children: [
+          //                                                             Text(
+          //                                                               Books[index].heading,
+          //                                                               maxLines: 2,
+          //                                                               overflow: TextOverflow.ellipsis,
+          //                                                               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
+          //                                                             ),
+          //                                                             Text(
+          //                                                               Books[index].Author,
+          //                                                               maxLines: 1,
+          //                                                               overflow: TextOverflow.ellipsis,
+          //                                                               style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+          //                                                             ),
+          //                                                             Text(
+          //                                                               Books[index].edition,
+          //                                                               maxLines: 1,
+          //                                                               overflow: TextOverflow.ellipsis,
+          //                                                               style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+          //                                                             ),
+          //                                                             Text(
+          //                                                               Books[index].description,
+          //                                                               maxLines: 1,
+          //                                                               overflow: TextOverflow.ellipsis,
+          //                                                               style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.white),
+          //                                                             ),
+          //                                                             SizedBox(height: 5,),
+          //                                                             Row(
+          //                                                               children: [
+          //                                                                 InkWell(
+          //                                                                   child: StreamBuilder<DocumentSnapshot>(
+          //                                                                     stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).snapshots(),
+          //                                                                     builder: (context, snapshot) {
+          //                                                                       if (snapshot.hasData) {
+          //                                                                         if (snapshot.data!.exists) {
+          //                                                                           return const Icon(
+          //                                                                               Icons.library_add_check,
+          //                                                                               size: 26, color: Colors.cyanAccent
+          //                                                                           );
+          //                                                                         } else {
+          //                                                                           return const Icon(
+          //                                                                             Icons.library_add_outlined,
+          //                                                                             size: 26,
+          //                                                                             color: Colors.cyanAccent,
+          //                                                                           );
+          //                                                                         }
+          //                                                                       } else {
+          //                                                                         return const Icon(
+          //                                                                           Icons.library_add_outlined,
+          //                                                                           size: 26,
+          //                                                                           color: Colors.cyanAccent,
+          //                                                                         );
+          //                                                                       }
+          //                                                                     },
+          //                                                                   ),
+          //                                                                   onTap: () async{
+          //                                                                     try {
+          //                                                                       await FirebaseFirestore
+          //                                                                           .instance
+          //                                                                           .collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id)
+          //                                                                           .get()
+          //                                                                           .then((docSnapshot) {
+          //                                                                         if (docSnapshot.exists) {
+          //                                                                           FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).delete();
+          //                                                                           showToast("Removed from saved list");
+          //                                                                         } else {
+          //                                                                           FavouriteBooksSubjects(description:Books[index].description,heading: Books[index].heading,link: Books[index].link,photoUrl: Books[index].photoUrl,Author: Books[index].Author,edition: Books[index].edition,date: Books[index].date, id: Books[index].id );
+          //                                                                           showToast("${Books[index].heading} in favorites");                                                            }
+          //                                                                       });
+          //                                                                     } catch (e) {
+          //                                                                       print(e);
+          //                                                                     }
+          //
+          //                                                                   },
+          //                                                                 ),
+          //
+          //                                                                 InkWell(
+          //                                                                     child: Container(
+          //                                                                       decoration: BoxDecoration(
+          //                                                                         borderRadius: BorderRadius.circular(15),
+          //                                                                         color: Colors.white.withOpacity(0.5),
+          //                                                                         border: Border.all(color: Colors.white),
+          //                                                                       ),
+          //                                                                       child: Padding(
+          //                                                                         padding: const EdgeInsets.only(left: 1, right: 5, top: 2, bottom: 2),
+          //                                                                         child: Row(
+          //                                                                           children: [
+          //                                                                             Text("Open"),
+          //                                                                             Icon(Icons.open_in_new)
+          //                                                                           ],
+          //                                                                         ),
+          //                                                                       ),
+          //                                                                     ),
+          //                                                                     onTap: () {}
+          //                                                                 ),
+          //                                                               ],
+          //                                                             ),
+          //                                                           ],
+          //                                                         ),
+          //                                                       ),
+          //                                                     ),
+          //                                                   ),
+          //                                                   SizedBox(
+          //                                                     width: 20,
+          //                                                   )
+          //                                                 ],
+          //                                               ),
+          //                                             ),
+          //                                           ),
+          //                                           onTap: () async {
+          //
+          //                                             // _BooksBottomSheet(context, Books[index],file);
+          //                                           },
+          //                                         );
+          //                                       }
+          //
+          //                                       },
+          //                                     shrinkWrap: true,
+          //                                     separatorBuilder: (context, index) => const SizedBox(
+          //                                       width: 9,
+          //                                     ),
+          //                                   ),
+          //                                 ),
+          //                               ],
+          //                             );
+          //                         }
+          //                     }
+          //                   }),
+          //             ),
+          //             SizedBox(
+          //               height: 20,
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
         ),
       ),
     ),
@@ -2704,9 +5425,6 @@ class _HomePageState extends State<HomePage> {
     return out[0];
 
   }
-
-
-
 }
 
 
@@ -2774,6 +5492,27 @@ class RegulationYearConvertor {
   Map<String, dynamic> toJson() => {"id": id, "heading": heading};
 
   static RegulationYearConvertor fromJson(Map<String, dynamic> json) => RegulationYearConvertor(id: json['id'], heading: json["heading"]);
+}
+
+Stream<List<TimeTableConvertor>> readTimeTable({required String id,required String id1}) =>
+    FirebaseFirestore.instance.collection('ECE').doc("regulation").collection("regulation").doc(id).collection("year").doc(id1).collection("class").orderBy("heading",descending: true).snapshots().map((snapshot) => snapshot.docs.map((doc) => TimeTableConvertor.fromJson(doc.data())).toList());
+
+Future createTimeTable({required String heading,required String photoUrl,required String id,required String id1}) async {
+  final docflash = FirebaseFirestore.instance.collection('ECE').doc("regulation").collection("regulation").doc(id).collection("year").doc(id1).collection("class").doc();
+  final flash = TimeTableConvertor(id: docflash.id, heading: heading,photoUrl: photoUrl);
+  final json = flash.toJson();
+  await docflash.set(json);
+}
+
+class TimeTableConvertor {
+  String id;
+  final String heading,photoUrl;
+
+  TimeTableConvertor({this.id = "", required this.heading,required this.photoUrl});
+
+  Map<String, dynamic> toJson() => {"id": id, "heading": heading,"photoUrl":photoUrl};
+
+  static TimeTableConvertor fromJson(Map<String, dynamic> json) => TimeTableConvertor(id: json['id'], heading: json["heading"],photoUrl: json['photoUrl']);
 }
 
 Stream<List<RegulationYearClassConvertor>> readRegulationYearClass({required String id,required String id1}) =>
@@ -3279,6 +6018,7 @@ void _BranchNewsBottomSheet(BuildContext context, BranchNewConvertor data,File f
                               ),
                             ),
                             onTap: (){
+                              download(data.photoUrl,fullUserId());
                               showToast("Saved in app");
                             },
                           ),
@@ -3360,6 +6100,7 @@ class _ImageZoomState extends State<ImageZoom> {
                     ),
                   ),
                   onTap: (){
+                    download(widget.url,fullUserId());
                     showToast("Saved in app");
                   },
                 ),
@@ -3368,4 +6109,25 @@ class _ImageZoomState extends State<ImageZoom> {
           ],
         ));
   }
+}
+
+download(String photoUrl,String path) async {
+  final Uri uri = Uri.parse(photoUrl);
+  final String fileName = uri.pathSegments.last;
+  var name = fileName.split("/").last;
+  final response = await http.get(Uri.parse(photoUrl));
+  final documentDirectory = await getApplicationDocumentsDirectory();
+  final newDirectory = Directory('${documentDirectory.path}/$path');
+  if (!await newDirectory.exists()) {
+    await newDirectory.create(recursive: true);
+    final file = File('${newDirectory.path}/${name}');
+    await file.writeAsBytes(response.bodyBytes);
+    showToast(file.path);
+
+  }else{
+    final file = File('${newDirectory.path}/${name}');
+    await file.writeAsBytes(response.bodyBytes);
+    showToast(file.path);
+  }
+
 }

@@ -23,6 +23,7 @@ Future main() async {
   await Firebase.initializeApp();
   final showHome = prefs.getBool('showHome') ?? false;
   await MobileAds.instance.initialize();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(MyApp(showHome: showHome));
   });
@@ -89,6 +90,7 @@ class Nav extends StatefulWidget {
 
 class _NavState extends State<Nav> {
   int _selectedIndex = 0;
+
   List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     favorites(),

@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srkr_study_app/TextField.dart';
 import 'package:srkr_study_app/HomePage.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'add subjects.dart';
 import 'ads.dart';
 import 'package:flutter/material.dart';
 
@@ -273,28 +274,6 @@ class _SubjectsState extends State<Subjects> {
     setState(() {
       folderPath = '${directory.path}/';
     });
-
-  }
-  downloadImage(String photoUrl,String path) async {
-    final Uri uri = Uri.parse(photoUrl);
-    final String fileName = uri.pathSegments.last;
-    var name = fileName.split("/").last;
-
-    final ref = FirebaseStorage.instance.ref().child(fileName);
-    final url = await ref.getDownloadURL();
-    final response = await http.get(Uri.parse(url));
-    final documentDirectory = await getApplicationDocumentsDirectory();
-    final newDirectory = Directory('${documentDirectory.path}/$path');
-    if (!await newDirectory.exists()) {
-      await newDirectory.create(recursive: true);
-      final file = File('${newDirectory.path}/${name}');
-      await file.writeAsBytes(response.bodyBytes);
-      showToast(file.path);
-    }else{
-      final file = File('${newDirectory.path}/${name}');
-      await file.writeAsBytes(response.bodyBytes);
-      showToast(file.path);
-    }
 
   }
   @override
@@ -636,7 +615,7 @@ class _SubjectsState extends State<Subjects> {
 
 
                                           } else {
-                                            downloadImage(SubjectsData.PhotoUrl,"ece_subjects");
+                                            download(SubjectsData.PhotoUrl,"ece_subjects");
                                             return  Column(
                                               children: [
                                                 SizedBox(
@@ -1960,7 +1939,7 @@ class subjectUnitsData extends StatefulWidget {
   String fullName;
   String photoUrl;
 
-  subjectUnitsData({required this.ID, required this.mode,required this.photoUrl,this.name="Subject",required this.fullName});
+  subjectUnitsData({required this.ID, required this.mode,required this.photoUrl,this.name="Subjects",required this.fullName});
 
   @override
   State<subjectUnitsData> createState() => _subjectUnitsDataState();
@@ -1968,6 +1947,7 @@ class subjectUnitsData extends StatefulWidget {
 
 class _subjectUnitsDataState extends State<subjectUnitsData> {
   bool isReadMore = false;
+  bool isDownloaded = false;
   String folderPath = "";
   File file  = File("");
 
@@ -1984,6 +1964,32 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
         file = File("${folderPath}/ece_labsubjects/$name");
       }
     });
+
+  }
+  download(String photoUrl,String path) async {
+    final Uri uri = Uri.parse(photoUrl);
+    final String fileName = uri.pathSegments.last;
+    var name = fileName.split("/").last;
+    final response = await http.get(Uri.parse(photoUrl));
+    final documentDirectory = await getApplicationDocumentsDirectory();
+    final newDirectory = Directory('${documentDirectory.path}/$path');
+    if (!await newDirectory.exists()) {
+      await newDirectory.create(recursive: true);
+      final file = File('${newDirectory.path}/${name}');
+      await file.writeAsBytes(response.bodyBytes);
+      showToast(file.path);
+      setState(() {
+        isDownloaded = false;
+      });
+
+    }else{
+      final file = File('${newDirectory.path}/${name}');
+      await file.writeAsBytes(response.bodyBytes);
+      showToast(file.path);
+      setState(() {
+        isDownloaded = false;
+      });
+    }
 
   }
   @override
@@ -2093,12 +2099,134 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                             children: [
                               Text(widget.name,style: TextStyle(fontSize: 23,color: Colors.white),),
                               Text(widget.fullName,style: TextStyle(fontSize: 15,color: Colors.white),),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    child: StreamBuilder<DocumentSnapshot>(
+                                      stream: FirebaseFirestore.instance.collection('ECE')
+                                          .doc("Subjects")
+                                          .collection("Subjects").doc(widget.ID).collection("likes").doc(fullUserId()).snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          if (snapshot.data!.exists) {
+                                            return const Icon(Icons.favorite,color: Colors.red,size: 26,);
+                                          } else {
+                                            return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
+                                          }
+                                        } else {
+                                          return Container();
+                                        }
+                                      },
+                                    ),
+                                    onTap:
+                                        ()async {
+
+                                      try {
+                                        await FirebaseFirestore.instance.
+                                        collection('ECE')
+                                            .doc("Subjects")
+                                            .collection("Subjects").doc(widget.ID).collection("likes").doc(fullUserId())
+                                            .get()
+                                            .then((docSnapshot) {
+                                          if (docSnapshot.exists) {
+                                            FirebaseFirestore.instance.
+                                            collection('ECE')
+                                                .doc("Subjects")
+                                                .collection("Subjects").doc(widget.ID).collection("likes").doc(fullUserId())
+                                                .delete();
+                                            showToast("Unliked");
+                                          } else {
+                                            FirebaseFirestore.instance.
+                                            collection('ECE')
+                                                .doc("Subjects")
+                                                .collection("Subjects").doc(widget.ID).collection("likes").doc(fullUserId())
+                                                .set({"id": fullUserId()});
+                                            showToast("Liked");
+                                          }
+                                        });
+                                      } catch (e) {
+                                        print(e);
+                                      }
+                                    },
+                                  ),
+                                  StreamBuilder<QuerySnapshot>(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('ECE')
+                                        .doc("Subjects")
+                                        .collection("Subjects").doc(widget.ID).collection("likes")
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        return Text(" ${snapshot.data!.docs.length} Likes",style: const TextStyle(fontSize: 16,color: Colors.white),);
+                                      } else {
+                                        return const Text("0");
+                                      }
+                                    },
+                                  ),
+                                  SizedBox(width: 5,),
+                                  InkWell(
+                                    child: StreamBuilder<DocumentSnapshot>(
+                                      stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(widget.ID).snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          if (snapshot.data!.exists) {
+                                            return Row(
+                                              children: [
+                                                const Icon(
+                                                    Icons.library_add_check,
+                                                    size: 26, color: Colors.cyanAccent
+                                                ),
+                                                Text(" Saved",style: TextStyle(color: Colors.white,fontSize: 16),)
+                                              ],
+                                            );
+                                          } else {
+                                            return Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.library_add_outlined,
+                                                  size: 26,
+                                                  color: Colors.cyanAccent,
+                                                ),
+                                                Text(" Save",style: TextStyle(color: Colors.white,fontSize: 16),)
+                                              ],
+                                            );
+                                          }
+                                        } else {
+                                          return Container();
+                                        }
+                                      },
+                                    ),
+                                    onTap: () async{
+                                      try {
+                                        await FirebaseFirestore
+                                            .instance
+                                            .collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(widget.ID)
+                                            .get()
+                                            .then((docSnapshot) {
+                                          if (docSnapshot.exists) {
+                                            FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(widget.ID).delete();
+                                            showToast("Removed from saved list");
+                                          } else {
+                                            FavouriteSubjects(SubjectId: widget.ID,name: widget.name,description: widget.fullName,photoUrl: widget.photoUrl);
+                                            showToast("${widget.name} in favorites");                                                                  }
+                                        });
+                                      } catch (e) {
+                                        print(
+                                            e);
+                                      }
+
+                                    },
+                                  ),
+                                ],
+                              )
                             ],
                           ),
                         )),
 
                   ],
                 ),
+                if(isDownloaded)LinearProgressIndicator(),
                 Expanded(
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
@@ -2135,6 +2263,10 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                               itemCount: Units!.length,
                                               itemBuilder: (context, int index) {
                                                 final unit = Units[index];
+                                                final Uri uri = Uri.parse(unit.PDFLink);
+                                                final String fileName = uri.pathSegments.last;
+                                                var name = fileName.split("/").last;
+                                                final file = File("${folderPath}/pdfs/$name");
                                                 return SizedBox(
                                                   child: Column(
                                                     children: [
@@ -2151,195 +2283,154 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                                             mainAxisAlignment: MainAxisAlignment.start,
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
-                                                              Text(
-                                                                unit.heading,
-                                                                style: const TextStyle(
-                                                                  fontSize: 18.0,
-                                                                  color: Colors.white,
-                                                                  fontWeight: FontWeight.w500,
-                                                                ),
-                                                              ),
+
                                                               Row(
                                                                 children: [
                                                                   Flexible(
-                                                                    child: Container(
-                                                                        child: buildText(unit.description)
+                                                                    flex:2,
+                                                                    child: Text(
+                                                                      unit.heading,
+                                                                      style: const TextStyle(
+                                                                        fontSize: 18.0,
+                                                                        color: Colors.white,
+                                                                        fontWeight: FontWeight.w500,
+                                                                      ),
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                      maxLines: 2,
                                                                     ),
-                                                                    flex: 4,
                                                                   ),
-                                                                  Flexible(
-                                                                    child: Column(
-                                                                      children: [
-                                                                        InkWell(
-                                                                          child: Container(
-                                                                            decoration: BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(15),
-                                                                              color: Colors.white.withOpacity(0.5),
-                                                                              border: Border.all(color: Colors.white),
-                                                                            ),
-                                                                            child: Row(
-                                                                              children: [
-                                                                                Text("  Open"),
-                                                                                Icon(Icons.open_in_new)
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                          onTap: (){
-                                                                            _launchUrl(unit.PDFLink);
-                                                                          },
-                                                                        ),
-                                                                        // SizedBox(height: 3,),
-                                                                        // Container(
-                                                                        //   decoration: BoxDecoration(
-                                                                        //     borderRadius: BorderRadius.circular(15),
-                                                                        //     color: Colors.white.withOpacity(0.5),
-                                                                        //     border: Border.all(color: Colors.white),
-                                                                        //   ),
-                                                                        //   child: Row(
-                                                                        //     children: [
-                                                                        //       Text("  Download"),
-                                                                        //       Icon(Icons.download_outlined)
-                                                                        //     ],
-                                                                        //   ),
-                                                                        // )
-                                                                      ],
-                                                                    ),
+                                                                  if (file.existsSync())Flexible(
                                                                     flex: 1,
+                                                                    child: InkWell(
+                                                                      child: Container(
+                                                                        decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(8),
+                                                                          color: Colors.black.withOpacity(0.5),
+                                                                          border: Border.all(color: Colors.green),
+                                                                        ),
+                                                                        child: Padding(
+                                                                          padding: const EdgeInsets.only(left: 3,right: 3),
+                                                                          child: Row(
+                                                                            children: [
+                                                                              Icon(Icons.download_outlined,color: Colors.green,),
+                                                                              Text(" & ",style: TextStyle(color: Colors.white,fontSize: 20),),
+                                                                              Text("Open",style: TextStyle(color: Colors.white,fontSize: 20),),
+                                                                              Icon(Icons.open_in_new,color: Colors.greenAccent,)
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      onTap: () {
+                                                                        Navigator
+                                                                            .push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                                builder: (
+                                                                                    context) =>
+                                                                                    PdfViewerPage(
+                                                                                        pdfUrl: "${folderPath}/pdfs/$name")));
+                                                                      }
+                                                                  )
+                                                                  )
+                                                                  else Flexible(
+                                                                    flex: 1,
+                                                                    child: InkWell(
+                                                                      child: Container(
+                                                                        decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(8),
+                                                                          color: Colors.black.withOpacity(0.5),
+                                                                          border: Border.all(color: Colors.white),
+                                                                        ),
+                                                                        child: Padding(
+                                                                          padding: const EdgeInsets.only(left: 3,right: 3),
+                                                                          child: Row(
+                                                                            children: [
+                                                                              Icon(Icons.download_outlined,color: Colors.red,),
+                                                                              Text(" & ",style: TextStyle(color: Colors.white,fontSize: 20),),
+                                                                              Text("Open",style: TextStyle(color: Colors.white,fontSize: 20),),
+                                                                              Icon(Icons.open_in_new,color: Colors.greenAccent,)
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      onTap: () async {
+                                                                        setState(() {
+                                                                          isDownloaded = true;
+                                                                        });
+                                                                        await download(unit.PDFLink, "pdfs");
+                                                                      },
+                                                                    ),
                                                                   )
                                                                 ],
                                                               ),
-                                                              // const Padding(
-                                                              //   padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-                                                              //   child: Text(
-                                                              //     'Download PDF :',
-                                                              //     style: TextStyle(
-                                                              //       fontSize: 13.0,
-                                                              //       color: Colors.white70,
-                                                              //       fontWeight: FontWeight.w700,
-                                                              //     ),
-                                                              //   ),
-                                                              // ),
-                                                              // Padding(
-                                                              //   padding: const EdgeInsets.only(left: 10, right: 60),
-                                                              //   child: InkWell(
-                                                              //     child: Container(
-                                                              //       decoration: BoxDecoration(
-                                                              //         borderRadius: BorderRadius.circular(12),
-                                                              //         color: const Color.fromRGBO(0, 2, 10, 0.5),
-                                                              //       ),
-                                                              //       child: Column(
-                                                              //         children: [
-                                                              //           Padding(
-                                                              //             padding: const EdgeInsets.only(left: 30),
-                                                              //             child: Row(
-                                                              //               children: [
-                                                              //                 Column(
-                                                              //                   children: [
-                                                              //                     Text(
-                                                              //                       unit.PDFName,
-                                                              //                       style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
-                                                              //                     ),
-                                                              //                     Padding(
-                                                              //                       padding: const EdgeInsets.only(bottom: 3),
-                                                              //                       child: Text(
-                                                              //                         'Size : ${unit.PDFSize}',
-                                                              //                         style: const TextStyle(
-                                                              //                           fontSize: 10.0,
-                                                              //                           color: Colors.white60,
-                                                              //                           fontWeight: FontWeight.bold,
-                                                              //                         ),
-                                                              //                       ),
-                                                              //                     ),
-                                                              //                   ],
-                                                              //                 ),
-                                                              //                 const Spacer(),
-                                                              //                 const Padding(
-                                                              //                   padding: EdgeInsets.only(right: 20),
-                                                              //                   child: Icon(
-                                                              //                     Icons.download_for_offline_outlined,
-                                                              //                     color: Colors.white54,
-                                                              //                   ),
-                                                              //                 ),
-                                                              //               ],
-                                                              //             ),
-                                                              //           ),
-                                                              //         ],
-                                                              //       ),
-                                                              //     ),
-                                                              //     onTap: () {
-                                                              //       _launchUrl(unit.PDFLink);
-                                                              //     },
-                                                              //   ),
-                                                              // ),
-                                                              // Row(
-                                                              //   children: [
-                                                              //     Spacer(),
-                                                              //     Padding(
-                                                              //       padding: const EdgeInsets.only(right: 10, top: 5, bottom: 5),
-                                                              //       child: Text(unit.Date),
-                                                              //     ),
-                                                              //   ],
-                                                              // ),
-                                                              // if (userId() == "gmail.com")
-                                                              //   Row(
-                                                              //     children: [
-                                                              //       InkWell(
-                                                              //         child: Chip(
-                                                              //           elevation: 20,
-                                                              //           backgroundColor: Colors.black,
-                                                              //           avatar: CircleAvatar(
-                                                              //               backgroundColor: Colors.black45,
-                                                              //               child: Icon(
-                                                              //                 Icons.edit_outlined,
-                                                              //               )),
-                                                              //           label: Text(
-                                                              //             "Edit",
-                                                              //             style: TextStyle(color: Colors.white),
-                                                              //           ),
-                                                              //         ),
-                                                              //         onTap: () {
-                                                              //           Navigator.push(
-                                                              //               context,
-                                                              //               MaterialPageRoute(
-                                                              //                   builder: (context) => UnitsCreator(
-                                                              //                         mode: widget.mode,
-                                                              //                         UnitId: widget.ID,
-                                                              //                         id: unit.id,
-                                                              //                         Heading: unit.heading,
-                                                              //                         Description: unit.description,
-                                                              //                         PDFName: unit.PDFName,
-                                                              //                         PDFSize: unit.PDFSize,
-                                                              //                         PDFUrl: unit.PDFLink,
-                                                              //                       )));
-                                                              //         },
-                                                              //       ),
-                                                              //       InkWell(
-                                                              //         child: Chip(
-                                                              //           elevation: 20,
-                                                              //           backgroundColor: Colors.black,
-                                                              //           avatar: CircleAvatar(
-                                                              //               backgroundColor: Colors.black45,
-                                                              //               child: Icon(
-                                                              //                 Icons.delete_rounded,
-                                                              //               )),
-                                                              //           label: Text(
-                                                              //             "Delete",
-                                                              //             style: TextStyle(color: Colors.white),
-                                                              //           ),
-                                                              //         ),
-                                                              //         onTap: () {
-                                                              //           final deleteFlashNews = FirebaseFirestore.instance
-                                                              //               .collection('ECE')
-                                                              //               .doc(widget.mode)
-                                                              //               .collection(widget.mode)
-                                                              //               .doc(widget.ID)
-                                                              //               .collection("Units")
-                                                              //               .doc(unit.id);
-                                                              //           deleteFlashNews.delete();
-                                                              //         },
-                                                              //       ),
-                                                              //     ],
-                                                              //   )
+                                                              Container(
+                                                                  child: Text(unit.description,
+                                                                    style: const TextStyle(
+                                                                      fontSize: 10.0,
+                                                                      color: Color.fromRGBO(204, 207, 222, 0.8),
+                                                                      fontWeight: FontWeight.bold,
+                                                                    ),)
+                                                              ),
+                                                              if (userId() == "gmail.com")
+                                                                Row(
+                                                                  children: [
+                                                                    InkWell(
+                                                                      child: Chip(
+                                                                        elevation: 20,
+                                                                        backgroundColor: Colors.black,
+                                                                        avatar: CircleAvatar(
+                                                                            backgroundColor: Colors.black45,
+                                                                            child: Icon(
+                                                                              Icons.edit_outlined,
+                                                                            )),
+                                                                        label: Text(
+                                                                          "Edit",
+                                                                          style: TextStyle(color: Colors.white),
+                                                                        ),
+                                                                      ),
+                                                                      onTap: () {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                                builder: (context) => UnitsCreator(
+                                                                                      mode: widget.mode,
+                                                                                      UnitId: widget.ID,
+                                                                                      id: unit.id,
+                                                                                      Heading: unit.heading,
+                                                                                      Description: unit.description,
+                                                                                      PDFName: unit.PDFName,
+                                                                                      PDFSize: unit.PDFSize,
+                                                                                      PDFUrl: unit.PDFLink,
+                                                                                    )));
+                                                                      },
+                                                                    ),
+                                                                    InkWell(
+                                                                      child: Chip(
+                                                                        elevation: 20,
+                                                                        backgroundColor: Colors.black,
+                                                                        avatar: CircleAvatar(
+                                                                            backgroundColor: Colors.black45,
+                                                                            child: Icon(
+                                                                              Icons.delete_rounded,
+                                                                            )),
+                                                                        label: Text(
+                                                                          "Delete",
+                                                                          style: TextStyle(color: Colors.white),
+                                                                        ),
+                                                                      ),
+                                                                      onTap: () {
+                                                                        final deleteFlashNews = FirebaseFirestore.instance
+                                                                            .collection('ECE')
+                                                                            .doc(widget.mode)
+                                                                            .collection(widget.mode)
+                                                                            .doc(widget.ID)
+                                                                            .collection("Units")
+                                                                            .doc(unit.id);
+                                                                        deleteFlashNews.delete();
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                )
                                                             ],
                                                           ),
                                                         ),
@@ -2355,9 +2446,9 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                     }
                                 }
                               }),
-                          if(widget.mode=="Subject")
-                            StreamBuilder<List<UnitsConvertor>>(
-                                stream: readUnits(widget.ID),
+                          if(widget.mode=="Subjects" )
+                            StreamBuilder<List<TextBooksConvertor>>(
+                                stream: readUnitTextBooks(widget.ID),
                                 builder: (context, snapshot) {
                                   final Units = snapshot.data;
                                   switch (snapshot.connectionState) {
@@ -2379,7 +2470,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                               padding: const EdgeInsets.only(left: 10,top: 20,bottom: 8),
                                               child: Text("Text Books",style: TextStyle(fontSize: 30,color: Colors.white),),
                                             ),
-                                            Container(
+                                            if(Units!.length>0)Container(
                                               height: 168,
                                               child: ListView.builder(
                                                 physics: BouncingScrollPhysics(),
@@ -2447,7 +2538,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                                 },
 
                                               ),
-                                            ),
+                                            )else Text("No TextBook")
                                           ],
                                         );
                                       }
@@ -2562,19 +2653,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
       ),
     );
 
-  Widget buildText(String text){
-    final maxLines = isReadMore ? null :2;
-    final overflow = isReadMore?TextOverflow.visible:TextOverflow.ellipsis;
-    return Text(text,
-    maxLines: maxLines,
-      overflow: overflow,
-      style: const TextStyle(
-        fontSize: 10.0,
-        color: Color.fromRGBO(204, 207, 222, 0.8),
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
+
   Stream<List<UnitsConvertor>> readUnits(String subjectsID) => FirebaseFirestore.instance
       .collection('ECE')
       .doc(widget.mode)
@@ -2584,6 +2663,15 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
       .orderBy("Heading", descending: false)
       .snapshots()
       .map((snapshot) => snapshot.docs.map((doc) => UnitsConvertor.fromJson(doc.data())).toList());
+  Stream<List<TextBooksConvertor>> readUnitTextBooks(String subjectsID) => FirebaseFirestore.instance
+      .collection('ECE')
+      .doc(widget.mode)
+      .collection(widget.mode)
+      .doc(subjectsID)
+      .collection("textBook")
+      .orderBy("heading", descending: false )
+      .snapshots()
+      .map((snapshot) => snapshot.docs.map((doc) => TextBooksConvertor.fromJson(doc.data())).toList());
 }
 
 Future createUnits(
@@ -2611,6 +2699,32 @@ class UnitsConvertor {
 
   static UnitsConvertor fromJson(Map<String, dynamic> json) =>
       UnitsConvertor(PDFLink: json["PDFLink"], id: json['id'], heading: json["Heading"], PDFName: json["PDFName"], description: json["Description"], PDFSize: json["PDFSize"], Date: json["Date"]);
+}
+
+Future createUnitTextBooks(
+    {required String mode,
+      required String heading,
+      required String description,
+      required String regulation,
+      required String date,
+      required String link,
+      required String subjectsID}) async {
+  final docflash = FirebaseFirestore.instance.collection("ECE").doc(mode).collection(mode).doc(subjectsID).collection("textBooks").doc();
+  final flash = TextBooksConvertor(id: docflash.id, heading: heading,date: date,link: link,regulation: regulation);
+  final json = flash.toJson();
+  await docflash.set(json);
+}
+
+class TextBooksConvertor {
+  String id;
+  final String heading,link,date,regulation;
+
+  TextBooksConvertor({this.id = "", required this.heading, required this.regulation, required this.link,required this.date});
+
+  Map<String, dynamic> toJson() => {"id": id, "heading": heading, "link": link, "date": date,"reg":regulation};
+
+  static TextBooksConvertor fromJson(Map<String, dynamic> json) =>
+      TextBooksConvertor(link: json["link"], id: json['id'], heading: json["heading"], date: json["date"],regulation: json['reg']);
 }
 
 class Units {
