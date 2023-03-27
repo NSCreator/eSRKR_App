@@ -8,8 +8,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'HomePage.dart';
 import 'SubPages.dart';
 import 'TextField.dart';
+import 'add subjects.dart';
 
 class favorites extends StatefulWidget {
   const favorites({Key? key}) : super(key: key);
@@ -755,7 +757,21 @@ class _favoritesState extends State<favorites> {
                                               physics: BouncingScrollPhysics(),
                                               scrollDirection: Axis.horizontal,
                                               itemCount: Favourites.length,
-                                              itemBuilder: (BuildContext context, int index) => InkWell(
+                                              itemBuilder: (BuildContext context, int index) {
+                                                final Uri uri =
+                                                Uri.parse(Favourites[index].photoUrl);
+                                                final String fileName = uri.pathSegments.last;
+                                                var name = fileName.split("/").last;
+                                                final file =
+                                                File("${folderPath}/ece_books/$name");
+                                                final Uri uri1 = Uri.parse(Favourites[index].link);
+                                                final String fileName1 =
+                                                    uri1.pathSegments.last;
+                                                var name1 = fileName1.split("/").last;
+                                                final file1 =
+                                                File("${folderPath}/pdfs/$name1");
+
+                                                return InkWell(
                                                 child: Padding(
                                                   padding: const EdgeInsets.only(left: 10),
                                                   child: Container(
@@ -766,14 +782,13 @@ class _favoritesState extends State<favorites> {
                                                     ),
                                                     child: Row(
                                                       children: [
+
                                                         Container(
                                                           decoration: BoxDecoration(
                                                             borderRadius: BorderRadius.circular(15),
                                                             color: Colors.black.withOpacity(0.4),
                                                             image: DecorationImage(
-                                                              image: NetworkImage(
-                                                                Favourites[index].photoUrl,
-                                                              ),
+                                                              image: FileImage(file),
                                                               fit: BoxFit.cover,
                                                             ),
                                                           ),
@@ -922,55 +937,81 @@ class _favoritesState extends State<favorites> {
                                                                     style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.white),
                                                                   ),
                                                                   SizedBox(height: 1,),
-                                                                  Row(
-                                                                    children: [
-                                                                      SizedBox(width: 10,),
-                                                                      InkWell(
-                                                                          child: Container(
-                                                                            decoration: BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(15),
-                                                                              color: Colors.white.withOpacity(0.5),
-                                                                              border: Border.all(color: Colors.white),
-                                                                            ),
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsets.only(left: 5, right: 5, top: 2, bottom: 2),
-                                                                              child: Icon(Icons.download_outlined),
+                                                                  if (file1.existsSync())
+                                                                    InkWell(
+                                                                        child: Container(
+                                                                          decoration: BoxDecoration(
+                                                                            borderRadius: BorderRadius.circular(8),
+                                                                            color: Colors.black.withOpacity(0.5),
+                                                                            border: Border.all(color: Colors.green),
+                                                                          ),
+                                                                          child: Padding(
+                                                                            padding: const EdgeInsets.only(left: 3, right: 3),
+                                                                            child: Row(
+                                                                              children: [
+                                                                                Icon(
+                                                                                  Icons.download_outlined,
+                                                                                  color: Colors.green,
+                                                                                ),
+                                                                                Text(
+                                                                                  " & ",
+                                                                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                ),
+                                                                                Text(
+                                                                                  "Open",
+                                                                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                ),
+                                                                                Icon(
+                                                                                  Icons.open_in_new,
+                                                                                  color: Colors.greenAccent,
+                                                                                )
+                                                                              ],
                                                                             ),
                                                                           ),
-                                                                          onTap: () {
-                                                                            String url = Favourites[index].link;
-                                                                            String url1 = url.split("/d/")[1];
-                                                                            String url2 = url1.split("/")[0];
-                                                                            _ExternalLaunchUrl("https://drive.google.com/uc?export=download&id=${url2}");
-                                                                          }
-                                                                      ),
-                                                                      SizedBox(width: 10,),
-                                                                      InkWell(
-                                                                          child: Container(
-                                                                            decoration: BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(15),
-                                                                              color: Colors.white.withOpacity(0.5),
-                                                                              border: Border.all(color: Colors.white),
-                                                                            ),
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsets.only(left: 1, right: 5, top: 2, bottom: 2),
-                                                                              child: Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                children: [
-                                                                                  Text("  Open"),
-                                                                                  Icon(Icons.open_in_new)
-                                                                                ],
+                                                                        ),
+                                                                        onTap: () {
+                                                                          Navigator.push(context, MaterialPageRoute(builder: (context) => PdfViewerPage(pdfUrl: "${folderPath}/pdfs/$name1")));
+                                                                        })
+                                                                  else
+                                                                    InkWell(
+                                                                      child: Container(
+                                                                        decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(8),
+                                                                          color: Colors.black.withOpacity(0.5),
+                                                                          border: Border.all(color: Colors.white),
+                                                                        ),
+                                                                        child: Padding(
+                                                                          padding: const EdgeInsets.only(left: 3, right: 3),
+                                                                          child: Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.download_outlined,
+                                                                                color: Colors.red,
                                                                               ),
-                                                                            ),
+                                                                              Text(
+                                                                                " & ",
+                                                                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                              ),
+                                                                              Text(
+                                                                                "Open",
+                                                                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                              ),
+                                                                              Icon(
+                                                                                Icons.open_in_new,
+                                                                                color: Colors.greenAccent,
+                                                                              )
+                                                                            ],
                                                                           ),
-                                                                          onTap: () {
-                                                                            _LaunchUrl(Favourites[index].link);
-                                                                          }
+                                                                        ),
                                                                       ),
-                                                                      SizedBox(width: 10,),
-                                                                    ],
-                                                                  ),
+                                                                      onTap: () async {
+                                                                        showToast("Downloading");
+                                                                        await download(Favourites[index].link, "pdfs");
+                                                                        setState(() {
+                                                                          showToast("Downloaded");
+                                                                        });
+                                                                      },
+                                                                    )
                                                                 ],
                                                               ),
                                                             ),
@@ -984,7 +1025,7 @@ class _favoritesState extends State<favorites> {
                                                   ),
                                                 ),
 
-                                              ),
+                                              );},
                                               shrinkWrap: true,
                                               separatorBuilder: (context, index) => const SizedBox(
                                                 width: 9,

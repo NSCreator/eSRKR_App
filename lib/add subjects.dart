@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart'as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
@@ -352,6 +353,7 @@ class _unseenImagesState extends State<unseenImages> {
     );
   }
 }
+
 class Images extends StatefulWidget {
   String path = "";
   String heading;
@@ -483,6 +485,7 @@ class _ImagesState extends State<Images> {
     );
   }
 }
+
 class PdfViewerPage extends StatefulWidget {
   final String pdfUrl;
 
@@ -551,53 +554,7 @@ floatingActionButton: InkWell(
   }
 }
 
-
-class MyDownloadPage extends StatefulWidget {
-  final String fileUrl;
-
-  MyDownloadPage({Key? key, required this.fileUrl}) : super(key: key);
-
-  @override
-  _MyDownloadPageState createState() => _MyDownloadPageState();
-}
-
-class _MyDownloadPageState extends State<MyDownloadPage> {
-  bool _downloading = false;
-  late String _localPath ="";
-
-  Future<void> _downloadFile() async {
-    setState(() {
-      _downloading = true;
-    });
-
-    final response = await http.get(Uri.parse(widget.fileUrl));
-    final documentDirectory = await getApplicationDocumentsDirectory();
-
-    final file = File("${documentDirectory.path}/ece_books/my_file.pdf");
-    await file.writeAsBytes(response.bodyBytes);
-
-    setState(() {
-      _downloading = false;
-      _localPath = file.path;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Download PDF"),
-      ),
-      body: Center(
-        child: _downloading ? CircularProgressIndicator()
-            :
-        _localPath.isNotEmpty
-            ? Text("File downloaded to: $_localPath")
-            : ElevatedButton(
-          onPressed: _downloadFile,
-          child: Text("Download PDF"),
-        ),
-      ),
-    );
-  }
+showToast(String message) async {
+  await Fluttertoast.cancel();
+  Fluttertoast.showToast(msg: message, fontSize: 18);
 }

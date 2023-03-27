@@ -90,7 +90,6 @@ class Nav extends StatefulWidget {
 
 class _NavState extends State<Nav> {
   int _selectedIndex = 0;
-
   List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     favorites(),
@@ -104,7 +103,6 @@ class _NavState extends State<Nav> {
       _selectedIndex = index;
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -263,4 +264,8 @@ _showSecondPage(BuildContext context, String url) {
       ),
     ),
   );
+}
+showToast(String message) async {
+  await Fluttertoast.cancel();
+  Fluttertoast.showToast(msg: message, fontSize: 18);
 }

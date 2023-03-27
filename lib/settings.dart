@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../HomePage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -468,7 +469,7 @@ class _settingsState extends State<settings> {
                                             if (SettingsData[index].title == "Report") {
                                               _sendingMails("sujithnimmala03@gmail.com");
                                             } else if (SettingsData[index].title == "About") {
-                                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const about()));
+                                              Navigator.push(context, MaterialPageRoute(builder: (context) => const about()));
                                             } else {
                                               _ExternallaunchUrl("https://github.com/NSCreator/PRIVACY_POLACY/blob/main/Privacy-policy");
                                             }
@@ -482,6 +483,107 @@ class _settingsState extends State<settings> {
                               ),
                             ),
                           ),
+                          StreamBuilder<List<followUsConvertor>>(
+                              stream: readfollowUs(),
+                              builder: (context, snapshot) {
+                                final Books = snapshot.data;
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                    return const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 0.3,
+                                          color: Colors.cyan,
+                                        ));
+                                  default:
+                                    if (snapshot.hasError) {
+                                      return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                    } else {
+                                      if (Books!.isEmpty) {
+
+                                        return const Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "Nothing To Follow",
+                                              style: TextStyle(color: Color.fromRGBO(195, 228, 250, 1),),
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        return Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Padding(
+                                              padding: EdgeInsets.only(left: 10, top: 20,bottom: 8),
+                                              child: Text(
+                                                "Follow Us",
+                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500,color: Color.fromRGBO(195, 228, 250, 1),),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 40,
+                                              child: ListView.separated(
+                                                physics: const BouncingScrollPhysics(),
+                                                scrollDirection: Axis.horizontal,
+                                                itemCount: Books.length,
+                                                itemBuilder: (BuildContext context, int index) => InkWell(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 5,bottom: 10),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(color: const Color.fromRGBO(174, 228, 242,0.15),),
+                                                        borderRadius: BorderRadius.circular(15),
+                                                        color: Colors.black.withOpacity(0.3),
+                                                        // border: Border.all(color: Colors.white),
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(15),
+                                                              color: Colors.black.withOpacity(0.4),
+                                                              image:  DecorationImage(
+                                                                image: NetworkImage(
+                                                                  Books[index].photoUrl,
+                                                                ),
+                                                                fit: BoxFit.cover,
+                                                              ),
+                                                            ),
+                                                            height: 35,
+                                                            width: 50,
+                                                          ),
+                                                          Padding(
+                                                            padding: const EdgeInsets.all(5.0),
+                                                            child: Text(Books[index].name,style: const TextStyle(fontSize: 16,color: Colors.white),),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  onTap: (){
+                                                    if(Books[index].name =="Gmail"){
+                                                      _sendingMails(Books[index].link);
+                                                    }
+                                                    else{
+                                                      if(Books[index].link.isNotEmpty)_ExternallaunchUrl(Books[index].link);
+                                                      else showToast("No ${Books[index].name} Link");
+                                                    }
+
+                                                  },
+                                                ),
+                                                shrinkWrap: true,
+                                                separatorBuilder: (context, index) => const SizedBox(
+                                                  width: 9,
+                                                ),
+                                              ),
+                                            ),
+
+                                          ],
+                                        );
+                                      }
+                                    }
+                                }
+                              }),
                           Center(
                             child: InkWell(
                               child: Container(
@@ -525,7 +627,6 @@ class _settingsState extends State<settings> {
       ),
     );
   }
-
 }
 
 class mainSettings {
@@ -536,11 +637,7 @@ class mainSettings {
   );
 }
 
-
-
-
 int branchIndex = 0;
-
 
 class BranchApi {
   static Future<List<Branch>> getUsers() async {
@@ -734,194 +831,187 @@ class appDevelopmentTeam extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey.shade800,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(35),
-        child: AppBar(
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
-            ),
-          ),
-          //brightness: Brightness.light,
-          centerTitle: true,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
-              color: Color.fromRGBO(7, 7, 23, 1.0),
-            ),
-          ),
-
-          title: const Text('App Development Team'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: NetworkImage(
+                "https://i.pinimg.com/736x/01/c7/f7/01c7f72511cc6ce7858e65b45d4f8c9c.jpg",
+              ),
+              fit: BoxFit.fill),
         ),
-      ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-
-              const SizedBox(
-                height: 9,
-              ),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  border: Border.all(color: Colors.white),
-                  color: const Color.fromRGBO(38, 39, 43, 0.4),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(30, 8, 8, 1),
-                          child: Text('Faculty Team', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white54)),
+        child: Container(
+          color: Colors.black.withOpacity(0.8),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25),
+                    color: const Color.fromRGBO(38, 39, 43, 0.4),
+                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(20, 8, 8, 1),
+                            child: Text('APP Development Team', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white54)),
+                          ),
+                          Spacer()
+                        ],
+                      ),
+                      InkWell(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: const Color.fromRGBO(0, 2, 10, 0.5),
+                  ),
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 3,
+                      ),
+                      Container(
+                        height: 60,
+                        width: 60,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            image: DecorationImage(image: NetworkImage("https://drive.google.com/uc?export=view&id=1g0pUY2mr2EU8M-fb9ZEsyioyLRKXtsuR"))
                         ),
-                        Spacer()
-                      ],
-                    ),
-                    StreamBuilder<List<FacultyConvertor>>(
-                        stream: ReadFaculty(),
-                        builder: (context, snapshot) {
-                          final students = snapshot.data;
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting:
-                              return const Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 0.3,
-                                    color: Colors.cyan,
-                                  ));
-                            default:
-                              if (snapshot.hasError) {
-                                return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                              } else {
-                                return buildFaculty(students!);
-                              }
-                          }
-                        }),
-                  ],
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text(
+                              "NIMMALA SUJITH",
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 13),
+                            child: Text(
+                              "R20-ECE-20B91A04H1",
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 13),
+                            child: Text(
+                              "App Developer",
+                              style: const TextStyle(
+                                color: Colors.blueGrey,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
+                onTap: () {
+                  _sendingMails("sujithnimmala03@gmail.com");
+                },
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: const Color.fromRGBO(38, 39, 43, 0.4),
-                  border: Border.all(color: Colors.white),
+                      StreamBuilder<List<studentConvertor>>(
+                          stream: Readstudent(),
+                          builder: (context, snapshot) {
+                            final students = snapshot.data;
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.waiting:
+                                return const Center(
+                                    child: CircularProgressIndicator(
+                                  strokeWidth: 0.3,
+                                  color: Colors.cyan,
+                                ));
+                              default:
+                                if (snapshot.hasError) {
+                                  return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                } else {
+                                  return buildStudent(students!);
+                                }
+                            }
+                          }),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(30, 8, 8, 1),
-                          child: Text('Student Team', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white54)),
-                        ),
-                        Spacer()
-                      ],
-                    ),
-                    InkWell(
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(38),
-                  border: Border.all(color: Colors.white),
-                  color: const Color.fromRGBO(0, 2, 10, 0.5),
-                ),
-                child: Row(
-                  children: [
-                    const SizedBox(
-                      width: 3,
-                    ),
-                    CircleAvatar(backgroundColor: Colors.black, radius: 33, child: ClipOval(child: Image.network("https://drive.google.com/uc?export=view&id=1g0pUY2mr2EU8M-fb9ZEsyioyLRKXtsuR"))),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Text(
-                            "NIMMALA SUJITH",
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(25),
+                              border: Border.all(color: Colors.white.withOpacity(0.1)),
+                              color: const Color.fromRGBO(38, 39, 43, 0.4),
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 13),
-                          child: Text(
-                            "R20-ECE-20B91A04H1",
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 13),
-                          child: Text(
-                            "App Developer",
-                            style: const TextStyle(
-                              color: Colors.blueGrey,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: const [
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(20, 8, 8, 1),
+                                      child: Text('Faculty Team', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white54)),
+                                    ),
+                                    Spacer()
+                                  ],
+                                ),
+                                StreamBuilder<List<FacultyConvertor>>(
+                                    stream: ReadFaculty(),
+                                    builder: (context, snapshot) {
+                                      final students = snapshot.data;
+                                      switch (snapshot.connectionState) {
+                                        case ConnectionState.waiting:
+                                          return const Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 0.3,
+                                                color: Colors.cyan,
+                                              ));
+                                        default:
+                                          if (snapshot.hasError) {
+                                            return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                          } else {
+                                            return buildFaculty(students!);
+                                          }
+                                      }
+                                    }),
+                              ],
                             ),
                           ),
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-              onTap: () {
-                _sendingMails("sujithnimmala03@gmail.com");
-              },
+
+              ],
             ),
-                    StreamBuilder<List<studentConvertor>>(
-                        stream: Readstudent(),
-                        builder: (context, snapshot) {
-                          final students = snapshot.data;
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting:
-                              return const Center(
-                                  child: CircularProgressIndicator(
-                                strokeWidth: 0.3,
-                                color: Colors.cyan,
-                              ));
-                            default:
-                              if (snapshot.hasError) {
-                                return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                              } else {
-                                return buildStudent(students!);
-                              }
-                          }
-                        }),
-                  ],
-                ),
-              ),
-            ],
           ),
         ),
       ),
@@ -938,7 +1028,7 @@ class appDevelopmentTeam extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(38),
+              borderRadius: BorderRadius.circular(20),
               color: const Color.fromRGBO(0, 2, 10, 0.5),
             ),
             child: Row(
@@ -946,13 +1036,12 @@ class appDevelopmentTeam extends StatelessWidget {
                 const SizedBox(
                   width: 3,
                 ),
-                CircleAvatar(
-                  backgroundColor: Colors.black,
-                  radius: 33,
-                  child: ClipOval(
-                    child: Image.network(
-                      facultyData.PhotoUrl,
-                    ),
+                Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      image: DecorationImage(image: NetworkImage(facultyData.PhotoUrl))
                   ),
                 ),
                 const SizedBox(
@@ -1019,8 +1108,7 @@ class appDevelopmentTeam extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(38),
-                border: Border.all(color: Colors.white),
+                borderRadius: BorderRadius.circular(20),
                 color: const Color.fromRGBO(0, 2, 10, 0.5),
               ),
               child: Row(
@@ -1028,7 +1116,14 @@ class appDevelopmentTeam extends StatelessWidget {
                   const SizedBox(
                     width: 3,
                   ),
-                  CircleAvatar(backgroundColor: Colors.black, radius: 33, child: ClipOval(child: Image.network(studentData.PhotoUrl))),
+                  Container(
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      image: DecorationImage(image: NetworkImage(studentData.PhotoUrl))
+                    ),
+                  ),
                   const SizedBox(
                     width: 20,
                   ),
@@ -1208,4 +1303,26 @@ userId() {
 fullUserId() {
   var user = FirebaseAuth.instance.currentUser!.email!;
   return user;
+}
+
+Stream<List<followUsConvertor>> readfollowUs() => FirebaseFirestore.instance
+    .collection('FollowUs')
+    .orderBy("name", descending: false)
+    .snapshots()
+    .map((snapshot) => snapshot.docs.map((doc) => followUsConvertor.fromJson(doc.data())).toList());
+
+class followUsConvertor {
+  String id;
+  final String name,link,photoUrl;
+
+
+
+  followUsConvertor({this.id = "",required this.name,required this.link,required this.photoUrl});
+
+  static followUsConvertor fromJson(Map<String, dynamic> json) =>
+      followUsConvertor(id: json['id'],name: json["name"],link: json["link"],photoUrl: json["photoUrl"]);
+}
+ showToast(String message) async {
+  await Fluttertoast.cancel();
+  Fluttertoast.showToast(msg: message, fontSize: 18);
 }

@@ -418,7 +418,6 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pop(context);
     return Navigator.pop(context);
   }
-
 }
 
 final messengerKey = GlobalKey<ScaffoldMessengerState>();
