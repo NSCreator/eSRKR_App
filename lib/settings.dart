@@ -29,7 +29,7 @@ class settings extends StatefulWidget {
 
 class _settingsState extends State<settings> {
   String localVersion = "";
-
+  final InputController = TextEditingController();
   getStringValuesSF() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String branchTitleOut = prefs.getString('branchTitle') ?? "ECE";
@@ -283,6 +283,7 @@ class _settingsState extends State<settings> {
                       ],
                     ),
                   ),
+                  SizedBox(height: 10,),
                   Expanded(
                     child: SingleChildScrollView(
                       physics: BouncingScrollPhysics(),
@@ -1294,7 +1295,10 @@ _ExternallaunchUrl(String url) async {
     throw 'Could not launch $urlIn';
   }
 }
-
+user0Id() {
+  var user = FirebaseAuth.instance.currentUser!.email!.split("@");
+  return user[0];
+}
 userId() {
   var user = FirebaseAuth.instance.currentUser!.email!.split("@");
   return user[1];
