@@ -2406,206 +2406,157 @@ class _allBooksState extends State<allBooks> {
                                       File("${folderPath}/pdfs/$name1");
 
                                   if (file.existsSync()) {
-                                    return InkWell(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 10, right: 10, top: 5),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            color:
-                                                Colors.black.withOpacity(0.3),
-                                            border: Border.all(
-                                                color: Colors.white
-                                                    .withOpacity(0.3)),
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Flexible(
-                                                    flex: 2,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              1.0),
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
-                                                            color:
-                                                                Colors.white
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                            border: Border
-                                                                .all(
-                                                                    color: Colors
-                                                                        .white),
-                                                            image: DecorationImage(
-                                                                image:
-                                                                    FileImage(
-                                                                        file),
-                                                                fit: BoxFit
-                                                                    .fill)),
-                                                        height: 125,
-                                                        width: 90,
-                                                      ),
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10, right: 10, top: 5),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          color:
+                                              Colors.black.withOpacity(0.3),
+                                          border: Border.all(
+                                              color: Colors.white
+                                                  .withOpacity(0.3)),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Flexible(
+                                                  flex: 2,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            1.0),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      15),
+                                                          color:
+                                                              Colors.white
+                                                                  .withOpacity(
+                                                                      0.5),
+                                                          border: Border
+                                                              .all(
+                                                                  color: Colors
+                                                                      .white),
+                                                          image: DecorationImage(
+                                                              image:
+                                                                  FileImage(
+                                                                      file),
+                                                              fit: BoxFit
+                                                                  .fill)),
+                                                      height: 125,
+                                                      width: 90,
                                                     ),
                                                   ),
-                                                  Flexible(
-                                                    flex: 4,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 8,
-                                                              top: 3,
-                                                              bottom: 3,
-                                                              right: 3),
-                                                      child: Container(
-                                                        child:
-                                                            SingleChildScrollView(
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
+                                                ),
+                                                Flexible(
+                                                  flex: 4,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 8,
+                                                            top: 3,
+                                                            bottom: 3,
+                                                            right: 3),
+                                                    child: Container(
+                                                      child:
+                                                          SingleChildScrollView(
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              Books[index]
+                                                                  .heading,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .orange,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  fontSize:
+                                                                      18),
+                                                              maxLines: 1,
+                                                            ),
+                                                            Text(
+                                                              Books[index]
+                                                                  .Author,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .lightBlueAccent,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  fontSize:
+                                                                      13),
+                                                              maxLines: 1,
+                                                            ),
+                                                            Text(
+                                                              Books[index]
+                                                                  .edition,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w300,
+                                                                  fontSize:
+                                                                      14),
+                                                              maxLines: 1,
+                                                            ),
+                                                            Text(
                                                                 Books[index]
-                                                                    .heading,
+                                                                    .description,
+                                                                maxLines: 2,
                                                                 style: TextStyle(
                                                                     color: Colors
-                                                                        .orange,
+                                                                        .white
+                                                                        .withOpacity(
+                                                                            0.8),
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w500,
                                                                     fontSize:
-                                                                        18),
-                                                                maxLines: 1,
-                                                              ),
-                                                              Text(
-                                                                Books[index]
-                                                                    .Author,
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .lightBlueAccent,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    fontSize:
-                                                                        13),
-                                                                maxLines: 1,
-                                                              ),
-                                                              Text(
-                                                                Books[index]
-                                                                    .edition,
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w300,
-                                                                    fontSize:
-                                                                        14),
-                                                                maxLines: 1,
-                                                              ),
-                                                              Text(
-                                                                  Books[index]
-                                                                      .description,
-                                                                  maxLines: 2,
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white
-                                                                          .withOpacity(
-                                                                              0.8),
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                      fontSize:
-                                                                          15)),
-                                                              SizedBox(
-                                                                height: 8,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  if (file1
-                                                                      .existsSync())
-                                                                    InkWell(
-                                                                        child:
-                                                                            Container(
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(8),
-                                                                            color:
-                                                                                Colors.black.withOpacity(0.5),
-                                                                            border:
-                                                                                Border.all(color: Colors.green),
-                                                                          ),
-                                                                          child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                const EdgeInsets.only(left: 3, right: 3),
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                                              children: [
-                                                                                Icon(
-                                                                                  Icons.download_outlined,
-                                                                                  color: Colors.green,
-                                                                                ),
-                                                                                Text(
-                                                                                  " & ",
-                                                                                  style: TextStyle(color: Colors.white, fontSize: 20),
-                                                                                ),
-                                                                                Text(
-                                                                                  "Open",
-                                                                                  style: TextStyle(color: Colors.white, fontSize: 20),
-                                                                                ),
-                                                                                Icon(
-                                                                                  Icons.open_in_new,
-                                                                                  color: Colors.greenAccent,
-                                                                                )
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        onTap:
-                                                                            () {
-                                                                          Navigator.push(
-                                                                              context,
-                                                                              MaterialPageRoute(builder: (context) => PdfViewerPage(pdfUrl: "${folderPath}/pdfs/$name1")));
-                                                                        })
-                                                                  else
-                                                                    InkWell(
+                                                                        15)),
+                                                            SizedBox(
+                                                              height: 8,
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                if (file1
+                                                                    .existsSync())
+                                                                  InkWell(
                                                                       child:
                                                                           Container(
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
                                                                               BorderRadius.circular(8),
-                                                                          color: Colors
-                                                                              .black
-                                                                              .withOpacity(0.5),
+                                                                          color:
+                                                                              Colors.black.withOpacity(0.5),
                                                                           border:
-                                                                              Border.all(color: Colors.white),
+                                                                              Border.all(color: Colors.green),
                                                                         ),
                                                                         child:
                                                                             Padding(
-                                                                          padding: const EdgeInsets.only(
-                                                                              left: 3,
-                                                                              right: 3),
+                                                                          padding:
+                                                                              const EdgeInsets.only(left: 3, right: 3),
                                                                           child:
                                                                               Row(
+                                                                            mainAxisAlignment: MainAxisAlignment.center,
                                                                             children: [
                                                                               Icon(
                                                                                 Icons.download_outlined,
-                                                                                color: Colors.red,
+                                                                                color: Colors.green,
                                                                               ),
                                                                               Text(
                                                                                 " & ",
@@ -2620,223 +2571,267 @@ class _allBooksState extends State<allBooks> {
                                                                                 color: Colors.greenAccent,
                                                                               )
                                                                             ],
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.center,
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.center,
                                                                           ),
                                                                         ),
                                                                       ),
                                                                       onTap:
-                                                                          () async {
-                                                                        showToast(
-                                                                            "Downloading...");
-                                                                        await download(
-                                                                            Books[index].link,
-                                                                            "pdfs");
-                                                                        setState(
-                                                                            () {
-                                                                          showToast(
-                                                                              "Downloaded");
-                                                                        });
-                                                                      },
-                                                                    ),
-                                                                  SizedBox(width: 5,),
+                                                                          () {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(builder: (context) => PdfViewerPage(pdfUrl: "${folderPath}/pdfs/$name1")));
+                                                                      })
+                                                                else
                                                                   InkWell(
-                                                                    child: StreamBuilder<
-                                                                        DocumentSnapshot>(
-                                                                      stream: FirebaseFirestore
-                                                                          .instance
-                                                                          .collection(
-                                                                              'user')
-                                                                          .doc(
-                                                                              fullUserId())
-                                                                          .collection(
-                                                                              "FavouriteBooks")
-                                                                          .doc(Books[index]
-                                                                              .id)
-                                                                          .snapshots(),
-                                                                      builder:
-                                                                          (context,
-                                                                              snapshot) {
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                        color: Colors
+                                                                            .black
+                                                                            .withOpacity(0.5),
+                                                                        border:
+                                                                            Border.all(color: Colors.white),
+                                                                      ),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets.only(
+                                                                            left: 3,
+                                                                            right: 3),
+                                                                        child:
+                                                                            Row(
+                                                                          children: [
+                                                                            Icon(
+                                                                              Icons.download_outlined,
+                                                                              color: Colors.red,
+                                                                            ),
+                                                                            Text(
+                                                                              " & ",
+                                                                              style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                            ),
+                                                                            Text(
+                                                                              "Open",
+                                                                              style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                            ),
+                                                                            Icon(
+                                                                              Icons.open_in_new,
+                                                                              color: Colors.greenAccent,
+                                                                            )
+                                                                          ],
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.center,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    onTap:
+                                                                        () async {
+                                                                      showToast(
+                                                                          "Downloading...");
+                                                                      await download(
+                                                                          Books[index].link,
+                                                                          "pdfs");
+                                                                      setState(
+                                                                          () {
+                                                                        showToast(
+                                                                            "Downloaded");
+                                                                      });
+                                                                    },
+                                                                  ),
+                                                                SizedBox(width: 5,),
+                                                                InkWell(
+                                                                  child: StreamBuilder<
+                                                                      DocumentSnapshot>(
+                                                                    stream: FirebaseFirestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            'user')
+                                                                        .doc(
+                                                                            fullUserId())
+                                                                        .collection(
+                                                                            "FavouriteBooks")
+                                                                        .doc(Books[index]
+                                                                            .id)
+                                                                        .snapshots(),
+                                                                    builder:
+                                                                        (context,
+                                                                            snapshot) {
+                                                                      if (snapshot
+                                                                          .hasData) {
                                                                         if (snapshot
-                                                                            .hasData) {
-                                                                          if (snapshot
-                                                                              .data!
-                                                                              .exists) {
-                                                                            return Row(
-                                                                              children: [
-                                                                                const Icon(Icons.library_add_check,
-                                                                                    size: 26,
-                                                                                    color: Colors.green),
-                                                                                Text("Saved",style: TextStyle(color: Colors.greenAccent,fontSize: 20),)
-                                                                              ],
-                                                                            );
-                                                                          } else {
-                                                                            return Row(
-                                                                              children: [
-                                                                                const Icon(
-                                                                                  Icons.library_add_outlined,
+                                                                            .data!
+                                                                            .exists) {
+                                                                          return Row(
+                                                                            children: [
+                                                                              const Icon(Icons.library_add_check,
                                                                                   size: 26,
-                                                                                  color: Colors.cyan,
-                                                                                ),
-                                                                                Text("Save",style: TextStyle(color: Colors.cyanAccent,fontSize: 20),)
-                                                                              ],
-                                                                            );
-                                                                          }
+                                                                                  color: Colors.green),
+                                                                              Text("Saved",style: TextStyle(color: Colors.greenAccent,fontSize: 20),)
+                                                                            ],
+                                                                          );
                                                                         } else {
                                                                           return Row(
                                                                             children: [
                                                                               const Icon(
                                                                                 Icons.library_add_outlined,
-                                                                                size:
-                                                                                    26,
-                                                                                color:
-                                                                                    Colors.cyan,
+                                                                                size: 26,
+                                                                                color: Colors.cyan,
                                                                               ),
                                                                               Text("Save",style: TextStyle(color: Colors.cyanAccent,fontSize: 20),)
                                                                             ],
                                                                           );
                                                                         }
-                                                                      },
-                                                                    ),
-                                                                    onTap:
-                                                                        () async {
-                                                                      try {
-                                                                        await FirebaseFirestore
-                                                                            .instance
-                                                                            .collection('user')
-                                                                            .doc(fullUserId())
-                                                                            .collection("FavouriteBooks")
-                                                                            .doc(Books[index].id)
-                                                                            .get()
-                                                                            .then((docSnapshot) {
-                                                                          if (docSnapshot
-                                                                              .exists) {
-                                                                            FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).delete();
-                                                                            showToast("Removed from saved list");
-                                                                          } else {
-                                                                            FavouriteBooksSubjects(
-                                                                                description: Books[index].description,
-                                                                                heading: Books[index].heading,
-                                                                                link: Books[index].link,
-                                                                                photoUrl: Books[index].photoUrl,
-                                                                                Author: Books[index].Author,
-                                                                                edition: Books[index].edition,
-                                                                                date: Books[index].date,
-                                                                                id: Books[index].id);
-                                                                            showToast("${Books[index].heading} in favorites");
-                                                                          }
-                                                                        });
-                                                                      } catch (e) {
-                                                                        print(
-                                                                            e);
+                                                                      } else {
+                                                                        return Row(
+                                                                          children: [
+                                                                            const Icon(
+                                                                              Icons.library_add_outlined,
+                                                                              size:
+                                                                                  26,
+                                                                              color:
+                                                                                  Colors.cyan,
+                                                                            ),
+                                                                            Text("Save",style: TextStyle(color: Colors.cyanAccent,fontSize: 20),)
+                                                                          ],
+                                                                        );
                                                                       }
                                                                     },
-                                                                  )
-                                                                ],
-                                                              )
-                                                            ],
-                                                          ),
+                                                                  ),
+                                                                  onTap:
+                                                                      () async {
+                                                                    try {
+                                                                      await FirebaseFirestore
+                                                                          .instance
+                                                                          .collection('user')
+                                                                          .doc(fullUserId())
+                                                                          .collection("FavouriteBooks")
+                                                                          .doc(Books[index].id)
+                                                                          .get()
+                                                                          .then((docSnapshot) {
+                                                                        if (docSnapshot
+                                                                            .exists) {
+                                                                          FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteBooks").doc(Books[index].id).delete();
+                                                                          showToast("Removed from saved list");
+                                                                        } else {
+                                                                          FavouriteBooksSubjects(
+                                                                              description: Books[index].description,
+                                                                              heading: Books[index].heading,
+                                                                              link: Books[index].link,
+                                                                              photoUrl: Books[index].photoUrl,
+                                                                              Author: Books[index].Author,
+                                                                              edition: Books[index].edition,
+                                                                              date: Books[index].date,
+                                                                              id: Books[index].id);
+                                                                          showToast("${Books[index].heading} in favorites");
+                                                                        }
+                                                                      });
+                                                                    } catch (e) {
+                                                                      print(
+                                                                          e);
+                                                                    }
+                                                                  },
+                                                                )
+                                                              ],
+                                                            )
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
                                                   ),
+                                                ),
+                                              ],
+                                            ),
+                                            if (userId() == "gmail.com")
+                                              Row(
+                                                children: [
+                                                  Spacer(),
+                                                  InkWell(
+                                                    child: Chip(
+                                                      elevation: 20,
+                                                      backgroundColor:
+                                                          Colors.black,
+                                                      avatar: CircleAvatar(
+                                                          backgroundColor:
+                                                              Colors.black45,
+                                                          child: Icon(
+                                                            Icons
+                                                                .edit_outlined,
+                                                          )),
+                                                      label: Text(
+                                                        "Edit",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      BooksCreator(
+                                                                        id: Books[index]
+                                                                            .id,
+                                                                        heading:
+                                                                            Books[index].heading,
+                                                                        description:
+                                                                            Books[index].description,
+                                                                        Edition:
+                                                                            Books[index].edition,
+                                                                        Link:
+                                                                            Books[index].link,
+                                                                        Author:
+                                                                            Books[index].Author,
+                                                                        photoUrl:
+                                                                            Books[index].photoUrl,
+                                                                      )));
+                                                    },
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  InkWell(
+                                                    child: Chip(
+                                                      elevation: 20,
+                                                      backgroundColor:
+                                                          Colors.black,
+                                                      avatar: CircleAvatar(
+                                                          backgroundColor:
+                                                              Colors.black45,
+                                                          child: Icon(
+                                                            Icons
+                                                                .delete_rounded,
+                                                          )),
+                                                      label: Text(
+                                                        "Delete",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      FirebaseFirestore
+                                                          .instance
+                                                          .collection("ECE")
+                                                          .doc("Books")
+                                                          .collection(
+                                                              "CoreBooks")
+                                                          .doc(
+                                                              Books[index].id)
+                                                          .delete();
+                                                    },
+                                                  ),
+                                                  Spacer()
                                                 ],
                                               ),
-                                              if (userId() == "gmail.com")
-                                                Row(
-                                                  children: [
-                                                    Spacer(),
-                                                    InkWell(
-                                                      child: Chip(
-                                                        elevation: 20,
-                                                        backgroundColor:
-                                                            Colors.black,
-                                                        avatar: CircleAvatar(
-                                                            backgroundColor:
-                                                                Colors.black45,
-                                                            child: Icon(
-                                                              Icons
-                                                                  .edit_outlined,
-                                                            )),
-                                                        label: Text(
-                                                          "Edit",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        ),
-                                                      ),
-                                                      onTap: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        BooksCreator(
-                                                                          id: Books[index]
-                                                                              .id,
-                                                                          heading:
-                                                                              Books[index].heading,
-                                                                          description:
-                                                                              Books[index].description,
-                                                                          Edition:
-                                                                              Books[index].edition,
-                                                                          Link:
-                                                                              Books[index].link,
-                                                                          Author:
-                                                                              Books[index].Author,
-                                                                          photoUrl:
-                                                                              Books[index].photoUrl,
-                                                                        )));
-                                                      },
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    InkWell(
-                                                      child: Chip(
-                                                        elevation: 20,
-                                                        backgroundColor:
-                                                            Colors.black,
-                                                        avatar: CircleAvatar(
-                                                            backgroundColor:
-                                                                Colors.black45,
-                                                            child: Icon(
-                                                              Icons
-                                                                  .delete_rounded,
-                                                            )),
-                                                        label: Text(
-                                                          "Delete",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        ),
-                                                      ),
-                                                      onTap: () {
-                                                        FirebaseFirestore
-                                                            .instance
-                                                            .collection("ECE")
-                                                            .doc("Books")
-                                                            .collection(
-                                                                "CoreBooks")
-                                                            .doc(
-                                                                Books[index].id)
-                                                            .delete();
-                                                      },
-                                                    ),
-                                                    Spacer()
-                                                  ],
-                                                ),
-                                              if ((index + 1) % 3 == 0)
-                                                CustomBannerAd01(),
-                                            ],
-                                          ),
+                                            if ((index + 1) % 3 == 0)
+                                              CustomBannerAd01(),
+                                          ],
                                         ),
                                       ),
-                                      onTap: () {
-                                        _launchUrl(Books[index].link);
-                                      },
                                     );
                                   } else {
                                     downloadImage(
@@ -3257,12 +3252,13 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
+
                                     InkWell(
                                       child: StreamBuilder<DocumentSnapshot>(
                                         stream: FirebaseFirestore.instance
                                             .collection('ECE')
-                                            .doc("Subjects")
-                                            .collection("Subjects")
+                                            .doc(widget.mode)
+                                            .collection(widget.mode)
                                             .doc(widget.ID)
                                             .collection("likes")
                                             .doc(fullUserId())
@@ -3291,8 +3287,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                         try {
                                           await FirebaseFirestore.instance
                                               .collection('ECE')
-                                              .doc("Subjects")
-                                              .collection("Subjects")
+                                              .doc(widget.mode)
+                                              .collection(widget.mode)
                                               .doc(widget.ID)
                                               .collection("likes")
                                               .doc(fullUserId())
@@ -3301,8 +3297,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                             if (docSnapshot.exists) {
                                               FirebaseFirestore.instance
                                                   .collection('ECE')
-                                                  .doc("Subjects")
-                                                  .collection("Subjects")
+                                                  .doc(widget.mode)
+                                                  .collection(widget.mode)
                                                   .doc(widget.ID)
                                                   .collection("likes")
                                                   .doc(fullUserId())
@@ -3311,8 +3307,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                             } else {
                                               FirebaseFirestore.instance
                                                   .collection('ECE')
-                                                  .doc("Subjects")
-                                                  .collection("Subjects")
+                                                  .doc(widget.mode)
+                                                  .collection(widget.mode)
                                                   .doc(widget.ID)
                                                   .collection("likes")
                                                   .doc(fullUserId())
@@ -3328,8 +3324,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                     StreamBuilder<QuerySnapshot>(
                                       stream: FirebaseFirestore.instance
                                           .collection('ECE')
-                                          .doc("Subjects")
-                                          .collection("Subjects")
+                                          .doc(widget.mode)
+                                          .collection(widget.mode)
                                           .doc(widget.ID)
                                           .collection("likes")
                                           .snapshots(),
@@ -3349,7 +3345,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                     SizedBox(
                                       width: 5,
                                     ),
-                                    InkWell(
+                                    if(widget.mode=="Subjects")InkWell(
                                       child: StreamBuilder<DocumentSnapshot>(
                                         stream: FirebaseFirestore.instance
                                             .collection('user')
@@ -3429,7 +3425,83 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                           print(e);
                                         }
                                       },
-                                    ),
+                                    )
+                                    else InkWell(
+                                      child: StreamBuilder<DocumentSnapshot>(
+                                        stream: FirebaseFirestore.instance
+                                            .collection('user')
+                                            .doc(fullUserId())
+                                            .collection("FavouriteLabSubjects")
+                                            .doc(widget.ID)
+                                            .snapshots(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData) {
+                                            if (snapshot.data!.exists) {
+                                              return Row(
+                                                children: [
+                                                  const Icon(
+                                                      Icons.library_add_check,
+                                                      size: 26,
+                                                      color: Colors.cyanAccent),
+                                                  Text(
+                                                    " Saved",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 16),
+                                                  )
+                                                ],
+                                              );
+                                            } else {
+                                              return Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.library_add_outlined,
+                                                    size: 26,
+                                                    color: Colors.cyanAccent,
+                                                  ),
+                                                  Text(
+                                                    " Save",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 16),
+                                                  )
+                                                ],
+                                              );
+                                            }
+                                          } else {
+                                            return Container();
+                                          }
+                                        },
+                                      ),
+                                      onTap: () async {
+                                        try {
+                                          await FirebaseFirestore.instance
+                                              .collection('user')
+                                              .doc(fullUserId())
+                                              .collection("FavouriteLabSubjects")
+                                              .doc(widget.ID)
+                                              .get()
+                                              .then((docSnapshot) {
+                                            if (docSnapshot.exists) {
+                                              FirebaseFirestore.instance
+                                                  .collection('user')
+                                                  .doc(fullUserId())
+                                                  .collection(
+                                                  "FavouriteLabSubjects")
+                                                  .doc(widget.ID)
+                                                  .delete();
+                                              showToast(
+                                                  "Removed from saved list");
+                                            } else {
+                                              FavouriteLabSubjectsSubjects(SubjectId: widget.ID, name: widget.name, description: widget.fullName, photoUrl: widget.photoUrl);
+                                              showToast("${widget.name} in favorites");
+                                            }
+                                          });
+                                        } catch (e) {
+                                          print(e);
+                                        }
+                                      },
+                                    )
                                   ],
                                 )
                               ],

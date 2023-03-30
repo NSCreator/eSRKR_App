@@ -69,6 +69,17 @@ class _HomePageState extends State<HomePage> {
             child: SafeArea(
                 child: Column(
               children: [
+                // ShaderMask(
+                //   shaderCallback: (Rect bounds) {
+                //     return RadialGradient(
+                //       center: Alignment.topLeft,
+                //       radius: 1.0,
+                //       colors: <Color>[Colors.yellow, Colors.deepOrange.shade900],
+                //       tileMode: TileMode.mirror,
+                //     ).createShader(bounds);
+                //   },
+                //   child: const Text('I’m burning the memories',style: TextStyle(color: Colors.white),),
+                // ),
                 SizedBox(
                   height: 10,
                 ),
@@ -516,8 +527,7 @@ class _HomePageState extends State<HomePage> {
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             ImageZoom(
-                                                                url: BranchNew
-                                                                    .photoUrl)));
+                                                                url: "",file: file,)));
                                               },
                                             );
                                           } else {
@@ -542,8 +552,7 @@ class _HomePageState extends State<HomePage> {
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             ImageZoom(
-                                                                url: BranchNew
-                                                                    .photoUrl)));
+                                                                url:"",file: file,)));
                                               },
                                             );
                                           }
@@ -1011,7 +1020,7 @@ class _HomePageState extends State<HomePage> {
                                                                               MaterialPageRoute(
                                                                                   builder: (context) =>
                                                                                       ImageZoom(
-                                                                                        url: classess.photoUrl,
+                                                                                        url:"",file: file,
                                                                                       )));
                                                                         },
                                                                       );
@@ -4374,7 +4383,16 @@ void _BooksBottomSheet(
                                   ),
                                 ),
                               ),
-                              onTap: () {
+                              onTap: () async {
+                                showToast("Downloading...");
+                                final Uri uri = Uri.parse(data.link);
+                                final String fileName = uri.pathSegments.last;
+                                var name = fileName.split("/").last;
+                                final response = await http.get(Uri.parse(data.link));
+
+                                final file = File('/storage/emulated/0/Download/$name');
+                                await file.writeAsBytes(response.bodyBytes);
+                                showToast(file.path);
                                 showToast("Downloaded");
                               },
                             ),
@@ -5002,8 +5020,9 @@ void _BranchNewsBottomSheet(
 
 class ImageZoom extends StatefulWidget {
   String url;
+  File file;
 
-  ImageZoom({Key? key, required this.url}) : super(key: key);
+  ImageZoom({Key? key, required this.url,required this.file}) : super(key: key);
 
   @override
   State<ImageZoom> createState() => _ImageZoomState();
@@ -5016,10 +5035,16 @@ class _ImageZoomState extends State<ImageZoom> {
         backgroundColor: Colors.black,
         body: Column(
           children: [
-            Flexible(
+            if(widget.url.isNotEmpty)Flexible(
               flex: 10,
               child: PhotoView(
                 imageProvider: NetworkImage(widget.url),
+              ),
+            ),
+            if(widget.file.existsSync())Flexible(
+              flex: 10,
+              child: PhotoView(
+                imageProvider: FileImage(widget.file),
               ),
             ),
             Flexible(

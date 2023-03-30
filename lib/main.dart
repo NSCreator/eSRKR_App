@@ -19,26 +19,18 @@ import 'notification.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final prefs = await SharedPreferences.getInstance();
   await Firebase.initializeApp();
-  final showHome = prefs.getBool('showHome') ?? false;
   await MobileAds.instance.initialize();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
-    runApp(MyApp(showHome: showHome));
+    runApp(MyApp());
   });
 }
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
-  final bool showHome;
 
-
-   MyApp({
-    Key? key,
-    required this.showHome,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,37 +43,21 @@ class MyApp extends StatelessWidget {
         hoverColor: Colors.transparent,
       ),
       title: 'e-SRKR',
-      home: mainPage(showHome: showHome),
+      home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Nav();
+            } else {
+              return LoginPage();
+            }
+          }),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class mainPage extends StatelessWidget {
-  final bool showHome;
 
-//  final bool isAuth;
-
-   mainPage({
-    Key? key,
-    required this.showHome,
-
-//    required this.isAuth,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return showHome ?  Nav() : initial_branch();
-          } else {
-            return LoginPage();
-          }
-        });
-  }
-}
 
 class Nav extends StatefulWidget {
   @override
