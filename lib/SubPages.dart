@@ -346,8 +346,6 @@ class _NewsPageState extends State<NewsPage> {
                                                 ],
                                               ),
                                             ),
-                                            if ((index + 1) % 1 == 0)
-                                              CustomBannerAd01(),
                                           ],
                                         ),
                                         onTap: () async {
@@ -836,8 +834,8 @@ class _SubjectsState extends State<Subjects> {
                                                                   )));
                                                     },
                                                   ),
-                                                  if ((index + 1) % 1 == 0)
-                                                    CustomBannerAd01(),
+                                                  // if ((index + 1) % 1 == 0)
+                                                  //   CustomBannerAd01(),
                                                 ],
                                               );
                                             } else {
@@ -1181,8 +1179,8 @@ class _SubjectsState extends State<Subjects> {
                                                                   )));
                                                     },
                                                   ),
-                                                  if ((index + 1) % 1 == 0)
-                                                    CustomBannerAd01(),
+                                                  // if ((index + 1) % 1 == 0)
+                                                  //   CustomBannerAd01(),
                                                 ],
                                               );
                                             }
@@ -1802,8 +1800,8 @@ class _LabSubjectsState extends State<LabSubjects> {
                                                       LabSubjectsData.PhotoUrl);
                                             },
                                           ),
-                                          if ((index + 1) % 2 == 0)
-                                            CustomBannerAd01(),
+                                          // if ((index + 1) % 2 == 0)
+                                          //   CustomBannerAd01(),
                                         ],
                                       ),
                                     );
@@ -2239,8 +2237,8 @@ class _LabSubjectsState extends State<LabSubjects> {
                                                       LabSubjectsData.PhotoUrl);
                                             },
                                           ),
-                                          if ((index + 1) % 2 == 0)
-                                            CustomBannerAd01(),
+                                          // if ((index + 1) % 2 == 0)
+                                          //   CustomBannerAd01(),
                                         ],
                                       ),
                                     );
@@ -2827,8 +2825,8 @@ class _allBooksState extends State<allBooks> {
                                                   Spacer()
                                                 ],
                                               ),
-                                            if ((index + 1) % 3 == 0)
-                                              CustomBannerAd01(),
+                                            // if ((index + 1) % 3 == 0)
+                                            //   CustomBannerAd01(),
                                           ],
                                         ),
                                       ),
@@ -3023,8 +3021,8 @@ class _allBooksState extends State<allBooks> {
                                                     Spacer()
                                                   ],
                                                 ),
-                                              if ((index + 1) % 3 == 0)
-                                                CustomBannerAd01(),
+                                              // if ((index + 1) % 3 == 0)
+                                              //   CustomBannerAd01(),
                                             ],
                                           ),
                                         ),
@@ -3242,12 +3240,12 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                 Text(
                                   widget.name,
                                   style: TextStyle(
-                                      fontSize: 23, color: Colors.white),
+                                      fontSize: 23, color: Colors.deepOrange,fontWeight: FontWeight.w500),
                                 ),
                                 Text(
                                   widget.fullName,
                                   style: TextStyle(
-                                      fontSize: 15, color: Colors.white),
+                                      fontSize: 15, color: Colors.orange),
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -3525,7 +3523,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                               child: Text(
                                 "Units",
                                 style: TextStyle(
-                                    fontSize: 30, color: Colors.white),
+                                    fontSize: 30, color: Colors.deepOrangeAccent),
                               ),
                             ),
                             StreamBuilder<List<UnitsConvertor>>(
@@ -3612,7 +3610,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                                                           fontSize:
                                                                               18.0,
                                                                           color:
-                                                                              Colors.white,
+                                                                              Colors.orangeAccent,
                                                                           fontWeight:
                                                                               FontWeight.w500,
                                                                         ),
@@ -3718,12 +3716,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                                                       const TextStyle(
                                                                     fontSize:
                                                                         10.0,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            204,
-                                                                            207,
-                                                                            222,
-                                                                            0.8),
+                                                                    color: Colors.lightBlueAccent,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
@@ -3808,9 +3801,9 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                                             ),
                                                           ),
                                                         ),
-                                                        if ((index + 1) % 2 ==
-                                                            0)
-                                                          CustomBannerAd01(),
+                                                        // if ((index + 1) % 2 ==
+                                                        //     0)
+                                                        //   CustomBannerAd01(),
                                                       ],
                                                     ),
                                                   );

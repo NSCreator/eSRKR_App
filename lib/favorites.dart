@@ -57,7 +57,7 @@ class _favoritesState extends State<favorites> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: Text("Favorites",style: TextStyle(fontSize: 35,fontWeight: FontWeight.w500,color: Colors.white),),
+                  child: Text("Favorites",style: TextStyle(fontSize: 35,fontWeight: FontWeight.w500,color: Colors.deepOrange),),
                 ),
                 Expanded(
                   child: SingleChildScrollView(
@@ -87,7 +87,7 @@ class _favoritesState extends State<favorites> {
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.only(top: 8,left: 25,bottom: 10),
-                                            child: Text("Favorite Subjects",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
+                                            child: Text("Favorite Subjects",style: TextStyle(color: Colors.deepOrangeAccent,fontSize: 25,fontWeight: FontWeight.w500),),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(left: 20,right: 10),
@@ -316,79 +316,6 @@ class _favoritesState extends State<favorites> {
                                               ),
                                               onTap: () {
                                                 showToast("Add Subjects");
-                                                // showDialog(
-                                                //   context: context,
-                                                //   builder: (context) {
-                                                //     return Dialog(
-                                                //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                                //       elevation: 16,
-                                                //       child: Container(
-                                                //         decoration: BoxDecoration(
-                                                //           border: Border.all(color: Colors.tealAccent),
-                                                //           borderRadius: BorderRadius.circular(20),
-                                                //         ),
-                                                //         child: ListView(
-                                                //           shrinkWrap: true,
-                                                //           children: <Widget>[
-                                                //             SizedBox(height: 10),
-                                                //             Center(
-                                                //                 child: Text(
-                                                //                   'Note',
-                                                //                   style: TextStyle(color: Colors.black87, fontSize: 20),
-                                                //                 )),
-                                                //             Divider(
-                                                //               color: Colors.tealAccent,
-                                                //             ),
-                                                //             SizedBox(height: 5),
-                                                //             Padding(
-                                                //               padding: const EdgeInsets.only(left: 15),
-                                                //               child: Text("1. Click on 'See More' option"),
-                                                //             ),
-                                                //             Padding(
-                                                //               padding: const EdgeInsets.only(left: 15),
-                                                //               child: Text("2. Long Press on Subject u need to add as important"),
-                                                //             ),
-                                                //             Padding(
-                                                //               padding: const EdgeInsets.only(left: 15),
-                                                //               child: Text("3. Restart the application"),
-                                                //             ),
-                                                //             Divider(
-                                                //               color: Colors.tealAccent,
-                                                //             ),
-                                                //             Padding(
-                                                //               padding: const EdgeInsets.only(left: 15),
-                                                //               child: Text("1. Long Press on Subject u need to remove as important"),
-                                                //             ),
-                                                //             Divider(
-                                                //               color: Colors.tealAccent,
-                                                //             ),
-                                                //             Center(
-                                                //               child: InkWell(
-                                                //                 child: Container(
-                                                //                   decoration: BoxDecoration(
-                                                //                     color: Colors.black26,
-                                                //                     border: Border.all(color: Colors.black),
-                                                //                     borderRadius: BorderRadius.circular(25),
-                                                //                   ),
-                                                //                   child: Padding(
-                                                //                     padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-                                                //                     child: Text("Back"),
-                                                //                   ),
-                                                //                 ),
-                                                //                 onTap: () {
-                                                //                   Navigator.pop(context);
-                                                //                 },
-                                                //               ),
-                                                //             ),
-                                                //             SizedBox(
-                                                //               height: 10,
-                                                //             ),
-                                                //           ],
-                                                //         ),
-                                                //       ),
-                                                //     );
-                                                //   },
-                                                // );
                                               }),
                                         ),
                                       );
@@ -417,7 +344,7 @@ class _favoritesState extends State<favorites> {
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.only(top: 15,left: 20,bottom: 10),
-                                            child: Text("Favorite Lab Subjects",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
+                                            child: Text("Favorite Lab Subjects",style: TextStyle(color: Colors.deepOrangeAccent,fontSize: 25,fontWeight: FontWeight.w500),),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(left: 20,right: 10),
@@ -748,7 +675,7 @@ class _favoritesState extends State<favorites> {
                                             padding: const EdgeInsets.only(top:20,left: 20, bottom: 10),
                                             child: Text(
                                               "Based on ECE",
-                                              style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w500),
+                                              style: TextStyle(color: Colors.deepOrangeAccent, fontSize: 25, fontWeight: FontWeight.w500),
                                             ),
                                           ),
                                           Container(

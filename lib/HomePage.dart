@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../SubPages.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'add subjects.dart';
+import 'ads.dart';
 import 'auth_page.dart';
 import 'favorites.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -69,17 +70,7 @@ class _HomePageState extends State<HomePage> {
             child: SafeArea(
                 child: Column(
               children: [
-                // ShaderMask(
-                //   shaderCallback: (Rect bounds) {
-                //     return RadialGradient(
-                //       center: Alignment.topLeft,
-                //       radius: 1.0,
-                //       colors: <Color>[Colors.yellow, Colors.deepOrange.shade900],
-                //       tileMode: TileMode.mirror,
-                //     ).createShader(bounds);
-                //   },
-                //   child: const Text('I’m burning the memories',style: TextStyle(color: Colors.white),),
-                // ),
+                CustomAdsBanner(),
                 SizedBox(
                   height: 10,
                 ),
@@ -87,13 +78,21 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Flexible(
                       child: Center(
-                          child: Text(
-                        "ECE",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500),
-                      )),
+                          child:    ShaderMask(
+                            shaderCallback: (Rect bounds) {
+                              return RadialGradient(
+                                center: Alignment.topLeft,
+                                radius: 1.0,
+                                colors: <Color>[Colors.yellow, Colors.deepOrange.shade900],
+                                tileMode: TileMode.mirror,
+                              ).createShader(bounds);
+                            },
+                            child: const Text('ECE' , style: TextStyle(
+                                fontSize: 30,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500),),
+                          ),
+                      ),
                       flex: 5,
                     ),
                     InkWell(
@@ -145,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                                   if (snapshot.hasError) {
                                     return const Center(
                                         child: Text(
-                                            'Error with TextBooks Data or\n Check Internet Connection'));
+                                            'Error with updates Data or\n Check Internet Connection'));
                                   } else {
                                     if (HomeUpdates!.length == 0) {
                                       return Container();
@@ -164,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                                               style: TextStyle(
                                                   fontSize: 25,
                                                   fontWeight: FontWeight.w500,
-                                                  color: Colors.white),
+                                                  color: Colors.orange),
                                             ),
                                           ),
                                           Padding(
@@ -218,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                                                                         .date),
                                                                 style: TextStyle(
                                                                     color: Colors
-                                                                        .white,
+                                                                        .lightBlueAccent,
                                                                     fontSize:
                                                                         8),
                                                               )
@@ -240,12 +239,7 @@ class _HomePageState extends State<HomePage> {
                                                                     const TextStyle(
                                                                   fontSize:
                                                                       15.0,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          204,
-                                                                          207,
-                                                                          222,
-                                                                          1),
+                                                                  color: Colors.yellowAccent,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
@@ -299,7 +293,7 @@ class _HomePageState extends State<HomePage> {
                                                                         .date),
                                                                 style: TextStyle(
                                                                     color: Colors
-                                                                        .white,
+                                                                        .lightBlueAccent,
                                                                     fontSize:
                                                                         8),
                                                               )
@@ -321,12 +315,7 @@ class _HomePageState extends State<HomePage> {
                                                                     const TextStyle(
                                                                   fontSize:
                                                                       15.0,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          204,
-                                                                          207,
-                                                                          222,
-                                                                          1),
+                                                                  color: Colors.yellowAccent,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
@@ -421,7 +410,7 @@ class _HomePageState extends State<HomePage> {
                                 style: TextStyle(
                                     fontSize: 25,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.white),
+                                    color: Colors.orange),
                               ),
                               Spacer(),
                               if (userId() == "gmail.com")
@@ -455,14 +444,14 @@ class _HomePageState extends State<HomePage> {
                               InkWell(
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[500],
+                                    color: Colors.black.withOpacity(0.7),
                                     borderRadius: BorderRadius.circular(15),
-                                    border: Border.all(color: Colors.white),
+                                    border: Border.all(color: Colors.white.withOpacity(0.3)),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.only(
-                                        left: 10, right: 10, top: 5, bottom: 5),
-                                    child: Text("see more"),
+                                        left: 10, right: 10, top: 3, bottom: 3),
+                                    child: Text("see more",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 18),),
                                   ),
                                 ),
                                 onTap: () {
@@ -598,7 +587,7 @@ class _HomePageState extends State<HomePage> {
                                               Text(
                                                 "Regulation : ",
                                                 style: TextStyle(
-                                                    color: Colors.orange,
+                                                    color: Colors.deepOrange,
                                                     fontSize: 25,
                                                     fontWeight: FontWeight.w500),
                                               ),
@@ -623,7 +612,7 @@ class _HomePageState extends State<HomePage> {
                                                     color:
                                                     Colors.red.withOpacity(1),
                                                     border: Border.all(
-                                                        color: Colors.white),
+                                                        color: Colors.white.withOpacity(0.3)),
                                                   ),
                                                   child: Padding(
                                                     padding: const EdgeInsets.only(
@@ -933,9 +922,9 @@ class _HomePageState extends State<HomePage> {
                                                   child: Text(
                                                     "Time Table :",
                                                     style: TextStyle(
-                                                        color: Colors.white,
+                                                        color: Colors.orange,
                                                         fontSize: 20,
-                                                        fontWeight: FontWeight.w500),
+                                                        fontWeight: FontWeight.w700),
                                                   ),
                                                 ),
                                                 StreamBuilder<List<TimeTableConvertor>>(
@@ -1010,7 +999,7 @@ class _HomePageState extends State<HomePage> {
                                                                               "${classess.heading}",
                                                                               style: TextStyle(
                                                                                   color: Colors
-                                                                                      .white),
+                                                                                      .lightBlueAccent),
                                                                             ))
                                                                           ],
                                                                         ),
@@ -1046,7 +1035,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       .fill)),
                                                                           child: Center(
                                                                               child: Text(
-                                                                                  "${classess.heading}")),
+                                                                                  "${classess.heading}",style: TextStyle(color: Colors.lightBlueAccent),)),
                                                                         ),
                                                                       );
                                                                     }
@@ -1073,7 +1062,7 @@ class _HomePageState extends State<HomePage> {
                                                 child: Text(
                                                   "Subjects",
                                                   style: TextStyle(
-                                                      color: Colors.white,
+                                                      color: Colors.deepOrangeAccent,
                                                       fontSize: 25,
                                                       fontWeight: FontWeight.w500),
                                                 ),
@@ -1082,9 +1071,9 @@ class _HomePageState extends State<HomePage> {
                                               InkWell(
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: Colors.white54,
+                                                    color: Colors.black.withOpacity(0.5),
                                                     border:
-                                                        Border.all(color: Colors.white),
+                                                        Border.all(color: Colors.white.withOpacity(0.3)),
                                                     borderRadius:
                                                         BorderRadius.circular(25),
                                                   ),
@@ -1092,9 +1081,9 @@ class _HomePageState extends State<HomePage> {
                                                     padding: const EdgeInsets.only(
                                                         left: 10,
                                                         right: 10,
-                                                        top: 5,
-                                                        bottom: 5),
-                                                    child: Text("see more"),
+                                                        top: 3,
+                                                        bottom: 3),
+                                                    child: Text("see more",style: TextStyle(color: Colors.white,fontSize: 18),),
                                                   ),
                                                 ),
                                                 onTap: () {
@@ -1216,7 +1205,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       style:
                                                                                           const TextStyle(
                                                                                         fontSize: 20.0,
-                                                                                        color: Colors.white,
+                                                                                        color: Colors.orange,
                                                                                         fontWeight: FontWeight.w600,
                                                                                       ),
                                                                                     ),
@@ -1334,11 +1323,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       const TextStyle(
                                                                                     fontSize:
                                                                                         13.0,
-                                                                                    color: Color.fromRGBO(
-                                                                                        204,
-                                                                                        207,
-                                                                                        222,
-                                                                                        1),
+                                                                                    color: Colors.yellowAccent
                                                                                   ),
                                                                                 ),
                                                                                 SizedBox(
@@ -1352,7 +1337,7 @@ class _HomePageState extends State<HomePage> {
                                                                                     fontSize:
                                                                                         9.0,
                                                                                     color:
-                                                                                        Colors.white60,
+                                                                                        Colors.lightBlueAccent,
                                                                                     //   fontWeight: FontWeight.bold,
                                                                                   ),
                                                                                 ),
@@ -1488,7 +1473,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       style:
                                                                                           const TextStyle(
                                                                                         fontSize: 20.0,
-                                                                                        color: Colors.white,
+                                                                                        color: Colors.orange,
                                                                                         fontWeight: FontWeight.w600,
                                                                                       ),
                                                                                     ),
@@ -1606,11 +1591,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       const TextStyle(
                                                                                     fontSize:
                                                                                         13.0,
-                                                                                    color: Color.fromRGBO(
-                                                                                        204,
-                                                                                        207,
-                                                                                        222,
-                                                                                        1),
+                                                                                    color: Colors.yellowAccent,
                                                                                   ),
                                                                                 ),
                                                                                 SizedBox(
@@ -1624,7 +1605,7 @@ class _HomePageState extends State<HomePage> {
                                                                                     fontSize:
                                                                                         9.0,
                                                                                     color:
-                                                                                        Colors.white60,
+                                                                                        Colors.lightBlueAccent,
                                                                                     //   fontWeight: FontWeight.bold,
                                                                                   ),
                                                                                 ),
@@ -1947,7 +1928,7 @@ class _HomePageState extends State<HomePage> {
                                                                 Text(
                                                                   "Lab Subjects",
                                                                   style: TextStyle(
-                                                                      color: Colors.white,
+                                                                      color: Colors.deepOrangeAccent,
                                                                       fontSize: 25,
                                                                       fontWeight:
                                                                           FontWeight
@@ -1959,10 +1940,10 @@ class _HomePageState extends State<HomePage> {
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color:
-                                                                          Colors.white54,
+                                                                          Colors.black.withOpacity(0.7),
                                                                       border: Border.all(
                                                                           color: Colors
-                                                                              .white),
+                                                                              .white.withOpacity(0.3)),
                                                                       borderRadius:
                                                                           BorderRadius
                                                                               .circular(
@@ -1974,10 +1955,10 @@ class _HomePageState extends State<HomePage> {
                                                                                   .only(
                                                                               left: 10,
                                                                               right: 10,
-                                                                              top: 5,
-                                                                              bottom: 5),
+                                                                              top: 3,
+                                                                              bottom: 3),
                                                                       child: Text(
-                                                                          "see more"),
+                                                                          "see more",style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w500),),
                                                                     ),
                                                                   ),
                                                                   onTap: () {
@@ -2087,7 +2068,7 @@ class _HomePageState extends State<HomePage> {
                                                                                           LabSubjectsData.heading,
                                                                                           style: const TextStyle(
                                                                                             fontSize: 20.0,
-                                                                                            color: Colors.white,
+                                                                                            color: Colors.orange,
                                                                                             fontWeight: FontWeight.w600,
                                                                                           ),
                                                                                         ),
@@ -2198,7 +2179,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       style:
                                                                                           const TextStyle(
                                                                                         fontSize: 13.0,
-                                                                                        color: Color.fromRGBO(204, 207, 222, 1),
+                                                                                        color: Colors.yellowAccent,
                                                                                       ),
                                                                                     ),
                                                                                     SizedBox(
@@ -2210,7 +2191,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       style:
                                                                                           const TextStyle(
                                                                                         fontSize: 9.0,
-                                                                                        color: Colors.white60,
+                                                                                        color: Colors.lightBlueAccent,
                                                                                         //   fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
@@ -2344,7 +2325,7 @@ class _HomePageState extends State<HomePage> {
                                                                                           LabSubjectsData.heading,
                                                                                           style: const TextStyle(
                                                                                             fontSize: 20.0,
-                                                                                            color: Colors.white,
+                                                                                            color: Colors.orange,
                                                                                             fontWeight: FontWeight.w600,
                                                                                           ),
                                                                                         ),
@@ -2455,7 +2436,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       style:
                                                                                           const TextStyle(
                                                                                         fontSize: 13.0,
-                                                                                        color: Color.fromRGBO(204, 207, 222, 1),
+                                                                                        color: Colors.yellowAccent,
                                                                                       ),
                                                                                     ),
                                                                                     SizedBox(
@@ -2467,7 +2448,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       style:
                                                                                           const TextStyle(
                                                                                         fontSize: 9.0,
-                                                                                        color: Colors.white60,
+                                                                                        color: Colors.lightBlueAccent,
                                                                                         //   fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
@@ -2763,7 +2744,7 @@ class _HomePageState extends State<HomePage> {
                                               Text(
                                                 "Regulation : ",
                                                 style: TextStyle(
-                                                    color: Colors.orange,
+                                                    color: Colors.deepOrange,
                                                     fontSize: 25,
                                                     fontWeight: FontWeight.w500),
                                               ),
@@ -2773,7 +2754,7 @@ class _HomePageState extends State<HomePage> {
                                                 child: Text(
                                                   "- Year - Sem",
                                                   style: TextStyle(
-                                                      color: Colors.orangeAccent,
+                                                      color: Colors.deepOrangeAccent,
                                                       fontSize: 18,
                                                       fontWeight: FontWeight.w500),
                                                 ),
@@ -3131,7 +3112,7 @@ class _HomePageState extends State<HomePage> {
                                                   Text(
                                                     "Based on ECE",
                                                     style: TextStyle(
-                                                        color: Colors.white,
+                                                        color: Colors.deepOrange,
                                                         fontSize: 25,
                                                         fontWeight:
                                                             FontWeight.w500),
@@ -3181,11 +3162,11 @@ class _HomePageState extends State<HomePage> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(15),
-                                                          color: Colors.white
-                                                              .withOpacity(0.5),
+                                                          color: Colors.black
+                                                              .withOpacity(0.7),
                                                           border: Border.all(
                                                               color:
-                                                                  Colors.white),
+                                                                  Colors.white.withOpacity(0.3)),
                                                         ),
                                                         child: Padding(
                                                           padding:
@@ -3196,7 +3177,7 @@ class _HomePageState extends State<HomePage> {
                                                                   top: 5,
                                                                   bottom: 5),
                                                           child:
-                                                              Text("See More"),
+                                                              Text("See More",style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w500),),
                                                         ),
                                                       ),
                                                       onTap: () {
@@ -3315,7 +3296,7 @@ class _HomePageState extends State<HomePage> {
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w500,
                                                                               fontSize: 16,
-                                                                              color: Colors.white),
+                                                                              color: Colors.orange),
                                                                         ),
                                                                         Text(
                                                                           Books[index]
@@ -3327,7 +3308,7 @@ class _HomePageState extends State<HomePage> {
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w400,
                                                                               fontSize: 13,
-                                                                              color: Colors.white),
+                                                                              color: Colors.blue),
                                                                         ),
                                                                         Text(
                                                                           Books[index]
@@ -3339,7 +3320,7 @@ class _HomePageState extends State<HomePage> {
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w400,
                                                                               fontSize: 13,
-                                                                              color: Colors.white),
+                                                                              color: Colors.lightBlueAccent),
                                                                         ),
                                                                         Text(
                                                                           Books[index]
@@ -3351,7 +3332,7 @@ class _HomePageState extends State<HomePage> {
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w300,
                                                                               fontSize: 13,
-                                                                              color: Colors.white),
+                                                                              color: Colors.limeAccent),
                                                                         ),
                                                                         SizedBox(
                                                                           height:

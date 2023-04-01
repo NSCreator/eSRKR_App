@@ -257,7 +257,7 @@ class _LoginPageState extends State<LoginPage> {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Text("Ends with @srkrec.a.in can Reset Password", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 15),),
+                                        child: Text("Ends with @srkrec.ac.in can Reset Password", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 15),),
                                       ),
 
                                       Padding(
@@ -500,11 +500,14 @@ class _LoginPageState extends State<LoginPage> {
               ));
       try {
         await FirebaseAuth.instance.signInWithEmailAndPassword( email: emailController.text.trim().toLowerCase(), password: passwordController.text.trim());
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Nav()));
       } on FirebaseException catch (e) {
         print(e);
         Utils.showSnackBar(e.message);
       }
-    Navigator.pop(context);
+
+Navigator.pop(context);
+
 
   }
 

@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
@@ -8,6 +9,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:srkr_study_app/HomePage.dart';
 import 'package:srkr_study_app/settings.dart';
+
+import 'ads.dart';
 
 class unseenImages extends StatefulWidget {
   @override
@@ -504,7 +507,6 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-
       body: Stack(
         children: [
           PDFView(
@@ -528,9 +530,14 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
             child: CircularProgressIndicator(),
           )
               : Offstage(),
-
+          Align(
+              alignment: Alignment.bottomCenter,
+              child: CustomAdsBanner()
+          ),
         ],
       ),
+
+
 floatingActionButton: InkWell(
   child: Container(
     decoration: BoxDecoration(

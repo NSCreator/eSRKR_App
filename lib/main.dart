@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:intl/intl.dart';
-import 'package:srkr_study_app/auth_page.dart';
-import 'package:srkr_study_app/HomePage.dart';
-import 'package:srkr_study_app/search%20bar.dart';
-import 'package:srkr_study_app/settings.dart';
-import '../intro_pages.dart';
-import '../HomePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:provider/provider.dart';
+
+import 'HomePage.dart';
 import 'auth_page.dart';
 import 'favorites.dart';
 import 'notification.dart';
+import 'search bar.dart';
+import 'settings.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
