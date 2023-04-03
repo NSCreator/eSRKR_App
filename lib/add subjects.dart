@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
+// import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart'as http;
 import 'package:path_provider/path_provider.dart';
@@ -499,7 +499,7 @@ class PdfViewerPage extends StatefulWidget {
 }
 
 class _PdfViewerPageState extends State<PdfViewerPage> {
-  late PDFViewController pdfController;
+  // late PDFViewController pdfController;
   int currentPage = 0;
   bool isReady = false;
 
@@ -509,22 +509,22 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
     return Scaffold(
       body: Stack(
         children: [
-          PDFView(
-            filePath: widget.pdfUrl,
-            enableSwipe: true,
-            swipeHorizontal: false,
-            autoSpacing: false,
-            pageFling: true,
-            onRender: (_pages) {
-              setState(() {
-                isReady = true;
-              });
-            },
-            onViewCreated: (PDFViewController vc) {
-              pdfController = vc;
-            },
-
-          ),
+          // PDFView(
+          //   filePath: widget.pdfUrl,
+          //   enableSwipe: true,
+          //   swipeHorizontal: false,
+          //   autoSpacing: false,
+          //   pageFling: true,
+          //   onRender: (_pages) {
+          //     setState(() {
+          //       isReady = true;
+          //     });
+          //   },
+          //   onViewCreated: (PDFViewController vc) {
+          //     pdfController = vc;
+          //   },
+          //
+          // ),
           !isReady
               ? Center(
             child: CircularProgressIndicator(),
