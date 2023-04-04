@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-class CustomAdsBanner extends StatefulWidget {
+class CustomAdsBannerForPdfs extends StatefulWidget {
   @override
-  _CustomAdsBannerState createState() => _CustomAdsBannerState();
+  _CustomAdsBannerForPdfsState createState() => _CustomAdsBannerForPdfsState();
 }
 
-class _CustomAdsBannerState extends State<CustomAdsBanner> {
+class _CustomAdsBannerForPdfsState extends State<CustomAdsBannerForPdfs> {
   BannerAd? _bannerAd;
   bool _isBannerAdLoaded = false;
 
@@ -14,7 +14,101 @@ class _CustomAdsBannerState extends State<CustomAdsBanner> {
   void initState() {
     super.initState();
     _bannerAd = BannerAd(
-      adUnitId: "ca-app-pub-3558812501803195/5706094921", // Replace with your ad unit id
+      adUnitId: "ca-app-pub-7097300908994281/1371419626", // Replace with your ad unit id
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            _isBannerAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+        },
+      ),
+    );
+
+    _bannerAd!.load();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _bannerAd?.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: _isBannerAdLoaded ? _bannerAd!.size.width.toDouble() : 0,
+      height: _isBannerAdLoaded ? _bannerAd!.size.height.toDouble() : 0,
+      child: AdWidget(ad: _bannerAd!),
+    );
+  }
+}
+
+class CustomAdsBannerForHomePage extends StatefulWidget {
+  @override
+  _CustomAdsBannerForHomePageState createState() => _CustomAdsBannerForHomePageState();
+}
+
+class _CustomAdsBannerForHomePageState extends State<CustomAdsBannerForHomePage> {
+  BannerAd? _bannerAd;
+  bool _isBannerAdLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _bannerAd = BannerAd(
+      adUnitId: "ca-app-pub-7097300908994281/9327291103", // Replace with your ad unit id
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            _isBannerAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+        },
+      ),
+    );
+
+    _bannerAd!.load();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _bannerAd?.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: _isBannerAdLoaded ? _bannerAd!.size.width.toDouble() : 0,
+      height: _isBannerAdLoaded ? _bannerAd!.size.height.toDouble() : 0,
+      child: AdWidget(ad: _bannerAd!),
+    );
+  }
+}
+
+class CustomAdsBannerForSubPage extends StatefulWidget {
+  @override
+  _CustomAdsBannerForSubPageState createState() => _CustomAdsBannerForSubPageState();
+}
+
+class _CustomAdsBannerForSubPageState extends State<CustomAdsBannerForSubPage> {
+  BannerAd? _bannerAd;
+  bool _isBannerAdLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _bannerAd = BannerAd(
+      adUnitId: "ca-app-pub-7097300908994281/7523315888", // Replace with your ad unit id
       size: AdSize.banner,
       request: AdRequest(),
       listener: BannerAdListener(

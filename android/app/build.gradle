@@ -92,3 +92,8 @@ dependencies {
 
 }
 apply plugin: 'com.google.gms.google-services'
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.core:core-ktx:1.6.0'
+    }
+}

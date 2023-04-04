@@ -153,7 +153,7 @@ class _settingsState extends State<settings> {
                                   padding: EdgeInsets.only(top: 44),
                                   child: CircleAvatar(
                                     backgroundColor: Colors.white30,
-                                    backgroundImage: NetworkImage(imageUrl),
+                                    backgroundImage: NetworkImage("https://drive.google.com/uc?export=view&id=1Mzx8ioES4Y10-xQqEIiQlMl09N8WDk-M"),
                                     radius: 30,
                                   ),
                                 ),
@@ -415,7 +415,7 @@ class _settingsState extends State<settings> {
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
-                                  child: Text("Saved Images ( In App )",style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.w500),),
+                                  child: Text("Saved Images and PDFs ( In App )",style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.w500),),
                                 ),
                               ),
                               onTap: (){
@@ -606,15 +606,20 @@ class _settingsState extends State<settings> {
                           const SizedBox(
                             height: 30,
                           ),
+
+                          Center(child: Text(".....eSRKR.....",style: TextStyle(color: Colors.white),)),
                           Center(
                             child: Text(
-                              localVersion,
+                              "v3.0.0",
                               style: TextStyle(
                                 fontSize: 9.0,
                                 color: Colors.white70,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                          ),
+                          const SizedBox(
+                            height: 30,
                           ),
                         ],
                       ),

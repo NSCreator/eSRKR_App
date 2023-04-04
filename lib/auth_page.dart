@@ -1,13 +1,10 @@
 import 'dart:async';
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:srkr_study_app/settings.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'TextField.dart';
 import 'main.dart';
@@ -38,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Container(
         decoration: BoxDecoration(
           color:Colors.grey[400],
-          image: DecorationImage(image: NetworkImage("https://cutewallpaper.org/34/education-phone-wallpaper/315537679.jpg"),
+          image: DecorationImage(image: NetworkImage("https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/auth_page%2F315537679.jpg?alt=media&token=e2e3c4f9-a19f-4593-b193-533196b48b0b"),
           fit: BoxFit.fill)
         ),
         child: SafeArea(
@@ -56,11 +53,23 @@ class _LoginPageState extends State<LoginPage> {
                            child: SizedBox(
                                height: 200,
                                width: 200,
-                               child: Image.network("https://i.pinimg.com/originals/69/81/de/6981deb6aedd16d4c49fa177ccbb2735.gif")),
+                               child: Image.network("https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/auth_page%2F6981deb6aedd16d4c49fa177ccbb2735.gif?alt=media&token=791bf6d8-8208-4ed8-9700-66788f29e781")),
                          ),
-                         Text(
-                           "e-SRKR",
-                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                         Row(
+                           mainAxisAlignment: MainAxisAlignment.center,
+                           children: [
+                             Text(
+                               "e-SRKR ",
+                               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold,color: Colors.deepOrange),
+                             ),
+                             Padding(
+                               padding: const EdgeInsets.only(top: 5),
+                               child: Text(
+                                 "( ECE )",
+                                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,color: Colors.blueAccent),
+                               ),
+                             ),
+                           ],
                          ),
                          SizedBox(
                            height: 10,
@@ -284,7 +293,7 @@ class _LoginPageState extends State<LoginPage> {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Text("Note :In Few Days Your Account Has Been Deleted and Create New One.", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 15),),
+                                        child: Text("Note : In Few Days Your Account Has Been Deleted and Create New One.", style: TextStyle(color: Colors.lightBlueAccent, fontWeight: FontWeight.w500, fontSize: 15),),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -302,7 +311,7 @@ class _LoginPageState extends State<LoginPage> {
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.only(right: 15),
-                                          child: Text('Send Notification'),
+                                          child: Text('Send Message To Owner',style: TextStyle(color: Colors.orangeAccent,fontSize: 20),),
                                         ),
                                       ),
                                     ],

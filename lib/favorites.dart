@@ -135,7 +135,7 @@ class _favoritesState extends State<favorites> {
                                                                           Favourite.name,
                                                                           style: const TextStyle(
                                                                             fontSize: 20.0,
-                                                                            color: Colors.white,
+                                                                            color: Colors.orangeAccent,
                                                                             fontWeight: FontWeight.w600,
                                                                           ),
                                                                         ),
@@ -253,7 +253,7 @@ class _favoritesState extends State<favorites> {
                                                                       Favourite.description,
                                                                       style: const TextStyle(
                                                                         fontSize: 13.0,
-                                                                        color: Color.fromRGBO(204, 207, 222, 1),
+                                                                        color: Colors.lightBlueAccent,
                                                                       ),
                                                                     ),
                                                                     SizedBox(
@@ -392,7 +392,7 @@ class _favoritesState extends State<favorites> {
                                                                           Favourite.name,
                                                                           style: const TextStyle(
                                                                             fontSize: 20.0,
-                                                                            color: Colors.white,
+                                                                            color: Colors.orangeAccent,
                                                                             fontWeight: FontWeight.w600,
                                                                           ),
                                                                         ),
@@ -509,7 +509,7 @@ class _favoritesState extends State<favorites> {
                                                                       Favourite.description,
                                                                       style: const TextStyle(
                                                                         fontSize: 13.0,
-                                                                        color: Color.fromRGBO(204, 207, 222, 1),
+                                                                        color: Colors.lightBlueAccent,
                                                                       ),
                                                                     ),
                                                                     SizedBox(
@@ -572,79 +572,6 @@ class _favoritesState extends State<favorites> {
                                               ),
                                               onTap: () {
                                                 showToast("Add La Subjects");
-                                                // showDialog(
-                                                //   context: context,
-                                                //   builder: (context) {
-                                                //     return Dialog(
-                                                //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                                //       elevation: 16,
-                                                //       child: Container(
-                                                //         decoration: BoxDecoration(
-                                                //           border: Border.all(color: Colors.tealAccent),
-                                                //           borderRadius: BorderRadius.circular(20),
-                                                //         ),
-                                                //         child: ListView(
-                                                //           shrinkWrap: true,
-                                                //           children: <Widget>[
-                                                //             SizedBox(height: 10),
-                                                //             Center(
-                                                //                 child: Text(
-                                                //                   'Note',
-                                                //                   style: TextStyle(color: Colors.black87, fontSize: 20),
-                                                //                 )),
-                                                //             Divider(
-                                                //               color: Colors.tealAccent,
-                                                //             ),
-                                                //             SizedBox(height: 5),
-                                                //             Padding(
-                                                //               padding: const EdgeInsets.only(left: 15),
-                                                //               child: Text("1. Click on 'See More' option"),
-                                                //             ),
-                                                //             Padding(
-                                                //               padding: const EdgeInsets.only(left: 15),
-                                                //               child: Text("2. Long Press on Subject u need to add as important"),
-                                                //             ),
-                                                //             Padding(
-                                                //               padding: const EdgeInsets.only(left: 15),
-                                                //               child: Text("3. Restart the application"),
-                                                //             ),
-                                                //             Divider(
-                                                //               color: Colors.tealAccent,
-                                                //             ),
-                                                //             Padding(
-                                                //               padding: const EdgeInsets.only(left: 15),
-                                                //               child: Text("1. Long Press on Subject u need to remove as important"),
-                                                //             ),
-                                                //             Divider(
-                                                //               color: Colors.tealAccent,
-                                                //             ),
-                                                //             Center(
-                                                //               child: InkWell(
-                                                //                 child: Container(
-                                                //                   decoration: BoxDecoration(
-                                                //                     color: Colors.black26,
-                                                //                     border: Border.all(color: Colors.black),
-                                                //                     borderRadius: BorderRadius.circular(25),
-                                                //                   ),
-                                                //                   child: Padding(
-                                                //                     padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-                                                //                     child: Text("Back"),
-                                                //                   ),
-                                                //                 ),
-                                                //                 onTap: () {
-                                                //                   Navigator.pop(context);
-                                                //                 },
-                                                //               ),
-                                                //             ),
-                                                //             SizedBox(
-                                                //               height: 10,
-                                                //             ),
-                                                //           ],
-                                                //         ),
-                                                //       ),
-                                                //     );
-                                                //   },
-                                                // );
                                               }),
                                         ),
                                       );
@@ -843,25 +770,25 @@ class _favoritesState extends State<favorites> {
                                                                     Favourites[index].heading,
                                                                     maxLines: 2,
                                                                     overflow: TextOverflow.ellipsis,
-                                                                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.white),
+                                                                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.orangeAccent),
                                                                   ),
                                                                   Text(
                                                                     Favourites[index].Author,
                                                                     maxLines: 1,
                                                                     overflow: TextOverflow.ellipsis,
-                                                                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+                                                                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.lightBlueAccent),
                                                                   ),
                                                                   Text(
                                                                     Favourites[index].edition,
                                                                     maxLines: 1,
                                                                     overflow: TextOverflow.ellipsis,
-                                                                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white),
+                                                                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 13, color: Colors.white.withOpacity(0.7)),
                                                                   ),
                                                                   Text(
                                                                     Favourites[index].description,
                                                                     maxLines: 1,
                                                                     overflow: TextOverflow.ellipsis,
-                                                                    style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.white),
+                                                                    style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.yellowAccent),
                                                                   ),
                                                                   SizedBox(height: 1,),
                                                                   if (file1.existsSync())

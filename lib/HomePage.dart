@@ -4,14 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srkr_study_app/SubPages.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'package:srkr_study_app/srkr_page.dart';
-import 'SubPages.dart';
 import 'TextField.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../SubPages.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'add subjects.dart';
 import 'ads.dart';
@@ -21,8 +18,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
-import 'net.dart';
-import 'package:path/path.dart' as p;
 
 class HomePage extends StatefulWidget {
   @override
@@ -70,7 +65,6 @@ class _HomePageState extends State<HomePage> {
             child: SafeArea(
                 child: Column(
               children: [
-                CustomAdsBanner(),
                 SizedBox(
                   height: 10,
                 ),
@@ -239,7 +233,7 @@ class _HomePageState extends State<HomePage> {
                                                                     const TextStyle(
                                                                   fontSize:
                                                                       15.0,
-                                                                  color: Colors.yellowAccent,
+                                                                  color: Colors.lightBlueAccent,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
@@ -337,56 +331,7 @@ class _HomePageState extends State<HomePage> {
                                                       },
                                                     );
                                                   }
-                                                  // return InkWell(
-                                                  //   child: Row(
-                                                  //     children: [
-                                                  //       Column(
-                                                  //         children: [
-                                                  //           Container(
-                                                  //             width: 30,
-                                                  //             height: 30,
-                                                  //             decoration: BoxDecoration(
-                                                  //               borderRadius: BorderRadius.circular(15),
-                                                  //               image: DecorationImage(
-                                                  //                 image: ,
-                                                  //                 // image: NetworkImage(
-                                                  //                 //   HomeUpdate.photoUrl,
-                                                  //                 // ),
-                                                  //                 fit: BoxFit.cover,
-                                                  //               ),
-                                                  //             ),
-                                                  //           ),
-                                                  //           Text(splitDate(HomeUpdate.date),style: TextStyle(color: Colors.white,fontSize: 8),)
-                                                  //         ],
-                                                  //       ),
-                                                  //       SizedBox(
-                                                  //         width: 5,
-                                                  //       ),
-                                                  //       Expanded(
-                                                  //         child: Padding(
-                                                  //           padding: const EdgeInsets.all(5.0),
-                                                  //           child: Container(
-                                                  //             child: Text(
-                                                  //                 HomeUpdate.heading,
-                                                  //               style: const TextStyle(
-                                                  //                 fontSize: 15.0,
-                                                  //                 color: Color.fromRGBO(204, 207, 222, 1),
-                                                  //                 fontWeight: FontWeight.w400,
-                                                  //               ),
-                                                  //             )
-                                                  //           ),
-                                                  //         ),
-                                                  //       )
-                                                  //     ],
-                                                  //   ),
-                                                  // onTap: (){
-                                                  //     if(HomeUpdate.link.length>0){
-                                                  //       _ExternalLaunchUrl(HomeUpdate.link);
-                                                  //     }else{
-                                                  //       showToast("No Link");
-                                                  //     }
-                                                  // },
-                                                  // );
+
                                                 },
                                                 separatorBuilder:
                                                     (context, index) =>
@@ -506,18 +451,15 @@ class _HomePageState extends State<HomePage> {
                                           if (file.existsSync()) {
                                             return InkWell(
                                               child: Image.file(file),
-                                              onTap: () async {
-                                                _BranchNewsBottomSheet(
-                                                    context, BranchNew, file);
-                                              },
-                                              onLongPress: () {
+                                              onTap: ()  {
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             ImageZoom(
-                                                                url: "",file: file,)));
+                                                              url: "",file: file,)));
                                               },
+
                                             );
                                           } else {
                                             download(
@@ -531,18 +473,15 @@ class _HomePageState extends State<HomePage> {
                                                     (context, url, error) =>
                                                         Icon(Icons.error),
                                               ),
-                                              onTap: () async {
-                                                _BranchNewsBottomSheet(
-                                                    context, BranchNew, file);
-                                              },
-                                              onLongPress: () {
+                                              onTap: () {
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             ImageZoom(
-                                                                url:"",file: file,)));
+                                                              url:"",file: file,)));
                                               },
+
                                             );
                                           }
                                         }),
@@ -729,7 +668,7 @@ class _HomePageState extends State<HomePage> {
                                                                                           SizedBox(
                                                                                             width: 10,
                                                                                           ),
-                                                                                          InkWell(
+                                                                                          if (userId() == "gmail.com")InkWell(
                                                                                             child: Container(
                                                                                               decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
                                                                                               child: Row(
@@ -905,6 +844,7 @@ class _HomePageState extends State<HomePage> {
                                             color: Colors.white,
                                           ),
                                         ),
+                                        CustomAdsBannerForHomePage(),
                                         SizedBox(
                                           height: 10,
                                         ),
@@ -1175,7 +1115,7 @@ class _HomePageState extends State<HomePage> {
                                                                                     BorderRadius.all(
                                                                                         Radius.circular(8.0)),
                                                                                 color: Colors
-                                                                                    .redAccent,
+                                                                                    .black,
                                                                                 image:
                                                                                     DecorationImage(
                                                                                   image: FileImage(
@@ -1205,7 +1145,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       style:
                                                                                           const TextStyle(
                                                                                         fontSize: 20.0,
-                                                                                        color: Colors.orange,
+                                                                                        color: Colors.orangeAccent,
                                                                                         fontWeight: FontWeight.w600,
                                                                                       ),
                                                                                     ),
@@ -1323,7 +1263,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       const TextStyle(
                                                                                     fontSize:
                                                                                         13.0,
-                                                                                    color: Colors.yellowAccent
+                                                                                    color: Colors.lightBlueAccent
                                                                                   ),
                                                                                 ),
                                                                                 SizedBox(
@@ -1337,7 +1277,7 @@ class _HomePageState extends State<HomePage> {
                                                                                     fontSize:
                                                                                         9.0,
                                                                                     color:
-                                                                                        Colors.lightBlueAccent,
+                                                                                        Colors.white54,
                                                                                     //   fontWeight: FontWeight.bold,
                                                                                   ),
                                                                                 ),
@@ -1473,7 +1413,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       style:
                                                                                           const TextStyle(
                                                                                         fontSize: 20.0,
-                                                                                        color: Colors.orange,
+                                                                                        color: Colors.orangeAccent,
                                                                                         fontWeight: FontWeight.w600,
                                                                                       ),
                                                                                     ),
@@ -1591,7 +1531,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       const TextStyle(
                                                                                     fontSize:
                                                                                         13.0,
-                                                                                    color: Colors.yellowAccent,
+                                                                                    color: Colors.lightBlueAccent,
                                                                                   ),
                                                                                 ),
                                                                                 SizedBox(
@@ -1605,7 +1545,7 @@ class _HomePageState extends State<HomePage> {
                                                                                     fontSize:
                                                                                         9.0,
                                                                                     color:
-                                                                                        Colors.lightBlueAccent,
+                                                                                        Colors.white54,
                                                                                     //   fontWeight: FontWeight.bold,
                                                                                   ),
                                                                                 ),
@@ -1679,27 +1619,6 @@ class _HomePageState extends State<HomePage> {
                                                                                         photoUrl: SubjectsData.PhotoUrl,
                                                                                       )));
                                                                     },
-                                                                    // onLongPress: () async {
-                                                                    //   SharedPreferences prefs = await SharedPreferences.getInstance();
-                                                                    //   String? SelectedSubjects = prefs.getString('addSubjects') ?? null;
-                                                                    //   print(SelectedSubjects);
-                                                                    //   if (SelectedSubjects != null) {
-                                                                    //     final body = jsonDecode(SelectedSubjects);
-                                                                    //     subjects = body.map<SearchAddedSubjects>(SearchAddedSubjects.fromJson).toList();
-                                                                    //   }
-                                                                    //   print(subjects);
-                                                                    //   final person = subjects.where((element) => element.name == SubjectsData.heading);
-                                                                    //   if (person.isEmpty) {
-                                                                    //     subjects.add(SearchAddedSubjects(
-                                                                    //         name: SubjectsData.heading, description: SubjectsData.description, date: SubjectsData.Date, id: SubjectsData.id, photoUrl: SubjectsData.PhotoUrl));
-                                                                    //   } else {
-                                                                    //     showToast("${SubjectsData.heading} is already added");
-                                                                    //   }
-                                                                    //   print(subjects);
-                                                                    //   prefs.setString('addSubjects', jsonEncode(subjects));
-                                                                    //   print(jsonEncode(subjects));
-                                                                    //   showToast("${SubjectsData.heading} is Added");
-                                                                    // },
                                                                   );
                                                                 }
                                                               } else {
@@ -1708,153 +1627,23 @@ class _HomePageState extends State<HomePage> {
                                                             },
                                                           );
                                                         else
-                                                          return InkWell(
-                                                              child: Container(
-                                                                decoration: BoxDecoration(
-                                                                  border: Border.all(
-                                                                      color: Colors
-                                                                          .tealAccent),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(20),
-                                                                ),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .all(8.0),
-                                                                  child: Text(
-                                                                      "No Subjects are Liked"),
-                                                                ),
-                                                              ),
-                                                              onTap: () {
-                                                                showDialog(
-                                                                  context: context,
-                                                                  builder: (context) {
-                                                                    return Dialog(
-                                                                      shape: RoundedRectangleBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius
-                                                                                  .circular(
-                                                                                      20)),
-                                                                      elevation: 16,
-                                                                      child: Container(
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          border: Border.all(
-                                                                              color: Colors
-                                                                                  .tealAccent),
-                                                                          borderRadius:
-                                                                              BorderRadius
-                                                                                  .circular(
-                                                                                      20),
-                                                                        ),
-                                                                        child: ListView(
-                                                                          shrinkWrap:
-                                                                              true,
-                                                                          children: <
-                                                                              Widget>[
-                                                                            SizedBox(
-                                                                                height:
-                                                                                    10),
-                                                                            Center(
-                                                                                child:
-                                                                                    Text(
-                                                                              'Note',
-                                                                              style: TextStyle(
-                                                                                  color: Colors
-                                                                                      .black87,
-                                                                                  fontSize:
-                                                                                      20),
-                                                                            )),
-                                                                            Divider(
-                                                                              color: Colors
-                                                                                  .tealAccent,
-                                                                            ),
-                                                                            SizedBox(
-                                                                                height:
-                                                                                    5),
-                                                                            Padding(
-                                                                              padding: const EdgeInsets
-                                                                                      .only(
-                                                                                  left:
-                                                                                      15),
-                                                                              child: Text(
-                                                                                  "1. Click on 'See More' option"),
-                                                                            ),
-                                                                            Padding(
-                                                                              padding: const EdgeInsets
-                                                                                      .only(
-                                                                                  left:
-                                                                                      15),
-                                                                              child: Text(
-                                                                                  "2. Long Press on Subject u need to add as important"),
-                                                                            ),
-                                                                            Padding(
-                                                                              padding: const EdgeInsets
-                                                                                      .only(
-                                                                                  left:
-                                                                                      15),
-                                                                              child: Text(
-                                                                                  "3. Restart the application"),
-                                                                            ),
-                                                                            Divider(
-                                                                              color: Colors
-                                                                                  .tealAccent,
-                                                                            ),
-                                                                            Padding(
-                                                                              padding: const EdgeInsets
-                                                                                      .only(
-                                                                                  left:
-                                                                                      15),
-                                                                              child: Text(
-                                                                                  "1. Long Press on Subject u need to remove as important"),
-                                                                            ),
-                                                                            Divider(
-                                                                              color: Colors
-                                                                                  .tealAccent,
-                                                                            ),
-                                                                            Center(
-                                                                              child:
-                                                                                  InkWell(
-                                                                                child:
-                                                                                    Container(
-                                                                                  decoration:
-                                                                                      BoxDecoration(
-                                                                                    color:
-                                                                                        Colors.black26,
-                                                                                    border:
-                                                                                        Border.all(color: Colors.black),
-                                                                                    borderRadius:
-                                                                                        BorderRadius.circular(25),
-                                                                                  ),
-                                                                                  child:
-                                                                                      Padding(
-                                                                                    padding: const EdgeInsets.only(
-                                                                                        left: 15,
-                                                                                        right: 15,
-                                                                                        top: 5,
-                                                                                        bottom: 5),
-                                                                                    child:
-                                                                                        Text("Back"),
-                                                                                  ),
-                                                                                ),
-                                                                                onTap:
-                                                                                    () {
-                                                                                  Navigator.pop(
-                                                                                      context);
-                                                                                },
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              height: 10,
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                );
-                                                              });
+                                                          return Container(
+                                                            decoration: BoxDecoration(
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .tealAccent),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(20),
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child: Text(
+                                                                  "No Subjects in this Regulation"),
+                                                            ),
+                                                          );
                                                       }
                                                   }
                                                 }),
@@ -2068,7 +1857,7 @@ class _HomePageState extends State<HomePage> {
                                                                                           LabSubjectsData.heading,
                                                                                           style: const TextStyle(
                                                                                             fontSize: 20.0,
-                                                                                            color: Colors.orange,
+                                                                                            color: Colors.orangeAccent,
                                                                                             fontWeight: FontWeight.w600,
                                                                                           ),
                                                                                         ),
@@ -2179,7 +1968,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       style:
                                                                                           const TextStyle(
                                                                                         fontSize: 13.0,
-                                                                                        color: Colors.yellowAccent,
+                                                                                        color: Colors.lightBlueAccent,
                                                                                       ),
                                                                                     ),
                                                                                     SizedBox(
@@ -2191,7 +1980,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       style:
                                                                                           const TextStyle(
                                                                                         fontSize: 9.0,
-                                                                                        color: Colors.lightBlueAccent,
+                                                                                        color: Colors.white54,
                                                                                         //   fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
@@ -2325,7 +2114,7 @@ class _HomePageState extends State<HomePage> {
                                                                                           LabSubjectsData.heading,
                                                                                           style: const TextStyle(
                                                                                             fontSize: 20.0,
-                                                                                            color: Colors.orange,
+                                                                                            color: Colors.orangeAccent,
                                                                                             fontWeight: FontWeight.w600,
                                                                                           ),
                                                                                         ),
@@ -2436,7 +2225,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       style:
                                                                                           const TextStyle(
                                                                                         fontSize: 13.0,
-                                                                                        color: Colors.yellowAccent,
+                                                                                        color: Colors.lightBlueAccent,
                                                                                       ),
                                                                                     ),
                                                                                     SizedBox(
@@ -2448,7 +2237,7 @@ class _HomePageState extends State<HomePage> {
                                                                                       style:
                                                                                           const TextStyle(
                                                                                         fontSize: 9.0,
-                                                                                        color: Colors.lightBlueAccent,
+                                                                                        color: Colors.white54,
                                                                                         //   fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
@@ -2518,201 +2307,6 @@ class _HomePageState extends State<HomePage> {
                                                                       ),
                                                                     );
                                                                   }
-                                                                  //   return Padding(
-                                                                  //       padding: const EdgeInsets.only(top: 3),
-                                                                  //       child: InkWell(
-                                                                  //   child: Container(
-                                                                  //       width: double.infinity,
-                                                                  //       decoration: BoxDecoration(color: Colors.white.withOpacity(0.07), borderRadius: BorderRadius.all(Radius.circular(10))),
-                                                                  //       child: SingleChildScrollView(
-                                                                  //         physics: const BouncingScrollPhysics(),
-                                                                  //         child: Row(
-                                                                  //           children: [
-                                                                  //             Container(
-                                                                  //               width: 90.0,
-                                                                  //               height: 70.0,
-                                                                  //               decoration: BoxDecoration(
-                                                                  //                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                                                  //                 color: Colors.black.withOpacity(0.6),
-                                                                  //                 image: DecorationImage(
-                                                                  //                   image: NetworkImage(
-                                                                  //                     SubjectsData.PhotoUrl,
-                                                                  //                   ),
-                                                                  //                   fit: BoxFit.cover,
-                                                                  //                 ),
-                                                                  //               ),
-                                                                  //             ),
-                                                                  //             const SizedBox(
-                                                                  //               width: 10,
-                                                                  //             ),
-                                                                  //             Expanded(
-                                                                  //                 child: Column(
-                                                                  //               mainAxisAlignment: MainAxisAlignment.center,
-                                                                  //               crossAxisAlignment: CrossAxisAlignment.start,
-                                                                  //               children: [
-                                                                  //                 Row(
-                                                                  //                   children: [
-                                                                  //                     Text(
-                                                                  //                       SubjectsData.heading,
-                                                                  //                       style: const TextStyle(
-                                                                  //                         fontSize: 20.0,
-                                                                  //                         color: Colors.white,
-                                                                  //                         fontWeight: FontWeight.w600,
-                                                                  //                       ),
-                                                                  //                     ),
-                                                                  //                     Spacer(),
-                                                                  //                     InkWell(
-                                                                  //                       child: StreamBuilder<DocumentSnapshot>(
-                                                                  //                         stream: FirebaseFirestore.instance.collection('ECE')
-                                                                  //                             .doc("LabSubjects")
-                                                                  //                             .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
-                                                                  //                         builder: (context, snapshot) {
-                                                                  //                           if (snapshot.hasData) {
-                                                                  //                             if (snapshot.data!.exists) {
-                                                                  //                               return const Icon(Icons.favorite,color: Colors.red,size: 26,);
-                                                                  //                             } else {
-                                                                  //                               return const Icon(Icons.favorite_border,color: Colors.red,size: 26,);
-                                                                  //                             }
-                                                                  //                           } else {
-                                                                  //                             return Container();
-                                                                  //                           }
-                                                                  //                         },
-                                                                  //                       ),
-                                                                  //                       onTap:
-                                                                  //                           ()async {
-                                                                  //
-                                                                  //                         try {
-                                                                  //                           await FirebaseFirestore.instance.
-                                                                  //                           collection('ECE')
-                                                                  //                               .doc("LabSubjects")
-                                                                  //                               .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                                                  //                               .get()
-                                                                  //                               .then((docSnapshot) {
-                                                                  //                             if (docSnapshot.exists) {
-                                                                  //                               FirebaseFirestore.instance.
-                                                                  //                               collection('ECE')
-                                                                  //                                   .doc("LabSubjects")
-                                                                  //                                   .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                                                  //                                   .delete();
-                                                                  //                               showToast("Unliked");
-                                                                  //                             } else {
-                                                                  //                               FirebaseFirestore.instance.
-                                                                  //                               collection('ECE')
-                                                                  //                                   .doc("LabSubjects")
-                                                                  //                                   .collection("LabSubjects").doc(SubjectsData.id).collection("likes").doc(fullUserId())
-                                                                  //                                   .set({"id": fullUserId()});
-                                                                  //                               showToast("Liked");
-                                                                  //                             }
-                                                                  //                           });
-                                                                  //                         } catch (e) {
-                                                                  //                           print(e);
-                                                                  //                         }
-                                                                  //                       },
-                                                                  //                     ),
-                                                                  //                     StreamBuilder<QuerySnapshot>(
-                                                                  //                       stream: FirebaseFirestore.instance
-                                                                  //                           .collection('ECE')
-                                                                  //                           .doc("LabSubjects")
-                                                                  //                           .collection("LabSubjects").doc(SubjectsData.id).collection("likes")
-                                                                  //                           .snapshots(),
-                                                                  //                       builder: (context, snapshot) {
-                                                                  //                         if (snapshot.hasData) {
-                                                                  //                           return Text(" ${snapshot.data!.docs.length}",style: const TextStyle(fontSize: 16,color: Colors.white),);
-                                                                  //                         } else {
-                                                                  //                           return const Text("0");
-                                                                  //                         }
-                                                                  //                       },
-                                                                  //                     ),
-                                                                  //                     SizedBox(width: 5,),
-                                                                  //
-                                                                  //                     InkWell(
-                                                                  //                       child: StreamBuilder<DocumentSnapshot>(
-                                                                  //                         stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(SubjectsData.id).snapshots(),
-                                                                  //                         builder: (context, snapshot) {
-                                                                  //                           if (snapshot.hasData) {
-                                                                  //                             if (snapshot.data!.exists) {
-                                                                  //                               return const Icon(
-                                                                  //                                   Icons.library_add_check,
-                                                                  //                                   size: 26, color: Colors.cyanAccent
-                                                                  //                               );
-                                                                  //                             } else {
-                                                                  //                               return const Icon(
-                                                                  //                                 Icons.library_add_outlined,
-                                                                  //                                 size: 26,
-                                                                  //                                 color: Colors.cyanAccent,
-                                                                  //                               );
-                                                                  //                             }
-                                                                  //                           } else {
-                                                                  //                             return Container();
-                                                                  //                           }
-                                                                  //                         },
-                                                                  //                       ),
-                                                                  //                       onTap: () async{
-                                                                  //                         try {
-                                                                  //                           await FirebaseFirestore
-                                                                  //                               .instance
-                                                                  //                               .collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(SubjectsData.id)
-                                                                  //                               .get()
-                                                                  //                               .then((docSnapshot) {
-                                                                  //                             if (docSnapshot.exists) {
-                                                                  //                               FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(SubjectsData.id).delete();
-                                                                  //                               showToast("Removed from saved list");
-                                                                  //                             } else {
-                                                                  //                               FavouriteLabSubjectsSubjects(SubjectId: SubjectsData.id,name: SubjectsData.heading,description: SubjectsData.description,photoUrl: SubjectsData.PhotoUrl);
-                                                                  //                               showToast("${SubjectsData.heading} in favorites");                                                         }
-                                                                  //                           });
-                                                                  //                         } catch (e) {
-                                                                  //                           print(
-                                                                  //                               e);
-                                                                  //                         }
-                                                                  //
-                                                                  //                       },
-                                                                  //                     ),
-                                                                  //
-                                                                  //                   ],
-                                                                  //                 ),
-                                                                  //                 SizedBox(
-                                                                  //                   height: 2,
-                                                                  //                 ),
-                                                                  //                 Text(
-                                                                  //                   SubjectsData.description,
-                                                                  //                   style: const TextStyle(
-                                                                  //                     fontSize: 13.0,
-                                                                  //                     color: Color.fromRGBO(204, 207, 222, 1),
-                                                                  //                   ),
-                                                                  //                 ),
-                                                                  //                 SizedBox(
-                                                                  //                   height: 1,
-                                                                  //                 ),
-                                                                  //                 Text(
-                                                                  //                   'Added :${SubjectsData.Date}',
-                                                                  //                   style: const TextStyle(
-                                                                  //                     fontSize: 9.0,
-                                                                  //                     color: Colors.white60,
-                                                                  //                     //   fontWeight: FontWeight.bold,
-                                                                  //                   ),
-                                                                  //                 ),
-                                                                  //               ],
-                                                                  //             ))
-                                                                  //           ],
-                                                                  //         ),
-                                                                  //       ),
-                                                                  //   ),
-                                                                  //   onTap: () {
-                                                                  //       Navigator.push(
-                                                                  //           context,
-                                                                  //           MaterialPageRoute(
-                                                                  //               builder: (context) => subjectUnitsData(
-                                                                  //                     ID: SubjectsData.id,
-                                                                  //                     mode: "LabSubjects",
-                                                                  //                     name: SubjectsData.heading,
-                                                                  //                 photoUrl: SubjectsData.PhotoUrl,
-                                                                  //                 fullName: SubjectsData.description,
-                                                                  //
-                                                                  //                   )));
-                                                                  //   },
-                                                                  // ),
-                                                                  //     );
                                                                 } else {
                                                                   return Container();
                                                                 }
@@ -3695,11 +3289,7 @@ Stream<List<HomeUpdateConvertor>> readHomeUpdate() => FirebaseFirestore.instance
         .map((doc) => HomeUpdateConvertor.fromJson(doc.data()))
         .toList());
 
-Future createHomeUpdate(
-    {required String heading,
-    required String Date,
-    required String photoUrl,
-    required link}) async {
+Future createHomeUpdate({required String heading,required String Date,required String photoUrl,required link}) async {
   final docflash = FirebaseFirestore.instance
       .collection("ECE")
       .doc("update")
@@ -3812,8 +3402,7 @@ class RegulationYearConvertor {
       RegulationYearConvertor(id: json['id'], heading: json["heading"]);
 }
 
-Stream<List<TimeTableConvertor>> readTimeTable(
-        {required String id, required String id1}) =>
+Stream<List<TimeTableConvertor>> readTimeTable({required String id, required String id1}) =>
     FirebaseFirestore.instance
         .collection('ECE')
         .doc("regulation")
@@ -3828,8 +3417,7 @@ Stream<List<TimeTableConvertor>> readTimeTable(
             .map((doc) => TimeTableConvertor.fromJson(doc.data()))
             .toList());
 
-Future createTimeTable(
-    {required String heading,
+Future createTimeTable({required String heading,
     required String photoUrl,
     required String id,
     required String id1}) async {
@@ -4755,249 +4343,6 @@ void _BooksBottomSheet(
   );
 }
 
-void _BranchNewsBottomSheet(
-    BuildContext context, BranchNewConvertor data, File file) {
-  showModalBottomSheet(
-    backgroundColor: Colors.black.withOpacity(0.8),
-    context: context,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(30),
-      ),
-    ),
-    builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.4,
-        maxChildSize: 0.63,
-        minChildSize: 0.32,
-        expand: false,
-        builder: (context, scrollController) {
-          return SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            controller: scrollController,
-            child: Stack(
-              alignment: AlignmentDirectional.topCenter,
-              clipBehavior: Clip.none,
-              children: [
-                Positioned(
-                  top: -15,
-                  child: Container(
-                    width: 60,
-                    height: 7,
-                    margin: const EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.white60,
-                    ),
-                    child: Center(
-                        child: Text(
-                      "ECE News",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 8,
-                          fontWeight: FontWeight.w500),
-                    )),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15, top: 5, bottom: 5),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 25,
-                                  width: 25,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          "assets/ece image 64x64.png"),
-                                    ),
-                                  ),
-                                ),
-                                if (data.heading.isNotEmpty)
-                                  Text(" ${data.heading}",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w400))
-                                else
-                                  Text(" ECE (SRKR)",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w400)),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                              padding: const EdgeInsets.only(left: 5, right: 5),
-                              child: Image.file(file)),
-                          Row(
-                            children: [
-                              Spacer(),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 10),
-                                child: Text(
-                                  data.Date,
-                                  style: TextStyle(
-                                      color: Colors.white54, fontSize: 10),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15),
-                            child: Text("Details : ${data.description}",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w400)),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          if (data.link.isNotEmpty)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 15, bottom: 10),
-                              child: InkWell(
-                                child: Text("Link : ${data.link}",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400)),
-                                onTap: () {
-                                  _ExternalLaunchUrl(data.link);
-                                },
-                              ),
-                            ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 15, bottom: 10),
-                            child: Text(
-                              "Download options : ",
-                              style: TextStyle(
-                                  color: Colors.tealAccent,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w900),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              InkWell(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          color: Colors.white.withOpacity(0.3)),
-                                      color: Colors.black.withOpacity(0.5)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.download_outlined,
-                                          color: Colors.white,
-                                        ),
-                                        Text(
-                                          "Download",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                onTap: () async {
-                                  showToast("Downloading...");
-                                  final Uri uri = Uri.parse(data.photoUrl);
-                                  final String fileName = uri.pathSegments.last;
-                                  var name = fileName.split("/").last;
-                                  final response =
-                                      await http.get(Uri.parse(data.photoUrl));
-
-                                  final file = File(
-                                      '/storage/emulated/0/Download/$name');
-                                  await file.writeAsBytes(response.bodyBytes);
-                                  showToast(file.path);
-                                  showToast("Downloaded");
-                                },
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              InkWell(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          color: Colors.white.withOpacity(0.3)),
-                                      color: Colors.black.withOpacity(0.5)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.save,
-                                          color: Colors.white,
-                                        ),
-                                        Text(
-                                          "Save",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                onTap: () {
-                                  download(data.photoUrl, fullUserId());
-                                  showToast("Saved");
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 30,
-                          )
-                        ]),
-                  ),
-                )
-              ],
-            ),
-          );
-        }),
-  );
-}
 
 class ImageZoom extends StatefulWidget {
   String url;
