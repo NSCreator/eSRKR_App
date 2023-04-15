@@ -8,6 +8,7 @@ import 'HomePage.dart';
 import 'auth_page.dart';
 import 'favorites.dart';
 import 'notification.dart';
+import 'notifications.dart';
 import 'search bar.dart';
 import 'settings.dart';
 
@@ -15,8 +16,10 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await MobileAds.instance.initialize();
+
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
     runApp(MyApp());
   });
 }
@@ -24,8 +27,6 @@ Future main() async {
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -37,6 +38,11 @@ class MyApp extends StatelessWidget {
         hoverColor: Colors.transparent,
       ),
       title: 'e-SRKR',
+      builder: (context, child) {
+        return MediaQuery(
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 0.85),
+            child: child!);
+      },
       home: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
@@ -50,8 +56,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
 
 class Nav extends StatefulWidget {
   @override
@@ -73,6 +77,7 @@ class _NavState extends State<Nav> {
       _selectedIndex = index;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,55 +89,37 @@ class _NavState extends State<Nav> {
         height: 50,
         child: BottomNavigationBar(
           backgroundColor: Colors.transparent,
-          items:  [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(
-                _selectedIndex==1?Icons.home_outlined:Icons.home,
-
-              ),
-              label:
-                'Home',
-                backgroundColor: Colors.transparent
-
-            ),
+                icon: Icon(
+                  _selectedIndex == 1 ? Icons.home_outlined : Icons.home,
+                ),
+                label: 'Home',
+                backgroundColor: Colors.transparent),
             BottomNavigationBarItem(
-              icon: Icon(
-                _selectedIndex == 2 ?Icons.favorite_border:Icons.favorite,
-
-              ),
-              label:
-              'favorites',
-                backgroundColor: Colors.transparent
-
-            ),
+                icon: Icon(
+                  _selectedIndex == 2 ? Icons.favorite_border : Icons.favorite,
+                ),
+                label: 'favorites',
+                backgroundColor: Colors.transparent),
             BottomNavigationBarItem(
-              icon: Icon(
-                _selectedIndex == 3 ?Icons.search:Icons.search_outlined,
-
-              ),
-              label:
-              'Search',
-                backgroundColor: Colors.transparent
-            ),
+                icon: Icon(
+                  _selectedIndex == 3 ? Icons.search : Icons.search_outlined,
+                ),
+                label: 'Search',
+                backgroundColor: Colors.transparent),
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.message,
-
-              ),
-              label:
-                'Messages',
-                backgroundColor: Colors.transparent
-            ),
-
+                icon: Icon(
+                  Icons.message,
+                ),
+                label: 'Messages',
+                backgroundColor: Colors.transparent),
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.person,
-              ),
-              label:
-                'Profile',
-                backgroundColor: Colors.transparent
-            ),
-
+                icon: Icon(
+                  Icons.person,
+                ),
+                label: 'Profile',
+                backgroundColor: Colors.transparent),
           ],
           currentIndex: _selectedIndex,
           onTap: _onItemTap,
