@@ -55,7 +55,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion 19
-        targetSdkVersion 33
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled = true
@@ -83,9 +83,9 @@ flutter {
 }
 
 dependencies {
-    implementation platform('com.google.firebase:firebase-bom:30.4.1')
-    implementation 'com.google.firebase:firebase-core'
-    implementation('com.google.firebase:firebase-auth') {
+    implementation platform('com.google.firebase:firebase-bom:31.5.0')
+    implementation 'com.google.firebase:firebase-core:21.1.1'
+    implementation('com.google.firebase:firebase-auth:21.3.0') {
         exclude module: "play-services-safetynet"
     }
     testImplementation 'junit:junit:4.12'

@@ -31,51 +31,6 @@ class settings extends StatefulWidget {
 class _settingsState extends State<settings> {
   String localVersion = "";
   final InputController = TextEditingController();
-  getStringValuesSF() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String branchTitleOut = prefs.getString('branchTitle') ?? "ECE";
-    String? classNameOut = prefs.getString('class');
-    String? branchImageUrl = prefs.getString('branchUrl');
-
-    setState(() {
-      branchTitle = branchTitleOut;
-      className = classNameOut!;
-      imageUrl = branchImageUrl!;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getStringValuesSF();
-    final newVersion = NewVersion(
-      androidId:
-          "https://play.google.com/store/apps/details?id=com.nimmalasujith.esrkr",
-    );
-    advancedStatusCheck(newVersion);
-  }
-
-  advancedStatusCheck(NewVersion newVersion) async {
-    final status = await newVersion.getVersionStatus();
-
-    if (status != null) {
-      newVersion.showUpdateDialog(
-        context: context,
-        versionStatus: status,
-        dialogTitle: 'UPDATE!',
-        dialogText:
-            'Please update the e-SRKR from " + "${status.localVersion} to ${status.storeVersion}',
-        dismissButtonText: "Not Now",
-        updateButtonText: "Lets update",
-        dismissAction: () {
-          Navigator.pop(context);
-        },
-      );
-      setState(() {
-        localVersion = status.localVersion;
-      });
-    }
-  }
 
   List<mainSettings> SettingsData = [
     mainSettings(
@@ -91,776 +46,712 @@ class _settingsState extends State<settings> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blueGrey,
-      body: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: NetworkImage(
-                  "https://i.pinimg.com/736x/01/c7/f7/01c7f72511cc6ce7858e65b45d4f8c9c.jpg",
-                ),
-                fit: BoxFit.fill)),
-        child: Container(
-          color: Colors.black.withOpacity(0.8),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(3.0),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: Column(
+          children: [
+            Container(
+              height: 200,
               child: Column(
                 children: [
                   Container(
-                    height: 200,
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                    height: 150,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(18),
+                      color: Colors.black,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.shade500,
+                          offset: Offset(4.0, 4.0),
+                          blurRadius: 50,
+                          spreadRadius: 0.5,
+                        ),
+                        BoxShadow(
+                          color: Colors.white,
+                          offset: Offset(-4.0, -4.0),
+                          blurRadius: 15,
+                          spreadRadius: 0.5,
+                        ),
+                      ],
+                      image: DecorationImage(
+                        image: NetworkImage(
+                          "https://images.pond5.com/blue-burning-eagle-animated-logo-footage-102505417_iconl.jpeg",
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Container(
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 5),
-                          height: 150,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(18),
-                            color: Colors.black,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.shade500,
-                                offset: Offset(4.0, 4.0),
-                                blurRadius: 50,
-                                spreadRadius: 0.5,
-                              ),
-                              BoxShadow(
-                                color: Colors.white,
-                                offset: Offset(-4.0, -4.0),
-                                blurRadius: 15,
-                                spreadRadius: 0.5,
-                              ),
-                            ],
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                "https://images.pond5.com/blue-burning-eagle-animated-logo-footage-102505417_iconl.jpeg",
-                              ),
-                              fit: BoxFit.cover,
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Center(
+                          child: Text(
+                            branchTitle,
+                            style: const TextStyle(
+                              color: Color.fromRGBO(220, 220, 227, 1),
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Center(
-                                child: Text(
-                                  branchTitle,
-                                  style: const TextStyle(
-                                    color: Color.fromRGBO(220, 220, 227, 1),
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              InkWell(
-                                child: Padding(
-                                  padding: EdgeInsets.only(top: 44),
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.white30,
-                                    backgroundImage: NetworkImage(
-                                        "https://drive.google.com/uc?export=view&id=1Mzx8ioES4Y10-xQqEIiQlMl09N8WDk-M"),
-                                    radius: 30,
-                                  ),
-                                ),
-                                onTap: () => _showSecondPage(context,
-                                    "https://drive.google.com/uc?export=view&id=1Mzx8ioES4Y10-xQqEIiQlMl09N8WDk-M"),
-                              ),
-                            ],
+                        ),
+                        InkWell(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 44),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white30,
+                              backgroundImage: NetworkImage(
+                                  "https://drive.google.com/uc?export=view&id=1Mzx8ioES4Y10-xQqEIiQlMl09N8WDk-M"),
+                              radius: 30,
+                            ),
                           ),
+                          onTap: () => _showSecondPage(context,
+                              "https://drive.google.com/uc?export=view&id=1Mzx8ioES4Y10-xQqEIiQlMl09N8WDk-M"),
                         ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20),
-                              child: Text(
-                                "User :",
-                                style: TextStyle(
-                                    color: Colors.orange,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 3),
-                              child: Text(
-                                fullUserId(),
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                            Spacer(),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 20),
-                              child: InkWell(
-                                  child: Text(
-                                    "Log Out",
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 24),
-                                  ),
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return Dialog(
-                                          backgroundColor:
-                                              Colors.black.withOpacity(0.3),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20)),
-                                          elevation: 16,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.tealAccent),
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: ListView(
-                                              shrinkWrap: true,
-                                              children: <Widget>[
-                                                SizedBox(height: 10),
-                                                SizedBox(height: 5),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 15),
-                                                  child: Text(
-                                                    "Do you want Log Out",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 18),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 5,
-                                                ),
-                                                Center(
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Spacer(),
-                                                      InkWell(
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color:
-                                                                Colors.black26,
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .white
-                                                                    .withOpacity(
-                                                                        0.3)),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        25),
-                                                          ),
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    left: 15,
-                                                                    right: 15,
-                                                                    top: 5,
-                                                                    bottom: 5),
-                                                            child: Text(
-                                                              "Back",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        onTap: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      InkWell(
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors.red,
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .black),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        25),
-                                                          ),
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    left: 15,
-                                                                    right: 15,
-                                                                    top: 5,
-                                                                    bottom: 5),
-                                                            child: Text(
-                                                              "Log Out",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        onTap: () {
-                                                          FirebaseAuth.instance
-                                                              .signOut();
-                                                          Navigator.pushReplacement(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          const LoginPage()));
-                                                        },
-                                                      ),
-                                                      SizedBox(
-                                                        width: 20,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  }),
-                            ),
-                          ],
-                        ),
-                        Divider(),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: BouncingScrollPhysics(),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (userId() == "gmail.com")
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 20, right: 20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      "User",
-                                      style: TextStyle(
-                                          fontSize: 25,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(3.0),
-                                    child: InkWell(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          color: Colors.white.withOpacity(0.1),
-                                          border: Border.all(
-                                              color: Colors.white
-                                                  .withOpacity(0.3)),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              "   Create Home Page Update",
-                                              style: TextStyle(
-                                                  fontSize: 22,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                            Spacer(),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 10),
-                                              child:
-                                                  Icon(Icons.arrow_forward_ios),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () {},
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(3.0),
-                                    child: InkWell(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          color: Colors.white.withOpacity(0.1),
-                                          border: Border.all(
-                                              color: Colors.white
-                                                  .withOpacity(0.3)),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              "   Create ECE News",
-                                              style: TextStyle(
-                                                  fontSize: 22,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                            Spacer(),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 10),
-                                              child:
-                                                  Icon(Icons.arrow_forward_ios),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    NewsCreator()));
-                                      },
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(3.0),
-                                    child: InkWell(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          color: Colors.white.withOpacity(0.1),
-                                          border: Border.all(
-                                              color: Colors.white
-                                                  .withOpacity(0.3)),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              "   Create Subject or Lab Subject",
-                                              style: TextStyle(
-                                                  fontSize: 22,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                            Spacer(),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 10),
-                                              child:
-                                                  Icon(Icons.arrow_forward_ios),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SubjectsCreator()));
-                                      },
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(3.0),
-                                    child: InkWell(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          color: Colors.white.withOpacity(0.1),
-                                          border: Border.all(
-                                              color: Colors.white
-                                                  .withOpacity(0.3)),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              "   Create Books",
-                                              style: TextStyle(
-                                                  fontSize: 22,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                            Spacer(),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 10),
-                                              child:
-                                                  Icon(Icons.arrow_forward_ios),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    BooksCreator()));
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Text(
+                          "User :",
+                          style: TextStyle(
+                              color: Colors.orange,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 3),
+                        child: Text(
+                          fullUserId(),
+                          style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: InkWell(
+                            child: Text(
+                              "Log Out",
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 24),
                             ),
-                          Center(
-                            child: InkWell(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Colors.white.withOpacity(0.1),
-                                  border: Border.all(
-                                      color: Colors.white.withOpacity(0.3)),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Text(
-                                    "Saved Images and PDFs ( In App )",
-                                    style: TextStyle(
-                                        fontSize: 22,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => unseenImages()));
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20),
-                            child: const Center(
-                                child: Text('Settings',
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.white70))),
-                          ),
-                          const SizedBox(height: 5.0),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              margin: const EdgeInsets.all(3),
-                              width: double.infinity,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(22),
-                                color: Colors.white.withOpacity(0.3),
-                              ),
-                              child: Column(
-                                children: [
-                                  GridView.count(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    childAspectRatio: 4,
-                                    shrinkWrap: true,
-                                    padding: const EdgeInsets.all(3),
-                                    mainAxisSpacing: 3,
-                                    crossAxisCount: 2,
-                                    children: List.generate(
-                                      SettingsData.length,
-                                      (int index) {
-                                        return InkWell(
-                                          child: Container(
-                                            margin: const EdgeInsets.all(2.0),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                              color:
-                                                  Colors.black.withOpacity(0.7),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
-                                              child: Center(
-                                                  child: Text(
-                                                SettingsData[index].title,
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              )),
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            if (SettingsData[index].title ==
-                                                "Report") {
-                                              _sendingMails(
-                                                  "sujithnimmala03@gmail.com");
-                                            } else if (SettingsData[index]
-                                                    .title ==
-                                                "About") {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const about()));
-                                            } else {
-                                              _ExternallaunchUrl(
-                                                  "https://github.com/NSCreator/PRIVACY_POLACY/blob/main/Privacy-policy");
-                                            }
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          StreamBuilder<List<followUsConvertor>>(
-                              stream: readfollowUs(),
-                              builder: (context, snapshot) {
-                                final Books = snapshot.data;
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.waiting:
-                                    return const Center(
-                                        child: CircularProgressIndicator(
-                                      strokeWidth: 0.3,
-                                      color: Colors.cyan,
-                                    ));
-                                  default:
-                                    if (snapshot.hasError) {
-                                      return const Center(
-                                          child: Text(
-                                              'Error with TextBooks Data or\n Check Internet Connection'));
-                                    } else {
-                                      if (Books!.isEmpty) {
-                                        return const Center(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(8.0),
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                    backgroundColor:
+                                        Colors.black.withOpacity(0.3),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    elevation: 16,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.tealAccent),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: ListView(
+                                        shrinkWrap: true,
+                                        children: <Widget>[
+                                          SizedBox(height: 10),
+                                          SizedBox(height: 5),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 15),
                                             child: Text(
-                                              "Nothing To Follow",
+                                              "Do you want Log Out",
                                               style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    195, 228, 250, 1),
-                                              ),
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 18),
                                             ),
                                           ),
-                                        );
-                                      } else {
-                                        return Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 10, top: 20, bottom: 8),
-                                              child: Text(
-                                                "Follow Us",
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Color.fromRGBO(
-                                                      195, 228, 250, 1),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 40,
-                                              child: ListView.separated(
-                                                physics:
-                                                    const BouncingScrollPhysics(),
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                itemCount: Books.length,
-                                                itemBuilder:
-                                                    (BuildContext context,
-                                                            int index) =>
-                                                        InkWell(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 5,
-                                                            bottom: 10),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                          color: const Color
-                                                                  .fromRGBO(174,
-                                                              228, 242, 0.15),
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(15),
-                                                        color: Colors.black
-                                                            .withOpacity(0.3),
-                                                        // border: Border.all(color: Colors.white),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          15),
-                                                              color: Colors
-                                                                  .black
-                                                                  .withOpacity(
-                                                                      0.4),
-                                                              image:
-                                                                  DecorationImage(
-                                                                image:
-                                                                    NetworkImage(
-                                                                  Books[index]
-                                                                      .photoUrl,
-                                                                ),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),
-                                                            ),
-                                                            height: 35,
-                                                            width: 50,
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(5.0),
-                                                            child: Text(
-                                                              Books[index].name,
-                                                              style: const TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                        ],
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Center(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Spacer(),
+                                                InkWell(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black26,
+                                                      border: Border.all(
+                                                          color: Colors.white
+                                                              .withOpacity(
+                                                                  0.3)),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              25),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 15,
+                                                              right: 15,
+                                                              top: 5,
+                                                              bottom: 5),
+                                                      child: Text(
+                                                        "Back",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
                                                       ),
                                                     ),
                                                   ),
                                                   onTap: () {
-                                                    if (Books[index].name ==
-                                                        "Gmail") {
-                                                      _sendingMails(
-                                                          Books[index].link);
-                                                    } else {
-                                                      if (Books[index]
-                                                          .link
-                                                          .isNotEmpty)
-                                                        _ExternallaunchUrl(
-                                                            Books[index].link);
-                                                      else
-                                                        showToast(
-                                                            "No ${Books[index].name} Link");
-                                                    }
+                                                    Navigator.pop(context);
                                                   },
                                                 ),
-                                                shrinkWrap: true,
-                                                separatorBuilder:
-                                                    (context, index) =>
-                                                        const SizedBox(
-                                                  width: 9,
+                                                SizedBox(
+                                                  width: 10,
                                                 ),
-                                              ),
+                                                InkWell(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.red,
+                                                      border: Border.all(
+                                                          color: Colors.black),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              25),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 15,
+                                                              right: 15,
+                                                              top: 5,
+                                                              bottom: 5),
+                                                      child: Text(
+                                                        "Log Out",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    FirebaseAuth.instance
+                                                        .signOut();
+                                                    Navigator.pushReplacement(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                const LoginPage()));
+                                                  },
+                                                ),
+                                                SizedBox(
+                                                  width: 20,
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        );
-                                      }
-                                    }
-                                }
-                              }),
-                          Center(
-                            child: InkWell(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Colors.white.withOpacity(0.1),
-                                  border: Border.all(
-                                      color: Colors.white.withOpacity(0.3)),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Text(
-                                    "APP DEVELOPMENT TEAM",
-                                    style: TextStyle(
-                                        fontSize: 22,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const appDevelopmentTeam()));
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          Center(
-                              child: Text(
-                            ".....eSRKR.....",
-                            style: TextStyle(color: Colors.white),
-                          )),
-                          Center(
-                            child: Text(
-                              "v3.0.0",
-                              style: TextStyle(
-                                fontSize: 9.0,
-                                color: Colors.white70,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                        ],
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            }),
                       ),
-                    ),
+                    ],
                   ),
+                  Divider(),
                 ],
               ),
             ),
-          ),
+            SizedBox(
+              height: 10,
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (userId() == "gmail.com")
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "User",
+                                style: TextStyle(
+                                    fontSize: 25,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: InkWell(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.white.withOpacity(0.1),
+                                    border: Border.all(
+                                        color: Colors.white.withOpacity(0.3)),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "   Create Home Page Update",
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Spacer(),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: Icon(Icons.arrow_forward_ios),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                onTap: () {},
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: InkWell(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.white.withOpacity(0.1),
+                                    border: Border.all(
+                                        color: Colors.white.withOpacity(0.3)),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "   Create ECE News",
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Spacer(),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: Icon(Icons.arrow_forward_ios),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => NewsCreator()));
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: InkWell(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.white.withOpacity(0.1),
+                                    border: Border.all(
+                                        color: Colors.white.withOpacity(0.3)),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "   Create Subject or Lab Subject",
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Spacer(),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: Icon(Icons.arrow_forward_ios),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SubjectsCreator()));
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: InkWell(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.white.withOpacity(0.1),
+                                    border: Border.all(
+                                        color: Colors.white.withOpacity(0.3)),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "   Create Books",
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Spacer(),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: Icon(Icons.arrow_forward_ios),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              BooksCreator()));
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    Center(
+                      child: InkWell(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: Colors.white.withOpacity(0.1),
+                            border: Border.all(
+                                color: Colors.white.withOpacity(0.3)),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text(
+                              "Saved Images and PDFs ( In App )",
+                              style: TextStyle(
+                                  fontSize: 22,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => unseenImages()));
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: const Center(
+                          child: Text('Settings',
+                              style: TextStyle(
+                                  fontSize: 20, color: Colors.white70))),
+                    ),
+                    const SizedBox(height: 5.0),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        margin: const EdgeInsets.all(3),
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(22),
+                          color: Colors.white.withOpacity(0.3),
+                        ),
+                        child: Column(
+                          children: [
+                            GridView.count(
+                              physics: const NeverScrollableScrollPhysics(),
+                              childAspectRatio: 4,
+                              shrinkWrap: true,
+                              padding: const EdgeInsets.all(3),
+                              mainAxisSpacing: 3,
+                              crossAxisCount: 2,
+                              children: List.generate(
+                                SettingsData.length,
+                                (int index) {
+                                  return InkWell(
+                                    child: Container(
+                                      margin: const EdgeInsets.all(2.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color: Colors.black.withOpacity(0.7),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Center(
+                                            child: Text(
+                                          SettingsData[index].title,
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500),
+                                        )),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      if (SettingsData[index].title ==
+                                          "Report") {
+                                        _sendingMails(
+                                            "sujithnimmala03@gmail.com");
+                                      } else if (SettingsData[index].title ==
+                                          "About") {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const about()));
+                                      } else {
+                                        _ExternallaunchUrl(
+                                            "https://github.com/NSCreator/PRIVACY_POLACY/blob/main/Privacy-policy");
+                                      }
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    StreamBuilder<List<followUsConvertor>>(
+                        stream: readfollowUs(),
+                        builder: (context, snapshot) {
+                          final Books = snapshot.data;
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.waiting:
+                              return const Center(
+                                  child: CircularProgressIndicator(
+                                strokeWidth: 0.3,
+                                color: Colors.cyan,
+                              ));
+                            default:
+                              if (snapshot.hasError) {
+                                return const Center(
+                                    child: Text(
+                                        'Error with TextBooks Data or\n Check Internet Connection'));
+                              } else {
+                                if (Books!.isEmpty) {
+                                  return const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "Nothing To Follow",
+                                        style: TextStyle(
+                                          color:
+                                              Color.fromRGBO(195, 228, 250, 1),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 10, top: 20, bottom: 8),
+                                        child: Text(
+                                          "Follow Us",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color.fromRGBO(
+                                                195, 228, 250, 1),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 40,
+                                        child: ListView.separated(
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: Books.length,
+                                          itemBuilder: (BuildContext context,
+                                                  int index) =>
+                                              InkWell(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 5, bottom: 10),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color: const Color.fromRGBO(
+                                                        174, 228, 242, 0.15),
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  color: Colors.black
+                                                      .withOpacity(0.3),
+                                                  // border: Border.all(color: Colors.white),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
+                                                        color: Colors.black
+                                                            .withOpacity(0.4),
+                                                        image: DecorationImage(
+                                                          image: NetworkImage(
+                                                            Books[index]
+                                                                .photoUrl,
+                                                          ),
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                      height: 35,
+                                                      width: 50,
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              5.0),
+                                                      child: Text(
+                                                        Books[index].name,
+                                                        style: const TextStyle(
+                                                            fontSize: 16,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            onTap: () {
+                                              if (Books[index].name ==
+                                                  "Gmail") {
+                                                _sendingMails(
+                                                    Books[index].link);
+                                              } else {
+                                                if (Books[index]
+                                                    .link
+                                                    .isNotEmpty)
+                                                  _ExternallaunchUrl(
+                                                      Books[index].link);
+                                                else
+                                                  showToast(
+                                                      "No ${Books[index].name} Link");
+                                              }
+                                            },
+                                          ),
+                                          shrinkWrap: true,
+                                          separatorBuilder: (context, index) =>
+                                              const SizedBox(
+                                            width: 9,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+                              }
+                          }
+                        }),
+                    Center(
+                      child: InkWell(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: Colors.white.withOpacity(0.1),
+                            border: Border.all(
+                                color: Colors.white.withOpacity(0.3)),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text(
+                              "APP DEVELOPMENT TEAM",
+                              style: TextStyle(
+                                  fontSize: 22,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const appDevelopmentTeam()));
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Center(
+                        child: Text(
+                      ".....eSRKR.....",
+                      style: TextStyle(color: Colors.white),
+                    )),
+                    Center(
+                      child: Text(
+                        "v3.0.0",
+                        style: TextStyle(
+                          fontSize: 9.0,
+                          color: Colors.white70,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

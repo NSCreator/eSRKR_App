@@ -31,6 +31,7 @@ dependencies:
   cached_network_image: ^3.2.3
   syncfusion_flutter_pdfviewer: ^21.1.39
   flutter_local_notifications: ^13.0.0
+  animations: ^2.0.7
 
 
 

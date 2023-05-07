@@ -113,1750 +113,843 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Colors.black,
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-                image: NetworkImage(
-                  "https://i.pinimg.com/736x/01/c7/f7/01c7f72511cc6ce7858e65b45d4f8c9c.jpg",
-                ),
-                fit: BoxFit.fill),
+  Widget build(BuildContext context) => SafeArea(
+          child: Column(
+        children: [
+          SizedBox(
+            height: 10,
           ),
-          child: Container(
-            color: Colors.black.withOpacity(0.8),
-            child: SafeArea(
-                child: Column(
-              children: [
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Flexible(
-                      child: Center(
-                        child: ShaderMask(
-                          shaderCallback: (Rect bounds) {
-                            return RadialGradient(
-                              center: Alignment.topLeft,
-                              radius: 1.0,
-                              colors: <Color>[
-                                Colors.yellow,
-                                Colors.deepOrange.shade900
-                              ],
-                              tileMode: TileMode.mirror,
-                            ).createShader(bounds);
-                          },
-                          child: const Text(
-                            'ECE',
-                            style: TextStyle(
-                                fontSize: 30,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      ),
-                      flex: 5,
+          Row(
+            children: [
+              Flexible(
+                child: Center(
+                  child: ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return RadialGradient(
+                        center: Alignment.topLeft,
+                        radius: 1.0,
+                        colors: <Color>[
+                          Colors.yellow,
+                          Colors.deepOrange.shade900
+                        ],
+                        tileMode: TileMode.mirror,
+                      ).createShader(bounds);
+                    },
+                    child: const Text(
+                      'ECE',
+                      style: TextStyle(
+                          fontSize: 30,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500),
                     ),
-                    InkWell(
-                        child: Container(
-                          height: 35,
-                          width: 80,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Colors.white.withOpacity(0.7),
-                              image: DecorationImage(
-                                  image: NetworkImage(
-                                      "https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/logo.png?alt=media&token=f008662e-2638-4990-a010-2081c2f4631b"),
-                                  fit: BoxFit.fill)),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SRKRPage()));
-                        }),
-                    SizedBox(
-                      width: 20,
-                    )
-                  ],
+                  ),
                 ),
-                Divider(
-                  thickness: 1,
-                  color: Colors.white,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        StreamBuilder<List<HomeUpdateConvertor>>(
-                            stream: readHomeUpdate(),
-                            builder: (context, snapshot) {
-                              final HomeUpdates = snapshot.data;
-                              switch (snapshot.connectionState) {
-                                case ConnectionState.waiting:
-                                  return const Center(
-                                      child: CircularProgressIndicator(
-                                    strokeWidth: 0.3,
-                                    color: Colors.cyan,
-                                  ));
-                                default:
-                                  if (snapshot.hasError) {
-                                    return const Center(
-                                        child: Text(
-                                            'Error with updates Data or\n Check Internet Connection'));
-                                  } else {
-                                    if (HomeUpdates!.length == 0) {
-                                      return Container();
-                                    } else
-                                      return Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 10, bottom: 10),
-                                            child: Text(
-                                              "Updates",
-                                              style: TextStyle(
-                                                  fontSize: 25,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.orange),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 20, right: 10),
-                                            child: ListView.separated(
-                                                physics:
-                                                    const BouncingScrollPhysics(),
-                                                shrinkWrap: true,
-                                                itemCount: HomeUpdates.length,
-                                                itemBuilder:
-                                                    (context, int index) {
-                                                  final HomeUpdate =
-                                                      HomeUpdates[index];
-                                                  final Uri uri = Uri.parse(
-                                                      HomeUpdate.photoUrl);
-                                                  final String fileName =
-                                                      uri.pathSegments.last;
-                                                  var name =
-                                                      fileName.split("/").last;
-                                                  final file = File(
-                                                      "${folderPath}/ece_updates/$name");
-                                                  if (file.existsSync()) {
-                                                    return InkWell(
-                                                      child: Row(
-                                                        children: [
-                                                          Column(
-                                                            children: [
-                                                              Container(
-                                                                width: 30,
-                                                                height: 30,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              15),
-                                                                  image:
-                                                                      DecorationImage(
-                                                                    image:
-                                                                        FileImage(
-                                                                            file),
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                splitDate(
-                                                                    HomeUpdate
-                                                                        .date),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .lightBlueAccent,
-                                                                    fontSize:
-                                                                        8),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(5.0),
-                                                              child: Container(
-                                                                  child: Text(
-                                                                HomeUpdate
-                                                                    .heading,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontSize:
-                                                                      15.0,
-                                                                  color: Colors
-                                                                      .lightBlueAccent,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              )),
+                flex: 5,
+              ),
+              InkWell(
+                  child: Container(
+                    height: 35,
+                    width: 80,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white.withOpacity(0.7),
+                        image: DecorationImage(
+                            image: NetworkImage(
+                                "https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/logo.png?alt=media&token=f008662e-2638-4990-a010-2081c2f4631b"),
+                            fit: BoxFit.fill)),
+                  ),
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SRKRPage()));
+                  }),
+              SizedBox(
+                width: 20,
+              )
+            ],
+          ),
+          Divider(
+            thickness: 1,
+            color: Colors.white,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  StreamBuilder<List<HomeUpdateConvertor>>(
+                      stream: readHomeUpdate(),
+                      builder: (context, snapshot) {
+                        final HomeUpdates = snapshot.data;
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return const Center(
+                                child: CircularProgressIndicator(
+                              strokeWidth: 0.3,
+                              color: Colors.cyan,
+                            ));
+                          default:
+                            if (snapshot.hasError) {
+                              return const Center(
+                                  child: Text(
+                                      'Error with updates Data or\n Check Internet Connection'));
+                            } else {
+                              if (HomeUpdates!.length == 0) {
+                                return Container();
+                              } else
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10, bottom: 10),
+                                      child: Text(
+                                        "Updates",
+                                        style: TextStyle(
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.orange),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 10),
+                                      child: ListView.separated(
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: HomeUpdates.length,
+                                          itemBuilder: (context, int index) {
+                                            final HomeUpdate =
+                                                HomeUpdates[index];
+                                            final Uri uri =
+                                                Uri.parse(HomeUpdate.photoUrl);
+                                            final String fileName =
+                                                uri.pathSegments.last;
+                                            var name = fileName.split("/").last;
+                                            final file = File(
+                                                "${folderPath}/ece_updates/$name");
+                                            if (file.existsSync()) {
+                                              return InkWell(
+                                                child: Row(
+                                                  children: [
+                                                    Column(
+                                                      children: [
+                                                        Container(
+                                                          width: 30,
+                                                          height: 30,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                            image:
+                                                                DecorationImage(
+                                                              image: FileImage(
+                                                                  file),
+                                                              fit: BoxFit.cover,
                                                             ),
-                                                          )
-                                                        ],
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          splitDate(
+                                                              HomeUpdate.date),
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .lightBlueAccent,
+                                                              fontSize: 8),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5.0),
+                                                        child: Container(
+                                                            child: Text(
+                                                          HomeUpdate.heading,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 15.0,
+                                                            color: Colors
+                                                                .lightBlueAccent,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        )),
                                                       ),
-                                                      onTap: () {
-                                                        if (HomeUpdate
-                                                                .link.length >
-                                                            0) {
-                                                          _ExternalLaunchUrl(
-                                                              HomeUpdate.link);
-                                                        } else {
-                                                          showToast("No Link");
-                                                        }
-                                                      },
-                                                    );
+                                                    )
+                                                  ],
+                                                ),
+                                                onTap: () {
+                                                  if (HomeUpdate.link.length >
+                                                      0) {
+                                                    _ExternalLaunchUrl(
+                                                        HomeUpdate.link);
                                                   } else {
-                                                    download(
-                                                        HomeUpdate.photoUrl,
-                                                        "ece_updates");
-                                                    return InkWell(
-                                                      child: Row(
-                                                        children: [
-                                                          Column(
-                                                            children: [
-                                                              Container(
-                                                                width: 30,
-                                                                height: 30,
-                                                                child:
-                                                                    CachedNetworkImage(
-                                                                  imageUrl:
-                                                                      HomeUpdate
-                                                                          .photoUrl,
-                                                                  placeholder: (context,
-                                                                          url) =>
-                                                                      CircularProgressIndicator(),
-                                                                  errorWidget: (context,
-                                                                          url,
-                                                                          error) =>
-                                                                      Icon(Icons
-                                                                          .error),
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                splitDate(
-                                                                    HomeUpdate
-                                                                        .date),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .lightBlueAccent,
-                                                                    fontSize:
-                                                                        8),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(5.0),
-                                                              child: Container(
-                                                                  child: Text(
-                                                                HomeUpdate
-                                                                    .heading,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontSize:
-                                                                      15.0,
-                                                                  color: Colors
-                                                                      .yellowAccent,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              )),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                      onTap: () {
-                                                        if (HomeUpdate
-                                                                .link.length >
-                                                            0) {
-                                                          _ExternalLaunchUrl(
-                                                              HomeUpdate.link);
-                                                        } else {
-                                                          showToast("No Link");
-                                                        }
-                                                      },
-                                                    );
+                                                    showToast("No Link");
                                                   }
                                                 },
-                                                separatorBuilder:
-                                                    (context, index) =>
-                                                        const SizedBox(
-                                                          height: 5,
+                                              );
+                                            } else {
+                                              download(HomeUpdate.photoUrl,
+                                                  "ece_updates");
+                                              return InkWell(
+                                                child: Row(
+                                                  children: [
+                                                    Column(
+                                                      children: [
+                                                        Container(
+                                                          width: 30,
+                                                          height: 30,
+                                                          child:
+                                                              CachedNetworkImage(
+                                                            imageUrl: HomeUpdate
+                                                                .photoUrl,
+                                                            placeholder: (context,
+                                                                    url) =>
+                                                                CircularProgressIndicator(),
+                                                            errorWidget:
+                                                                (context, url,
+                                                                        error) =>
+                                                                    Icon(Icons
+                                                                        .error),
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          splitDate(
+                                                              HomeUpdate.date),
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .lightBlueAccent,
+                                                              fontSize: 8),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5.0),
+                                                        child: Container(
+                                                            child: Text(
+                                                          HomeUpdate.heading,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 15.0,
+                                                            color: Colors
+                                                                .yellowAccent,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
                                                         )),
-                                          ),
-                                        ],
-                                      );
-                                  }
-                              }
-                            }),
-                        //Branch News
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 10, top: 15, bottom: 10),
-                          child: Row(
-                            children: [
-                              Text(
-                                "ECE News",
-                                style: TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.orange),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                onTap: () {
+                                                  if (HomeUpdate.link.length >
+                                                      0) {
+                                                    _ExternalLaunchUrl(
+                                                        HomeUpdate.link);
+                                                  } else {
+                                                    showToast("No Link");
+                                                  }
+                                                },
+                                              );
+                                            }
+                                          },
+                                          separatorBuilder: (context, index) =>
+                                              const SizedBox(
+                                                height: 5,
+                                              )),
+                                    ),
+                                  ],
+                                );
+                            }
+                        }
+                      }),
+                  //Branch News
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 10, top: 15, bottom: 10),
+                    child: Row(
+                      children: [
+                        Text(
+                          "ECE News",
+                          style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.orange),
+                        ),
+                        Spacer(),
+                        if (userId() == "gmail.com")
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white.withOpacity(0.5),
+                                border: Border.all(color: Colors.white),
                               ),
-                              Spacer(),
-                              if (userId() == "gmail.com")
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Colors.white.withOpacity(0.5),
-                                      border: Border.all(color: Colors.white),
-                                    ),
-                                    child: InkWell(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 10,
-                                            right: 10,
-                                            top: 5,
-                                            bottom: 5),
-                                        child: Text("+Add"),
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    NewsCreator()));
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              InkWell(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.7),
-                                    borderRadius: BorderRadius.circular(15),
-                                    border: Border.all(
-                                        color: Colors.white.withOpacity(0.3)),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10, right: 10, top: 3, bottom: 3),
-                                    child: Text(
-                                      "see more",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18),
-                                    ),
-                                  ),
+                              child: InkWell(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10, top: 5, bottom: 5),
+                                  child: Text("+Add"),
                                 ),
                                 onTap: () {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => NewsPage()));
+                                          builder: (context) => NewsCreator()));
                                 },
                               ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                            ],
+                            ),
                           ),
+                        InkWell(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                  color: Colors.white.withOpacity(0.3)),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 10, top: 3, bottom: 3),
+                              child: Text(
+                                "see more",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18),
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => NewsPage()));
+                          },
                         ),
-                        StreamBuilder<List<BranchNewConvertor>>(
-                            stream: readBranchNew(),
-                            builder: (context, snapshot) {
-                              final BranchNews = snapshot.data;
-                              switch (snapshot.connectionState) {
-                                case ConnectionState.waiting:
-                                  return const Center(
-                                      child: CircularProgressIndicator(
-                                    strokeWidth: 0.3,
-                                    color: Colors.cyan,
-                                  ));
-                                default:
-                                  if (snapshot.hasError) {
-                                    return const Center(
-                                        child: Text(
-                                            'Error with TextBooks Data or\n Check Internet Connection'));
-                                  } else {
-                                    if (BranchNews!.length == 0) {
-                                      return Center(
-                                          child: Text(
-                                        "No ECE News",
-                                        style: TextStyle(
-                                            color: Colors.lightBlueAccent),
-                                      ));
-                                    } else
-                                      return CarouselSlider(
-                                        items: List.generate(BranchNews.length,
-                                            (int index) {
-                                          final BranchNew = BranchNews[index];
-                                          final Uri uri =
-                                              Uri.parse(BranchNew.photoUrl);
-                                          final String fileName =
-                                              uri.pathSegments.last;
-                                          var name = fileName.split("/").last;
-                                          final file = File(
-                                              "${folderPath}/ece_news/$name");
-                                          if (file.existsSync()) {
-                                            return InkWell(
-                                              child: Image.file(file),
-                                              onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ImageZoom(
-                                                              url: "",
-                                                              file: file,
-                                                            )));
-                                              },
-                                            );
-                                          } else {
-                                            download(
-                                                BranchNew.photoUrl, "ece_news");
-                                            return InkWell(
-                                              child: CachedNetworkImage(
-                                                imageUrl: BranchNew.photoUrl,
-                                                placeholder: (context, url) =>
-                                                    CircularProgressIndicator(),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        Icon(Icons.error),
-                                              ),
-                                              onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ImageZoom(
-                                                              url: "",
-                                                              file: file,
-                                                            )));
-                                              },
-                                            );
-                                          }
-                                        }),
-                                        //Slider Container properties
-                                        options: CarouselOptions(
-                                          viewportFraction: 0.85,
-                                          enlargeCenterPage: true,
-                                          height: 210,
-                                          autoPlayAnimationDuration:
-                                              Duration(milliseconds: 1800),
-                                          autoPlay: true,
-                                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                      ],
+                    ),
+                  ),
+                  StreamBuilder<List<BranchNewConvertor>>(
+                      stream: readBranchNew(),
+                      builder: (context, snapshot) {
+                        final BranchNews = snapshot.data;
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return const Center(
+                                child: CircularProgressIndicator(
+                              strokeWidth: 0.3,
+                              color: Colors.cyan,
+                            ));
+                          default:
+                            if (snapshot.hasError) {
+                              return const Center(
+                                  child: Text(
+                                      'Error with TextBooks Data or\n Check Internet Connection'));
+                            } else {
+                              if (BranchNews!.length == 0) {
+                                return Center(
+                                    child: Text(
+                                  "No ECE News",
+                                  style:
+                                      TextStyle(color: Colors.lightBlueAccent),
+                                ));
+                              } else
+                                return CarouselSlider(
+                                  items: List.generate(BranchNews.length,
+                                      (int index) {
+                                    final BranchNew = BranchNews[index];
+                                    final Uri uri =
+                                        Uri.parse(BranchNew.photoUrl);
+                                    final String fileName =
+                                        uri.pathSegments.last;
+                                    var name = fileName.split("/").last;
+                                    final file =
+                                        File("${folderPath}/ece_news/$name");
+                                    if (file.existsSync()) {
+                                      return InkWell(
+                                        child: Image.file(file),
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ImageZoom(
+                                                        url: "",
+                                                        file: file,
+                                                      )));
+                                        },
                                       );
-                                  }
-                              }
-                            }),
-                        //Subjects
+                                    } else {
+                                      download(BranchNew.photoUrl, "ece_news");
+                                      return InkWell(
+                                        child: CachedNetworkImage(
+                                          imageUrl: BranchNew.photoUrl,
+                                          placeholder: (context, url) =>
+                                              CircularProgressIndicator(),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons.error),
+                                        ),
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ImageZoom(
+                                                        url: "",
+                                                        file: file,
+                                                      )));
+                                        },
+                                      );
+                                    }
+                                  }),
+                                  //Slider Container properties
+                                  options: CarouselOptions(
+                                    viewportFraction: 0.85,
+                                    enlargeCenterPage: true,
+                                    height: 210,
+                                    autoPlayAnimationDuration:
+                                        Duration(milliseconds: 1800),
+                                    autoPlay: true,
+                                  ),
+                                );
+                            }
+                        }
+                      }),
+                  //Subjects
 
-                        StreamBuilder<DocumentSnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection("user")
-                                .doc(fullUserId())
-                                .snapshots(),
-                            builder: (context, mainsnapshot) {
-                              switch (mainsnapshot.connectionState) {
-                                case ConnectionState.waiting:
-                                  return const Center(
-                                      child: CircularProgressIndicator(
-                                    strokeWidth: 0.3,
-                                    color: Colors.cyan,
-                                  ));
-                                default:
-                                  if (mainsnapshot.data!.exists) {
-                                    return Column(
+                  StreamBuilder<DocumentSnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection("user")
+                          .doc(fullUserId())
+                          .snapshots(),
+                      builder: (context, mainsnapshot) {
+                        switch (mainsnapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return const Center(
+                                child: CircularProgressIndicator(
+                              strokeWidth: 0.3,
+                              color: Colors.cyan,
+                            ));
+                          default:
+                            if (mainsnapshot.data!.exists) {
+                              return Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, top: 15),
+                                    child: Row(
                                       children: [
+                                        Text(
+                                          "Regulation : ",
+                                          style: TextStyle(
+                                              color: Colors.deepOrange,
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.w500),
+                                        ),
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, top: 15),
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                "Regulation : ",
+                                          padding:
+                                              const EdgeInsets.only(top: 8),
+                                          child: Text(
+                                            "${mainsnapshot.data!["reg"].toString()}",
+                                            style: TextStyle(
+                                                color: Colors.orangeAccent,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        InkWell(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              color: Colors.red.withOpacity(1),
+                                              border: Border.all(
+                                                  color: Colors.white
+                                                      .withOpacity(0.3)),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10,
+                                                  right: 10,
+                                                  top: 5,
+                                                  bottom: 5),
+                                              child: Text(
+                                                "Change",
                                                 style: TextStyle(
-                                                    color: Colors.deepOrange,
-                                                    fontSize: 25,
-                                                    fontWeight:
-                                                        FontWeight.w500),
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.white),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 8),
-                                                child: Text(
-                                                  "${mainsnapshot.data!["reg"].toString()}",
-                                                  style: TextStyle(
-                                                      color:
-                                                          Colors.orangeAccent,
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
-                                              ),
-                                              Spacer(),
-                                              InkWell(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15),
-                                                    color: Colors.red
-                                                        .withOpacity(1),
-                                                    border: Border.all(
-                                                        color: Colors.white
-                                                            .withOpacity(0.3)),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 10,
-                                                            right: 10,
-                                                            top: 5,
-                                                            bottom: 5),
-                                                    child: Text(
-                                                      "Change",
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Colors.white),
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return Dialog(
+                                                  backgroundColor: Colors.black
+                                                      .withOpacity(0.1),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20)),
+                                                  elevation: 16,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Colors.white
+                                                              .withOpacity(
+                                                                  0.5)),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
                                                     ),
-                                                  ),
-                                                ),
-                                                onTap: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return Dialog(
-                                                        backgroundColor: Colors
-                                                            .black
-                                                            .withOpacity(0.1),
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20)),
-                                                        elevation: 16,
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .white
-                                                                    .withOpacity(
-                                                                        0.5)),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20),
+                                                    child: ListView(
+                                                      physics:
+                                                          BouncingScrollPhysics(),
+                                                      shrinkWrap: true,
+                                                      children: <Widget>[
+                                                        const Center(
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    8.0),
+                                                            child: Text(
+                                                              "Select Regulation and Year",
+                                                              style: TextStyle(
+                                                                  fontSize: 22,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: Colors
+                                                                      .orange),
+                                                            ),
                                                           ),
-                                                          child: ListView(
-                                                            physics:
-                                                                BouncingScrollPhysics(),
-                                                            shrinkWrap: true,
-                                                            children: <Widget>[
-                                                              const Center(
-                                                                child: Padding(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              8.0),
-                                                                  child: Text(
-                                                                    "Select Regulation and Year",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            22,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w500,
-                                                                        color: Colors
-                                                                            .orange),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              StreamBuilder<
-                                                                      List<
-                                                                          RegulationConvertor>>(
-                                                                  stream:
-                                                                      readRegulation(),
-                                                                  builder: (context,
-                                                                      snapshot) {
-                                                                    final user =
-                                                                        snapshot
-                                                                            .data;
-                                                                    switch (snapshot
-                                                                        .connectionState) {
-                                                                      case ConnectionState
-                                                                          .waiting:
-                                                                        return const Center(
-                                                                            child:
-                                                                                CircularProgressIndicator(
-                                                                          strokeWidth:
-                                                                              0.3,
-                                                                          color:
-                                                                              Colors.cyan,
-                                                                        ));
-                                                                      default:
-                                                                        if (snapshot
-                                                                            .hasError) {
-                                                                          return const Center(
-                                                                              child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                                                                        } else {
-                                                                          return ListView.separated(
-                                                                              physics: const BouncingScrollPhysics(),
-                                                                              shrinkWrap: true,
-                                                                              itemCount: user!.length,
-                                                                              itemBuilder: (context, int index) {
-                                                                                final SubjectsData = user[index];
-                                                                                return Column(
-                                                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                        ),
+                                                        StreamBuilder<
+                                                                List<
+                                                                    RegulationConvertor>>(
+                                                            stream:
+                                                                readRegulation(),
+                                                            builder: (context,
+                                                                snapshot) {
+                                                              final user =
+                                                                  snapshot.data;
+                                                              switch (snapshot
+                                                                  .connectionState) {
+                                                                case ConnectionState
+                                                                    .waiting:
+                                                                  return const Center(
+                                                                      child:
+                                                                          CircularProgressIndicator(
+                                                                    strokeWidth:
+                                                                        0.3,
+                                                                    color: Colors
+                                                                        .cyan,
+                                                                  ));
+                                                                default:
+                                                                  if (snapshot
+                                                                      .hasError) {
+                                                                    return const Center(
+                                                                        child: Text(
+                                                                            'Error with TextBooks Data or\n Check Internet Connection'));
+                                                                  } else {
+                                                                    return ListView.separated(
+                                                                        physics: const BouncingScrollPhysics(),
+                                                                        shrinkWrap: true,
+                                                                        itemCount: user!.length,
+                                                                        itemBuilder: (context, int index) {
+                                                                          final SubjectsData =
+                                                                              user[index];
+                                                                          return Column(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.only(left: 10, bottom: 5),
+                                                                                child: Row(
                                                                                   children: [
-                                                                                    Padding(
-                                                                                      padding: const EdgeInsets.only(left: 10, bottom: 5),
-                                                                                      child: Row(
-                                                                                        children: [
-                                                                                          Text(
-                                                                                            "${SubjectsData.heading}",
-                                                                                            style: TextStyle(color: Colors.white, fontSize: 30),
-                                                                                          ),
-                                                                                          SizedBox(
-                                                                                            width: 10,
-                                                                                          ),
-                                                                                          if (userId() == "gmail.com")
-                                                                                            InkWell(
-                                                                                              child: Container(
-                                                                                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
-                                                                                                child: Row(
-                                                                                                  children: [
-                                                                                                    Text(
-                                                                                                      " ADD",
-                                                                                                      style: TextStyle(color: Colors.redAccent, fontSize: 20),
-                                                                                                    ),
-                                                                                                    Icon(
-                                                                                                      Icons.add,
-                                                                                                      color: Colors.red,
-                                                                                                    ),
-                                                                                                  ],
-                                                                                                ),
+                                                                                    Text(
+                                                                                      "${SubjectsData.heading}",
+                                                                                      style: TextStyle(color: Colors.white, fontSize: 30),
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      width: 10,
+                                                                                    ),
+                                                                                    if (userId() == "gmail.com")
+                                                                                      InkWell(
+                                                                                        child: Container(
+                                                                                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
+                                                                                          child: Row(
+                                                                                            children: [
+                                                                                              Text(
+                                                                                                " ADD",
+                                                                                                style: TextStyle(color: Colors.redAccent, fontSize: 20),
                                                                                               ),
-                                                                                              onTap: () {
-                                                                                                showDialog(
-                                                                                                  context: context,
-                                                                                                  builder: (context) {
-                                                                                                    return Dialog(
-                                                                                                      backgroundColor: Colors.black.withOpacity(0.1),
-                                                                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                                                                                      elevation: 16,
-                                                                                                      child: Container(
-                                                                                                        decoration: BoxDecoration(
-                                                                                                          border: Border.all(color: Colors.white.withOpacity(0.5)),
-                                                                                                          borderRadius: BorderRadius.circular(20),
-                                                                                                        ),
-                                                                                                        child: ListView(
-                                                                                                          physics: BouncingScrollPhysics(),
-                                                                                                          shrinkWrap: true,
-                                                                                                          children: <Widget>[
-                                                                                                            Padding(
-                                                                                                              padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
-                                                                                                              child: Text(
-                                                                                                                "x year x sem",
-                                                                                                                style: TextStyle(color: Colors.white, fontSize: 30),
-                                                                                                              ),
-                                                                                                            ),
-                                                                                                            Padding(
-                                                                                                              padding: const EdgeInsets.only(left: 10, bottom: 3, right: 10),
-                                                                                                              child: Container(
-                                                                                                                decoration: BoxDecoration(
-                                                                                                                  color: Colors.grey[200],
-                                                                                                                  border: Border.all(color: Colors.white),
-                                                                                                                  borderRadius: BorderRadius.circular(14),
-                                                                                                                ),
-                                                                                                                child: Padding(
-                                                                                                                  padding: const EdgeInsets.only(left: 20),
-                                                                                                                  child: TextFormField(
-                                                                                                                    //obscureText: true,
-                                                                                                                    controller: InputController,
-                                                                                                                    textInputAction: TextInputAction.next,
-                                                                                                                    decoration: InputDecoration(
-                                                                                                                      border: InputBorder.none,
-                                                                                                                      hintText: 'Description or Full name',
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                            ),
-                                                                                                            InkWell(
-                                                                                                              child: Container(
-                                                                                                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
-                                                                                                                child: Text(
-                                                                                                                  "Create",
-                                                                                                                  style: TextStyle(color: Colors.white),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                              onTap: () {
-                                                                                                                FirebaseFirestore.instance.collection("ECE").doc("regulation").collection("regulation").doc(SubjectsData.id).collection("year").doc(getID()).set({
-                                                                                                                  "id": getTime(),
-                                                                                                                  "heading": InputController.text.trim()
-                                                                                                                });
-                                                                                                                Navigator.pop(context);
-                                                                                                              },
-                                                                                                            )
-                                                                                                          ],
+                                                                                              Icon(
+                                                                                                Icons.add,
+                                                                                                color: Colors.red,
+                                                                                              ),
+                                                                                            ],
+                                                                                          ),
+                                                                                        ),
+                                                                                        onTap: () {
+                                                                                          showDialog(
+                                                                                            context: context,
+                                                                                            builder: (context) {
+                                                                                              return Dialog(
+                                                                                                backgroundColor: Colors.black.withOpacity(0.1),
+                                                                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                                                                elevation: 16,
+                                                                                                child: Container(
+                                                                                                  decoration: BoxDecoration(
+                                                                                                    border: Border.all(color: Colors.white.withOpacity(0.5)),
+                                                                                                    borderRadius: BorderRadius.circular(20),
+                                                                                                  ),
+                                                                                                  child: ListView(
+                                                                                                    physics: BouncingScrollPhysics(),
+                                                                                                    shrinkWrap: true,
+                                                                                                    children: <Widget>[
+                                                                                                      Padding(
+                                                                                                        padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+                                                                                                        child: Text(
+                                                                                                          "x year x sem",
+                                                                                                          style: TextStyle(color: Colors.white, fontSize: 30),
                                                                                                         ),
                                                                                                       ),
-                                                                                                    );
-                                                                                                  },
-                                                                                                );
-                                                                                              },
-                                                                                            )
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
-                                                                                    StreamBuilder<List<RegulationYearConvertor>>(
-                                                                                        stream: readRegulationYear(SubjectsData.id),
-                                                                                        builder: (context, snapshot) {
-                                                                                          final user1 = snapshot.data;
-                                                                                          switch (snapshot.connectionState) {
-                                                                                            case ConnectionState.waiting:
-                                                                                              return const Center(
-                                                                                                  child: CircularProgressIndicator(
-                                                                                                strokeWidth: 0.3,
-                                                                                                color: Colors.cyan,
-                                                                                              ));
-                                                                                            default:
-                                                                                              if (snapshot.hasError) {
-                                                                                                return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                                                                                              } else {
-                                                                                                return ListView.separated(
-                                                                                                    physics: const BouncingScrollPhysics(),
-                                                                                                    shrinkWrap: true,
-                                                                                                    itemCount: user1!.length,
-                                                                                                    itemBuilder: (context, int index) {
-                                                                                                      final SubjectsData1 = user1[index];
-                                                                                                      return InkWell(
-                                                                                                        child: Padding(
-                                                                                                          padding: const EdgeInsets.only(left: 25),
+                                                                                                      Padding(
+                                                                                                        padding: const EdgeInsets.only(left: 10, bottom: 3, right: 10),
+                                                                                                        child: Container(
+                                                                                                          decoration: BoxDecoration(
+                                                                                                            color: Colors.grey[200],
+                                                                                                            border: Border.all(color: Colors.white),
+                                                                                                            borderRadius: BorderRadius.circular(14),
+                                                                                                          ),
+                                                                                                          child: Padding(
+                                                                                                            padding: const EdgeInsets.only(left: 20),
+                                                                                                            child: TextFormField(
+                                                                                                              //obscureText: true,
+                                                                                                              controller: InputController,
+                                                                                                              textInputAction: TextInputAction.next,
+                                                                                                              decoration: InputDecoration(
+                                                                                                                border: InputBorder.none,
+                                                                                                                hintText: 'Description or Full name',
+                                                                                                              ),
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                      InkWell(
+                                                                                                        child: Container(
+                                                                                                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
                                                                                                           child: Text(
-                                                                                                            "${SubjectsData1.heading}",
-                                                                                                            style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                                            "Create",
+                                                                                                            style: TextStyle(color: Colors.white),
                                                                                                           ),
                                                                                                         ),
                                                                                                         onTap: () {
-                                                                                                          FirebaseFirestore.instance.collection("user").doc(fullUserId()).update({
-                                                                                                            "YearId": SubjectsData1.id,
-                                                                                                            "regId": SubjectsData.id,
-                                                                                                            "reg": "${SubjectsData.heading}-${SubjectsData1.heading}"
+                                                                                                          FirebaseFirestore.instance.collection("ECE").doc("regulation").collection("regulation").doc(SubjectsData.id).collection("year").doc(getID()).set({
+                                                                                                            "id": getTime(),
+                                                                                                            "heading": InputController.text.trim()
                                                                                                           });
                                                                                                           Navigator.pop(context);
                                                                                                         },
-                                                                                                        onLongPress: () async {
-                                                                                                          if (userId() == "gmail.com") await FirebaseFirestore.instance.collection("ECE").doc("regulation").collection("regulation").doc(SubjectsData.id).collection("year").doc(SubjectsData1.id).delete();
-                                                                                                        },
-                                                                                                      );
-                                                                                                    },
-                                                                                                    separatorBuilder: (context, index) => const SizedBox(
-                                                                                                          height: 1,
-                                                                                                        ));
-                                                                                              }
-                                                                                          }
-                                                                                        }),
-                                                                                    Padding(
-                                                                                      padding: const EdgeInsets.only(left: 10, right: 10),
-                                                                                      child: Divider(
-                                                                                        color: Colors.white,
-                                                                                        thickness: 0.3,
-                                                                                      ),
-                                                                                    )
+                                                                                                      )
+                                                                                                    ],
+                                                                                                  ),
+                                                                                                ),
+                                                                                              );
+                                                                                            },
+                                                                                          );
+                                                                                        },
+                                                                                      )
                                                                                   ],
-                                                                                );
-                                                                              },
-                                                                              separatorBuilder: (context, index) => const SizedBox(
-                                                                                    height: 1,
-                                                                                  ));
-                                                                        }
-                                                                    }
-                                                                  }),
-                                                              const SizedBox(
-                                                                height: 10,
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                              ),
-                                              SizedBox(width: 20),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20, right: 20),
-                                          child: Divider(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        CustomAdsBannerForHomePage(),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        if (mainsnapshot.data!["reg"]
-                                            .toString()
-                                            .isNotEmpty)
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 20, right: 8, bottom: 8),
-                                            child: Column(
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          bottom: 10),
-                                                  child: Text(
-                                                    "Time Table :",
-                                                    style: TextStyle(
-                                                        color: Colors.orange,
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.w700),
-                                                  ),
-                                                ),
-                                                StreamBuilder<
-                                                        List<
-                                                            TimeTableConvertor>>(
-                                                    stream: readTimeTable(
-                                                        id: mainsnapshot
-                                                            .data!["regId"]
-                                                            .toString(),
-                                                        id1: mainsnapshot
-                                                            .data!["YearId"]
-                                                            .toString()),
-                                                    builder:
-                                                        (context, snapshot) {
-                                                      final user =
-                                                          snapshot.data;
-                                                      switch (snapshot
-                                                          .connectionState) {
-                                                        case ConnectionState
-                                                            .waiting:
-                                                          return const Center(
-                                                              child:
-                                                                  CircularProgressIndicator(
-                                                            strokeWidth: 0.3,
-                                                            color: Colors.cyan,
-                                                          ));
-                                                        default:
-                                                          if (snapshot
-                                                              .hasError) {
-                                                            return const Center(
-                                                                child: Text(
-                                                                    'Error with TextBooks Data or\n Check Internet Connection'));
-                                                          } else {
-                                                            return SizedBox(
-                                                              height: 74,
-                                                              child: ListView
-                                                                  .separated(
-                                                                      physics:
-                                                                          const BouncingScrollPhysics(),
-                                                                      shrinkWrap:
-                                                                          true,
-                                                                      scrollDirection:
-                                                                          Axis
-                                                                              .horizontal,
-                                                                      itemCount:
-                                                                          user!
-                                                                              .length,
-                                                                      itemBuilder:
-                                                                          (context,
-                                                                              int
-                                                                                  index) {
-                                                                        final classess =
-                                                                            user[index];
-                                                                        final Uri
-                                                                            uri =
-                                                                            Uri.parse(classess.photoUrl);
-                                                                        final String
-                                                                            fileName =
-                                                                            uri.pathSegments.last;
-                                                                        var name = fileName
-                                                                            .split("/")
-                                                                            .last;
-                                                                        final file =
-                                                                            File("${folderPath}/ece_timetable/$name");
-                                                                        if (file
-                                                                            .existsSync()) {
-                                                                          return InkWell(
-                                                                            child:
-                                                                                Column(
-                                                                              children: [
-                                                                                Container(
-                                                                                  height: 60,
-                                                                                  width: 70,
-                                                                                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(40), image: DecorationImage(image: FileImage(file), fit: BoxFit.fill)),
                                                                                 ),
-                                                                                Center(
-                                                                                    child: Text(
-                                                                                  "${classess.heading}",
-                                                                                  style: TextStyle(color: Colors.lightBlueAccent),
-                                                                                ))
-                                                                              ],
-                                                                            ),
-                                                                            onTap:
-                                                                                () {
-                                                                              Navigator.push(
-                                                                                  context,
-                                                                                  MaterialPageRoute(
-                                                                                      builder: (context) => ImageZoom(
-                                                                                            url: "",
-                                                                                            file: file,
-                                                                                          )));
-                                                                            },
+                                                                              ),
+                                                                              StreamBuilder<List<RegulationYearConvertor>>(
+                                                                                  stream: readRegulationYear(SubjectsData.id),
+                                                                                  builder: (context, snapshot) {
+                                                                                    final user1 = snapshot.data;
+                                                                                    switch (snapshot.connectionState) {
+                                                                                      case ConnectionState.waiting:
+                                                                                        return const Center(
+                                                                                            child: CircularProgressIndicator(
+                                                                                          strokeWidth: 0.3,
+                                                                                          color: Colors.cyan,
+                                                                                        ));
+                                                                                      default:
+                                                                                        if (snapshot.hasError) {
+                                                                                          return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                                                                        } else {
+                                                                                          return ListView.separated(
+                                                                                              physics: const BouncingScrollPhysics(),
+                                                                                              shrinkWrap: true,
+                                                                                              itemCount: user1!.length,
+                                                                                              itemBuilder: (context, int index) {
+                                                                                                final SubjectsData1 = user1[index];
+                                                                                                return InkWell(
+                                                                                                  child: Padding(
+                                                                                                    padding: const EdgeInsets.only(left: 25),
+                                                                                                    child: Text(
+                                                                                                      "${SubjectsData1.heading}",
+                                                                                                      style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                  onTap: () {
+                                                                                                    FirebaseFirestore.instance.collection("user").doc(fullUserId()).update({
+                                                                                                      "YearId": SubjectsData1.id,
+                                                                                                      "regId": SubjectsData.id,
+                                                                                                      "reg": "${SubjectsData.heading}-${SubjectsData1.heading}"
+                                                                                                    });
+                                                                                                    Navigator.pop(context);
+                                                                                                  },
+                                                                                                  onLongPress: () async {
+                                                                                                    if (userId() == "gmail.com") await FirebaseFirestore.instance.collection("ECE").doc("regulation").collection("regulation").doc(SubjectsData.id).collection("year").doc(SubjectsData1.id).delete();
+                                                                                                  },
+                                                                                                );
+                                                                                              },
+                                                                                              separatorBuilder: (context, index) => const SizedBox(
+                                                                                                    height: 1,
+                                                                                                  ));
+                                                                                        }
+                                                                                    }
+                                                                                  }),
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.only(left: 10, right: 10),
+                                                                                child: Divider(
+                                                                                  color: Colors.white,
+                                                                                  thickness: 0.3,
+                                                                                ),
+                                                                              )
+                                                                            ],
                                                                           );
-                                                                        } else {
-                                                                          download(
-                                                                              classess.photoUrl,
-                                                                              "ece_timetable");
-
-                                                                          return InkWell(
-                                                                            child:
-                                                                                Container(
-                                                                              width: 70,
-                                                                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(40), image: DecorationImage(image: NetworkImage(classess.photoUrl), fit: BoxFit.fill)),
-                                                                              child: Center(
-                                                                                  child: Text(
-                                                                                "${classess.heading}",
-                                                                                style: TextStyle(color: Colors.lightBlueAccent),
-                                                                              )),
-                                                                            ),
-                                                                          );
-                                                                        }
-                                                                      },
-                                                                      separatorBuilder: (context,
-                                                                              index) =>
-                                                                          const SizedBox(
-                                                                            height:
-                                                                                1,
-                                                                          )),
-                                                            );
-                                                          }
-                                                      }
-                                                    }),
-                                              ],
-                                            ),
-                                          ),
-                                        if (mainsnapshot.data!["reg"]
-                                            .toString()
-                                            .isNotEmpty)
-                                          Row(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 20),
-                                                child: Text(
-                                                  "Subjects",
-                                                  style: TextStyle(
-                                                      color: Colors
-                                                          .deepOrangeAccent,
-                                                      fontSize: 25,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
-                                              ),
-                                              Spacer(),
-                                              InkWell(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.black
-                                                        .withOpacity(0.5),
-                                                    border: Border.all(
-                                                        color: Colors.white
-                                                            .withOpacity(0.3)),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 10,
-                                                            right: 10,
-                                                            top: 3,
-                                                            bottom: 3),
-                                                    child: Text(
-                                                      "see more",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18),
+                                                                        },
+                                                                        separatorBuilder: (context, index) => const SizedBox(
+                                                                              height: 1,
+                                                                            ));
+                                                                  }
+                                                              }
+                                                            }),
+                                                        const SizedBox(
+                                                          height: 10,
+                                                        )
+                                                      ],
                                                     ),
                                                   ),
-                                                ),
-                                                onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Subjects()));
-                                                },
-                                              ),
-                                              SizedBox(
-                                                width: 20,
-                                              )
-                                            ],
-                                          ),
-                                        if (mainsnapshot.data!["reg"]
-                                            .toString()
-                                            .isNotEmpty)
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(width: 20),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 20),
+                                    child: Divider(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  CustomAdsBannerForHomePage(),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  if (mainsnapshot.data!["reg"]
+                                      .toString()
+                                      .isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 8, bottom: 8),
+                                      child: Column(
+                                        children: [
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                top: 10,
-                                                left: 20,
-                                                right: 10,
-                                                bottom: 5),
-                                            child:
-                                                StreamBuilder<
-                                                        List<FlashConvertor>>(
-                                                    stream: readFlashNews(),
-                                                    builder:
-                                                        (context, snapshot) {
-                                                      final Favourites =
-                                                          snapshot.data;
-                                                      switch (snapshot
-                                                          .connectionState) {
-                                                        case ConnectionState
-                                                            .waiting:
-                                                          return const Center(
-                                                              child:
-                                                                  CircularProgressIndicator(
-                                                            strokeWidth: 0.3,
-                                                            color: Colors.cyan,
-                                                          ));
-                                                        default:
-                                                          if (snapshot
-                                                              .hasError) {
-                                                            return Center(
-                                                                child: Text(
-                                                                    "Error"));
-                                                          } else {
-                                                            if (Favourites!
-                                                                    .length >
-                                                                0)
-                                                              return ListView
-                                                                  .builder(
+                                                bottom: 10),
+                                            child: Text(
+                                              "Time Table :",
+                                              style: TextStyle(
+                                                  color: Colors.orange,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w700),
+                                            ),
+                                          ),
+                                          StreamBuilder<
+                                                  List<TimeTableConvertor>>(
+                                              stream: readTimeTable(
+                                                  id: mainsnapshot
+                                                      .data!["regId"]
+                                                      .toString(),
+                                                  id1: mainsnapshot
+                                                      .data!["YearId"]
+                                                      .toString()),
+                                              builder: (context, snapshot) {
+                                                final user = snapshot.data;
+                                                switch (
+                                                    snapshot.connectionState) {
+                                                  case ConnectionState.waiting:
+                                                    return const Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                      strokeWidth: 0.3,
+                                                      color: Colors.cyan,
+                                                    ));
+                                                  default:
+                                                    if (snapshot.hasError) {
+                                                      return const Center(
+                                                          child: Text(
+                                                              'Error with TextBooks Data or\n Check Internet Connection'));
+                                                    } else {
+                                                      return SizedBox(
+                                                        height: 74,
+                                                        child:
+                                                            ListView.separated(
                                                                 physics:
                                                                     const BouncingScrollPhysics(),
                                                                 shrinkWrap:
                                                                     true,
-                                                                itemCount:
-                                                                    Favourites
-                                                                        .length,
+                                                                scrollDirection:
+                                                                    Axis
+                                                                        .horizontal,
+                                                                itemCount: user!
+                                                                    .length,
                                                                 itemBuilder:
                                                                     (context,
-                                                                        int index) {
-                                                                  final SubjectsData =
-                                                                      Favourites[
+                                                                        int
+                                                                            index) {
+                                                                  final classess =
+                                                                      user[
                                                                           index];
-                                                                  if (SubjectsData
-                                                                      .regulation
-                                                                      .toString()
-                                                                      .startsWith(mainsnapshot
-                                                                          .data![
-                                                                              "reg"]
-                                                                          .toString())) {
-                                                                    final Uri
-                                                                        uri =
-                                                                        Uri.parse(
-                                                                            SubjectsData.PhotoUrl);
-                                                                    final String
-                                                                        fileName =
-                                                                        uri.pathSegments
-                                                                            .last;
-                                                                    var name = fileName
-                                                                        .split(
-                                                                            "/")
-                                                                        .last;
-                                                                    final file =
-                                                                        File(
-                                                                            "${folderPath}/ece_subjects/$name");
-                                                                    if (file
-                                                                        .existsSync()) {
-                                                                      return InkWell(
-                                                                        child:
-                                                                            Container(
-                                                                          width:
-                                                                              double.infinity,
-                                                                          decoration: BoxDecoration(
-                                                                              color: Colors.black38,
-                                                                              borderRadius: BorderRadius.all(Radius.circular(10))),
-                                                                          child:
-                                                                              SingleChildScrollView(
-                                                                            physics:
-                                                                                const BouncingScrollPhysics(),
-                                                                            child:
-                                                                                Row(
-                                                                              children: [
-                                                                                Container(
-                                                                                  width: 90.0,
-                                                                                  height: 70.0,
-                                                                                  decoration: BoxDecoration(
-                                                                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                                                                    color: Colors.black,
-                                                                                    image: DecorationImage(
-                                                                                      image: FileImage(file),
-                                                                                      fit: BoxFit.cover,
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                                const SizedBox(
-                                                                                  width: 10,
-                                                                                ),
-                                                                                Expanded(
-                                                                                    child: Column(
-                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    Row(
-                                                                                      children: [
-                                                                                        Text(
-                                                                                          SubjectsData.heading,
-                                                                                          style: const TextStyle(
-                                                                                            fontSize: 20.0,
-                                                                                            color: Colors.orangeAccent,
-                                                                                            fontWeight: FontWeight.w600,
-                                                                                          ),
-                                                                                        ),
-                                                                                        Spacer(),
-                                                                                        InkWell(
-                                                                                          child: StreamBuilder<DocumentSnapshot>(
-                                                                                            stream: FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
-                                                                                            builder: (context, snapshot) {
-                                                                                              if (snapshot.hasData) {
-                                                                                                if (snapshot.data!.exists) {
-                                                                                                  return const Icon(
-                                                                                                    Icons.favorite,
-                                                                                                    color: Colors.red,
-                                                                                                    size: 26,
-                                                                                                  );
-                                                                                                } else {
-                                                                                                  return const Icon(
-                                                                                                    Icons.favorite_border,
-                                                                                                    color: Colors.red,
-                                                                                                    size: 26,
-                                                                                                  );
-                                                                                                }
-                                                                                              } else {
-                                                                                                return Container();
-                                                                                              }
-                                                                                            },
-                                                                                          ),
-                                                                                          onTap: () async {
-                                                                                            try {
-                                                                                              await FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).get().then((docSnapshot) {
-                                                                                                if (docSnapshot.exists) {
-                                                                                                  FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).delete();
-                                                                                                  showToast("Unliked");
-                                                                                                } else {
-                                                                                                  FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).set({"id": fullUserId()});
-                                                                                                  showToast("Liked");
-                                                                                                }
-                                                                                              });
-                                                                                            } catch (e) {
-                                                                                              print(e);
-                                                                                            }
-                                                                                          },
-                                                                                        ),
-                                                                                        StreamBuilder<QuerySnapshot>(
-                                                                                          stream: FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").snapshots(),
-                                                                                          builder: (context, snapshot) {
-                                                                                            if (snapshot.hasData) {
-                                                                                              return Text(
-                                                                                                " ${snapshot.data!.docs.length}",
-                                                                                                style: const TextStyle(fontSize: 16, color: Colors.white),
-                                                                                              );
-                                                                                            } else {
-                                                                                              return const Text("0");
-                                                                                            }
-                                                                                          },
-                                                                                        ),
-                                                                                        SizedBox(
-                                                                                          width: 5,
-                                                                                        ),
-                                                                                        InkWell(
-                                                                                          child: StreamBuilder<DocumentSnapshot>(
-                                                                                            stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
-                                                                                            builder: (context, snapshot) {
-                                                                                              if (snapshot.hasData) {
-                                                                                                if (snapshot.data!.exists) {
-                                                                                                  return const Icon(Icons.library_add_check, size: 26, color: Colors.cyanAccent);
-                                                                                                } else {
-                                                                                                  return const Icon(
-                                                                                                    Icons.library_add_outlined,
-                                                                                                    size: 26,
-                                                                                                    color: Colors.cyanAccent,
-                                                                                                  );
-                                                                                                }
-                                                                                              } else {
-                                                                                                return Container();
-                                                                                              }
-                                                                                            },
-                                                                                          ),
-                                                                                          onTap: () async {
-                                                                                            try {
-                                                                                              await FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).get().then((docSnapshot) {
-                                                                                                if (docSnapshot.exists) {
-                                                                                                  FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
-                                                                                                  showToast("Removed from saved list");
-                                                                                                } else {
-                                                                                                  FavouriteSubjects(SubjectId: SubjectsData.id, name: SubjectsData.heading, description: SubjectsData.description, photoUrl: SubjectsData.PhotoUrl);
-                                                                                                  showToast("${SubjectsData.heading} in favorites");
-                                                                                                }
-                                                                                              });
-                                                                                            } catch (e) {
-                                                                                              print(e);
-                                                                                            }
-                                                                                          },
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      height: 2,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      SubjectsData.description,
-                                                                                      style: const TextStyle(fontSize: 13.0, color: Colors.lightBlueAccent),
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      height: 1,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      'Added :${SubjectsData.Date}',
-                                                                                      style: const TextStyle(
-                                                                                        fontSize: 9.0,
-                                                                                        color: Colors.white54,
-                                                                                        //   fontWeight: FontWeight.bold,
-                                                                                      ),
-                                                                                    ),
-                                                                                    if (userId() == "gmail.com")
-                                                                                      Padding(
-                                                                                        padding: const EdgeInsets.only(right: 10),
-                                                                                        child: Container(
-                                                                                          decoration: BoxDecoration(
-                                                                                            borderRadius: BorderRadius.circular(15),
-                                                                                            color: Colors.black.withOpacity(0.3),
-                                                                                            border: Border.all(color: Colors.white.withOpacity(0.5)),
-                                                                                          ),
-                                                                                          width: 70,
-                                                                                          child: InkWell(
-                                                                                            child: Row(
-                                                                                              children: [
-                                                                                                SizedBox(
-                                                                                                  width: 5,
-                                                                                                ),
-                                                                                                Icon(
-                                                                                                  Icons.edit,
-                                                                                                  color: Colors.white,
-                                                                                                ),
-                                                                                                Padding(
-                                                                                                  padding: const EdgeInsets.only(left: 3, right: 3),
-                                                                                                  child: Text(
-                                                                                                    "Edit",
-                                                                                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 18),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ),
-                                                                                            onTap: () {
-                                                                                              Navigator.push(
-                                                                                                  context,
-                                                                                                  MaterialPageRoute(
-                                                                                                      builder: (context) => SubjectsCreator(
-                                                                                                            Id: SubjectsData.id,
-                                                                                                            heading: SubjectsData.heading,
-                                                                                                            description: SubjectsData.description,
-                                                                                                            photoUrl: SubjectsData.PhotoUrl,
-                                                                                                            mode: "Subjects",
-                                                                                                          )));
-                                                                                            },
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                  ],
-                                                                                ))
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        onTap:
-                                                                            () async {
-                                                                          Navigator.push(
-                                                                              context,
-                                                                              MaterialPageRoute(
-                                                                                  builder: (context) => subjectUnitsData(
-                                                                                        ID: SubjectsData.id,
-                                                                                        mode: "Subjects",
-                                                                                        name: SubjectsData.heading,
-                                                                                        fullName: SubjectsData.description,
-                                                                                        photoUrl: SubjectsData.PhotoUrl,
-                                                                                      )));
-                                                                        },
-                                                                      );
-                                                                    } else {
-                                                                      download(
-                                                                          SubjectsData
-                                                                              .PhotoUrl,
-                                                                          "ece_subjects");
-                                                                      return InkWell(
-                                                                        child:
-                                                                            Container(
-                                                                          width:
-                                                                              double.infinity,
-                                                                          decoration: BoxDecoration(
-                                                                              color: Colors.black38,
-                                                                              borderRadius: BorderRadius.all(Radius.circular(10))),
-                                                                          child:
-                                                                              SingleChildScrollView(
-                                                                            physics:
-                                                                                const BouncingScrollPhysics(),
-                                                                            child:
-                                                                                Row(
-                                                                              children: [
-                                                                                Container(
-                                                                                  width: 90.0,
-                                                                                  height: 70.0,
-                                                                                  child: CachedNetworkImage(
-                                                                                    imageUrl: SubjectsData.PhotoUrl,
-                                                                                    placeholder: (context, url) => CircularProgressIndicator(),
-                                                                                    errorWidget: (context, url, error) => Icon(Icons.error),
-                                                                                  ),
-                                                                                ),
-                                                                                const SizedBox(
-                                                                                  width: 10,
-                                                                                ),
-                                                                                Expanded(
-                                                                                    child: Column(
-                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    Row(
-                                                                                      children: [
-                                                                                        Text(
-                                                                                          SubjectsData.heading,
-                                                                                          style: const TextStyle(
-                                                                                            fontSize: 20.0,
-                                                                                            color: Colors.orangeAccent,
-                                                                                            fontWeight: FontWeight.w600,
-                                                                                          ),
-                                                                                        ),
-                                                                                        Spacer(),
-                                                                                        InkWell(
-                                                                                          child: StreamBuilder<DocumentSnapshot>(
-                                                                                            stream: FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
-                                                                                            builder: (context, snapshot) {
-                                                                                              if (snapshot.hasData) {
-                                                                                                if (snapshot.data!.exists) {
-                                                                                                  return const Icon(
-                                                                                                    Icons.favorite,
-                                                                                                    color: Colors.red,
-                                                                                                    size: 26,
-                                                                                                  );
-                                                                                                } else {
-                                                                                                  return const Icon(
-                                                                                                    Icons.favorite_border,
-                                                                                                    color: Colors.red,
-                                                                                                    size: 26,
-                                                                                                  );
-                                                                                                }
-                                                                                              } else {
-                                                                                                return Container();
-                                                                                              }
-                                                                                            },
-                                                                                          ),
-                                                                                          onTap: () async {
-                                                                                            try {
-                                                                                              await FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).get().then((docSnapshot) {
-                                                                                                if (docSnapshot.exists) {
-                                                                                                  FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).delete();
-                                                                                                  showToast("Unliked");
-                                                                                                } else {
-                                                                                                  FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).set({"id": fullUserId()});
-                                                                                                  showToast("Liked");
-                                                                                                }
-                                                                                              });
-                                                                                            } catch (e) {
-                                                                                              print(e);
-                                                                                            }
-                                                                                          },
-                                                                                        ),
-                                                                                        StreamBuilder<QuerySnapshot>(
-                                                                                          stream: FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").snapshots(),
-                                                                                          builder: (context, snapshot) {
-                                                                                            if (snapshot.hasData) {
-                                                                                              return Text(
-                                                                                                " ${snapshot.data!.docs.length}",
-                                                                                                style: const TextStyle(fontSize: 16, color: Colors.white),
-                                                                                              );
-                                                                                            } else {
-                                                                                              return const Text("0");
-                                                                                            }
-                                                                                          },
-                                                                                        ),
-                                                                                        SizedBox(
-                                                                                          width: 5,
-                                                                                        ),
-                                                                                        InkWell(
-                                                                                          child: StreamBuilder<DocumentSnapshot>(
-                                                                                            stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
-                                                                                            builder: (context, snapshot) {
-                                                                                              if (snapshot.hasData) {
-                                                                                                if (snapshot.data!.exists) {
-                                                                                                  return const Icon(Icons.library_add_check, size: 26, color: Colors.cyanAccent);
-                                                                                                } else {
-                                                                                                  return const Icon(
-                                                                                                    Icons.library_add_outlined,
-                                                                                                    size: 26,
-                                                                                                    color: Colors.cyanAccent,
-                                                                                                  );
-                                                                                                }
-                                                                                              } else {
-                                                                                                return Container();
-                                                                                              }
-                                                                                            },
-                                                                                          ),
-                                                                                          onTap: () async {
-                                                                                            try {
-                                                                                              await FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).get().then((docSnapshot) {
-                                                                                                if (docSnapshot.exists) {
-                                                                                                  FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
-                                                                                                  showToast("Removed from saved list");
-                                                                                                } else {
-                                                                                                  FavouriteSubjects(SubjectId: SubjectsData.id, name: SubjectsData.heading, description: SubjectsData.description, photoUrl: SubjectsData.PhotoUrl);
-                                                                                                  showToast("${SubjectsData.heading} in favorites");
-                                                                                                }
-                                                                                              });
-                                                                                            } catch (e) {
-                                                                                              print(e);
-                                                                                            }
-                                                                                          },
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      height: 2,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      SubjectsData.description,
-                                                                                      style: const TextStyle(
-                                                                                        fontSize: 13.0,
-                                                                                        color: Colors.lightBlueAccent,
-                                                                                      ),
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      height: 1,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      'Added :${SubjectsData.Date}',
-                                                                                      style: const TextStyle(
-                                                                                        fontSize: 9.0,
-                                                                                        color: Colors.white54,
-                                                                                        //   fontWeight: FontWeight.bold,
-                                                                                      ),
-                                                                                    ),
-                                                                                    if (userId() == "gmail.com")
-                                                                                      Padding(
-                                                                                        padding: const EdgeInsets.only(right: 10),
-                                                                                        child: Container(
-                                                                                          decoration: BoxDecoration(
-                                                                                            borderRadius: BorderRadius.circular(15),
-                                                                                            color: Colors.black.withOpacity(0.3),
-                                                                                            border: Border.all(color: Colors.white.withOpacity(0.5)),
-                                                                                          ),
-                                                                                          width: 70,
-                                                                                          child: InkWell(
-                                                                                            child: Row(
-                                                                                              children: [
-                                                                                                SizedBox(
-                                                                                                  width: 5,
-                                                                                                ),
-                                                                                                Icon(
-                                                                                                  Icons.edit,
-                                                                                                  color: Colors.white,
-                                                                                                ),
-                                                                                                Padding(
-                                                                                                  padding: const EdgeInsets.only(left: 3, right: 3),
-                                                                                                  child: Text(
-                                                                                                    "Edit",
-                                                                                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 18),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ),
-                                                                                            onTap: () {
-                                                                                              Navigator.push(
-                                                                                                  context,
-                                                                                                  MaterialPageRoute(
-                                                                                                      builder: (context) => SubjectsCreator(
-                                                                                                            Id: SubjectsData.id,
-                                                                                                            heading: SubjectsData.heading,
-                                                                                                            description: SubjectsData.description,
-                                                                                                            photoUrl: SubjectsData.PhotoUrl,
-                                                                                                            mode: "Subjects",
-                                                                                                          )));
-                                                                                            },
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                  ],
-                                                                                ))
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        onTap:
-                                                                            () async {
-                                                                          Navigator.push(
-                                                                              context,
-                                                                              MaterialPageRoute(
-                                                                                  builder: (context) => subjectUnitsData(
-                                                                                        ID: SubjectsData.id,
-                                                                                        mode: "Subjects",
-                                                                                        name: SubjectsData.heading,
-                                                                                        fullName: SubjectsData.description,
-                                                                                        photoUrl: SubjectsData.PhotoUrl,
-                                                                                      )));
-                                                                        },
-                                                                      );
-                                                                    }
-                                                                  } else {
-                                                                    return Container();
-                                                                  }
-                                                                },
-                                                              );
-                                                            else
-                                                              return Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  border: Border.all(
-                                                                      color: Colors
-                                                                          .tealAccent),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              20),
-                                                                ),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                              .all(
-                                                                          8.0),
-                                                                  child: Text(
-                                                                      "No Subjects in this Regulation"),
-                                                                ),
-                                                              );
-                                                          }
-                                                      }
-                                                    }),
-                                          )
-                                        else
-                                          Center(
-                                              child: Column(
-                                            children: [
-                                              Text(
-                                                "Regulation and Year is Not Selected for Subjects",
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
-                                              InkWell(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white54,
-                                                    border: Border.all(
-                                                        color: Colors.white),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 10,
-                                                            right: 10,
-                                                            top: 5,
-                                                            bottom: 5),
-                                                    child: Text("see more"),
-                                                  ),
-                                                ),
-                                                onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Subjects()));
-                                                },
-                                              ),
-                                            ],
-                                          )),
-                                        //Lab Subjects
-                                        if (mainsnapshot.data!["reg"]
-                                            .toString()
-                                            .isNotEmpty)
-                                          StreamBuilder<
-                                              List<LabSubjectsConvertor>>(
-                                            stream: readLabSubjects(),
-                                            builder: (context, snapshot) {
-                                              final Subjects = snapshot.data;
-                                              switch (
-                                                  snapshot.connectionState) {
-                                                case ConnectionState.waiting:
-                                                  return const Center(
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                    strokeWidth: 0.3,
-                                                    color: Colors.cyan,
-                                                  ));
-                                                default:
-                                                  if (snapshot.hasError) {
-                                                    return Text(
-                                                        "Error with fireBase");
-                                                  } else {
-                                                    if (Subjects!.length > 0)
-                                                      return Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                left: 20,
-                                                                top: 10,
-                                                                bottom: 10,
-                                                                right: 10),
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              children: [
-                                                                Text(
-                                                                  "Lab Subjects",
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .deepOrangeAccent,
-                                                                      fontSize:
-                                                                          25,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500),
-                                                                ),
-                                                                Spacer(),
-                                                                InkWell(
-                                                                  child:
-                                                                      Container(
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: Colors
-                                                                          .black
-                                                                          .withOpacity(
-                                                                              0.7),
-                                                                      border: Border.all(
-                                                                          color: Colors
-                                                                              .white
-                                                                              .withOpacity(0.3)),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              25),
-                                                                    ),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: const EdgeInsets
-                                                                              .only(
-                                                                          left:
-                                                                              10,
-                                                                          right:
-                                                                              10,
-                                                                          top:
-                                                                              3,
-                                                                          bottom:
-                                                                              3),
-                                                                      child:
-                                                                          Text(
-                                                                        "see more",
-                                                                        style: TextStyle(
-                                                                            color: Colors
-                                                                                .white,
-                                                                            fontSize:
-                                                                                18,
-                                                                            fontWeight:
-                                                                                FontWeight.w500),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  onTap: () {
-                                                                    Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                            builder: (context) =>
-                                                                                const LabSubjects()));
-                                                                  },
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                )
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                              height: 10,
-                                                            ),
-                                                            ListView.builder(
-                                                              physics:
-                                                                  const BouncingScrollPhysics(),
-                                                              shrinkWrap: true,
-                                                              itemCount:
-                                                                  Subjects
-                                                                      .length,
-                                                              itemBuilder:
-                                                                  (context,
-                                                                      int index) {
-                                                                final LabSubjectsData =
-                                                                    Subjects[
-                                                                        index];
-                                                                if (LabSubjectsData
-                                                                    .regulation
-                                                                    .toString()
-                                                                    .startsWith(mainsnapshot
-                                                                        .data![
-                                                                            "reg"]
-                                                                        .toString())) {
                                                                   final Uri
                                                                       uri =
                                                                       Uri.parse(
-                                                                          LabSubjectsData
-                                                                              .PhotoUrl);
+                                                                          classess
+                                                                              .photoUrl);
                                                                   final String
                                                                       fileName =
                                                                       uri.pathSegments
@@ -1867,535 +960,1772 @@ class _HomePageState extends State<HomePage> {
                                                                               "/")
                                                                           .last;
                                                                   final file = File(
-                                                                      "${folderPath}/ece_labsubjects/$name");
+                                                                      "${folderPath}/ece_timetable/$name");
                                                                   if (file
                                                                       .existsSync()) {
-                                                                    return Padding(
-                                                                      padding: const EdgeInsets
-                                                                              .only(
-                                                                          bottom:
-                                                                              5,
-                                                                          left:
-                                                                              5,
-                                                                          right:
-                                                                              5),
+                                                                    return InkWell(
                                                                       child:
-                                                                          InkWell(
-                                                                        child:
-                                                                            Container(
-                                                                          width:
-                                                                              double.infinity,
-                                                                          decoration: BoxDecoration(
-                                                                              color: Colors.black38,
-                                                                              borderRadius: BorderRadius.all(Radius.circular(10))),
-                                                                          child:
-                                                                              SingleChildScrollView(
-                                                                            physics:
-                                                                                const BouncingScrollPhysics(),
-                                                                            child:
-                                                                                Row(
-                                                                              children: [
-                                                                                Container(
-                                                                                  width: 90.0,
-                                                                                  height: 70.0,
-                                                                                  decoration: BoxDecoration(
-                                                                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                                                                    color: Colors.redAccent,
-                                                                                    image: DecorationImage(
-                                                                                      image: FileImage(file),
-                                                                                      fit: BoxFit.cover,
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                                const SizedBox(
-                                                                                  width: 10,
-                                                                                ),
-                                                                                Expanded(
-                                                                                    child: Column(
-                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    Row(
-                                                                                      children: [
-                                                                                        Text(
-                                                                                          LabSubjectsData.heading,
-                                                                                          style: const TextStyle(
-                                                                                            fontSize: 20.0,
-                                                                                            color: Colors.orangeAccent,
-                                                                                            fontWeight: FontWeight.w600,
-                                                                                          ),
-                                                                                        ),
-                                                                                        Spacer(),
-                                                                                        InkWell(
-                                                                                          child: StreamBuilder<DocumentSnapshot>(
-                                                                                            stream: FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
-                                                                                            builder: (context, snapshot) {
-                                                                                              if (snapshot.hasData) {
-                                                                                                if (snapshot.data!.exists) {
-                                                                                                  return const Icon(
-                                                                                                    Icons.favorite,
-                                                                                                    color: Colors.red,
-                                                                                                    size: 26,
-                                                                                                  );
-                                                                                                } else {
-                                                                                                  return const Icon(
-                                                                                                    Icons.favorite_border,
-                                                                                                    color: Colors.red,
-                                                                                                    size: 26,
-                                                                                                  );
-                                                                                                }
-                                                                                              } else {
-                                                                                                return Container();
-                                                                                              }
-                                                                                            },
-                                                                                          ),
-                                                                                          onTap: () async {
-                                                                                            try {
-                                                                                              await FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).get().then((docSnapshot) {
-                                                                                                if (docSnapshot.exists) {
-                                                                                                  FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).delete();
-                                                                                                  showToast("Unliked");
-                                                                                                } else {
-                                                                                                  FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).set({"id": fullUserId()});
-                                                                                                  showToast("Liked");
-                                                                                                }
-                                                                                              });
-                                                                                            } catch (e) {
-                                                                                              print(e);
-                                                                                            }
-                                                                                          },
-                                                                                        ),
-                                                                                        StreamBuilder<QuerySnapshot>(
-                                                                                          stream: FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").snapshots(),
-                                                                                          builder: (context, snapshot) {
-                                                                                            if (snapshot.hasData) {
-                                                                                              return Text(
-                                                                                                " ${snapshot.data!.docs.length}",
-                                                                                                style: const TextStyle(fontSize: 16, color: Colors.white),
-                                                                                              );
-                                                                                            } else {
-                                                                                              return const Text("0");
-                                                                                            }
-                                                                                          },
-                                                                                        ),
-                                                                                        SizedBox(
-                                                                                          width: 5,
-                                                                                        ),
-                                                                                        InkWell(
-                                                                                          child: StreamBuilder<DocumentSnapshot>(
-                                                                                            stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).snapshots(),
-                                                                                            builder: (context, snapshot) {
-                                                                                              if (snapshot.hasData) {
-                                                                                                if (snapshot.data!.exists) {
-                                                                                                  return const Icon(Icons.library_add_check, size: 26, color: Colors.cyanAccent);
-                                                                                                } else {
-                                                                                                  return const Icon(
-                                                                                                    Icons.library_add_outlined,
-                                                                                                    size: 26,
-                                                                                                    color: Colors.cyanAccent,
-                                                                                                  );
-                                                                                                }
-                                                                                              } else {
-                                                                                                return Container();
-                                                                                              }
-                                                                                            },
-                                                                                          ),
-                                                                                          onTap: () async {
-                                                                                            try {
-                                                                                              await FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).get().then((docSnapshot) {
-                                                                                                if (docSnapshot.exists) {
-                                                                                                  FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
-                                                                                                  showToast("Removed from saved list");
-                                                                                                } else {
-                                                                                                  FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id, name: LabSubjectsData.heading, description: LabSubjectsData.description, photoUrl: LabSubjectsData.PhotoUrl);
-                                                                                                  showToast("${LabSubjectsData.heading} in favorites");
-                                                                                                }
-                                                                                              });
-                                                                                            } catch (e) {
-                                                                                              print(e);
-                                                                                            }
-                                                                                          },
-                                                                                        ),
-                                                                                        SizedBox(
-                                                                                          width: 10,
-                                                                                        )
-                                                                                      ],
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      height: 2,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      LabSubjectsData.description,
-                                                                                      style: const TextStyle(
-                                                                                        fontSize: 13.0,
-                                                                                        color: Colors.lightBlueAccent,
-                                                                                      ),
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      height: 1,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      'Added :${LabSubjectsData.Date}',
-                                                                                      style: const TextStyle(
-                                                                                        fontSize: 9.0,
-                                                                                        color: Colors.white54,
-                                                                                        //   fontWeight: FontWeight.bold,
-                                                                                      ),
-                                                                                    ),
-                                                                                    if (userId() == "gmail.com")
-                                                                                      Padding(
-                                                                                        padding: const EdgeInsets.only(right: 10),
-                                                                                        child: Container(
-                                                                                          decoration: BoxDecoration(
-                                                                                            borderRadius: BorderRadius.circular(15),
-                                                                                            color: Colors.white.withOpacity(0.5),
-                                                                                            border: Border.all(color: Colors.white),
-                                                                                          ),
-                                                                                          child: InkWell(
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                                                                              child: Text("+Add"),
-                                                                                            ),
-                                                                                            onTap: () {
-                                                                                              Navigator.push(
-                                                                                                  context,
-                                                                                                  MaterialPageRoute(
-                                                                                                      builder: (context) => SubjectsCreator(
-                                                                                                            Id: LabSubjectsData.id,
-                                                                                                            heading: LabSubjectsData.heading,
-                                                                                                            description: LabSubjectsData.description,
-                                                                                                            photoUrl: LabSubjectsData.PhotoUrl,
-                                                                                                            mode: "LabSubjects",
-                                                                                                          )));
-                                                                                            },
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                  ],
-                                                                                ))
-                                                                              ],
-                                                                            ),
+                                                                          Column(
+                                                                        children: [
+                                                                          Container(
+                                                                            height:
+                                                                                60,
+                                                                            width:
+                                                                                70,
+                                                                            decoration: BoxDecoration(
+                                                                                color: Colors.white,
+                                                                                borderRadius: BorderRadius.circular(40),
+                                                                                image: DecorationImage(image: FileImage(file), fit: BoxFit.fill)),
                                                                           ),
-                                                                        ),
-                                                                        onTap:
-                                                                            () async {
-                                                                          Navigator.push(
-                                                                              context,
-                                                                              MaterialPageRoute(
-                                                                                  builder: (context) => subjectUnitsData(
-                                                                                        ID: LabSubjectsData.id,
-                                                                                        mode: "LabSubjects",
-                                                                                        name: LabSubjectsData.heading,
-                                                                                        fullName: LabSubjectsData.description,
-                                                                                        photoUrl: LabSubjectsData.PhotoUrl,
-                                                                                      )));
-                                                                        },
-                                                                        onLongPress:
-                                                                            () {
-                                                                          FavouriteLabSubjectsSubjects(
-                                                                              SubjectId: LabSubjectsData.id,
-                                                                              name: LabSubjectsData.heading,
-                                                                              description: LabSubjectsData.description,
-                                                                              photoUrl: LabSubjectsData.PhotoUrl);
-                                                                        },
+                                                                          Center(
+                                                                              child: Text(
+                                                                            "${classess.heading}",
+                                                                            style:
+                                                                                TextStyle(color: Colors.lightBlueAccent),
+                                                                          ))
+                                                                        ],
                                                                       ),
+                                                                      onTap:
+                                                                          () {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                                builder: (context) => ImageZoom(
+                                                                                      url: "",
+                                                                                      file: file,
+                                                                                    )));
+                                                                      },
                                                                     );
                                                                   } else {
                                                                     download(
-                                                                        LabSubjectsData
-                                                                            .PhotoUrl,
-                                                                        "ece_labsubjects");
-                                                                    return Padding(
-                                                                      padding: const EdgeInsets
-                                                                              .only(
-                                                                          bottom:
-                                                                              5,
-                                                                          left:
-                                                                              5,
-                                                                          right:
-                                                                              5),
+                                                                        classess
+                                                                            .photoUrl,
+                                                                        "ece_timetable");
+
+                                                                    return InkWell(
                                                                       child:
-                                                                          InkWell(
-                                                                        child:
-                                                                            Container(
-                                                                          width:
-                                                                              double.infinity,
-                                                                          decoration: BoxDecoration(
-                                                                              color: Colors.black38,
-                                                                              borderRadius: BorderRadius.all(Radius.circular(10))),
-                                                                          child:
-                                                                              SingleChildScrollView(
-                                                                            physics:
-                                                                                const BouncingScrollPhysics(),
-                                                                            child:
-                                                                                Row(
-                                                                              children: [
-                                                                                Container(
-                                                                                  width: 90.0,
-                                                                                  height: 70.0,
-                                                                                  child: CachedNetworkImage(
-                                                                                    imageUrl: LabSubjectsData.PhotoUrl,
-                                                                                    placeholder: (context, url) => CircularProgressIndicator(),
-                                                                                    errorWidget: (context, url, error) => Icon(
-                                                                                      Icons.error,
-                                                                                      color: Colors.red,
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                                const SizedBox(
-                                                                                  width: 10,
-                                                                                ),
-                                                                                Expanded(
-                                                                                    child: Column(
-                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    Row(
-                                                                                      children: [
-                                                                                        Text(
-                                                                                          LabSubjectsData.heading,
-                                                                                          style: const TextStyle(
-                                                                                            fontSize: 20.0,
-                                                                                            color: Colors.orangeAccent,
-                                                                                            fontWeight: FontWeight.w600,
-                                                                                          ),
-                                                                                        ),
-                                                                                        Spacer(),
-                                                                                        InkWell(
-                                                                                          child: StreamBuilder<DocumentSnapshot>(
-                                                                                            stream: FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
-                                                                                            builder: (context, snapshot) {
-                                                                                              if (snapshot.hasData) {
-                                                                                                if (snapshot.data!.exists) {
-                                                                                                  return const Icon(
-                                                                                                    Icons.favorite,
-                                                                                                    color: Colors.red,
-                                                                                                    size: 26,
-                                                                                                  );
-                                                                                                } else {
-                                                                                                  return const Icon(
-                                                                                                    Icons.favorite_border,
-                                                                                                    color: Colors.red,
-                                                                                                    size: 26,
-                                                                                                  );
-                                                                                                }
-                                                                                              } else {
-                                                                                                return Container();
-                                                                                              }
-                                                                                            },
-                                                                                          ),
-                                                                                          onTap: () async {
-                                                                                            try {
-                                                                                              await FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).get().then((docSnapshot) {
-                                                                                                if (docSnapshot.exists) {
-                                                                                                  FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).delete();
-                                                                                                  showToast("Unliked");
-                                                                                                } else {
-                                                                                                  FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).set({"id": fullUserId()});
-                                                                                                  showToast("Liked");
-                                                                                                }
-                                                                                              });
-                                                                                            } catch (e) {
-                                                                                              print(e);
-                                                                                            }
-                                                                                          },
-                                                                                        ),
-                                                                                        StreamBuilder<QuerySnapshot>(
-                                                                                          stream: FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").snapshots(),
-                                                                                          builder: (context, snapshot) {
-                                                                                            if (snapshot.hasData) {
-                                                                                              return Text(
-                                                                                                " ${snapshot.data!.docs.length}",
-                                                                                                style: const TextStyle(fontSize: 16, color: Colors.white),
-                                                                                              );
-                                                                                            } else {
-                                                                                              return const Text("0");
-                                                                                            }
-                                                                                          },
-                                                                                        ),
-                                                                                        SizedBox(
-                                                                                          width: 5,
-                                                                                        ),
-                                                                                        InkWell(
-                                                                                          child: StreamBuilder<DocumentSnapshot>(
-                                                                                            stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).snapshots(),
-                                                                                            builder: (context, snapshot) {
-                                                                                              if (snapshot.hasData) {
-                                                                                                if (snapshot.data!.exists) {
-                                                                                                  return const Icon(Icons.library_add_check, size: 26, color: Colors.cyanAccent);
-                                                                                                } else {
-                                                                                                  return const Icon(
-                                                                                                    Icons.library_add_outlined,
-                                                                                                    size: 26,
-                                                                                                    color: Colors.cyanAccent,
-                                                                                                  );
-                                                                                                }
-                                                                                              } else {
-                                                                                                return Container();
-                                                                                              }
-                                                                                            },
-                                                                                          ),
-                                                                                          onTap: () async {
-                                                                                            try {
-                                                                                              await FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).get().then((docSnapshot) {
-                                                                                                if (docSnapshot.exists) {
-                                                                                                  FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
-                                                                                                  showToast("Removed from saved list");
-                                                                                                } else {
-                                                                                                  FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id, name: LabSubjectsData.heading, description: LabSubjectsData.description, photoUrl: LabSubjectsData.PhotoUrl);
-                                                                                                  showToast("${LabSubjectsData.heading} in favorites");
-                                                                                                }
-                                                                                              });
-                                                                                            } catch (e) {
-                                                                                              print(e);
-                                                                                            }
-                                                                                          },
-                                                                                        ),
-                                                                                        SizedBox(
-                                                                                          width: 10,
-                                                                                        )
-                                                                                      ],
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      height: 2,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      LabSubjectsData.description,
-                                                                                      style: const TextStyle(
-                                                                                        fontSize: 13.0,
-                                                                                        color: Colors.lightBlueAccent,
-                                                                                      ),
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      height: 1,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      'Added :${LabSubjectsData.Date}',
-                                                                                      style: const TextStyle(
-                                                                                        fontSize: 9.0,
-                                                                                        color: Colors.white54,
-                                                                                        //   fontWeight: FontWeight.bold,
-                                                                                      ),
-                                                                                    ),
-                                                                                    if (userId() == "gmail.com")
-                                                                                      Padding(
-                                                                                        padding: const EdgeInsets.only(right: 10),
-                                                                                        child: Container(
-                                                                                          decoration: BoxDecoration(
-                                                                                            borderRadius: BorderRadius.circular(15),
-                                                                                            color: Colors.white.withOpacity(0.5),
-                                                                                            border: Border.all(color: Colors.white),
-                                                                                          ),
-                                                                                          child: InkWell(
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                                                                                              child: Text("+Add"),
-                                                                                            ),
-                                                                                            onTap: () {
-                                                                                              Navigator.push(
-                                                                                                  context,
-                                                                                                  MaterialPageRoute(
-                                                                                                      builder: (context) => SubjectsCreator(
-                                                                                                            Id: LabSubjectsData.id,
-                                                                                                            heading: LabSubjectsData.heading,
-                                                                                                            description: LabSubjectsData.description,
-                                                                                                            photoUrl: LabSubjectsData.PhotoUrl,
-                                                                                                            mode: "LabSubjects",
-                                                                                                          )));
-                                                                                            },
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                  ],
-                                                                                ))
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        onTap:
-                                                                            () async {
-                                                                          Navigator.push(
-                                                                              context,
-                                                                              MaterialPageRoute(
-                                                                                  builder: (context) => subjectUnitsData(
-                                                                                        ID: LabSubjectsData.id,
-                                                                                        mode: "LabSubjects",
-                                                                                        name: LabSubjectsData.heading,
-                                                                                        fullName: LabSubjectsData.description,
-                                                                                        photoUrl: LabSubjectsData.PhotoUrl,
-                                                                                      )));
-                                                                        },
-                                                                        onLongPress:
-                                                                            () {
-                                                                          FavouriteLabSubjectsSubjects(
-                                                                              SubjectId: LabSubjectsData.id,
-                                                                              name: LabSubjectsData.heading,
-                                                                              description: LabSubjectsData.description,
-                                                                              photoUrl: LabSubjectsData.PhotoUrl);
-                                                                        },
+                                                                          Container(
+                                                                        width:
+                                                                            70,
+                                                                        decoration: BoxDecoration(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            borderRadius: BorderRadius.circular(40),
+                                                                            image: DecorationImage(image: NetworkImage(classess.photoUrl), fit: BoxFit.fill)),
+                                                                        child: Center(
+                                                                            child: Text(
+                                                                          "${classess.heading}",
+                                                                          style:
+                                                                              TextStyle(color: Colors.lightBlueAccent),
+                                                                        )),
                                                                       ),
                                                                     );
                                                                   }
-                                                                } else {
-                                                                  return Container();
-                                                                }
-                                                              },
-                                                            ),
-                                                          ],
-                                                        ),
+                                                                },
+                                                                separatorBuilder:
+                                                                    (context,
+                                                                            index) =>
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              1,
+                                                                        )),
                                                       );
-                                                    else
-                                                      return Center(
-                                                          child: Text(
-                                                              "No Lab Subjects For Your Regulation"));
-                                                  }
-                                              }
-                                            },
-                                          ),
-                                      ],
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                    );
-                                  } else {
-                                    return Column(
+                                                    }
+                                                }
+                                              }),
+                                        ],
+                                      ),
+                                    ),
+                                  if (mainsnapshot.data!["reg"]
+                                      .toString()
+                                      .isNotEmpty)
+                                    Row(
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, top: 15),
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                "Regulation : ",
+                                          padding:
+                                              const EdgeInsets.only(left: 20),
+                                          child: Text(
+                                            "Subjects",
+                                            style: TextStyle(
+                                                color: Colors.deepOrangeAccent,
+                                                fontSize: 25,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        InkWell(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  Colors.black.withOpacity(0.5),
+                                              border: Border.all(
+                                                  color: Colors.white
+                                                      .withOpacity(0.3)),
+                                              borderRadius:
+                                                  BorderRadius.circular(25),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10,
+                                                  right: 10,
+                                                  top: 3,
+                                                  bottom: 3),
+                                              child: Text(
+                                                "see more",
                                                 style: TextStyle(
-                                                    color: Colors.deepOrange,
-                                                    fontSize: 25,
-                                                    fontWeight:
-                                                        FontWeight.w500),
+                                                    color: Colors.white,
+                                                    fontSize: 18),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 8),
-                                                child: Text(
-                                                  "- Year - Sem",
-                                                  style: TextStyle(
-                                                      color: Colors
-                                                          .deepOrangeAccent,
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Subjects()));
+                                          },
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        )
+                                      ],
+                                    ),
+                                  if (mainsnapshot.data!["reg"]
+                                      .toString()
+                                      .isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10,
+                                          left: 20,
+                                          right: 10,
+                                          bottom: 5),
+                                      child:
+                                          StreamBuilder<List<FlashConvertor>>(
+                                              stream: readFlashNews(),
+                                              builder: (context, snapshot) {
+                                                final Favourites =
+                                                    snapshot.data;
+                                                switch (
+                                                    snapshot.connectionState) {
+                                                  case ConnectionState.waiting:
+                                                    return const Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                      strokeWidth: 0.3,
+                                                      color: Colors.cyan,
+                                                    ));
+                                                  default:
+                                                    if (snapshot.hasError) {
+                                                      return Center(
+                                                          child: Text("Error"));
+                                                    } else {
+                                                      if (Favourites!.length >
+                                                          0)
+                                                        return ListView.builder(
+                                                          physics:
+                                                              const BouncingScrollPhysics(),
+                                                          shrinkWrap: true,
+                                                          itemCount:
+                                                              Favourites.length,
+                                                          itemBuilder: (context,
+                                                              int index) {
+                                                            final SubjectsData =
+                                                                Favourites[
+                                                                    index];
+                                                            if (SubjectsData
+                                                                .regulation
+                                                                .toString()
+                                                                .startsWith(
+                                                                    mainsnapshot
+                                                                        .data![
+                                                                            "reg"]
+                                                                        .toString())) {
+                                                              final Uri uri =
+                                                                  Uri.parse(
+                                                                      SubjectsData
+                                                                          .PhotoUrl);
+                                                              final String
+                                                                  fileName =
+                                                                  uri.pathSegments
+                                                                      .last;
+                                                              var name =
+                                                                  fileName
+                                                                      .split(
+                                                                          "/")
+                                                                      .last;
+                                                              final file = File(
+                                                                  "${folderPath}/ece_subjects/$name");
+                                                              if (file
+                                                                  .existsSync()) {
+                                                                return InkWell(
+                                                                  child:
+                                                                      Container(
+                                                                    width: double
+                                                                        .infinity,
+                                                                    decoration: BoxDecoration(
+                                                                        color: Colors
+                                                                            .black38,
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(10))),
+                                                                    child:
+                                                                        SingleChildScrollView(
+                                                                      physics:
+                                                                          const BouncingScrollPhysics(),
+                                                                      child:
+                                                                          Row(
+                                                                        children: [
+                                                                          Container(
+                                                                            width:
+                                                                                90.0,
+                                                                            height:
+                                                                                70.0,
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                                                              color: Colors.black,
+                                                                              image: DecorationImage(
+                                                                                image: FileImage(file),
+                                                                                fit: BoxFit.cover,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                            width:
+                                                                                10,
+                                                                          ),
+                                                                          Expanded(
+                                                                              child: Column(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.center,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    SubjectsData.heading,
+                                                                                    style: const TextStyle(
+                                                                                      fontSize: 20.0,
+                                                                                      color: Colors.orangeAccent,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                    ),
+                                                                                  ),
+                                                                                  Spacer(),
+                                                                                  InkWell(
+                                                                                    child: StreamBuilder<DocumentSnapshot>(
+                                                                                      stream: FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+                                                                                      builder: (context, snapshot) {
+                                                                                        if (snapshot.hasData) {
+                                                                                          if (snapshot.data!.exists) {
+                                                                                            return const Icon(
+                                                                                              Icons.favorite,
+                                                                                              color: Colors.red,
+                                                                                              size: 26,
+                                                                                            );
+                                                                                          } else {
+                                                                                            return const Icon(
+                                                                                              Icons.favorite_border,
+                                                                                              color: Colors.red,
+                                                                                              size: 26,
+                                                                                            );
+                                                                                          }
+                                                                                        } else {
+                                                                                          return Container();
+                                                                                        }
+                                                                                      },
+                                                                                    ),
+                                                                                    onTap: () async {
+                                                                                      try {
+                                                                                        await FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).get().then((docSnapshot) {
+                                                                                          if (docSnapshot.exists) {
+                                                                                            FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).delete();
+                                                                                            showToast("Unliked");
+                                                                                          } else {
+                                                                                            FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).set({
+                                                                                              "id": fullUserId()
+                                                                                            });
+                                                                                            showToast("Liked");
+                                                                                          }
+                                                                                        });
+                                                                                      } catch (e) {
+                                                                                        print(e);
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  StreamBuilder<QuerySnapshot>(
+                                                                                    stream: FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").snapshots(),
+                                                                                    builder: (context, snapshot) {
+                                                                                      if (snapshot.hasData) {
+                                                                                        return Text(
+                                                                                          " ${snapshot.data!.docs.length}",
+                                                                                          style: const TextStyle(fontSize: 16, color: Colors.white),
+                                                                                        );
+                                                                                      } else {
+                                                                                        return const Text("0");
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    width: 5,
+                                                                                  ),
+                                                                                  InkWell(
+                                                                                    child: StreamBuilder<DocumentSnapshot>(
+                                                                                      stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
+                                                                                      builder: (context, snapshot) {
+                                                                                        if (snapshot.hasData) {
+                                                                                          if (snapshot.data!.exists) {
+                                                                                            return const Icon(Icons.library_add_check, size: 26, color: Colors.cyanAccent);
+                                                                                          } else {
+                                                                                            return const Icon(
+                                                                                              Icons.library_add_outlined,
+                                                                                              size: 26,
+                                                                                              color: Colors.cyanAccent,
+                                                                                            );
+                                                                                          }
+                                                                                        } else {
+                                                                                          return Container();
+                                                                                        }
+                                                                                      },
+                                                                                    ),
+                                                                                    onTap: () async {
+                                                                                      try {
+                                                                                        await FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).get().then((docSnapshot) {
+                                                                                          if (docSnapshot.exists) {
+                                                                                            FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
+                                                                                            showToast("Removed from saved list");
+                                                                                          } else {
+                                                                                            FavouriteSubjects(SubjectId: SubjectsData.id, name: SubjectsData.heading, description: SubjectsData.description, photoUrl: SubjectsData.PhotoUrl);
+                                                                                            showToast("${SubjectsData.heading} in favorites");
+                                                                                          }
+                                                                                        });
+                                                                                      } catch (e) {
+                                                                                        print(e);
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              SizedBox(
+                                                                                height: 2,
+                                                                              ),
+                                                                              Text(
+                                                                                SubjectsData.description,
+                                                                                style: const TextStyle(fontSize: 13.0, color: Colors.lightBlueAccent),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                height: 1,
+                                                                              ),
+                                                                              Text(
+                                                                                'Added :${SubjectsData.Date}',
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 9.0,
+                                                                                  color: Colors.white54,
+                                                                                  //   fontWeight: FontWeight.bold,
+                                                                                ),
+                                                                              ),
+                                                                              if (userId() == "gmail.com")
+                                                                                Padding(
+                                                                                  padding: const EdgeInsets.only(right: 10),
+                                                                                  child: Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      borderRadius: BorderRadius.circular(15),
+                                                                                      color: Colors.black.withOpacity(0.3),
+                                                                                      border: Border.all(color: Colors.white.withOpacity(0.5)),
+                                                                                    ),
+                                                                                    width: 70,
+                                                                                    child: InkWell(
+                                                                                      child: Row(
+                                                                                        children: [
+                                                                                          SizedBox(
+                                                                                            width: 5,
+                                                                                          ),
+                                                                                          Icon(
+                                                                                            Icons.edit,
+                                                                                            color: Colors.white,
+                                                                                          ),
+                                                                                          Padding(
+                                                                                            padding: const EdgeInsets.only(left: 3, right: 3),
+                                                                                            child: Text(
+                                                                                              "Edit",
+                                                                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 18),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      onTap: () {
+                                                                                        Navigator.push(
+                                                                                            context,
+                                                                                            MaterialPageRoute(
+                                                                                                builder: (context) => SubjectsCreator(
+                                                                                                      Id: SubjectsData.id,
+                                                                                                      heading: SubjectsData.heading,
+                                                                                                      description: SubjectsData.description,
+                                                                                                      photoUrl: SubjectsData.PhotoUrl,
+                                                                                                      mode: "Subjects",
+                                                                                                    )));
+                                                                                      },
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                            ],
+                                                                          ))
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  onTap:
+                                                                      () async {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => subjectUnitsData(
+                                                                                  ID: SubjectsData.id,
+                                                                                  mode: "Subjects",
+                                                                                  name: SubjectsData.heading,
+                                                                                  fullName: SubjectsData.description,
+                                                                                  photoUrl: SubjectsData.PhotoUrl,
+                                                                                )));
+                                                                  },
+                                                                );
+                                                              } else {
+                                                                download(
+                                                                    SubjectsData
+                                                                        .PhotoUrl,
+                                                                    "ece_subjects");
+                                                                return InkWell(
+                                                                  child:
+                                                                      Container(
+                                                                    width: double
+                                                                        .infinity,
+                                                                    decoration: BoxDecoration(
+                                                                        color: Colors
+                                                                            .black38,
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(10))),
+                                                                    child:
+                                                                        SingleChildScrollView(
+                                                                      physics:
+                                                                          const BouncingScrollPhysics(),
+                                                                      child:
+                                                                          Row(
+                                                                        children: [
+                                                                          Container(
+                                                                            width:
+                                                                                90.0,
+                                                                            height:
+                                                                                70.0,
+                                                                            child:
+                                                                                CachedNetworkImage(
+                                                                              imageUrl: SubjectsData.PhotoUrl,
+                                                                              placeholder: (context, url) => CircularProgressIndicator(),
+                                                                              errorWidget: (context, url, error) => Icon(Icons.error),
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                            width:
+                                                                                10,
+                                                                          ),
+                                                                          Expanded(
+                                                                              child: Column(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.center,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    SubjectsData.heading,
+                                                                                    style: const TextStyle(
+                                                                                      fontSize: 20.0,
+                                                                                      color: Colors.orangeAccent,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                    ),
+                                                                                  ),
+                                                                                  Spacer(),
+                                                                                  InkWell(
+                                                                                    child: StreamBuilder<DocumentSnapshot>(
+                                                                                      stream: FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+                                                                                      builder: (context, snapshot) {
+                                                                                        if (snapshot.hasData) {
+                                                                                          if (snapshot.data!.exists) {
+                                                                                            return const Icon(
+                                                                                              Icons.favorite,
+                                                                                              color: Colors.red,
+                                                                                              size: 26,
+                                                                                            );
+                                                                                          } else {
+                                                                                            return const Icon(
+                                                                                              Icons.favorite_border,
+                                                                                              color: Colors.red,
+                                                                                              size: 26,
+                                                                                            );
+                                                                                          }
+                                                                                        } else {
+                                                                                          return Container();
+                                                                                        }
+                                                                                      },
+                                                                                    ),
+                                                                                    onTap: () async {
+                                                                                      try {
+                                                                                        await FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).get().then((docSnapshot) {
+                                                                                          if (docSnapshot.exists) {
+                                                                                            FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).delete();
+                                                                                            showToast("Unliked");
+                                                                                          } else {
+                                                                                            FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).set({
+                                                                                              "id": fullUserId()
+                                                                                            });
+                                                                                            showToast("Liked");
+                                                                                          }
+                                                                                        });
+                                                                                      } catch (e) {
+                                                                                        print(e);
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  StreamBuilder<QuerySnapshot>(
+                                                                                    stream: FirebaseFirestore.instance.collection('ECE').doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").snapshots(),
+                                                                                    builder: (context, snapshot) {
+                                                                                      if (snapshot.hasData) {
+                                                                                        return Text(
+                                                                                          " ${snapshot.data!.docs.length}",
+                                                                                          style: const TextStyle(fontSize: 16, color: Colors.white),
+                                                                                        );
+                                                                                      } else {
+                                                                                        return const Text("0");
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    width: 5,
+                                                                                  ),
+                                                                                  InkWell(
+                                                                                    child: StreamBuilder<DocumentSnapshot>(
+                                                                                      stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).snapshots(),
+                                                                                      builder: (context, snapshot) {
+                                                                                        if (snapshot.hasData) {
+                                                                                          if (snapshot.data!.exists) {
+                                                                                            return const Icon(Icons.library_add_check, size: 26, color: Colors.cyanAccent);
+                                                                                          } else {
+                                                                                            return const Icon(
+                                                                                              Icons.library_add_outlined,
+                                                                                              size: 26,
+                                                                                              color: Colors.cyanAccent,
+                                                                                            );
+                                                                                          }
+                                                                                        } else {
+                                                                                          return Container();
+                                                                                        }
+                                                                                      },
+                                                                                    ),
+                                                                                    onTap: () async {
+                                                                                      try {
+                                                                                        await FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).get().then((docSnapshot) {
+                                                                                          if (docSnapshot.exists) {
+                                                                                            FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
+                                                                                            showToast("Removed from saved list");
+                                                                                          } else {
+                                                                                            FavouriteSubjects(SubjectId: SubjectsData.id, name: SubjectsData.heading, description: SubjectsData.description, photoUrl: SubjectsData.PhotoUrl);
+                                                                                            showToast("${SubjectsData.heading} in favorites");
+                                                                                          }
+                                                                                        });
+                                                                                      } catch (e) {
+                                                                                        print(e);
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              SizedBox(
+                                                                                height: 2,
+                                                                              ),
+                                                                              Text(
+                                                                                SubjectsData.description,
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 13.0,
+                                                                                  color: Colors.lightBlueAccent,
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                height: 1,
+                                                                              ),
+                                                                              Text(
+                                                                                'Added :${SubjectsData.Date}',
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 9.0,
+                                                                                  color: Colors.white54,
+                                                                                  //   fontWeight: FontWeight.bold,
+                                                                                ),
+                                                                              ),
+                                                                              if (userId() == "gmail.com")
+                                                                                Padding(
+                                                                                  padding: const EdgeInsets.only(right: 10),
+                                                                                  child: Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      borderRadius: BorderRadius.circular(15),
+                                                                                      color: Colors.black.withOpacity(0.3),
+                                                                                      border: Border.all(color: Colors.white.withOpacity(0.5)),
+                                                                                    ),
+                                                                                    width: 70,
+                                                                                    child: InkWell(
+                                                                                      child: Row(
+                                                                                        children: [
+                                                                                          SizedBox(
+                                                                                            width: 5,
+                                                                                          ),
+                                                                                          Icon(
+                                                                                            Icons.edit,
+                                                                                            color: Colors.white,
+                                                                                          ),
+                                                                                          Padding(
+                                                                                            padding: const EdgeInsets.only(left: 3, right: 3),
+                                                                                            child: Text(
+                                                                                              "Edit",
+                                                                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 18),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      onTap: () {
+                                                                                        Navigator.push(
+                                                                                            context,
+                                                                                            MaterialPageRoute(
+                                                                                                builder: (context) => SubjectsCreator(
+                                                                                                      Id: SubjectsData.id,
+                                                                                                      heading: SubjectsData.heading,
+                                                                                                      description: SubjectsData.description,
+                                                                                                      photoUrl: SubjectsData.PhotoUrl,
+                                                                                                      mode: "Subjects",
+                                                                                                    )));
+                                                                                      },
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                            ],
+                                                                          ))
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  onTap:
+                                                                      () async {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => subjectUnitsData(
+                                                                                  ID: SubjectsData.id,
+                                                                                  mode: "Subjects",
+                                                                                  name: SubjectsData.heading,
+                                                                                  fullName: SubjectsData.description,
+                                                                                  photoUrl: SubjectsData.PhotoUrl,
+                                                                                )));
+                                                                  },
+                                                                );
+                                                              }
+                                                            } else {
+                                                              return Container();
+                                                            }
+                                                          },
+                                                        );
+                                                      else
+                                                        return Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .tealAccent),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Text(
+                                                                "No Subjects in this Regulation"),
+                                                          ),
+                                                        );
+                                                    }
+                                                }
+                                              }),
+                                    )
+                                  else
+                                    Center(
+                                        child: Column(
+                                      children: [
+                                        Text(
+                                          "Regulation and Year is Not Selected for Subjects",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        InkWell(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.white54,
+                                              border: Border.all(
+                                                  color: Colors.white),
+                                              borderRadius:
+                                                  BorderRadius.circular(25),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10,
+                                                  right: 10,
+                                                  top: 5,
+                                                  bottom: 5),
+                                              child: Text("see more"),
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Subjects()));
+                                          },
+                                        ),
+                                      ],
+                                    )),
+                                  //Lab Subjects
+                                  if (mainsnapshot.data!["reg"]
+                                      .toString()
+                                      .isNotEmpty)
+                                    StreamBuilder<List<LabSubjectsConvertor>>(
+                                      stream: readLabSubjects(),
+                                      builder: (context, snapshot) {
+                                        final Subjects = snapshot.data;
+                                        switch (snapshot.connectionState) {
+                                          case ConnectionState.waiting:
+                                            return const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                              strokeWidth: 0.3,
+                                              color: Colors.cyan,
+                                            ));
+                                          default:
+                                            if (snapshot.hasError) {
+                                              return Text(
+                                                  "Error with fireBase");
+                                            } else {
+                                              if (Subjects!.length > 0)
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 20,
+                                                          top: 10,
+                                                          bottom: 10,
+                                                          right: 10),
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            "Lab Subjects",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .deepOrangeAccent,
+                                                                fontSize: 25,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500),
+                                                          ),
+                                                          Spacer(),
+                                                          InkWell(
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withOpacity(
+                                                                        0.7),
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .white
+                                                                        .withOpacity(
+                                                                            0.3)),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            25),
+                                                              ),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            10,
+                                                                        right:
+                                                                            10,
+                                                                        top: 3,
+                                                                        bottom:
+                                                                            3),
+                                                                child: Text(
+                                                                  "see more",
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize:
+                                                                          18,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              const LabSubjects()));
+                                                            },
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          )
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      ListView.builder(
+                                                        physics:
+                                                            const BouncingScrollPhysics(),
+                                                        shrinkWrap: true,
+                                                        itemCount:
+                                                            Subjects.length,
+                                                        itemBuilder: (context,
+                                                            int index) {
+                                                          final LabSubjectsData =
+                                                              Subjects[index];
+                                                          if (LabSubjectsData
+                                                              .regulation
+                                                              .toString()
+                                                              .startsWith(
+                                                                  mainsnapshot
+                                                                      .data![
+                                                                          "reg"]
+                                                                      .toString())) {
+                                                            final Uri uri = Uri.parse(
+                                                                LabSubjectsData
+                                                                    .PhotoUrl);
+                                                            final String
+                                                                fileName =
+                                                                uri.pathSegments
+                                                                    .last;
+                                                            var name = fileName
+                                                                .split("/")
+                                                                .last;
+                                                            final file = File(
+                                                                "${folderPath}/ece_labsubjects/$name");
+                                                            if (file
+                                                                .existsSync()) {
+                                                              return Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        bottom:
+                                                                            5,
+                                                                        left: 5,
+                                                                        right:
+                                                                            5),
+                                                                child: InkWell(
+                                                                  child:
+                                                                      Container(
+                                                                    width: double
+                                                                        .infinity,
+                                                                    decoration: BoxDecoration(
+                                                                        color: Colors
+                                                                            .black38,
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(10))),
+                                                                    child:
+                                                                        SingleChildScrollView(
+                                                                      physics:
+                                                                          const BouncingScrollPhysics(),
+                                                                      child:
+                                                                          Row(
+                                                                        children: [
+                                                                          Container(
+                                                                            width:
+                                                                                90.0,
+                                                                            height:
+                                                                                70.0,
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                                                              color: Colors.redAccent,
+                                                                              image: DecorationImage(
+                                                                                image: FileImage(file),
+                                                                                fit: BoxFit.cover,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                            width:
+                                                                                10,
+                                                                          ),
+                                                                          Expanded(
+                                                                              child: Column(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.center,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    LabSubjectsData.heading,
+                                                                                    style: const TextStyle(
+                                                                                      fontSize: 20.0,
+                                                                                      color: Colors.orangeAccent,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                    ),
+                                                                                  ),
+                                                                                  Spacer(),
+                                                                                  InkWell(
+                                                                                    child: StreamBuilder<DocumentSnapshot>(
+                                                                                      stream: FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+                                                                                      builder: (context, snapshot) {
+                                                                                        if (snapshot.hasData) {
+                                                                                          if (snapshot.data!.exists) {
+                                                                                            return const Icon(
+                                                                                              Icons.favorite,
+                                                                                              color: Colors.red,
+                                                                                              size: 26,
+                                                                                            );
+                                                                                          } else {
+                                                                                            return const Icon(
+                                                                                              Icons.favorite_border,
+                                                                                              color: Colors.red,
+                                                                                              size: 26,
+                                                                                            );
+                                                                                          }
+                                                                                        } else {
+                                                                                          return Container();
+                                                                                        }
+                                                                                      },
+                                                                                    ),
+                                                                                    onTap: () async {
+                                                                                      try {
+                                                                                        await FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).get().then((docSnapshot) {
+                                                                                          if (docSnapshot.exists) {
+                                                                                            FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).delete();
+                                                                                            showToast("Unliked");
+                                                                                          } else {
+                                                                                            FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).set({
+                                                                                              "id": fullUserId()
+                                                                                            });
+                                                                                            showToast("Liked");
+                                                                                          }
+                                                                                        });
+                                                                                      } catch (e) {
+                                                                                        print(e);
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  StreamBuilder<QuerySnapshot>(
+                                                                                    stream: FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").snapshots(),
+                                                                                    builder: (context, snapshot) {
+                                                                                      if (snapshot.hasData) {
+                                                                                        return Text(
+                                                                                          " ${snapshot.data!.docs.length}",
+                                                                                          style: const TextStyle(fontSize: 16, color: Colors.white),
+                                                                                        );
+                                                                                      } else {
+                                                                                        return const Text("0");
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    width: 5,
+                                                                                  ),
+                                                                                  InkWell(
+                                                                                    child: StreamBuilder<DocumentSnapshot>(
+                                                                                      stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).snapshots(),
+                                                                                      builder: (context, snapshot) {
+                                                                                        if (snapshot.hasData) {
+                                                                                          if (snapshot.data!.exists) {
+                                                                                            return const Icon(Icons.library_add_check, size: 26, color: Colors.cyanAccent);
+                                                                                          } else {
+                                                                                            return const Icon(
+                                                                                              Icons.library_add_outlined,
+                                                                                              size: 26,
+                                                                                              color: Colors.cyanAccent,
+                                                                                            );
+                                                                                          }
+                                                                                        } else {
+                                                                                          return Container();
+                                                                                        }
+                                                                                      },
+                                                                                    ),
+                                                                                    onTap: () async {
+                                                                                      try {
+                                                                                        await FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).get().then((docSnapshot) {
+                                                                                          if (docSnapshot.exists) {
+                                                                                            FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
+                                                                                            showToast("Removed from saved list");
+                                                                                          } else {
+                                                                                            FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id, name: LabSubjectsData.heading, description: LabSubjectsData.description, photoUrl: LabSubjectsData.PhotoUrl);
+                                                                                            showToast("${LabSubjectsData.heading} in favorites");
+                                                                                          }
+                                                                                        });
+                                                                                      } catch (e) {
+                                                                                        print(e);
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    width: 10,
+                                                                                  )
+                                                                                ],
+                                                                              ),
+                                                                              SizedBox(
+                                                                                height: 2,
+                                                                              ),
+                                                                              Text(
+                                                                                LabSubjectsData.description,
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 13.0,
+                                                                                  color: Colors.lightBlueAccent,
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                height: 1,
+                                                                              ),
+                                                                              Text(
+                                                                                'Added :${LabSubjectsData.Date}',
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 9.0,
+                                                                                  color: Colors.white54,
+                                                                                  //   fontWeight: FontWeight.bold,
+                                                                                ),
+                                                                              ),
+                                                                              if (userId() == "gmail.com")
+                                                                                Padding(
+                                                                                  padding: const EdgeInsets.only(right: 10),
+                                                                                  child: Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      borderRadius: BorderRadius.circular(15),
+                                                                                      color: Colors.white.withOpacity(0.5),
+                                                                                      border: Border.all(color: Colors.white),
+                                                                                    ),
+                                                                                    child: InkWell(
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                                                                        child: Text("+Add"),
+                                                                                      ),
+                                                                                      onTap: () {
+                                                                                        Navigator.push(
+                                                                                            context,
+                                                                                            MaterialPageRoute(
+                                                                                                builder: (context) => SubjectsCreator(
+                                                                                                      Id: LabSubjectsData.id,
+                                                                                                      heading: LabSubjectsData.heading,
+                                                                                                      description: LabSubjectsData.description,
+                                                                                                      photoUrl: LabSubjectsData.PhotoUrl,
+                                                                                                      mode: "LabSubjects",
+                                                                                                    )));
+                                                                                      },
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                            ],
+                                                                          ))
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  onTap:
+                                                                      () async {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => subjectUnitsData(
+                                                                                  ID: LabSubjectsData.id,
+                                                                                  mode: "LabSubjects",
+                                                                                  name: LabSubjectsData.heading,
+                                                                                  fullName: LabSubjectsData.description,
+                                                                                  photoUrl: LabSubjectsData.PhotoUrl,
+                                                                                )));
+                                                                  },
+                                                                  onLongPress:
+                                                                      () {
+                                                                    FavouriteLabSubjectsSubjects(
+                                                                        SubjectId:
+                                                                            LabSubjectsData
+                                                                                .id,
+                                                                        name: LabSubjectsData
+                                                                            .heading,
+                                                                        description:
+                                                                            LabSubjectsData
+                                                                                .description,
+                                                                        photoUrl:
+                                                                            LabSubjectsData.PhotoUrl);
+                                                                  },
+                                                                ),
+                                                              );
+                                                            } else {
+                                                              download(
+                                                                  LabSubjectsData
+                                                                      .PhotoUrl,
+                                                                  "ece_labsubjects");
+                                                              return Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        bottom:
+                                                                            5,
+                                                                        left: 5,
+                                                                        right:
+                                                                            5),
+                                                                child: InkWell(
+                                                                  child:
+                                                                      Container(
+                                                                    width: double
+                                                                        .infinity,
+                                                                    decoration: BoxDecoration(
+                                                                        color: Colors
+                                                                            .black38,
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(10))),
+                                                                    child:
+                                                                        SingleChildScrollView(
+                                                                      physics:
+                                                                          const BouncingScrollPhysics(),
+                                                                      child:
+                                                                          Row(
+                                                                        children: [
+                                                                          Container(
+                                                                            width:
+                                                                                90.0,
+                                                                            height:
+                                                                                70.0,
+                                                                            child:
+                                                                                CachedNetworkImage(
+                                                                              imageUrl: LabSubjectsData.PhotoUrl,
+                                                                              placeholder: (context, url) => CircularProgressIndicator(),
+                                                                              errorWidget: (context, url, error) => Icon(
+                                                                                Icons.error,
+                                                                                color: Colors.red,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                            width:
+                                                                                10,
+                                                                          ),
+                                                                          Expanded(
+                                                                              child: Column(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.center,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    LabSubjectsData.heading,
+                                                                                    style: const TextStyle(
+                                                                                      fontSize: 20.0,
+                                                                                      color: Colors.orangeAccent,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                    ),
+                                                                                  ),
+                                                                                  Spacer(),
+                                                                                  InkWell(
+                                                                                    child: StreamBuilder<DocumentSnapshot>(
+                                                                                      stream: FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).snapshots(),
+                                                                                      builder: (context, snapshot) {
+                                                                                        if (snapshot.hasData) {
+                                                                                          if (snapshot.data!.exists) {
+                                                                                            return const Icon(
+                                                                                              Icons.favorite,
+                                                                                              color: Colors.red,
+                                                                                              size: 26,
+                                                                                            );
+                                                                                          } else {
+                                                                                            return const Icon(
+                                                                                              Icons.favorite_border,
+                                                                                              color: Colors.red,
+                                                                                              size: 26,
+                                                                                            );
+                                                                                          }
+                                                                                        } else {
+                                                                                          return Container();
+                                                                                        }
+                                                                                      },
+                                                                                    ),
+                                                                                    onTap: () async {
+                                                                                      try {
+                                                                                        await FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).get().then((docSnapshot) {
+                                                                                          if (docSnapshot.exists) {
+                                                                                            FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).delete();
+                                                                                            showToast("Unliked");
+                                                                                          } else {
+                                                                                            FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).set({
+                                                                                              "id": fullUserId()
+                                                                                            });
+                                                                                            showToast("Liked");
+                                                                                          }
+                                                                                        });
+                                                                                      } catch (e) {
+                                                                                        print(e);
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  StreamBuilder<QuerySnapshot>(
+                                                                                    stream: FirebaseFirestore.instance.collection('ECE').doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").snapshots(),
+                                                                                    builder: (context, snapshot) {
+                                                                                      if (snapshot.hasData) {
+                                                                                        return Text(
+                                                                                          " ${snapshot.data!.docs.length}",
+                                                                                          style: const TextStyle(fontSize: 16, color: Colors.white),
+                                                                                        );
+                                                                                      } else {
+                                                                                        return const Text("0");
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    width: 5,
+                                                                                  ),
+                                                                                  InkWell(
+                                                                                    child: StreamBuilder<DocumentSnapshot>(
+                                                                                      stream: FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).snapshots(),
+                                                                                      builder: (context, snapshot) {
+                                                                                        if (snapshot.hasData) {
+                                                                                          if (snapshot.data!.exists) {
+                                                                                            return const Icon(Icons.library_add_check, size: 26, color: Colors.cyanAccent);
+                                                                                          } else {
+                                                                                            return const Icon(
+                                                                                              Icons.library_add_outlined,
+                                                                                              size: 26,
+                                                                                              color: Colors.cyanAccent,
+                                                                                            );
+                                                                                          }
+                                                                                        } else {
+                                                                                          return Container();
+                                                                                        }
+                                                                                      },
+                                                                                    ),
+                                                                                    onTap: () async {
+                                                                                      try {
+                                                                                        await FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).get().then((docSnapshot) {
+                                                                                          if (docSnapshot.exists) {
+                                                                                            FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
+                                                                                            showToast("Removed from saved list");
+                                                                                          } else {
+                                                                                            FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id, name: LabSubjectsData.heading, description: LabSubjectsData.description, photoUrl: LabSubjectsData.PhotoUrl);
+                                                                                            showToast("${LabSubjectsData.heading} in favorites");
+                                                                                          }
+                                                                                        });
+                                                                                      } catch (e) {
+                                                                                        print(e);
+                                                                                      }
+                                                                                    },
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    width: 10,
+                                                                                  )
+                                                                                ],
+                                                                              ),
+                                                                              SizedBox(
+                                                                                height: 2,
+                                                                              ),
+                                                                              Text(
+                                                                                LabSubjectsData.description,
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 13.0,
+                                                                                  color: Colors.lightBlueAccent,
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                height: 1,
+                                                                              ),
+                                                                              Text(
+                                                                                'Added :${LabSubjectsData.Date}',
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 9.0,
+                                                                                  color: Colors.white54,
+                                                                                  //   fontWeight: FontWeight.bold,
+                                                                                ),
+                                                                              ),
+                                                                              if (userId() == "gmail.com")
+                                                                                Padding(
+                                                                                  padding: const EdgeInsets.only(right: 10),
+                                                                                  child: Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      borderRadius: BorderRadius.circular(15),
+                                                                                      color: Colors.white.withOpacity(0.5),
+                                                                                      border: Border.all(color: Colors.white),
+                                                                                    ),
+                                                                                    child: InkWell(
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                                                                        child: Text("+Add"),
+                                                                                      ),
+                                                                                      onTap: () {
+                                                                                        Navigator.push(
+                                                                                            context,
+                                                                                            MaterialPageRoute(
+                                                                                                builder: (context) => SubjectsCreator(
+                                                                                                      Id: LabSubjectsData.id,
+                                                                                                      heading: LabSubjectsData.heading,
+                                                                                                      description: LabSubjectsData.description,
+                                                                                                      photoUrl: LabSubjectsData.PhotoUrl,
+                                                                                                      mode: "LabSubjects",
+                                                                                                    )));
+                                                                                      },
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                            ],
+                                                                          ))
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  onTap:
+                                                                      () async {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => subjectUnitsData(
+                                                                                  ID: LabSubjectsData.id,
+                                                                                  mode: "LabSubjects",
+                                                                                  name: LabSubjectsData.heading,
+                                                                                  fullName: LabSubjectsData.description,
+                                                                                  photoUrl: LabSubjectsData.PhotoUrl,
+                                                                                )));
+                                                                  },
+                                                                  onLongPress:
+                                                                      () {
+                                                                    FavouriteLabSubjectsSubjects(
+                                                                        SubjectId:
+                                                                            LabSubjectsData
+                                                                                .id,
+                                                                        name: LabSubjectsData
+                                                                            .heading,
+                                                                        description:
+                                                                            LabSubjectsData
+                                                                                .description,
+                                                                        photoUrl:
+                                                                            LabSubjectsData.PhotoUrl);
+                                                                  },
+                                                                ),
+                                                              );
+                                                            }
+                                                          } else {
+                                                            return Container();
+                                                          }
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              else
+                                                return Center(
+                                                    child: Text(
+                                                        "No Lab Subjects For Your Regulation"));
+                                            }
+                                        }
+                                      },
+                                    ),
+                                ],
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                              );
+                            } else {
+                              return Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, top: 15),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Regulation : ",
+                                          style: TextStyle(
+                                              color: Colors.deepOrange,
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 8),
+                                          child: Text(
+                                            "- Year - Sem",
+                                            style: TextStyle(
+                                                color: Colors.deepOrangeAccent,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        InkWell(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              color: Colors.red.withOpacity(1),
+                                              border: Border.all(
+                                                  color: Colors.white),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10,
+                                                  right: 10,
+                                                  top: 5,
+                                                  bottom: 5),
+                                              child: Text(
+                                                "Change",
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.white),
                                               ),
-                                              Spacer(),
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return Dialog(
+                                                  backgroundColor: Colors.black
+                                                      .withOpacity(0.1),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20)),
+                                                  elevation: 16,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Colors.white
+                                                              .withOpacity(
+                                                                  0.5)),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    child: ListView(
+                                                      physics:
+                                                          BouncingScrollPhysics(),
+                                                      shrinkWrap: true,
+                                                      children: <Widget>[
+                                                        const Center(
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    8.0),
+                                                            child: Text(
+                                                              "Select Regulation and Year",
+                                                              style: TextStyle(
+                                                                  fontSize: 22,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: Colors
+                                                                      .orange),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        StreamBuilder<
+                                                                List<
+                                                                    RegulationConvertor>>(
+                                                            stream:
+                                                                readRegulation(),
+                                                            builder: (context,
+                                                                snapshot) {
+                                                              final user =
+                                                                  snapshot.data;
+                                                              switch (snapshot
+                                                                  .connectionState) {
+                                                                case ConnectionState
+                                                                    .waiting:
+                                                                  return const Center(
+                                                                      child:
+                                                                          CircularProgressIndicator(
+                                                                    strokeWidth:
+                                                                        0.3,
+                                                                    color: Colors
+                                                                        .cyan,
+                                                                  ));
+                                                                default:
+                                                                  if (snapshot
+                                                                      .hasError) {
+                                                                    return const Center(
+                                                                        child: Text(
+                                                                            'Error with TextBooks Data or\n Check Internet Connection'));
+                                                                  } else {
+                                                                    return ListView.separated(
+                                                                        physics: const BouncingScrollPhysics(),
+                                                                        shrinkWrap: true,
+                                                                        itemCount: user!.length,
+                                                                        itemBuilder: (context, int index) {
+                                                                          final SubjectsData =
+                                                                              user[index];
+                                                                          return Column(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.only(left: 10, bottom: 5),
+                                                                                child: Row(
+                                                                                  children: [
+                                                                                    Text(
+                                                                                      "${SubjectsData.heading}",
+                                                                                      style: TextStyle(color: Colors.white, fontSize: 30),
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      width: 10,
+                                                                                    ),
+                                                                                    InkWell(
+                                                                                      child: Container(
+                                                                                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
+                                                                                        child: Row(
+                                                                                          children: [
+                                                                                            Text(
+                                                                                              " ADD",
+                                                                                              style: TextStyle(color: Colors.redAccent, fontSize: 20),
+                                                                                            ),
+                                                                                            Icon(
+                                                                                              Icons.add,
+                                                                                              color: Colors.red,
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      ),
+                                                                                      onTap: () {
+                                                                                        showDialog(
+                                                                                          context: context,
+                                                                                          builder: (context) {
+                                                                                            return Dialog(
+                                                                                              backgroundColor: Colors.black.withOpacity(0.1),
+                                                                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                                                              elevation: 16,
+                                                                                              child: Container(
+                                                                                                decoration: BoxDecoration(
+                                                                                                  border: Border.all(color: Colors.white.withOpacity(0.5)),
+                                                                                                  borderRadius: BorderRadius.circular(20),
+                                                                                                ),
+                                                                                                child: ListView(
+                                                                                                  physics: BouncingScrollPhysics(),
+                                                                                                  shrinkWrap: true,
+                                                                                                  children: <Widget>[
+                                                                                                    Padding(
+                                                                                                      padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+                                                                                                      child: Text(
+                                                                                                        "x year x sem",
+                                                                                                        style: TextStyle(color: Colors.white, fontSize: 30),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    Padding(
+                                                                                                      padding: const EdgeInsets.only(left: 10, bottom: 3, right: 10),
+                                                                                                      child: Container(
+                                                                                                        decoration: BoxDecoration(
+                                                                                                          color: Colors.grey[200],
+                                                                                                          border: Border.all(color: Colors.white),
+                                                                                                          borderRadius: BorderRadius.circular(14),
+                                                                                                        ),
+                                                                                                        child: Padding(
+                                                                                                          padding: const EdgeInsets.only(left: 20),
+                                                                                                          child: TextFormField(
+                                                                                                            //obscureText: true,
+                                                                                                            controller: InputController,
+                                                                                                            textInputAction: TextInputAction.next,
+                                                                                                            decoration: InputDecoration(
+                                                                                                              border: InputBorder.none,
+                                                                                                              hintText: 'Description or Full name',
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    InkWell(
+                                                                                                      child: Container(
+                                                                                                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                                                                                                        child: Text(
+                                                                                                          "Create",
+                                                                                                          style: TextStyle(color: Colors.white),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                      onTap: () {
+                                                                                                        FirebaseFirestore.instance.collection("ECE").doc("regulation").collection("regulation").doc(SubjectsData.id).collection("year").doc(getID()).set({
+                                                                                                          "id": getTime(),
+                                                                                                          "heading": InputController.text.trim()
+                                                                                                        });
+                                                                                                        Navigator.pop(context);
+                                                                                                      },
+                                                                                                    )
+                                                                                                  ],
+                                                                                                ),
+                                                                                              ),
+                                                                                            );
+                                                                                          },
+                                                                                        );
+                                                                                      },
+                                                                                    )
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                              StreamBuilder<List<RegulationYearConvertor>>(
+                                                                                  stream: readRegulationYear(SubjectsData.id),
+                                                                                  builder: (context, snapshot) {
+                                                                                    final user1 = snapshot.data;
+                                                                                    switch (snapshot.connectionState) {
+                                                                                      case ConnectionState.waiting:
+                                                                                        return const Center(
+                                                                                            child: CircularProgressIndicator(
+                                                                                          strokeWidth: 0.3,
+                                                                                          color: Colors.cyan,
+                                                                                        ));
+                                                                                      default:
+                                                                                        if (snapshot.hasError) {
+                                                                                          return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                                                                                        } else {
+                                                                                          return ListView.separated(
+                                                                                              physics: const BouncingScrollPhysics(),
+                                                                                              shrinkWrap: true,
+                                                                                              itemCount: user1!.length,
+                                                                                              itemBuilder: (context, int index) {
+                                                                                                final SubjectsData1 = user1[index];
+                                                                                                return InkWell(
+                                                                                                  child: Padding(
+                                                                                                    padding: const EdgeInsets.only(left: 25),
+                                                                                                    child: Text(
+                                                                                                      "${SubjectsData1.heading}",
+                                                                                                      style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                  onTap: () async {
+                                                                                                    await FirebaseFirestore.instance.collection("user").doc(fullUserId()).set({
+                                                                                                      "YearId": SubjectsData1.id,
+                                                                                                      "regId": SubjectsData.id,
+                                                                                                      "reg": "${SubjectsData.heading}-${SubjectsData1.heading}"
+                                                                                                    });
+                                                                                                    Navigator.pop(context);
+                                                                                                  },
+                                                                                                  onLongPress: () {
+                                                                                                    if (userId() == "gmail.com") FirebaseFirestore.instance.collection("ECE").doc("regulation").collection("regulation").doc(SubjectsData.id).collection("year").doc(SubjectsData1.id).delete();
+                                                                                                  },
+                                                                                                );
+                                                                                              },
+                                                                                              separatorBuilder: (context, index) => const SizedBox(
+                                                                                                    height: 1,
+                                                                                                  ));
+                                                                                        }
+                                                                                    }
+                                                                                  }),
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.only(left: 10, right: 10),
+                                                                                child: Divider(
+                                                                                  color: Colors.white,
+                                                                                  thickness: 0.3,
+                                                                                ),
+                                                                              )
+                                                                            ],
+                                                                          );
+                                                                        },
+                                                                        separatorBuilder: (context, index) => const SizedBox(
+                                                                              height: 1,
+                                                                            ));
+                                                                  }
+                                                              }
+                                                            }),
+                                                        const SizedBox(
+                                                          height: 10,
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(width: 20),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 20),
+                                    child: Divider(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                        }
+                      }),
+
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 10,
+                    ),
+                    child: StreamBuilder<List<BooksConvertor>>(
+                        stream: ReadBook(),
+                        builder: (context, snapshot) {
+                          final Books = snapshot.data;
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.waiting:
+                              return const Center(
+                                  child: CircularProgressIndicator(
+                                strokeWidth: 0.3,
+                                color: Colors.cyan,
+                              ));
+                            default:
+                              if (snapshot.hasError) {
+                                return const Center(
+                                    child: Text(
+                                        'Error with TextBooks Data or\n Check Internet Connection'));
+                              } else {
+                                if (Books!.length < 1) {
+                                  return Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "No ECE Books",
+                                        style: TextStyle(color: Colors.blue),
+                                      ),
+                                    ),
+                                  );
+                                } else
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10, bottom: 10),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "Based on ECE",
+                                              style: TextStyle(
+                                                  color: Colors.deepOrange,
+                                                  fontSize: 25,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                            Spacer(),
+                                            if (userId() == "gmail.com")
                                               InkWell(
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             15),
-                                                    color: Colors.red
-                                                        .withOpacity(1),
+                                                    color: Colors.white
+                                                        .withOpacity(0.5),
                                                     border: Border.all(
                                                         color: Colors.white),
                                                   ),
@@ -2406,919 +2736,599 @@ class _HomePageState extends State<HomePage> {
                                                             right: 10,
                                                             top: 5,
                                                             bottom: 5),
+                                                    child: Text("+Add"),
+                                                  ),
+                                                ),
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              BooksCreator()));
+                                                },
+                                              ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            InkWell(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    color: Colors.black
+                                                        .withOpacity(0.7),
+                                                    border: Border.all(
+                                                        color: Colors.white
+                                                            .withOpacity(0.3)),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10,
+                                                            right: 10,
+                                                            top: 5,
+                                                            bottom: 5),
                                                     child: Text(
-                                                      "Change",
+                                                      "See More",
                                                       style: TextStyle(
-                                                          fontSize: 15,
+                                                          color: Colors.white,
+                                                          fontSize: 18,
                                                           fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Colors.white),
+                                                              FontWeight.w500),
                                                     ),
                                                   ),
                                                 ),
                                                 onTap: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return Dialog(
-                                                        backgroundColor: Colors
-                                                            .black
-                                                            .withOpacity(0.1),
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20)),
-                                                        elevation: 16,
-                                                        child: Container(
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              allBooks()));
+                                                }),
+                                            SizedBox(
+                                              width: 20,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 125,
+                                        child: ListView.builder(
+                                          physics: BouncingScrollPhysics(),
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: Books.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            final Uri uri = Uri.parse(
+                                                Books[index].photoUrl);
+                                            final String fileName =
+                                                uri.pathSegments.last;
+                                            var name = fileName.split("/").last;
+                                            final file = File(
+                                                "${folderPath}/ece_books/$name");
+
+                                            final Uri uri1 =
+                                                Uri.parse(Books[index].link);
+                                            final String fileName1 =
+                                                uri1.pathSegments.last;
+                                            var name1 =
+                                                fileName1.split("/").last;
+                                            final file1 = File(
+                                                "${folderPath}/pdfs/$name1");
+                                            if (file.existsSync()) {
+                                              return InkWell(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 10),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                      color: Colors.black
+                                                          .withOpacity(0.3),
+                                                      // border: Border.all(color: Colors.white),
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Container(
                                                           decoration:
                                                               BoxDecoration(
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .white
-                                                                    .withOpacity(
-                                                                        0.5)),
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
-                                                                        20),
+                                                                        15),
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                    0.4),
+                                                            image:
+                                                                DecorationImage(
+                                                              image: FileImage(
+                                                                  file),
+                                                              fit: BoxFit.cover,
+                                                            ),
                                                           ),
-                                                          child: ListView(
-                                                            physics:
-                                                                BouncingScrollPhysics(),
-                                                            shrinkWrap: true,
-                                                            children: <Widget>[
-                                                              const Center(
-                                                                child: Padding(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              8.0),
-                                                                  child: Text(
-                                                                    "Select Regulation and Year",
+                                                          height: 140,
+                                                          width: 90,
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Container(
+                                                            width: 120,
+                                                            child:
+                                                                SingleChildScrollView(
+                                                              physics:
+                                                                  BouncingScrollPhysics(),
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    Books[index]
+                                                                        .heading,
+                                                                    maxLines: 2,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
                                                                     style: TextStyle(
-                                                                        fontSize:
-                                                                            22,
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .w500,
+                                                                        fontSize:
+                                                                            16,
                                                                         color: Colors
                                                                             .orange),
                                                                   ),
-                                                                ),
-                                                              ),
-                                                              StreamBuilder<
-                                                                      List<
-                                                                          RegulationConvertor>>(
-                                                                  stream:
-                                                                      readRegulation(),
-                                                                  builder: (context,
-                                                                      snapshot) {
-                                                                    final user =
-                                                                        snapshot
-                                                                            .data;
-                                                                    switch (snapshot
-                                                                        .connectionState) {
-                                                                      case ConnectionState
-                                                                          .waiting:
-                                                                        return const Center(
+                                                                  Text(
+                                                                    Books[index]
+                                                                        .Author,
+                                                                    maxLines: 1,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w400,
+                                                                        fontSize:
+                                                                            13,
+                                                                        color: Colors
+                                                                            .blue),
+                                                                  ),
+                                                                  Text(
+                                                                    Books[index]
+                                                                        .edition,
+                                                                    maxLines: 1,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w400,
+                                                                        fontSize:
+                                                                            13,
+                                                                        color: Colors
+                                                                            .lightBlueAccent),
+                                                                  ),
+                                                                  Text(
+                                                                    Books[index]
+                                                                        .description,
+                                                                    maxLines: 1,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w300,
+                                                                        fontSize:
+                                                                            13,
+                                                                        color: Colors
+                                                                            .limeAccent),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  if (file1
+                                                                      .existsSync())
+                                                                    InkWell(
+                                                                        child:
+                                                                            Container(
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(8),
+                                                                            color:
+                                                                                Colors.black.withOpacity(0.5),
+                                                                            border:
+                                                                                Border.all(color: Colors.green),
+                                                                          ),
+                                                                          child:
+                                                                              Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.only(left: 3, right: 3),
                                                                             child:
-                                                                                CircularProgressIndicator(
-                                                                          strokeWidth:
-                                                                              0.3,
-                                                                          color:
-                                                                              Colors.cyan,
-                                                                        ));
-                                                                      default:
-                                                                        if (snapshot
-                                                                            .hasError) {
-                                                                          return const Center(
-                                                                              child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                                                                        } else {
-                                                                          return ListView.separated(
-                                                                              physics: const BouncingScrollPhysics(),
-                                                                              shrinkWrap: true,
-                                                                              itemCount: user!.length,
-                                                                              itemBuilder: (context, int index) {
-                                                                                final SubjectsData = user[index];
-                                                                                return Column(
-                                                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    Padding(
-                                                                                      padding: const EdgeInsets.only(left: 10, bottom: 5),
-                                                                                      child: Row(
-                                                                                        children: [
-                                                                                          Text(
-                                                                                            "${SubjectsData.heading}",
-                                                                                            style: TextStyle(color: Colors.white, fontSize: 30),
-                                                                                          ),
-                                                                                          SizedBox(
-                                                                                            width: 10,
-                                                                                          ),
-                                                                                          InkWell(
-                                                                                            child: Container(
-                                                                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
-                                                                                              child: Row(
-                                                                                                children: [
-                                                                                                  Text(
-                                                                                                    " ADD",
-                                                                                                    style: TextStyle(color: Colors.redAccent, fontSize: 20),
-                                                                                                  ),
-                                                                                                  Icon(
-                                                                                                    Icons.add,
-                                                                                                    color: Colors.red,
-                                                                                                  ),
-                                                                                                ],
-                                                                                              ),
-                                                                                            ),
-                                                                                            onTap: () {
-                                                                                              showDialog(
-                                                                                                context: context,
-                                                                                                builder: (context) {
-                                                                                                  return Dialog(
-                                                                                                    backgroundColor: Colors.black.withOpacity(0.1),
-                                                                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                                                                                    elevation: 16,
-                                                                                                    child: Container(
-                                                                                                      decoration: BoxDecoration(
-                                                                                                        border: Border.all(color: Colors.white.withOpacity(0.5)),
-                                                                                                        borderRadius: BorderRadius.circular(20),
-                                                                                                      ),
-                                                                                                      child: ListView(
-                                                                                                        physics: BouncingScrollPhysics(),
-                                                                                                        shrinkWrap: true,
-                                                                                                        children: <Widget>[
-                                                                                                          Padding(
-                                                                                                            padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
-                                                                                                            child: Text(
-                                                                                                              "x year x sem",
-                                                                                                              style: TextStyle(color: Colors.white, fontSize: 30),
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                          Padding(
-                                                                                                            padding: const EdgeInsets.only(left: 10, bottom: 3, right: 10),
-                                                                                                            child: Container(
-                                                                                                              decoration: BoxDecoration(
-                                                                                                                color: Colors.grey[200],
-                                                                                                                border: Border.all(color: Colors.white),
-                                                                                                                borderRadius: BorderRadius.circular(14),
-                                                                                                              ),
-                                                                                                              child: Padding(
-                                                                                                                padding: const EdgeInsets.only(left: 20),
-                                                                                                                child: TextFormField(
-                                                                                                                  //obscureText: true,
-                                                                                                                  controller: InputController,
-                                                                                                                  textInputAction: TextInputAction.next,
-                                                                                                                  decoration: InputDecoration(
-                                                                                                                    border: InputBorder.none,
-                                                                                                                    hintText: 'Description or Full name',
-                                                                                                                  ),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                          InkWell(
-                                                                                                            child: Container(
-                                                                                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
-                                                                                                              child: Text(
-                                                                                                                "Create",
-                                                                                                                style: TextStyle(color: Colors.white),
-                                                                                                              ),
-                                                                                                            ),
-                                                                                                            onTap: () {
-                                                                                                              FirebaseFirestore.instance.collection("ECE").doc("regulation").collection("regulation").doc(SubjectsData.id).collection("year").doc(getID()).set({
-                                                                                                                "id": getTime(),
-                                                                                                                "heading": InputController.text.trim()
-                                                                                                              });
-                                                                                                              Navigator.pop(context);
-                                                                                                            },
-                                                                                                          )
-                                                                                                        ],
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  );
-                                                                                                },
-                                                                                              );
-                                                                                            },
-                                                                                          )
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
-                                                                                    StreamBuilder<List<RegulationYearConvertor>>(
-                                                                                        stream: readRegulationYear(SubjectsData.id),
-                                                                                        builder: (context, snapshot) {
-                                                                                          final user1 = snapshot.data;
-                                                                                          switch (snapshot.connectionState) {
-                                                                                            case ConnectionState.waiting:
-                                                                                              return const Center(
-                                                                                                  child: CircularProgressIndicator(
-                                                                                                strokeWidth: 0.3,
-                                                                                                color: Colors.cyan,
-                                                                                              ));
-                                                                                            default:
-                                                                                              if (snapshot.hasError) {
-                                                                                                return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                                                                                              } else {
-                                                                                                return ListView.separated(
-                                                                                                    physics: const BouncingScrollPhysics(),
-                                                                                                    shrinkWrap: true,
-                                                                                                    itemCount: user1!.length,
-                                                                                                    itemBuilder: (context, int index) {
-                                                                                                      final SubjectsData1 = user1[index];
-                                                                                                      return InkWell(
-                                                                                                        child: Padding(
-                                                                                                          padding: const EdgeInsets.only(left: 25),
-                                                                                                          child: Text(
-                                                                                                            "${SubjectsData1.heading}",
-                                                                                                            style: TextStyle(color: Colors.white, fontSize: 20),
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                        onTap: () async {
-                                                                                                          await FirebaseFirestore.instance.collection("user").doc(fullUserId()).set({
-                                                                                                            "YearId": SubjectsData1.id,
-                                                                                                            "regId": SubjectsData.id,
-                                                                                                            "reg": "${SubjectsData.heading}-${SubjectsData1.heading}"
-                                                                                                          });
-                                                                                                          Navigator.pop(context);
-                                                                                                        },
-                                                                                                        onLongPress: () {
-                                                                                                          if (userId() == "gmail.com") FirebaseFirestore.instance.collection("ECE").doc("regulation").collection("regulation").doc(SubjectsData.id).collection("year").doc(SubjectsData1.id).delete();
-                                                                                                        },
-                                                                                                      );
-                                                                                                    },
-                                                                                                    separatorBuilder: (context, index) => const SizedBox(
-                                                                                                          height: 1,
-                                                                                                        ));
-                                                                                              }
-                                                                                          }
-                                                                                        }),
-                                                                                    Padding(
-                                                                                      padding: const EdgeInsets.only(left: 10, right: 10),
-                                                                                      child: Divider(
-                                                                                        color: Colors.white,
-                                                                                        thickness: 0.3,
-                                                                                      ),
-                                                                                    )
-                                                                                  ],
-                                                                                );
-                                                                              },
-                                                                              separatorBuilder: (context, index) => const SizedBox(
-                                                                                    height: 1,
-                                                                                  ));
-                                                                        }
-                                                                    }
-                                                                  }),
-                                                              const SizedBox(
-                                                                height: 10,
-                                                              )
-                                                            ],
+                                                                                Row(
+                                                                              children: [
+                                                                                Icon(
+                                                                                  Icons.download_outlined,
+                                                                                  color: Colors.green,
+                                                                                ),
+                                                                                Text(
+                                                                                  " & ",
+                                                                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                ),
+                                                                                Text(
+                                                                                  "Open",
+                                                                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                ),
+                                                                                Icon(
+                                                                                  Icons.open_in_new,
+                                                                                  color: Colors.greenAccent,
+                                                                                )
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        onTap:
+                                                                            () {
+                                                                          Navigator.push(
+                                                                              context,
+                                                                              MaterialPageRoute(builder: (context) => PdfViewerPage(pdfUrl: "${folderPath}/pdfs/$name1")));
+                                                                        })
+                                                                  else
+                                                                    InkWell(
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(8),
+                                                                          color: Colors
+                                                                              .black
+                                                                              .withOpacity(0.5),
+                                                                          border:
+                                                                              Border.all(color: Colors.white),
+                                                                        ),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets.only(
+                                                                              left: 3,
+                                                                              right: 3),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.download_outlined,
+                                                                                color: Colors.red,
+                                                                              ),
+                                                                              Text(
+                                                                                " & ",
+                                                                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                              ),
+                                                                              Text(
+                                                                                "Open",
+                                                                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                              ),
+                                                                              Icon(
+                                                                                Icons.open_in_new,
+                                                                                color: Colors.greenAccent,
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      onTap:
+                                                                          () async {
+                                                                        showToast(
+                                                                            "Downloading...");
+                                                                        await download(
+                                                                            Books[index].link,
+                                                                            "pdfs");
+                                                                        setState(
+                                                                            () {
+                                                                          showToast(
+                                                                              "Downloaded");
+                                                                        });
+                                                                      },
+                                                                    )
+                                                                ],
+                                                              ),
+                                                            ),
                                                           ),
                                                         ),
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                              ),
-                                              SizedBox(width: 20),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20, right: 20),
-                                          child: Divider(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  }
-                              }
-                            }),
-
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 10,
-                          ),
-                          child: StreamBuilder<List<BooksConvertor>>(
-                              stream: ReadBook(),
-                              builder: (context, snapshot) {
-                                final Books = snapshot.data;
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.waiting:
-                                    return const Center(
-                                        child: CircularProgressIndicator(
-                                      strokeWidth: 0.3,
-                                      color: Colors.cyan,
-                                    ));
-                                  default:
-                                    if (snapshot.hasError) {
-                                      return const Center(
-                                          child: Text(
-                                              'Error with TextBooks Data or\n Check Internet Connection'));
-                                    } else {
-                                      if (Books!.length < 1) {
-                                        return Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              "No ECE Books",
-                                              style:
-                                                  TextStyle(color: Colors.blue),
-                                            ),
-                                          ),
-                                        );
-                                      } else
-                                        return Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10, bottom: 10),
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                    "Based on ECE",
-                                                    style: TextStyle(
-                                                        color:
-                                                            Colors.deepOrange,
-                                                        fontSize: 25,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                  ),
-                                                  Spacer(),
-                                                  if (userId() == "gmail.com")
-                                                    InkWell(
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
-                                                          color: Colors.white
-                                                              .withOpacity(0.5),
-                                                          border: Border.all(
-                                                              color:
-                                                                  Colors.white),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 10,
-                                                                  right: 10,
-                                                                  top: 5,
-                                                                  bottom: 5),
-                                                          child: Text("+Add"),
-                                                        ),
-                                                      ),
-                                                      onTap: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        BooksCreator()));
-                                                      },
+                                                        SizedBox(
+                                                          width: 20,
+                                                        )
+                                                      ],
                                                     ),
-                                                  SizedBox(
-                                                    width: 10,
                                                   ),
-                                                  InkWell(
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
-                                                          color: Colors.black
-                                                              .withOpacity(0.7),
-                                                          border: Border.all(
-                                                              color: Colors
-                                                                  .white
-                                                                  .withOpacity(
-                                                                      0.3)),
+                                                ),
+                                                onTap: () async {
+                                                  _BooksBottomSheet(
+                                                      context,
+                                                      Books[index],
+                                                      file,
+                                                      file1);
+                                                },
+                                              );
+                                            } else {
+                                              download(Books[index].photoUrl,
+                                                  "ece_books");
+                                              return InkWell(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 10),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                      color: Colors.black
+                                                          .withOpacity(0.3),
+                                                      // border: Border.all(color: Colors.white),
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                    0.4),
+                                                          ),
+                                                          height: 140,
+                                                          width: 90,
+                                                          child:
+                                                              CachedNetworkImage(
+                                                            imageUrl:
+                                                                Books[index]
+                                                                    .photoUrl,
+                                                            placeholder: (context,
+                                                                    url) =>
+                                                                CircularProgressIndicator(),
+                                                            errorWidget:
+                                                                (context, url,
+                                                                        error) =>
+                                                                    Icon(Icons
+                                                                        .error),
+                                                          ),
                                                         ),
-                                                        child: Padding(
+                                                        Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .only(
-                                                                  left: 10,
-                                                                  right: 10,
-                                                                  top: 5,
-                                                                  bottom: 5),
-                                                          child: Text(
-                                                            "See More",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 18,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      onTap: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        allBooks()));
-                                                      }),
-                                                  SizedBox(
-                                                    width: 20,
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              height: 125,
-                                              child: ListView.builder(
-                                                physics:
-                                                    BouncingScrollPhysics(),
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                itemCount: Books.length,
-                                                itemBuilder:
-                                                    (BuildContext context,
-                                                        int index) {
-                                                  final Uri uri = Uri.parse(
-                                                      Books[index].photoUrl);
-                                                  final String fileName =
-                                                      uri.pathSegments.last;
-                                                  var name =
-                                                      fileName.split("/").last;
-                                                  final file = File(
-                                                      "${folderPath}/ece_books/$name");
-
-                                                  final Uri uri1 = Uri.parse(
-                                                      Books[index].link);
-                                                  final String fileName1 =
-                                                      uri1.pathSegments.last;
-                                                  var name1 =
-                                                      fileName1.split("/").last;
-                                                  final file1 = File(
-                                                      "${folderPath}/pdfs/$name1");
-                                                  if (file.existsSync()) {
-                                                    return InkWell(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(left: 10),
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
-                                                            color: Colors.black
-                                                                .withOpacity(
-                                                                    0.3),
-                                                            // border: Border.all(color: Colors.white),
-                                                          ),
-                                                          child: Row(
-                                                            children: [
-                                                              Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              15),
-                                                                  color: Colors
-                                                                      .black
-                                                                      .withOpacity(
-                                                                          0.4),
-                                                                  image:
-                                                                      DecorationImage(
-                                                                    image:
-                                                                        FileImage(
-                                                                            file),
-                                                                    fit: BoxFit
-                                                                        .cover,
+                                                                  .all(8.0),
+                                                          child: Container(
+                                                            width: 120,
+                                                            child:
+                                                                SingleChildScrollView(
+                                                              physics:
+                                                                  BouncingScrollPhysics(),
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    Books[index]
+                                                                        .heading,
+                                                                    maxLines: 2,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w500,
+                                                                        fontSize:
+                                                                            16,
+                                                                        color: Colors
+                                                                            .white),
                                                                   ),
-                                                                ),
-                                                                height: 140,
-                                                                width: 90,
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        8.0),
-                                                                child:
-                                                                    Container(
-                                                                  width: 120,
-                                                                  child:
-                                                                      SingleChildScrollView(
-                                                                    physics:
-                                                                        BouncingScrollPhysics(),
-                                                                    child:
-                                                                        Column(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .start,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        Text(
-                                                                          Books[index]
-                                                                              .heading,
-                                                                          maxLines:
-                                                                              2,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: 16,
-                                                                              color: Colors.orange),
-                                                                        ),
-                                                                        Text(
-                                                                          Books[index]
-                                                                              .Author,
-                                                                          maxLines:
-                                                                              1,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w400,
-                                                                              fontSize: 13,
-                                                                              color: Colors.blue),
-                                                                        ),
-                                                                        Text(
-                                                                          Books[index]
-                                                                              .edition,
-                                                                          maxLines:
-                                                                              1,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w400,
-                                                                              fontSize: 13,
-                                                                              color: Colors.lightBlueAccent),
-                                                                        ),
-                                                                        Text(
-                                                                          Books[index]
-                                                                              .description,
-                                                                          maxLines:
-                                                                              1,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w300,
-                                                                              fontSize: 13,
-                                                                              color: Colors.limeAccent),
-                                                                        ),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              5,
-                                                                        ),
-                                                                        if (file1
-                                                                            .existsSync())
-                                                                          InkWell(
-                                                                              child: Container(
-                                                                                decoration: BoxDecoration(
-                                                                                  borderRadius: BorderRadius.circular(8),
-                                                                                  color: Colors.black.withOpacity(0.5),
-                                                                                  border: Border.all(color: Colors.green),
-                                                                                ),
-                                                                                child: Padding(
-                                                                                  padding: const EdgeInsets.only(left: 3, right: 3),
-                                                                                  child: Row(
-                                                                                    children: [
-                                                                                      Icon(
-                                                                                        Icons.download_outlined,
-                                                                                        color: Colors.green,
-                                                                                      ),
-                                                                                      Text(
-                                                                                        " & ",
-                                                                                        style: TextStyle(color: Colors.white, fontSize: 20),
-                                                                                      ),
-                                                                                      Text(
-                                                                                        "Open",
-                                                                                        style: TextStyle(color: Colors.white, fontSize: 20),
-                                                                                      ),
-                                                                                      Icon(
-                                                                                        Icons.open_in_new,
-                                                                                        color: Colors.greenAccent,
-                                                                                      )
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              onTap: () {
-                                                                                Navigator.push(context, MaterialPageRoute(builder: (context) => PdfViewerPage(pdfUrl: "${folderPath}/pdfs/$name1")));
-                                                                              })
-                                                                        else
-                                                                          InkWell(
+                                                                  Text(
+                                                                    Books[index]
+                                                                        .Author,
+                                                                    maxLines: 1,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w400,
+                                                                        fontSize:
+                                                                            13,
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                  Text(
+                                                                    Books[index]
+                                                                        .edition,
+                                                                    maxLines: 1,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w400,
+                                                                        fontSize:
+                                                                            13,
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                  Text(
+                                                                    Books[index]
+                                                                        .description,
+                                                                    maxLines: 1,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w300,
+                                                                        fontSize:
+                                                                            13,
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  if (file1
+                                                                      .existsSync())
+                                                                    InkWell(
+                                                                        child:
+                                                                            Container(
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(8),
+                                                                            color:
+                                                                                Colors.black.withOpacity(0.5),
+                                                                            border:
+                                                                                Border.all(color: Colors.green),
+                                                                          ),
+                                                                          child:
+                                                                              Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.only(left: 3, right: 3),
                                                                             child:
-                                                                                Container(
-                                                                              decoration: BoxDecoration(
-                                                                                borderRadius: BorderRadius.circular(8),
-                                                                                color: Colors.black.withOpacity(0.5),
-                                                                                border: Border.all(color: Colors.white),
-                                                                              ),
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 3, right: 3),
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    Icon(
-                                                                                      Icons.download_outlined,
-                                                                                      color: Colors.red,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      " & ",
-                                                                                      style: TextStyle(color: Colors.white, fontSize: 20),
-                                                                                    ),
-                                                                                    Text(
-                                                                                      "Open",
-                                                                                      style: TextStyle(color: Colors.white, fontSize: 20),
-                                                                                    ),
-                                                                                    Icon(
-                                                                                      Icons.open_in_new,
-                                                                                      color: Colors.greenAccent,
-                                                                                    )
-                                                                                  ],
+                                                                                Row(
+                                                                              children: [
+                                                                                Icon(
+                                                                                  Icons.download_outlined,
+                                                                                  color: Colors.green,
                                                                                 ),
-                                                                              ),
+                                                                                Text(
+                                                                                  " & ",
+                                                                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                ),
+                                                                                Text(
+                                                                                  "Open",
+                                                                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                ),
+                                                                                Icon(
+                                                                                  Icons.open_in_new,
+                                                                                  color: Colors.greenAccent,
+                                                                                )
+                                                                              ],
                                                                             ),
-                                                                            onTap:
-                                                                                () async {
-                                                                              showToast("Downloading...");
-                                                                              await download(Books[index].link, "pdfs");
-                                                                              setState(() {
-                                                                                showToast("Downloaded");
-                                                                              });
-                                                                            },
-                                                                          )
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
+                                                                          ),
+                                                                        ),
+                                                                        onTap:
+                                                                            () {
+                                                                          Navigator.push(
+                                                                              context,
+                                                                              MaterialPageRoute(builder: (context) => PdfViewerPage(pdfUrl: "${folderPath}/pdfs/$name")));
+                                                                        })
+                                                                  else
+                                                                    InkWell(
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(8),
+                                                                          color: Colors
+                                                                              .black
+                                                                              .withOpacity(0.5),
+                                                                          border:
+                                                                              Border.all(color: Colors.white),
+                                                                        ),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets.only(
+                                                                              left: 3,
+                                                                              right: 3),
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.download_outlined,
+                                                                                color: Colors.red,
+                                                                              ),
+                                                                              Text(
+                                                                                " & ",
+                                                                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                              ),
+                                                                              Text(
+                                                                                "Open",
+                                                                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                              ),
+                                                                              Icon(
+                                                                                Icons.open_in_new,
+                                                                                color: Colors.greenAccent,
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      onTap:
+                                                                          () async {
+                                                                        download(
+                                                                            Books[index].link,
+                                                                            "pdfs");
+                                                                      },
+                                                                    )
+                                                                ],
                                                               ),
-                                                              SizedBox(
-                                                                width: 20,
-                                                              )
-                                                            ],
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      onTap: () async {
-                                                        _BooksBottomSheet(
-                                                            context,
-                                                            Books[index],
-                                                            file,
-                                                            file1);
-                                                      },
-                                                    );
-                                                  } else {
-                                                    download(
-                                                        Books[index].photoUrl,
-                                                        "ece_books");
-                                                    return InkWell(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(left: 10),
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
-                                                            color: Colors.black
-                                                                .withOpacity(
-                                                                    0.3),
-                                                            // border: Border.all(color: Colors.white),
-                                                          ),
-                                                          child: Row(
-                                                            children: [
-                                                              Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              15),
-                                                                  color: Colors
-                                                                      .black
-                                                                      .withOpacity(
-                                                                          0.4),
-                                                                ),
-                                                                height: 140,
-                                                                width: 90,
-                                                                child:
-                                                                    CachedNetworkImage(
-                                                                  imageUrl: Books[
-                                                                          index]
-                                                                      .photoUrl,
-                                                                  placeholder: (context,
-                                                                          url) =>
-                                                                      CircularProgressIndicator(),
-                                                                  errorWidget: (context,
-                                                                          url,
-                                                                          error) =>
-                                                                      Icon(Icons
-                                                                          .error),
-                                                                ),
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        8.0),
-                                                                child:
-                                                                    Container(
-                                                                  width: 120,
-                                                                  child:
-                                                                      SingleChildScrollView(
-                                                                    physics:
-                                                                        BouncingScrollPhysics(),
-                                                                    child:
-                                                                        Column(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .start,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        Text(
-                                                                          Books[index]
-                                                                              .heading,
-                                                                          maxLines:
-                                                                              2,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: 16,
-                                                                              color: Colors.white),
-                                                                        ),
-                                                                        Text(
-                                                                          Books[index]
-                                                                              .Author,
-                                                                          maxLines:
-                                                                              1,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w400,
-                                                                              fontSize: 13,
-                                                                              color: Colors.white),
-                                                                        ),
-                                                                        Text(
-                                                                          Books[index]
-                                                                              .edition,
-                                                                          maxLines:
-                                                                              1,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w400,
-                                                                              fontSize: 13,
-                                                                              color: Colors.white),
-                                                                        ),
-                                                                        Text(
-                                                                          Books[index]
-                                                                              .description,
-                                                                          maxLines:
-                                                                              1,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w300,
-                                                                              fontSize: 13,
-                                                                              color: Colors.white),
-                                                                        ),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              5,
-                                                                        ),
-                                                                        if (file1
-                                                                            .existsSync())
-                                                                          InkWell(
-                                                                              child: Container(
-                                                                                decoration: BoxDecoration(
-                                                                                  borderRadius: BorderRadius.circular(8),
-                                                                                  color: Colors.black.withOpacity(0.5),
-                                                                                  border: Border.all(color: Colors.green),
-                                                                                ),
-                                                                                child: Padding(
-                                                                                  padding: const EdgeInsets.only(left: 3, right: 3),
-                                                                                  child: Row(
-                                                                                    children: [
-                                                                                      Icon(
-                                                                                        Icons.download_outlined,
-                                                                                        color: Colors.green,
-                                                                                      ),
-                                                                                      Text(
-                                                                                        " & ",
-                                                                                        style: TextStyle(color: Colors.white, fontSize: 20),
-                                                                                      ),
-                                                                                      Text(
-                                                                                        "Open",
-                                                                                        style: TextStyle(color: Colors.white, fontSize: 20),
-                                                                                      ),
-                                                                                      Icon(
-                                                                                        Icons.open_in_new,
-                                                                                        color: Colors.greenAccent,
-                                                                                      )
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              onTap: () {
-                                                                                Navigator.push(context, MaterialPageRoute(builder: (context) => PdfViewerPage(pdfUrl: "${folderPath}/pdfs/$name")));
-                                                                              })
-                                                                        else
-                                                                          InkWell(
-                                                                            child:
-                                                                                Container(
-                                                                              decoration: BoxDecoration(
-                                                                                borderRadius: BorderRadius.circular(8),
-                                                                                color: Colors.black.withOpacity(0.5),
-                                                                                border: Border.all(color: Colors.white),
-                                                                              ),
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 3, right: 3),
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    Icon(
-                                                                                      Icons.download_outlined,
-                                                                                      color: Colors.red,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      " & ",
-                                                                                      style: TextStyle(color: Colors.white, fontSize: 20),
-                                                                                    ),
-                                                                                    Text(
-                                                                                      "Open",
-                                                                                      style: TextStyle(color: Colors.white, fontSize: 20),
-                                                                                    ),
-                                                                                    Icon(
-                                                                                      Icons.open_in_new,
-                                                                                      color: Colors.greenAccent,
-                                                                                    )
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            onTap:
-                                                                                () async {
-                                                                              download(Books[index].link, "pdfs");
-                                                                            },
-                                                                          )
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width: 20,
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      onTap: () async {
-                                                        _BooksBottomSheet(
-                                                            context,
-                                                            Books[index],
-                                                            file,
-                                                            file1);
-                                                      },
-                                                    );
-                                                  }
+                                                        SizedBox(
+                                                          width: 20,
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                onTap: () async {
+                                                  _BooksBottomSheet(
+                                                      context,
+                                                      Books[index],
+                                                      file,
+                                                      file1);
                                                 },
-                                                shrinkWrap: true,
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                    }
-                                }
-                              }),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                      ],
-                    ),
+                                              );
+                                            }
+                                          },
+                                          shrinkWrap: true,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                              }
+                          }
+                        }),
                   ),
-                ),
-              ],
-            )),
+                  SizedBox(
+                    height: 20,
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      );
+        ],
+      ));
 
   splitDate(String date) {
     var out = date.split(":");

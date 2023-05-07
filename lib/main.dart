@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
       title: 'e-SRKR',
       builder: (context, child) {
         return MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaleFactor: 0.85),
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 0.8),
             child: child!);
       },
       home: StreamBuilder<User?>(
@@ -80,51 +81,77 @@ class _NavState extends State<Nav> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            image: NetworkImage(
+              "https://i.pinimg.com/736x/01/c7/f7/01c7f72511cc6ce7858e65b45d4f8c9c.jpg",
+            ),
+            fit: BoxFit.fill),
       ),
-      bottomNavigationBar: SizedBox(
-        height: 50,
-        child: BottomNavigationBar(
-          backgroundColor: Colors.transparent,
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(
-                  _selectedIndex == 1 ? Icons.home_outlined : Icons.home,
-                ),
-                label: 'Home',
-                backgroundColor: Colors.transparent),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  _selectedIndex == 2 ? Icons.favorite_border : Icons.favorite,
-                ),
-                label: 'favorites',
-                backgroundColor: Colors.transparent),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  _selectedIndex == 3 ? Icons.search : Icons.search_outlined,
-                ),
-                label: 'Search',
-                backgroundColor: Colors.transparent),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.message,
-                ),
-                label: 'Messages',
-                backgroundColor: Colors.transparent),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.person,
-                ),
-                label: 'Profile',
-                backgroundColor: Colors.transparent),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: _onItemTap,
-          selectedFontSize: 13.0,
-          unselectedFontSize: 10.0,
+      child: Scaffold(
+        backgroundColor: Colors.black.withOpacity(0.8),
+        body: _widgetOptions.elementAt(_selectedIndex),
+        bottomNavigationBar: SizedBox(
+          height: 50,
+          child: BottomNavigationBar(
+            backgroundColor: Colors.black,
+            items: [
+              BottomNavigationBarItem(
+                  icon: Icon(
+                    _selectedIndex == 0 ? Icons.home : Icons.home_outlined,
+                    color: _selectedIndex == 0
+                        ? Colors.lightBlueAccent
+                        : Colors.grey,
+                  ),
+                  label: 'Home',
+                  backgroundColor: Colors.transparent),
+              BottomNavigationBarItem(
+                  icon: Icon(
+                    _selectedIndex == 1
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: _selectedIndex == 1
+                        ? Colors.lightBlueAccent
+                        : Colors.grey,
+                  ),
+                  label: 'favorites',
+                  backgroundColor: Colors.transparent),
+              BottomNavigationBarItem(
+                  icon: Icon(
+                    _selectedIndex == 2 ? Icons.manage_search : Icons.search,
+                    color: _selectedIndex == 2
+                        ? Colors.lightBlueAccent
+                        : Colors.grey,
+                  ),
+                  label: 'Search',
+                  backgroundColor: Colors.transparent),
+              BottomNavigationBarItem(
+                  icon: Icon(
+                    _selectedIndex == 3
+                        ? Icons.message
+                        : Icons.messenger_outline,
+                    color: _selectedIndex == 3
+                        ? Colors.lightBlueAccent
+                        : Colors.grey,
+                  ),
+                  label: 'Messages',
+                  backgroundColor: Colors.transparent),
+              BottomNavigationBarItem(
+                  icon: Icon(
+                    _selectedIndex == 4 ? Icons.person : Icons.person_outline,
+                    color: _selectedIndex == 4
+                        ? Colors.lightBlueAccent
+                        : Colors.grey,
+                  ),
+                  label: 'Profile',
+                  backgroundColor: Colors.transparent),
+            ],
+            currentIndex: _selectedIndex,
+            onTap: _onItemTap,
+            selectedFontSize: 13.0,
+            unselectedFontSize: 10.0,
+          ),
         ),
       ),
     );
