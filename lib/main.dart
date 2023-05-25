@@ -1,23 +1,46 @@
 import 'package:animations/animations.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'dart:async';
 import 'HomePage.dart';
 import 'auth_page.dart';
 import 'favorites.dart';
 import 'notification.dart';
-import 'notifications.dart';
 import 'search bar.dart';
 import 'settings.dart';
+
+Future<void> backgroundHandler(RemoteMessage message) async {
+  print(message.data.toString());
+  print(message.notification!.title);
+  // await Firebase.initializeApp();
+  // FirebaseFirestore.instance
+  //     .collection('users')
+  //     .doc(fullUserId())
+  //     .collection("notifications")
+  //     .doc("projectId")
+  //     .set({
+  //   "id": message.notification!.title,
+  //   "name": message.notification!.body
+  // });
+}
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await MobileAds.instance.initialize();
-
+  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  NotificationService().initNotification();
+  // await Permission.storage.request();
+  // await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+  //   alert: true,
+  //   badge: true,
+  //   sound: true,
+  // );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
@@ -27,7 +50,38 @@ Future main() async {
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        print(message.notification);
+      }
+    });
+
+    ///forground work
+    FirebaseMessaging.onMessage.listen((message) async {
+      if (message.notification != null) {}
+      NotificationService().showNotification(
+          title: message.notification!.title, body: message.notification!.body);
+    });
+
+    ///When the app is in background but opened and user taps
+    ///on the notification
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      final routeFromMessage = message.data["route"];
+
+      Navigator.of(context).pushNamed(routeFromMessage);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -60,17 +114,15 @@ class MyApp extends StatelessWidget {
 
 class Nav extends StatefulWidget {
   @override
-  _NavState createState() => _NavState();
+  State<Nav> createState() => _NavState();
 }
 
 class _NavState extends State<Nav> {
   int _selectedIndex = 0;
-  List<Widget> _widgetOptions = <Widget>[
+  final List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     favorites(),
     MyAppq(),
-    notifications(),
-    settings()
   ];
 
   void _onItemTap(int index) {
@@ -81,77 +133,93 @@ class _NavState extends State<Nav> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: NetworkImage(
-              "https://i.pinimg.com/736x/01/c7/f7/01c7f72511cc6ce7858e65b45d4f8c9c.jpg",
+    return Scaffold(
+      extendBody: true,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: NetworkImage(
+                      "https://i.pinimg.com/736x/01/c7/f7/01c7f72511cc6ce7858e65b45d4f8c9c.jpg",
+                    ),
+                    fit: BoxFit.fill),
+              ),
+              child: Container(
+                  color: Colors.black.withOpacity(0.8),
+                  child: _widgetOptions.elementAt(_selectedIndex)),
             ),
-            fit: BoxFit.fill),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.black.withOpacity(0.8),
-        body: _widgetOptions.elementAt(_selectedIndex),
-        bottomNavigationBar: SizedBox(
-          height: 50,
-          child: BottomNavigationBar(
-            backgroundColor: Colors.black,
-            items: [
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    _selectedIndex == 0 ? Icons.home : Icons.home_outlined,
-                    color: _selectedIndex == 0
-                        ? Colors.lightBlueAccent
-                        : Colors.grey,
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 25,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 80),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.blueGrey,
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 3, bottom: 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          child: Column(
+                            children: [
+                              Icon(
+                                _selectedIndex == 0
+                                    ? Icons.home
+                                    : Icons.home_outlined,
+                                size: 30,
+                              ),
+                              Text("Home")
+                            ],
+                          ),
+                          onTap: () {
+                            _onItemTap(0);
+                          },
+                        ),
+                        InkWell(
+                          child: Column(
+                            children: [
+                              Icon(
+                                _selectedIndex == 1
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                              ),
+                              Text("Favorite")
+                            ],
+                          ),
+                          onTap: () {
+                            _onItemTap(1);
+                          },
+                        ),
+                        InkWell(
+                          child: Column(
+                            children: [
+                              Icon(
+                                _selectedIndex == 2
+                                    ? Icons.manage_search
+                                    : Icons.search,
+                              ),
+                              Text("Search")
+                            ],
+                          ),
+                          onTap: () {
+                            _onItemTap(2);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  label: 'Home',
-                  backgroundColor: Colors.transparent),
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    _selectedIndex == 1
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    color: _selectedIndex == 1
-                        ? Colors.lightBlueAccent
-                        : Colors.grey,
-                  ),
-                  label: 'favorites',
-                  backgroundColor: Colors.transparent),
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    _selectedIndex == 2 ? Icons.manage_search : Icons.search,
-                    color: _selectedIndex == 2
-                        ? Colors.lightBlueAccent
-                        : Colors.grey,
-                  ),
-                  label: 'Search',
-                  backgroundColor: Colors.transparent),
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    _selectedIndex == 3
-                        ? Icons.message
-                        : Icons.messenger_outline,
-                    color: _selectedIndex == 3
-                        ? Colors.lightBlueAccent
-                        : Colors.grey,
-                  ),
-                  label: 'Messages',
-                  backgroundColor: Colors.transparent),
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    _selectedIndex == 4 ? Icons.person : Icons.person_outline,
-                    color: _selectedIndex == 4
-                        ? Colors.lightBlueAccent
-                        : Colors.grey,
-                  ),
-                  label: 'Profile',
-                  backgroundColor: Colors.transparent),
-            ],
-            currentIndex: _selectedIndex,
-            onTap: _onItemTap,
-            selectedFontSize: 13.0,
-            unselectedFontSize: 10.0,
-          ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

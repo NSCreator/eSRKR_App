@@ -1,17 +1,20 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:srkr_study_app/HomePage.dart';
 import 'package:srkr_study_app/settings.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+
 import 'package:flutter/gestures.dart';
 
 import 'ads.dart';
+import 'package:flutter/foundation.dart';
 
 class unseenImages extends StatefulWidget {
   @override
@@ -718,133 +721,194 @@ class PdfViewerPage extends StatefulWidget {
 }
 
 class _PdfViewerPageState extends State<PdfViewerPage> {
-  late PdfViewerController _pdfViewerController;
-  int currentPage = 0;
+  late bool isExp = false;
+  late bool l1 = false;
+  late bool l2 = false;
+  late bool isNM = false;
+  late bool isScrolling = false;
+  final Completer<PDFViewController> _controller =
+      Completer<PDFViewController>();
+  int? pages = 0;
+  int? currentPage = 0;
   bool isReady = false;
+  String errorMessage = '';
+  on() {
+    Future.delayed(Duration(milliseconds: 100), () {
+      setState(() {
+        l1 = true;
+      });
+    });
+    Future.delayed(Duration(milliseconds: 200), () {
+      setState(() {
+        l2 = true;
+      });
+    });
+  }
 
-  @override
-  void initState() {
-    super.initState();
-    _pdfViewerController = PdfViewerController();
+  bool myBoolValue = false;
+  Timer? _timer;
+
+  void changeBoolValue() {
+    setState(() {
+      isScrolling = true;
+    });
+
+    // Cancel the previous timer if it exists
+    _timer?.cancel();
+
+    // Start a new timer with a 3-second delay
+    _timer = Timer(Duration(seconds: 3), () {
+      setState(() {
+        isScrolling = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          SfPdfViewer.file(
-            File(widget.pdfUrl),
-            controller: _pdfViewerController,
-            enableTextSelection: true,
-            onTextSelectionChanged: (PdfTextSelectionChangedDetails details) {
-              if (details.selectedText != null) {
-                print(details.selectedText);
-              }
-            },
-          ),
-          Align(
-              alignment: Alignment.bottomCenter,
-              child: CustomAdsBannerForPdfs()),
-        ],
-      ),
-      floatingActionButton: InkWell(
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: MediaQuery.of(context).orientation == Orientation.portrait
-              ? Icon(
-                  Icons.rotate_90_degrees_cw,
-                  size: 35,
-                  color: Colors.black.withOpacity(0.6),
-                )
-              : Icon(Icons.rotate_90_degrees_ccw,
-                  size: 35, color: Colors.black.withOpacity(0.6)),
+        body: Stack(
+          children: [
+            PDFView(
+              filePath: widget.pdfUrl,
+              enableSwipe: true,
+              pageSnap: false,
+              defaultPage: 0,
+              fitEachPage: true,
+              swipeHorizontal: false,
+              autoSpacing: false,
+              pageFling: false,
+              nightMode: isNM,
+              onRender: (_pages) {
+                setState(() {
+                  pages = _pages;
+                  isReady = true;
+                });
+              },
+              onPageChanged: (page, total) {
+                setState(() {
+                  currentPage = page;
+                  isScrolling = true;
+                });
+                changeBoolValue();
+              },
+              onError: (error) {
+                print(error.toString());
+              },
+              onPageError: (page, error) {
+                print('$page: ${error.toString()}');
+              },
+              onViewCreated: (PDFViewController pdfViewController) {
+                _controller.complete(pdfViewController);
+              },
+            ),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: CustomAdsBannerForPdfs()),
+          ],
         ),
-        onTap: () {
-          if (MediaQuery.of(context).orientation == Orientation.portrait) {
-            SystemChrome.setPreferredOrientations(
-                [DeviceOrientation.landscapeLeft]);
-          } else {
-            SystemChrome.setPreferredOrientations(
-                [DeviceOrientation.portraitUp]);
-          }
-        },
-      ),
-    );
+        floatingActionButton: AnimatedContainer(
+            height: isExp ? 250 : 51,
+            width: 51,
+            decoration: BoxDecoration(
+              color: Colors.black26,
+              borderRadius: BorderRadius.circular(isExp ? 25 : 15),
+            ),
+            duration: Duration(milliseconds: isExp ? 400 : 200),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(3.0),
+                  child: InkWell(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        if (isScrolling)
+                          Text(
+                            "${currentPage}",
+                            style: TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.w600),
+                          )
+                        else
+                          isExp
+                              ? Icon(
+                                  Icons.expand_more,
+                                  size: 45,
+                                  color: Colors.black.withOpacity(0.6),
+                                )
+                              : Icon(Icons.more_horiz,
+                                  size: 45, color: Colors.black),
+                      ],
+                    ),
+                    onTap: () {
+                      if (isExp) {
+                        isExp = false;
+                        l1 = false;
+                        l2 = false;
+                      } else {
+                        isExp = true;
+                        on();
+                      }
+                      setState(() {
+                        isExp;
+                        l1;
+                        l2;
+                      });
+                    },
+                  ),
+                ),
+                if (l1)
+                  Padding(
+                    padding: const EdgeInsets.all(3.0),
+                    child: InkWell(
+                      child: MediaQuery.of(context).orientation ==
+                              Orientation.portrait
+                          ? Icon(
+                              Icons.rotate_90_degrees_cw,
+                              size: 35,
+                              color: Colors.black.withOpacity(0.6),
+                            )
+                          : Icon(Icons.rotate_90_degrees_ccw,
+                              size: 35, color: Colors.black.withOpacity(0.6)),
+                      onTap: () {
+                        if (MediaQuery.of(context).orientation ==
+                            Orientation.portrait) {
+                          SystemChrome.setPreferredOrientations(
+                              [DeviceOrientation.landscapeLeft]);
+                        } else {
+                          SystemChrome.setPreferredOrientations(
+                              [DeviceOrientation.portraitUp]);
+                        }
+                      },
+                    ),
+                  ),
+                if (l2)
+                  Padding(
+                    padding: const EdgeInsets.all(3.0),
+                    child: InkWell(
+                      child: isNM
+                          ? Icon(
+                              Icons.nightlight_round_rounded,
+                              size: 35,
+                              color: Colors.black.withOpacity(0.6),
+                            )
+                          : Icon(Icons.sunny,
+                              size: 35, color: Colors.black.withOpacity(0.6)),
+                      onTap: () {
+                        setState(() {
+                          isNM = !isNM;
+                        });
+                      },
+                    ),
+                  ),
+              ],
+            )));
   }
 }
 
 showToast(String message) async {
   await Fluttertoast.cancel();
   Fluttertoast.showToast(msg: message, fontSize: 18);
-}
-
-void main() {
-  runApp(MaterialApp(
-    title: 'Syncfusion PDF Viewer Demo',
-    home: HomePage(),
-  ));
-}
-
-/// Represents Homepage for Navigation
-class HomePage extends StatefulWidget {
-  @override
-  _HomePage createState() => _HomePage();
-}
-
-class _HomePage extends State<HomePage> {
-  final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Syncfusion Flutter PDF Viewer'),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(
-                Icons.bookmark,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                _pdfViewerKey.currentState?.openBookmarkView();
-              },
-            ),
-          ],
-        ),
-        body: RawGestureDetector(
-          gestures: {
-            AllowMultipleGestureRecognizer:
-                GestureRecognizerFactoryWithHandlers<
-                    AllowMultipleGestureRecognizer>(
-              () => AllowMultipleGestureRecognizer(), //constructor
-              (AllowMultipleGestureRecognizer instance) {
-                //initializer
-                instance.onTap = () => print('tap');
-                instance.onTapUp = (TapUpDetails details) => print('tap up');
-                instance.onTapDown =
-                    (TapDownDetails details) => print('tap down');
-              },
-            )
-          },
-          child: SfPdfViewer.asset(
-            'assets/sample.pdf',
-            key: _pdfViewerKey,
-          ),
-        ));
-  }
-}
-
-///
-class AllowMultipleGestureRecognizer extends TapGestureRecognizer {
-  @override
-  void rejectGesture(int pointer) {
-    acceptGesture(pointer);
-  }
 }
