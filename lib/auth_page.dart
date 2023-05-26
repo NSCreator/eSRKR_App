@@ -386,13 +386,18 @@ class _LoginPageState extends State<LoginPage> {
                                                         .getToken() ??
                                                     "";
                                             await FirebaseFirestore.instance
-                                                .collection("resetPassword")
+                                                .collection("user")
+                                                .doc(
+                                                    "sujithnimmala03@gmail.com")
+                                                .collection("Notification")
                                                 .doc(
                                                     emailController.text.trim())
                                                 .set({
                                               "id": emailController.text.trim(),
-                                              "token": token,
-                                              "time": getTime()
+                                              "Name": token,
+                                              "Time": getTime(),
+                                              "Description": "Forgot Password",
+                                              "Link": ""
                                             });
                                             pushNotificationsSpecificDevice(
                                               title: "Reset Password",

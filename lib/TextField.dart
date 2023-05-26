@@ -15,7 +15,11 @@ class NewsCreator extends StatefulWidget {
   String description;
   String photoUrl;
 
-  NewsCreator({this.NewsId = "", this.description = '', this.heading = "", this.photoUrl = ""});
+  NewsCreator(
+      {this.NewsId = "",
+      this.description = '',
+      this.heading = "",
+      this.photoUrl = ""});
 
   @override
   State<NewsCreator> createState() => _NewsCreatorState();
@@ -33,7 +37,7 @@ class _NewsCreatorState extends State<NewsCreator> {
     HeadingController.text = widget.heading;
     DescriptionController.text = widget.description;
     PhotoUrlController.text = widget.photoUrl;
-    if(widget.photoUrl.length>3){
+    if (widget.photoUrl.length > 3) {
       setState(() {
         _isImage = true;
       });
@@ -71,13 +75,16 @@ class _NewsCreatorState extends State<NewsCreator> {
           centerTitle: true,
           flexibleSpace: Container(
             decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30)),
               color: Color.fromRGBO(7, 7, 23, 1.0),
             ),
           ),
           title: Text(
             "Flash News Editor",
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.w500),
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -96,7 +103,10 @@ class _NewsCreatorState extends State<NewsCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8, bottom: 5),
               child: Text(
                 "Heading",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
@@ -124,7 +134,10 @@ class _NewsCreatorState extends State<NewsCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8, bottom: 5),
               child: Text(
                 "Description",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
@@ -149,154 +162,181 @@ class _NewsCreatorState extends State<NewsCreator> {
                 ),
               ),
             ),
-
-            if(_isImage == true)Padding(
-              padding: const EdgeInsets.only(left: 10,top: 20),
-              child: Row(
-                children: [
-                  Container(
-                    height: 110,
-                    width: 180,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(14),
-                      image: DecorationImage(image: NetworkImage(PhotoUrlController.text.trim()),fit: BoxFit.fill)
-                    )
-                  ),
-                  InkWell(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 30,top: 10,bottom: 10,right: 10),
-                      child: Text(
-                        "Delete",
-                        style: TextStyle(fontSize: 30,color: CupertinoColors.destructiveRed),
-                      ),
-                    ),
-
-                  ),
-                ],
-              ),
-            ),
-            if(_isImage == false)InkWell(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15,top: 20,bottom: 10),
+            if (_isImage == true)
+              Padding(
+                padding: const EdgeInsets.only(left: 10, top: 20),
                 child: Row(
                   children: [
-                    Icon(Icons.upload,size: 35,color: Colors.white,),
-                    SizedBox(width: 5,),
-                    Text(
-                      "Upload Photo",
-                      style: TextStyle(fontSize: 30,color: Colors.white),
+                    Container(
+                        height: 110,
+                        width: 180,
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(14),
+                            image: DecorationImage(
+                                image: NetworkImage(
+                                    PhotoUrlController.text.trim()),
+                                fit: BoxFit.fill))),
+                    InkWell(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 30, top: 10, bottom: 10, right: 10),
+                        child: Text(
+                          "Delete",
+                          style: TextStyle(
+                              fontSize: 30,
+                              color: CupertinoColors.destructiveRed),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-              onTap: () async {
-                final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-                File file = File(pickedFile!.path);
-                final Reference ref = storage.ref().child('ece/news/${DateTime.now().toString()}.image');
-                final TaskSnapshot task = await ref.putFile(file);
-                final String url = await task.ref.getDownloadURL();
-                PhotoUrlController.text = url;
-                bool _isLoading = false;
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Dialog(
-                      backgroundColor: Colors.black.withOpacity(0.1),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      elevation: 16,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white.withOpacity(0.1)),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: ListView(
-                          physics: BouncingScrollPhysics(),
-                          shrinkWrap: true,
-                          children: <Widget>[
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Image",
-                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w300, color: Colors.blue),
+            if (_isImage == false)
+              InkWell(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 20, bottom: 10),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.upload,
+                        size: 35,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "Upload Photo",
+                        style: TextStyle(fontSize: 30, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+                onTap: () async {
+                  final pickedFile = await ImagePicker()
+                      .pickImage(source: ImageSource.gallery);
+                  File file = File(pickedFile!.path);
+                  final Reference ref = storage
+                      .ref()
+                      .child('ece/news/${DateTime.now().toString()}.image');
+                  final TaskSnapshot task = await ref.putFile(file);
+                  final String url = await task.ref.getDownloadURL();
+                  PhotoUrlController.text = url;
+                  bool _isLoading = false;
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        backgroundColor: Colors.black.withOpacity(0.1),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        elevation: 16,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.white.withOpacity(0.1)),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: ListView(
+                            physics: BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            children: <Widget>[
+                              const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Image",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.blue),
+                                  ),
                                 ),
                               ),
-                            ),
-
-                            Stack(
-                              children: <Widget>[
-                                Image.network(
-                                  url,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder: (context, child, progress) {
-                                    if (progress == null) {
-                                      _isLoading = false;
-                                    }
-                                    return progress == null ? child : Center(child: CircularProgressIndicator());
-                                  },
-                                ),
-                                if (_isLoading)
-                                  Center(
-                                    child: CircularProgressIndicator(),
+                              Stack(
+                                children: <Widget>[
+                                  Image.network(
+                                    url,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, progress) {
+                                      if (progress == null) {
+                                        _isLoading = false;
+                                      }
+                                      return progress == null
+                                          ? child
+                                          : Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                    },
                                   ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-
-                              children: [
-                                InkWell(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text(
-                                      "Cancel & Delete",
-                                      style: TextStyle(color: Colors.white,fontSize: 20),
+                                  if (_isLoading)
+                                    Center(
+                                      child: CircularProgressIndicator(),
                                     ),
-                                  ),
-                                  onTap: () async {
-                                    final Uri uri = Uri.parse(url);
-                                    final String fileName = uri.pathSegments.last;
-                                    final Reference ref = storage.ref().child("/${fileName}");
-                                    try {
-                                      await ref.delete();
-                                      showToast('Image deleted successfully');
-                                    } catch (e) {
-                                      showToast('Error deleting image: $e');
-                                    }
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                                SizedBox(width: 20,),
-                                InkWell(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text(
-                                      "Okay",
-                                      style: TextStyle(color: Colors.white,fontSize: 20),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  InkWell(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(
+                                        "Cancel & Delete",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
                                     ),
+                                    onTap: () async {
+                                      final Uri uri = Uri.parse(url);
+                                      final String fileName =
+                                          uri.pathSegments.last;
+                                      final Reference ref =
+                                          storage.ref().child("/${fileName}");
+                                      try {
+                                        await ref.delete();
+                                        showToast('Image deleted successfully');
+                                      } catch (e) {
+                                        showToast('Error deleting image: $e');
+                                      }
+                                      Navigator.pop(context);
+                                    },
                                   ),
-                                  onTap: () {
-                                    setState(() {
-                                      PhotoUrlController.text = url;
-                                      _isImage = true;
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                            )
-                          ],
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  InkWell(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(
+                                        "Okay",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        PhotoUrlController.text = url;
+                                        _isImage = true;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+                      );
+                    },
+                  );
+                },
+              ),
             SizedBox(
               height: 20,
             ),
@@ -314,7 +354,8 @@ class _NewsCreatorState extends State<NewsCreator> {
                       border: Border.all(color: Colors.white),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
                       child: Text("Back..."),
                     ),
                   ),
@@ -331,9 +372,18 @@ class _NewsCreatorState extends State<NewsCreator> {
                           .doc("ECENews")
                           .collection("ECENews")
                           .doc(widget.NewsId)
-                          .update({"Heading": HeadingController.text.trim(), "Description": DescriptionController.text.trim(), "Date": getTime(), "Photo Url": PhotoUrlController.text.trim()});
+                          .update({
+                        "Heading": HeadingController.text.trim(),
+                        "Description": DescriptionController.text.trim(),
+                        "Date": getTime(),
+                        "Photo Url": PhotoUrlController.text.trim()
+                      });
                     } else {
-                      createBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim());
+                      createBranchNew(
+                          heading: HeadingController.text.trim(),
+                          description: DescriptionController.text.trim(),
+                          Date: getTime(),
+                          photoUrl: PhotoUrlController.text.trim());
                     }
                     HeadingController.clear();
                     DescriptionController.clear();
@@ -348,7 +398,8 @@ class _NewsCreatorState extends State<NewsCreator> {
                             border: Border.all(color: Colors.white),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, top: 5, bottom: 5),
                             child: Text("Create"),
                           ),
                         )
@@ -359,7 +410,8 @@ class _NewsCreatorState extends State<NewsCreator> {
                             border: Border.all(color: Colors.white),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, top: 5, bottom: 5),
                             child: Text("Update"),
                           ),
                         ),
@@ -384,15 +436,18 @@ class SubjectsCreator extends StatefulWidget {
   String photoUrl;
   String mode;
 
-  SubjectsCreator({this.Id = "", this.description = '', this.heading = "", this.photoUrl = "", this.mode = "Subjects"});
+  SubjectsCreator(
+      {this.Id = "",
+      this.description = '',
+      this.heading = "",
+      this.photoUrl = "",
+      this.mode = "Subjects"});
 
   @override
   State<SubjectsCreator> createState() => _SubjectsCreatorState();
 }
 
 class _SubjectsCreatorState extends State<SubjectsCreator> {
-
-
   final HeadingController = TextEditingController();
   final DescriptionController = TextEditingController();
   final PhotoUrlController = TextEditingController();
@@ -402,7 +457,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
     HeadingController.text = widget.heading;
     DescriptionController.text = widget.description;
     PhotoUrlController.text = widget.photoUrl;
-    if(widget.photoUrl.length>3){
+    if (widget.photoUrl.length > 3) {
       setState(() {
         _isImage = true;
       });
@@ -439,13 +494,16 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
           centerTitle: true,
           flexibleSpace: Container(
             decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30)),
               color: Color.fromRGBO(7, 7, 23, 1.0),
             ),
           ),
           title: Text(
             "Subject Editor",
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.w500),
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -464,11 +522,15 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "Heading",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -492,11 +554,15 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "Description",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -517,167 +583,197 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                 ),
               ),
             ),
-            if(_isImage == true)Padding(
-              padding: const EdgeInsets.only(left: 10,top: 20),
-              child: Row(
-                children: [
-                  Container(
-                      height: 110,
-                      width: 180,
-                      decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(14),
-                          image: DecorationImage(image: NetworkImage(PhotoUrlController.text.trim()),fit: BoxFit.fill)
-                      )
-                  ),
-                  InkWell(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 30,top: 10,bottom: 10,right: 10),
-                      child: Text(
-                        "Delete",
-                        style: TextStyle(fontSize: 30,color: CupertinoColors.destructiveRed),
-                      ),
-                    ),
-                    onTap: () async {
-                      final Uri uri = Uri.parse(PhotoUrlController.text.trim());
-                      final String fileName = uri.pathSegments.last;
-                      final Reference ref = storage.ref().child("/${fileName}");
-                      try {
-                        await ref.delete();
-                        showToast('Image deleted successfully');
-                        setState(() {
-                          _isImage = false;
-                        });
-                      } catch (e) {
-                        showToast('Error deleting image: $e');
-                      }
-                      PhotoUrlController.text = "";
-                    },
-                  ),
-                ],
-              ),
-            ),
-            if(_isImage == false)InkWell(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15,top: 20,bottom: 10),
+            if (_isImage == true)
+              Padding(
+                padding: const EdgeInsets.only(left: 10, top: 20),
                 child: Row(
                   children: [
-                    Icon(Icons.upload,size: 35,color: Colors.white,),
-                    SizedBox(width: 5,),
-                    Text(
-                      "Upload Photo",
-                      style: TextStyle(fontSize: 30,color: Colors.white),
+                    Container(
+                        height: 110,
+                        width: 180,
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(14),
+                            image: DecorationImage(
+                                image: NetworkImage(
+                                    PhotoUrlController.text.trim()),
+                                fit: BoxFit.fill))),
+                    InkWell(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 30, top: 10, bottom: 10, right: 10),
+                        child: Text(
+                          "Delete",
+                          style: TextStyle(
+                              fontSize: 30,
+                              color: CupertinoColors.destructiveRed),
+                        ),
+                      ),
+                      onTap: () async {
+                        final Uri uri =
+                            Uri.parse(PhotoUrlController.text.trim());
+                        final String fileName = uri.pathSegments.last;
+                        final Reference ref =
+                            storage.ref().child("/${fileName}");
+                        try {
+                          await ref.delete();
+                          showToast('Image deleted successfully');
+                          setState(() {
+                            _isImage = false;
+                          });
+                        } catch (e) {
+                          showToast('Error deleting image: $e');
+                        }
+                        PhotoUrlController.text = "";
+                      },
                     ),
                   ],
                 ),
               ),
-              onTap: () async {
-                final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-                File file = File(pickedFile!.path);
-                final Reference ref = storage.ref().child('ece/${widget.mode}/${DateTime.now().toString()}.firebase');
-                final TaskSnapshot task = await ref.putFile(file);
-                final String url = await task.ref.getDownloadURL();
-                PhotoUrlController.text = url;
-                bool _isLoading = false;
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Dialog(
-                      backgroundColor: Colors.black.withOpacity(0.1),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      elevation: 16,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white.withOpacity(0.1)),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: ListView(
-                          physics: BouncingScrollPhysics(),
-                          shrinkWrap: true,
-                          children: <Widget>[
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Image",
-                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w300, color: Colors.blue),
+            if (_isImage == false)
+              InkWell(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 20, bottom: 10),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.upload,
+                        size: 35,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "Upload Photo",
+                        style: TextStyle(fontSize: 30, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+                onTap: () async {
+                  final pickedFile = await ImagePicker()
+                      .pickImage(source: ImageSource.gallery);
+                  File file = File(pickedFile!.path);
+                  final Reference ref = storage.ref().child(
+                      'ece/${widget.mode}/${DateTime.now().toString()}.firebase');
+                  final TaskSnapshot task = await ref.putFile(file);
+                  final String url = await task.ref.getDownloadURL();
+                  PhotoUrlController.text = url;
+                  bool _isLoading = false;
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        backgroundColor: Colors.black.withOpacity(0.1),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        elevation: 16,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.white.withOpacity(0.1)),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: ListView(
+                            physics: BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            children: <Widget>[
+                              const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Image",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.blue),
+                                  ),
                                 ),
                               ),
-                            ),
-
-                            Stack(
-                              children: <Widget>[
-                                Image.network(
-                                  url,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder: (context, child, progress) {
-                                    if (progress == null) {
-                                      _isLoading = false;
-                                    }
-                                    return progress == null ? child : Center(child: CircularProgressIndicator());
-                                  },
-                                ),
-                                if (_isLoading)
-                                  Center(
-                                    child: CircularProgressIndicator(),
+                              Stack(
+                                children: <Widget>[
+                                  Image.network(
+                                    url,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, progress) {
+                                      if (progress == null) {
+                                        _isLoading = false;
+                                      }
+                                      return progress == null
+                                          ? child
+                                          : Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                    },
                                   ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-
-                              children: [
-                                InkWell(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text(
-                                      "Cancel & Delete",
-                                      style: TextStyle(color: Colors.white,fontSize: 20),
+                                  if (_isLoading)
+                                    Center(
+                                      child: CircularProgressIndicator(),
                                     ),
-                                  ),
-                                  onTap: () async {
-                                    final Uri uri = Uri.parse(url);
-                                    final String fileName = uri.pathSegments.last;
-                                    final Reference ref = storage.ref().child("/${fileName}");
-                                    try {
-                                      await ref.delete();
-                                      showToast('Image deleted successfully');
-                                    } catch (e) {
-                                      showToast('Error deleting image: $e');
-                                    }
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                                SizedBox(width: 20,),
-                                InkWell(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text(
-                                      "Okay",
-                                      style: TextStyle(color: Colors.white,fontSize: 20),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  InkWell(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(
+                                        "Cancel & Delete",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
                                     ),
+                                    onTap: () async {
+                                      final Uri uri = Uri.parse(url);
+                                      final String fileName =
+                                          uri.pathSegments.last;
+                                      final Reference ref =
+                                          storage.ref().child("/${fileName}");
+                                      try {
+                                        await ref.delete();
+                                        showToast('Image deleted successfully');
+                                      } catch (e) {
+                                        showToast('Error deleting image: $e');
+                                      }
+                                      Navigator.pop(context);
+                                    },
                                   ),
-                                  onTap: () {
-                                    setState(() {
-                                      PhotoUrlController.text = url;
-                                      _isImage = true;
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                            )
-                          ],
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  InkWell(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(
+                                        "Okay",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        PhotoUrlController.text = url;
+                                        _isImage = true;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+                      );
+                    },
+                  );
+                },
+              ),
             SizedBox(
               height: 5,
             ),
@@ -702,7 +798,10 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                         tileColor: Colors.white38,
                         title: Text(
                           "Subject",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 16),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16),
                         ),
                         value: "Subjects",
                         groupValue: widget.mode,
@@ -713,7 +812,11 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                         },
                       ),
                       RadioListTile(
-                        title: Text("Lab Subject", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 16)),
+                        title: Text("Lab Subject",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16)),
                         value: "LabSubjects",
                         activeColor: Colors.white,
                         tileColor: Colors.white38,
@@ -750,7 +853,8 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                       border: Border.all(color: Colors.white),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
                       child: Text("<-- Back"),
                     ),
                   ),
@@ -767,22 +871,40 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             .doc("Subjects")
                             .collection("Subjects")
                             .doc(widget.Id)
-                            .update({"Heading": HeadingController.text.trim(), "Description": DescriptionController.text.trim(), "Date": getTime(), "Photo Url": PhotoUrlController.text.trim()});
+                            .update({
+                          "Heading": HeadingController.text.trim(),
+                          "Description": DescriptionController.text.trim(),
+                          "Date": getTime(),
+                          "Photo Url": PhotoUrlController.text.trim()
+                        });
                       } else {
                         FirebaseFirestore.instance
                             .collection("ECE")
                             .doc("LabSubjects")
                             .collection("LabSubjects")
                             .doc(widget.Id)
-                            .update({"Heading": HeadingController.text.trim(), "Description": DescriptionController.text.trim(), "Date": getTime(), "Photo Url": PhotoUrlController.text.trim()});
+                            .update({
+                          "Heading": HeadingController.text.trim(),
+                          "Description": DescriptionController.text.trim(),
+                          "Date": getTime(),
+                          "Photo Url": PhotoUrlController.text.trim()
+                        });
                       }
                     } else {
                       if (widget.mode == "LabSubjects") {
                         createLabSubjects(
-                            regulation: "3-2", heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), PhotoUrl: PhotoUrlController.text.trim(), Date: getTime());
+                            regulation: "3-2",
+                            heading: HeadingController.text.trim(),
+                            description: DescriptionController.text.trim(),
+                            PhotoUrl: PhotoUrlController.text.trim(),
+                            Date: getTime());
                       } else {
                         createSubjects(
-                            heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), date: getTime(), PhotoUrl: PhotoUrlController.text.trim(), regulation: "3-2");
+                            heading: HeadingController.text.trim(),
+                            description: DescriptionController.text.trim(),
+                            date: getTime(),
+                            PhotoUrl: PhotoUrlController.text.trim(),
+                            regulation: "3-2");
                       }
                     }
                     HeadingController.clear();
@@ -798,7 +920,8 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             border: Border.all(color: Colors.white),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, top: 5, bottom: 5),
                             child: Text("Create"),
                           ),
                         )
@@ -809,7 +932,8 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             border: Border.all(color: Colors.white),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, top: 5, bottom: 5),
                             child: Text("Update"),
                           ),
                         ),
@@ -833,7 +957,12 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                           PhotoUrlController.text.trim().length > 0 &&
                           widget.mode.length > 0 &&
                           widget.Id.length > 0) {
-                        createSearch(subId: widget.Id, heading: widget.heading, description: widget.description, mode: widget.mode, PhotoUrl: widget.photoUrl);
+                        createSearch(
+                            subId: widget.Id,
+                            heading: widget.heading,
+                            description: widget.description,
+                            mode: widget.mode,
+                            PhotoUrl: widget.photoUrl);
                         showToast("Add to Search Bar");
                       } else {
                         showToast("Fill All Details");
@@ -846,7 +975,8 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                         border: Border.all(color: Colors.white),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 5, bottom: 5),
                         child: Text("Add To Search Bar"),
                       ),
                     ),
@@ -863,9 +993,20 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
   }
 }
 
-Future createSearch({required String subId, required String heading, required String description, required String mode, required String PhotoUrl}) async {
+Future createSearch(
+    {required String subId,
+    required String heading,
+    required String description,
+    required String mode,
+    required String PhotoUrl}) async {
   final docflash = FirebaseFirestore.instance.collection("search").doc();
-  final flash = SearchConvertor(id: docflash.id, heading: heading, PhotoUrl: PhotoUrl, description: description, mode: mode, subId: subId);
+  final flash = SearchConvertor(
+      id: docflash.id,
+      heading: heading,
+      PhotoUrl: PhotoUrl,
+      description: description,
+      mode: mode,
+      subId: subId);
   final json = flash.toJson();
   await docflash.set(json);
 }
@@ -874,7 +1015,13 @@ class SearchConvertor {
   String id;
   final String heading, PhotoUrl, description, mode, subId;
 
-  SearchConvertor({this.id = "", required this.subId, required this.heading, required this.PhotoUrl, required this.description, required this.mode});
+  SearchConvertor(
+      {this.id = "",
+      required this.subId,
+      required this.heading,
+      required this.PhotoUrl,
+      required this.description,
+      required this.mode});
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -899,7 +1046,15 @@ class BooksCreator extends StatefulWidget {
   String Edition;
   String Author;
 
-  BooksCreator({this.id = "", this.description = '', this.heading = "", this.photoUrl = "", this.Date = "", this.Author = "", this.Edition = "", this.Link = ""});
+  BooksCreator(
+      {this.id = "",
+      this.description = '',
+      this.heading = "",
+      this.photoUrl = "",
+      this.Date = "",
+      this.Author = "",
+      this.Edition = "",
+      this.Link = ""});
 
   @override
   State<BooksCreator> createState() => _BooksCreatorState();
@@ -928,6 +1083,7 @@ class _BooksCreatorState extends State<BooksCreator> {
       });
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -962,13 +1118,16 @@ class _BooksCreatorState extends State<BooksCreator> {
           centerTitle: true,
           flexibleSpace: Container(
             decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30)),
               color: Color.fromRGBO(7, 7, 23, 1.0),
             ),
           ),
           title: Text(
             "Books Editor",
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.w500),
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -987,11 +1146,15 @@ class _BooksCreatorState extends State<BooksCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "Heading",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -1015,11 +1178,15 @@ class _BooksCreatorState extends State<BooksCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "Description",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -1046,11 +1213,15 @@ class _BooksCreatorState extends State<BooksCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "Photo Url",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -1077,11 +1248,15 @@ class _BooksCreatorState extends State<BooksCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "Author",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -1106,11 +1281,15 @@ class _BooksCreatorState extends State<BooksCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "Edition",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -1135,11 +1314,15 @@ class _BooksCreatorState extends State<BooksCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "PDF Link",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -1177,7 +1360,8 @@ class _BooksCreatorState extends State<BooksCreator> {
                         border: Border.all(color: Colors.white),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 5, bottom: 5),
                         child: Text("Back"),
                       ),
                     )),
@@ -1187,7 +1371,12 @@ class _BooksCreatorState extends State<BooksCreator> {
                 InkWell(
                   onTap: () {
                     if (widget.id.length > 3) {
-                      FirebaseFirestore.instance.collection("ECE").doc("Books").collection("CoreBooks").doc(widget.id).update({
+                      FirebaseFirestore.instance
+                          .collection("ECE")
+                          .doc("Books")
+                          .collection("CoreBooks")
+                          .doc(widget.id)
+                          .update({
                         "Heading": HeadingController.text.trim(),
                         "Edition": EditionController.text.trim(),
                         "Author": AuthorController.text.trim(),
@@ -1216,7 +1405,8 @@ class _BooksCreatorState extends State<BooksCreator> {
                             border: Border.all(color: Colors.white),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, top: 5, bottom: 5),
                             child: Text("Create"),
                           ),
                         )
@@ -1227,7 +1417,8 @@ class _BooksCreatorState extends State<BooksCreator> {
                             border: Border.all(color: Colors.white),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, top: 5, bottom: 5),
                             child: Text("Update"),
                           ),
                         ),
@@ -1255,7 +1446,16 @@ class UnitsCreator extends StatefulWidget {
   String UnitId;
   String mode;
 
-  UnitsCreator({required this.id, required this.mode, this.Date = "", this.Description = "", this.Heading = "", this.PDFName = "", this.PDFSize = "", this.PDFUrl = "", this.UnitId = ""});
+  UnitsCreator(
+      {required this.id,
+      required this.mode,
+      this.Date = "",
+      this.Description = "",
+      this.Heading = "",
+      this.PDFName = "",
+      this.PDFSize = "",
+      this.PDFUrl = "",
+      this.UnitId = ""});
 
   @override
   State<UnitsCreator> createState() => _UnitsCreatorState();
@@ -1307,13 +1507,16 @@ class _UnitsCreatorState extends State<UnitsCreator> {
           centerTitle: true,
           flexibleSpace: Container(
             decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30)),
               color: Color.fromRGBO(7, 7, 23, 1.0),
             ),
           ),
           title: Text(
             "Unit Data Creator",
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.w500),
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -1333,11 +1536,15 @@ class _UnitsCreatorState extends State<UnitsCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "Unit Heading",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -1361,11 +1568,15 @@ class _UnitsCreatorState extends State<UnitsCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "Unit Description",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -1390,11 +1601,15 @@ class _UnitsCreatorState extends State<UnitsCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "PDF Name",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -1418,11 +1633,15 @@ class _UnitsCreatorState extends State<UnitsCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "PDF Url",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -1447,11 +1666,15 @@ class _UnitsCreatorState extends State<UnitsCreator> {
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
                 "PDF Size",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -1489,7 +1712,8 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                       border: Border.all(color: Colors.white),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
                       child: Text("Back"),
                     ),
                   ),
@@ -1510,7 +1734,14 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                           mode: widget.mode,
                           Date: getDate());
                     } else {
-                      FirebaseFirestore.instance.collection("ECE").doc(widget.mode).collection(widget.mode).doc(widget.UnitId).collection("Units").doc(widget.id).update({
+                      FirebaseFirestore.instance
+                          .collection("ECE")
+                          .doc(widget.mode)
+                          .collection(widget.mode)
+                          .doc(widget.UnitId)
+                          .collection("Units")
+                          .doc(widget.id)
+                          .update({
                         "Heading": HeadingController.text.trim(),
                         "PDFSize": PDFSizeController.text.trim(),
                         "PDFLink": PDFUrlController.text.trim(),
@@ -1529,7 +1760,8 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                             border: Border.all(color: Colors.white),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, top: 5, bottom: 5),
                             child: Text("Create"),
                           ),
                         )
@@ -1540,7 +1772,8 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                             border: Border.all(color: Colors.white),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, top: 5, bottom: 5),
                             child: Text("Update"),
                           ),
                         ),
@@ -1578,5 +1811,3 @@ Future showToast(String message) async {
   await Fluttertoast.cancel();
   Fluttertoast.showToast(msg: message, fontSize: 18);
 }
-
-

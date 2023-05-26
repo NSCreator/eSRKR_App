@@ -21,6 +21,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 
+import 'net.dart';
+
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();

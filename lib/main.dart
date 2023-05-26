@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 import 'HomePage.dart';
 import 'auth_page.dart';
@@ -35,12 +36,7 @@ Future main() async {
   await MobileAds.instance.initialize();
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   NotificationService().initNotification();
-  // await Permission.storage.request();
-  // await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-  //   alert: true,
-  //   badge: true,
-  //   sound: true,
-  // );
+
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
@@ -117,7 +113,7 @@ class Nav extends StatefulWidget {
   State<Nav> createState() => _NavState();
 }
 
-class _NavState extends State<Nav> {
+class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   final List<Widget> _widgetOptions = <Widget>[
     HomePage(),
