@@ -14,12 +14,14 @@ class NewsCreator extends StatefulWidget {
   String heading;
   String description;
   String photoUrl;
+  String branch;
 
   NewsCreator(
       {this.NewsId = "",
       this.description = '',
       this.heading = "",
-      this.photoUrl = ""});
+      this.photoUrl = "",
+      required this.branch});
 
   @override
   State<NewsCreator> createState() => _NewsCreatorState();
@@ -380,6 +382,7 @@ class _NewsCreatorState extends State<NewsCreator> {
                       });
                     } else {
                       createBranchNew(
+                          branch: widget.branch,
                           heading: HeadingController.text.trim(),
                           description: DescriptionController.text.trim(),
                           Date: getTime(),
@@ -435,13 +438,15 @@ class SubjectsCreator extends StatefulWidget {
   String description;
   String photoUrl;
   String mode;
+  String branch;
 
   SubjectsCreator(
       {this.Id = "",
       this.description = '',
       this.heading = "",
       this.photoUrl = "",
-      this.mode = "Subjects"});
+      this.mode = "Subjects",
+      required this.branch});
 
   @override
   State<SubjectsCreator> createState() => _SubjectsCreatorState();
@@ -656,7 +661,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                       .pickImage(source: ImageSource.gallery);
                   File file = File(pickedFile!.path);
                   final Reference ref = storage.ref().child(
-                      'ece/${widget.mode}/${DateTime.now().toString()}.firebase');
+                      '${widget.branch.toLowerCase()}/${widget.mode}/${DateTime.now().toString()}.firebase');
                   final TaskSnapshot task = await ref.putFile(file);
                   final String url = await task.ref.getDownloadURL();
                   PhotoUrlController.text = url;
@@ -867,7 +872,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                     if (widget.Id.length > 3) {
                       if (widget.mode != "LabSubjects") {
                         FirebaseFirestore.instance
-                            .collection("ECE")
+                            .collection(widget.branch)
                             .doc("Subjects")
                             .collection("Subjects")
                             .doc(widget.Id)
@@ -879,7 +884,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                         });
                       } else {
                         FirebaseFirestore.instance
-                            .collection("ECE")
+                            .collection(widget.branch)
                             .doc("LabSubjects")
                             .collection("LabSubjects")
                             .doc(widget.Id)
@@ -893,6 +898,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                     } else {
                       if (widget.mode == "LabSubjects") {
                         createLabSubjects(
+                            branch: widget.branch,
                             regulation: "3-2",
                             heading: HeadingController.text.trim(),
                             description: DescriptionController.text.trim(),
@@ -900,6 +906,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             Date: getTime());
                       } else {
                         createSubjects(
+                            branch: widget.branch,
                             heading: HeadingController.text.trim(),
                             description: DescriptionController.text.trim(),
                             date: getTime(),
@@ -1045,6 +1052,7 @@ class BooksCreator extends StatefulWidget {
   String Link;
   String Edition;
   String Author;
+  String branch;
 
   BooksCreator(
       {this.id = "",
@@ -1054,6 +1062,7 @@ class BooksCreator extends StatefulWidget {
       this.Date = "",
       this.Author = "",
       this.Edition = "",
+      required this.branch,
       this.Link = ""});
 
   @override
@@ -1387,6 +1396,7 @@ class _BooksCreatorState extends State<BooksCreator> {
                       });
                     } else {
                       createBook(
+                          branch: widget.branch,
                           heading: HeadingController.text.trim(),
                           description: DescriptionController.text.trim(),
                           photoUrl: PhotoUrlController.text.trim(),

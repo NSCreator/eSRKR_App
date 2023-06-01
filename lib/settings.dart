@@ -21,7 +21,9 @@ String imageUrl =
     "https://drive.google.com/uc?export=view&id=12yZolNq49Fikqi-lh67f7sxQelEb_3Zt";
 
 class settings extends StatefulWidget {
-  const settings({Key? key}) : super(key: key);
+  final String reg, branch;
+  const settings({Key? key, required this.reg, required this.branch})
+      : super(key: key);
 
   @override
   State<settings> createState() => _settingsState();
@@ -260,11 +262,8 @@ class _settingsState extends State<settings> {
                                                     onTap: () {
                                                       FirebaseAuth.instance
                                                           .signOut();
-                                                      Navigator.pushReplacement(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  const LoginPage()));
+                                                      Navigator.pop(context);
+                                                      Navigator.pop(context);
                                                     },
                                                   ),
                                                   SizedBox(
@@ -292,6 +291,170 @@ class _settingsState extends State<settings> {
               ),
               SizedBox(
                 height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, top: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      "Reg : ",
+                      style: TextStyle(
+                          color: Colors.deepOrange,
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        widget.reg,
+                        style: TextStyle(
+                            color: Colors.orangeAccent,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    InkWell(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.red.withOpacity(1),
+                          border:
+                              Border.all(color: Colors.white.withOpacity(0.3)),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 5, bottom: 5),
+                          child: Text(
+                            "Change",
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              backgroundColor: Colors.black.withOpacity(0.8),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              elevation: 16,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.white.withOpacity(0.3)),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: ListView(
+                                  physics: BouncingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  children: <Widget>[
+                                    const Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "Select Year and Sem",
+                                          style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.orange),
+                                        ),
+                                      ),
+                                    ),
+                                    StreamBuilder<List<RegulationConvertor>>(
+                                        stream: readRegulation(widget.branch),
+                                        builder: (context, snapshot) {
+                                          final user = snapshot.data;
+                                          switch (snapshot.connectionState) {
+                                            case ConnectionState.waiting:
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                strokeWidth: 0.3,
+                                                color: Colors.cyan,
+                                              ));
+                                            default:
+                                              if (snapshot.hasError) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'Error with TextBooks Data or\n Check Internet Connection'));
+                                              } else {
+                                                return ListView.builder(
+                                                  physics:
+                                                      const BouncingScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount: user!.length,
+                                                  itemBuilder:
+                                                      (context, int index) {
+                                                    final SubjectsData =
+                                                        user[index];
+                                                    return Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 10,
+                                                                  bottom: 5,
+                                                                  right: 10),
+                                                          child: InkWell(
+                                                            child: Text(
+                                                              "${SubjectsData.id}",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize: 30),
+                                                            ),
+                                                            onTap: () {
+                                                              FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      "user")
+                                                                  .doc(
+                                                                      fullUserId())
+                                                                  .update({
+                                                                "reg":
+                                                                    SubjectsData
+                                                                        .id
+                                                              });
+                                                              Navigator.pop(
+                                                                  context);
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              }
+                                          }
+                                        }),
+                                    const SizedBox(
+                                      height: 10,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    SizedBox(width: 20),
+                  ],
+                ),
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -380,8 +543,9 @@ class _settingsState extends State<settings> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                NewsCreator()));
+                                            builder: (context) => NewsCreator(
+                                                  branch: widget.branch,
+                                                )));
                                   },
                                 ),
                               ),
@@ -418,7 +582,9 @@ class _settingsState extends State<settings> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                SubjectsCreator()));
+                                                SubjectsCreator(
+                                                  branch: widget.branch,
+                                                )));
                                   },
                                 ),
                               ),
@@ -454,8 +620,9 @@ class _settingsState extends State<settings> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                BooksCreator()));
+                                            builder: (context) => BooksCreator(
+                                                  branch: widget.branch,
+                                                )));
                                   },
                                 ),
                               ),

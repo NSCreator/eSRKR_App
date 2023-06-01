@@ -545,6 +545,7 @@ class _unseenImagesState extends State<unseenImages> {
 class Images extends StatefulWidget {
   String path = "";
   String heading;
+
   Images({Key? key, required this.path, required this.heading})
       : super(key: key);
 
@@ -713,25 +714,47 @@ class _ImagesState extends State<Images> {
 
 class PdfViewerPage extends StatefulWidget {
   final String pdfUrl;
+  final int defaultPage;
 
-  const PdfViewerPage({Key? key, required this.pdfUrl}) : super(key: key);
+  const PdfViewerPage({Key? key, required this.pdfUrl, this.defaultPage = 0})
+      : super(key: key);
 
   @override
   _PdfViewerPageState createState() => _PdfViewerPageState();
 }
 
-class _PdfViewerPageState extends State<PdfViewerPage> {
-  late bool isExp = false;
-  late bool l1 = false;
-  late bool l2 = false;
-  late bool isNM = false;
-  late bool isScrolling = false;
+class _PdfViewerPageState extends State<PdfViewerPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final Completer<PDFViewController> _controller =
       Completer<PDFViewController>();
-  int? pages = 0;
+
   int? currentPage = 0;
+  late bool isEnableSwipe = true;
+  late bool isExpand = false;
+  late bool isPageSnap = false;
   bool isReady = false;
+  int? pages = 0;
+  late bool l1 = false;
+  late bool l2 = false;
+  late bool isNightMode = false;
+  late bool isScrolling = false;
+  late bool isSwipeHorizontal = false;
+  late bool isAutoSpacing = false;
   String errorMessage = '';
+
+  Timer? _timer;
+
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    currentPage = widget.defaultPage;
+  }
+
   on() {
     Future.delayed(Duration(milliseconds: 100), () {
       setState(() {
@@ -745,21 +768,28 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
     });
   }
 
-  bool myBoolValue = false;
-  Timer? _timer;
-
-  void changeBoolValue() {
+  void isScrollingThePage() {
     setState(() {
       isScrolling = true;
     });
 
-    // Cancel the previous timer if it exists
     _timer?.cancel();
 
-    // Start a new timer with a 3-second delay
-    _timer = Timer(Duration(seconds: 3), () {
+    _timer = Timer(Duration(seconds: 2), () {
       setState(() {
         isScrolling = false;
+      });
+    });
+  }
+
+  void _reloadPage() {
+    setState(() {
+      isLoading = true;
+    });
+
+    Future.delayed(Duration(milliseconds: 100), () {
+      setState(() {
+        isLoading = false;
       });
     });
   }
@@ -769,142 +799,209 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
     return Scaffold(
         body: Stack(
           children: [
-            PDFView(
-              filePath: widget.pdfUrl,
-              enableSwipe: true,
-              pageSnap: false,
-              defaultPage: 0,
-              fitEachPage: true,
-              swipeHorizontal: false,
-              autoSpacing: false,
-              pageFling: false,
-              nightMode: isNM,
-              onRender: (_pages) {
-                setState(() {
-                  pages = _pages;
-                  isReady = true;
-                });
-              },
-              onPageChanged: (page, total) {
-                setState(() {
-                  currentPage = page;
-                  isScrolling = true;
-                });
-                changeBoolValue();
-              },
-              onError: (error) {
-                print(error.toString());
-              },
-              onPageError: (page, error) {
-                print('$page: ${error.toString()}');
-              },
-              onViewCreated: (PDFViewController pdfViewController) {
-                _controller.complete(pdfViewController);
-              },
-            ),
+            isLoading && isReady
+                ? Center(child: CircularProgressIndicator())
+                : PDFView(
+                    filePath: widget.pdfUrl,
+                    enableSwipe: isEnableSwipe,
+                    pageSnap: isPageSnap,
+                    defaultPage: currentPage as int,
+                    swipeHorizontal: isSwipeHorizontal,
+                    autoSpacing: isAutoSpacing,
+                    pageFling: false,
+                    nightMode: isNightMode,
+                    onRender: (_pages) {
+                      setState(() {
+                        pages = _pages;
+                        isReady = true;
+                      });
+                    },
+                    onPageChanged: (page, total) {
+                      setState(() {
+                        currentPage = page;
+                        isScrolling = true;
+                      });
+                      isScrollingThePage();
+                    },
+                    onError: (error) {
+                      print(error.toString());
+                    },
+                    onPageError: (page, error) {
+                      print('$page: ${error.toString()}');
+                    },
+                    onViewCreated: (PDFViewController pdfViewController) {
+                      _controller.complete(pdfViewController);
+                    },
+                  ),
             Align(
                 alignment: Alignment.bottomCenter,
                 child: CustomAdsBannerForPdfs()),
-          ],
-        ),
-        floatingActionButton: AnimatedContainer(
-            height: isExp ? 250 : 51,
-            width: 51,
-            decoration: BoxDecoration(
-              color: Colors.black26,
-              borderRadius: BorderRadius.circular(isExp ? 25 : 15),
-            ),
-            duration: Duration(milliseconds: isExp ? 400 : 200),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(3.0),
-                  child: InkWell(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        if (isScrolling)
-                          Text(
-                            "${currentPage}",
-                            style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.w600),
-                          )
-                        else
-                          isExp
-                              ? Icon(
-                                  Icons.expand_more,
-                                  size: 45,
-                                  color: Colors.black.withOpacity(0.6),
-                                )
-                              : Icon(Icons.more_horiz,
-                                  size: 45, color: Colors.black),
-                      ],
+            if (isExpand)
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 0,
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 80, vertical: 10),
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: isNightMode
+                              ? Colors.white.withOpacity(0.6)
+                              : Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          InkWell(
+                            child: Icon(
+                              isEnableSwipe
+                                  ? Icons.lock_outline
+                                  : Icons.lock_open,
+                              color: isNightMode ? Colors.black : Colors.white,
+                            ),
+                            onTap: () {
+                              isEnableSwipe = !isEnableSwipe;
+                              _reloadPage();
+                            },
+                          ),
+                          InkWell(
+                            child: Icon(
+                              isPageSnap
+                                  ? Icons.view_carousel
+                                  : Icons.view_carousel_outlined,
+                              color: isNightMode ? Colors.black : Colors.white,
+                            ),
+                            onTap: () {
+                              isPageSnap = !isPageSnap;
+                              _reloadPage();
+                            },
+                          ),
+                          InkWell(
+                            child: Icon(
+                              isSwipeHorizontal
+                                  ? Icons.swap_vert
+                                  : Icons.swap_horiz,
+                              color: isNightMode ? Colors.black : Colors.white,
+                            ),
+                            onTap: () {
+                              isSwipeHorizontal = !isSwipeHorizontal;
+                              _reloadPage();
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    onTap: () {
-                      if (isExp) {
-                        isExp = false;
-                        l1 = false;
-                        l2 = false;
-                      } else {
-                        isExp = true;
-                        on();
-                      }
-                      setState(() {
-                        isExp;
-                        l1;
-                        l2;
-                      });
-                    },
                   ),
                 ),
-                if (l1)
+              )
+          ],
+        ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 30),
+          child: AnimatedContainer(
+              height: isExpand ? 175 : 51,
+              width: 51,
+              decoration: BoxDecoration(
+                color: isNightMode
+                    ? Colors.white.withOpacity(0.6)
+                    : Colors.black.withOpacity(0.6),
+                borderRadius: BorderRadius.circular(isExpand ? 25 : 15),
+              ),
+              duration: Duration(milliseconds: isExpand ? 300 : 200),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
                   Padding(
-                    padding: const EdgeInsets.all(3.0),
+                    padding: const EdgeInsets.only(left: 3, top: 3, right: 3),
                     child: InkWell(
-                      child: MediaQuery.of(context).orientation ==
-                              Orientation.portrait
-                          ? Icon(
-                              Icons.rotate_90_degrees_cw,
-                              size: 35,
-                              color: Colors.black.withOpacity(0.6),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          if (isScrolling)
+                            Text(
+                              "${currentPage! + 1}",
+                              style: TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w600,
+                                  color: isNightMode
+                                      ? Colors.black
+                                      : Colors.white),
                             )
-                          : Icon(Icons.rotate_90_degrees_ccw,
-                              size: 35, color: Colors.black.withOpacity(0.6)),
+                          else
+                            Icon(
+                                isExpand ? Icons.expand_more : Icons.more_horiz,
+                                size: 45,
+                                color:
+                                    isNightMode ? Colors.black : Colors.white),
+                        ],
+                      ),
                       onTap: () {
-                        if (MediaQuery.of(context).orientation ==
-                            Orientation.portrait) {
-                          SystemChrome.setPreferredOrientations(
-                              [DeviceOrientation.landscapeLeft]);
+                        if (isExpand) {
+                          isExpand = false;
+                          l1 = false;
+                          l2 = false;
                         } else {
-                          SystemChrome.setPreferredOrientations(
-                              [DeviceOrientation.portraitUp]);
+                          isExpand = true;
+                          on();
                         }
-                      },
-                    ),
-                  ),
-                if (l2)
-                  Padding(
-                    padding: const EdgeInsets.all(3.0),
-                    child: InkWell(
-                      child: isNM
-                          ? Icon(
-                              Icons.nightlight_round_rounded,
-                              size: 35,
-                              color: Colors.black.withOpacity(0.6),
-                            )
-                          : Icon(Icons.sunny,
-                              size: 35, color: Colors.black.withOpacity(0.6)),
-                      onTap: () {
                         setState(() {
-                          isNM = !isNM;
+                          isExpand;
+                          l1;
+                          l2;
                         });
                       },
                     ),
                   ),
-              ],
-            )));
+                  if (l1)
+                    Text(
+                      "Pages : $pages",
+                      style: TextStyle(color: Colors.white, fontSize: 9),
+                    ),
+                  if (l1)
+                    Padding(
+                      padding: const EdgeInsets.all(3.0),
+                      child: InkWell(
+                        child: Icon(
+                            MediaQuery.of(context).orientation ==
+                                    Orientation.portrait
+                                ? Icons.rotate_90_degrees_ccw
+                                : Icons.rotate_90_degrees_cw,
+                            size: 35,
+                            color: isNightMode ? Colors.black : Colors.white),
+                        onTap: () {
+                          if (MediaQuery.of(context).orientation ==
+                              Orientation.portrait) {
+                            SystemChrome.setPreferredOrientations(
+                                [DeviceOrientation.landscapeLeft]);
+                          } else {
+                            SystemChrome.setPreferredOrientations(
+                                [DeviceOrientation.portraitUp]);
+                          }
+                        },
+                      ),
+                    ),
+                  if (l2)
+                    Padding(
+                      padding: const EdgeInsets.all(3.0),
+                      child: InkWell(
+                          child: Icon(
+                              isNightMode
+                                  ? Icons.wb_sunny_outlined
+                                  : Icons.nightlight_round_rounded,
+                              size: 35,
+                              color: isNightMode ? Colors.black : Colors.white),
+                          onTap: () {
+                            isNightMode = !isNightMode;
+                            _reloadPage();
+                          }),
+                    ),
+                ],
+              )),
+        ));
   }
 }
 
