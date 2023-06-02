@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,8 @@ import 'package:srkr_study_app/SubPages.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+import 'functins.dart';
 
 class NewsCreator extends StatefulWidget {
   String NewsId;
@@ -219,9 +223,8 @@ class _NewsCreatorState extends State<NewsCreator> {
                   final pickedFile = await ImagePicker()
                       .pickImage(source: ImageSource.gallery);
                   File file = File(pickedFile!.path);
-                  final Reference ref = storage
-                      .ref()
-                      .child('ece/news/${DateTime.now().toString()}.image');
+                  final Reference ref = storage.ref().child(
+                      '${widget.branch.toLowerCase()}/news/${DateTime.now().toString()}.image');
                   final TaskSnapshot task = await ref.putFile(file);
                   final String url = await task.ref.getDownloadURL();
                   PhotoUrlController.text = url;
@@ -300,9 +303,11 @@ class _NewsCreatorState extends State<NewsCreator> {
                                           storage.ref().child("/${fileName}");
                                       try {
                                         await ref.delete();
-                                        showToast('Image deleted successfully');
+                                        showToastText(
+                                            'Image deleted successfully');
                                       } catch (e) {
-                                        showToast('Error deleting image: $e');
+                                        showToastText(
+                                            'Error deleting image: $e');
                                       }
                                       Navigator.pop(context);
                                     },
@@ -370,14 +375,14 @@ class _NewsCreatorState extends State<NewsCreator> {
                     if (widget.NewsId.length > 3) {
                       // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
                       FirebaseFirestore.instance
-                          .collection("ECE")
-                          .doc("ECENews")
-                          .collection("ECENews")
+                          .collection(widget.branch)
+                          .doc("${widget.branch}News")
+                          .collection("${widget.branch}News")
                           .doc(widget.NewsId)
                           .update({
                         "Heading": HeadingController.text.trim(),
                         "Description": DescriptionController.text.trim(),
-                        "Date": getTime(),
+                        "Date": getDate(),
                         "Photo Url": PhotoUrlController.text.trim()
                       });
                     } else {
@@ -385,7 +390,7 @@ class _NewsCreatorState extends State<NewsCreator> {
                           branch: widget.branch,
                           heading: HeadingController.text.trim(),
                           description: DescriptionController.text.trim(),
-                          Date: getTime(),
+                          Date: getDate(),
                           photoUrl: PhotoUrlController.text.trim());
                     }
                     HeadingController.clear();
@@ -431,7 +436,6 @@ class _NewsCreatorState extends State<NewsCreator> {
   }
 }
 
-// ignore: must_be_immutable
 class SubjectsCreator extends StatefulWidget {
   String Id;
   String heading;
@@ -622,12 +626,12 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             storage.ref().child("/${fileName}");
                         try {
                           await ref.delete();
-                          showToast('Image deleted successfully');
+                          showToastText('Image deleted successfully');
                           setState(() {
                             _isImage = false;
                           });
                         } catch (e) {
-                          showToast('Error deleting image: $e');
+                          showToastText('Error deleting image: $e');
                         }
                         PhotoUrlController.text = "";
                       },
@@ -740,9 +744,11 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                                           storage.ref().child("/${fileName}");
                                       try {
                                         await ref.delete();
-                                        showToast('Image deleted successfully');
+                                        showToastText(
+                                            'Image deleted successfully');
                                       } catch (e) {
-                                        showToast('Error deleting image: $e');
+                                        showToastText(
+                                            'Error deleting image: $e');
                                       }
                                       Navigator.pop(context);
                                     },
@@ -879,7 +885,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             .update({
                           "Heading": HeadingController.text.trim(),
                           "Description": DescriptionController.text.trim(),
-                          "Date": getTime(),
+                          "Date": getDate(),
                           "Photo Url": PhotoUrlController.text.trim()
                         });
                       } else {
@@ -891,7 +897,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             .update({
                           "Heading": HeadingController.text.trim(),
                           "Description": DescriptionController.text.trim(),
-                          "Date": getTime(),
+                          "Date": getDate(),
                           "Photo Url": PhotoUrlController.text.trim()
                         });
                       }
@@ -903,13 +909,13 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             heading: HeadingController.text.trim(),
                             description: DescriptionController.text.trim(),
                             PhotoUrl: PhotoUrlController.text.trim(),
-                            Date: getTime());
+                            Date: getDate());
                       } else {
                         createSubjects(
                             branch: widget.branch,
                             heading: HeadingController.text.trim(),
                             description: DescriptionController.text.trim(),
-                            date: getTime(),
+                            date: getDate(),
                             PhotoUrl: PhotoUrlController.text.trim(),
                             regulation: "3-2");
                       }
@@ -953,94 +959,11 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
             SizedBox(
               height: 10,
             ),
-            if (widget.Id.length > 3)
-              Row(
-                children: [
-                  Spacer(),
-                  InkWell(
-                    onTap: () {
-                      if (HeadingController.text.trim().length > 0 &&
-                          DescriptionController.text.trim().length > 0 &&
-                          PhotoUrlController.text.trim().length > 0 &&
-                          widget.mode.length > 0 &&
-                          widget.Id.length > 0) {
-                        createSearch(
-                            subId: widget.Id,
-                            heading: widget.heading,
-                            description: widget.description,
-                            mode: widget.mode,
-                            PhotoUrl: widget.photoUrl);
-                        showToast("Add to Search Bar");
-                      } else {
-                        showToast("Fill All Details");
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10, top: 5, bottom: 5),
-                        child: Text("Add To Search Bar"),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  )
-                ],
-              ),
           ],
         ),
       ),
     );
   }
-}
-
-Future createSearch(
-    {required String subId,
-    required String heading,
-    required String description,
-    required String mode,
-    required String PhotoUrl}) async {
-  final docflash = FirebaseFirestore.instance.collection("search").doc();
-  final flash = SearchConvertor(
-      id: docflash.id,
-      heading: heading,
-      PhotoUrl: PhotoUrl,
-      description: description,
-      mode: mode,
-      subId: subId);
-  final json = flash.toJson();
-  await docflash.set(json);
-}
-
-class SearchConvertor {
-  String id;
-  final String heading, PhotoUrl, description, mode, subId;
-
-  SearchConvertor(
-      {this.id = "",
-      required this.subId,
-      required this.heading,
-      required this.PhotoUrl,
-      required this.description,
-      required this.mode});
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": heading,
-        "mode": mode,
-        "description": description,
-        "Photo Url": PhotoUrl,
-        "subId": subId,
-      };
-
-// static SearchConvertor fromJson(Map<String, dynamic> json) =>
-//     SearchConvertor(id: json['id'], heading: json["Heading"], PhotoUrl: json["Photo Url"], description: json["Description"], Date: json["Date"]);
 }
 
 class BooksCreator extends StatefulWidget {
@@ -1071,7 +994,6 @@ class BooksCreator extends StatefulWidget {
 
 class _BooksCreatorState extends State<BooksCreator> {
   final FirebaseStorage storage = FirebaseStorage.instance;
-  bool _isImage = false;
   final HeadingController = TextEditingController();
   final DescriptionController = TextEditingController();
   final PhotoUrlController = TextEditingController();
@@ -1086,11 +1008,6 @@ class _BooksCreatorState extends State<BooksCreator> {
     LinkController.text = widget.Link;
     EditionController.text = widget.Edition;
     AuthorController.text = widget.Author;
-    if (widget.photoUrl.length > 3) {
-      setState(() {
-        _isImage = true;
-      });
-    }
   }
 
   @override
@@ -1381,7 +1298,7 @@ class _BooksCreatorState extends State<BooksCreator> {
                   onTap: () {
                     if (widget.id.length > 3) {
                       FirebaseFirestore.instance
-                          .collection("ECE")
+                          .collection(widget.branch)
                           .doc("Books")
                           .collection("CoreBooks")
                           .doc(widget.id)
@@ -1391,7 +1308,7 @@ class _BooksCreatorState extends State<BooksCreator> {
                         "Author": AuthorController.text.trim(),
                         "Link": LinkController.text.trim(),
                         "Description": DescriptionController.text.trim(),
-                        "Date": getTime(),
+                        "Date": getDate(),
                         "Photo Url": PhotoUrlController.text.trim()
                       });
                     } else {
@@ -1450,7 +1367,8 @@ class UnitsCreator extends StatefulWidget {
   String Heading;
   String Description;
   String Date;
-  String PDFName;
+  String questions;
+  String branch;
   String PDFSize;
   String PDFUrl;
   String UnitId;
@@ -1459,10 +1377,11 @@ class UnitsCreator extends StatefulWidget {
   UnitsCreator(
       {required this.id,
       required this.mode,
+      required this.branch,
       this.Date = "",
       this.Description = "",
       this.Heading = "",
-      this.PDFName = "",
+      this.questions = "",
       this.PDFSize = "",
       this.PDFUrl = "",
       this.UnitId = ""});
@@ -1474,14 +1393,14 @@ class UnitsCreator extends StatefulWidget {
 class _UnitsCreatorState extends State<UnitsCreator> {
   final HeadingController = TextEditingController();
   final DescriptionController = TextEditingController();
-  final PDFNameController = TextEditingController();
+  final questionsController = TextEditingController();
   final PDFUrlController = TextEditingController();
   final PDFSizeController = TextEditingController();
 
   void AutoFill() {
     HeadingController.text = widget.Heading;
     DescriptionController.text = widget.Description;
-    PDFNameController.text = widget.PDFName;
+    questionsController.text = widget.questions;
     PDFUrlController.text = widget.PDFUrl;
     PDFSizeController.text = widget.PDFSize;
   }
@@ -1496,7 +1415,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
   void dispose() {
     HeadingController.dispose();
     DescriptionController.dispose();
-    PDFNameController.dispose();
+    questionsController.dispose();
     PDFUrlController.dispose();
     PDFSizeController.dispose();
     super.dispose();
@@ -1610,7 +1529,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
             Padding(
               padding: const EdgeInsets.only(left: 15, top: 8),
               child: Text(
-                "PDF Name",
+                "Questions",
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w500,
@@ -1629,7 +1548,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20),
                   child: TextFormField(
-                    controller: PDFNameController,
+                    controller: questionsController,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -1735,17 +1654,18 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                   onTap: () {
                     if (widget.UnitId.length < 3) {
                       createUnits(
-                          description: DescriptionController.text.trim(),
-                          PDFName: PDFNameController.text.trim(),
-                          heading: HeadingController.text.trim(),
-                          PDFSize: PDFSizeController.text.trim(),
-                          PDFLink: PDFUrlController.text.trim(),
-                          subjectsID: widget.id,
-                          mode: widget.mode,
-                          Date: getDate());
+                        branch: widget.branch,
+                        description: DescriptionController.text.trim(),
+                        questions: questionsController.text.trim(),
+                        heading: HeadingController.text.trim(),
+                        PDFSize: PDFSizeController.text.trim(),
+                        PDFLink: PDFUrlController.text.trim(),
+                        subjectsID: widget.id,
+                        mode: widget.mode,
+                      );
                     } else {
                       FirebaseFirestore.instance
-                          .collection("ECE")
+                          .collection(widget.branch)
                           .doc(widget.mode)
                           .collection(widget.mode)
                           .doc(widget.UnitId)
@@ -1756,8 +1676,8 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                         "PDFSize": PDFSizeController.text.trim(),
                         "PDFLink": PDFUrlController.text.trim(),
                         "Description": DescriptionController.text.trim(),
-                        "Date": getTime(),
-                        "PDFName": PDFNameController.text.trim()
+                        "Date": getDate(),
+                        "PDFName": questionsController.text.trim()
                       });
                     }
                     Navigator.pop(context);
@@ -1798,26 +1718,4 @@ class _UnitsCreatorState extends State<UnitsCreator> {
       ),
     );
   }
-}
-
-String getDate() {
-  var now = new DateTime.now();
-  var formatter = new DateFormat('dd-MM-yyyy');
-  String formattedDate = formatter.format(now);
-  return formattedDate;
-}
-
-String getTime() {
-  DateTime now = DateTime.now();
-  return DateFormat('d/M/y-kk:mm:ss').format(now);
-}
-
-String getID() {
-  var now = new DateTime.now();
-  return DateFormat('d.M.y-kk:mm:ss').format(now);
-}
-
-Future showToast(String message) async {
-  await Fluttertoast.cancel();
-  Fluttertoast.showToast(msg: message, fontSize: 18);
 }

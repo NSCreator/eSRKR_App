@@ -5,7 +5,16 @@ import 'SubPages.dart';
 
 class MyAppq extends StatefulWidget {
   final String branch;
-  const MyAppq({Key? key, required this.branch}) : super(key: key);
+  final double size;
+  final double height;
+  final double width;
+  const MyAppq(
+      {Key? key,
+      required this.branch,
+      required this.width,
+      required this.size,
+      required this.height})
+      : super(key: key);
 
   @override
   State<MyAppq> createState() => _MyAppqState();
@@ -25,14 +34,18 @@ class _MyAppqState extends State<MyAppq> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 70,
+                  height: widget.height * 70,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 10, bottom: 3, top: 5),
+                  padding: EdgeInsets.only(
+                      left: widget.width * 10,
+                      bottom: widget.height * 3,
+                      top: widget.height * 5),
                   child: InkWell(
                     child: Text(
                       "Subjects",
-                      style: TextStyle(color: Colors.white, fontSize: 30),
+                      style: TextStyle(
+                          color: Colors.white, fontSize: widget.size * 30),
                     ),
                     onTap: () {
                       Navigator.push(
@@ -66,25 +79,29 @@ class _MyAppqState extends State<MyAppq> {
 
                               if (name.isEmpty) {
                                 return Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 15.0, right: 10, top: 5),
+                                  padding: EdgeInsets.only(
+                                      left: widget.width * 15.0,
+                                      right: widget.width * 10,
+                                      top: widget.height * 5),
                                   child: InkWell(
                                     child: Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                           color: Colors.black38,
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(10))),
+                                              Radius.circular(
+                                                  widget.size * 10))),
                                       child: SingleChildScrollView(
                                         physics: const BouncingScrollPhysics(),
                                         child: Row(
                                           children: [
                                             Container(
-                                              width: 80.0,
-                                              height: 50.0,
+                                              width: widget.width * 80.0,
+                                              height: widget.height * 50.0,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.all(
-                                                    Radius.circular(8.0)),
+                                                    Radius.circular(
+                                                        widget.size * 8.0)),
                                                 color: Colors.black
                                                     .withOpacity(0.5),
                                                 image: DecorationImage(
@@ -95,8 +112,8 @@ class _MyAppqState extends State<MyAppq> {
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(
-                                              width: 10,
+                                            SizedBox(
+                                              width: widget.width * 10,
                                             ),
                                             Expanded(
                                                 child: Column(
@@ -107,19 +124,21 @@ class _MyAppqState extends State<MyAppq> {
                                               children: [
                                                 Text(
                                                   data['Heading'],
-                                                  style: const TextStyle(
-                                                    fontSize: 20.0,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        widget.size * 20.0,
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.w600,
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  height: 2,
+                                                  height: widget.height * 2,
                                                 ),
                                                 Text(
                                                   data['Description'],
-                                                  style: const TextStyle(
-                                                    fontSize: 13.0,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        widget.size * 13.0,
                                                     color: Color.fromRGBO(
                                                         204, 207, 222, 0.8),
                                                   ),
@@ -136,6 +155,7 @@ class _MyAppqState extends State<MyAppq> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   subjectUnitsData(
+                                                    branch: widget.branch,
                                                     ID: data['id'],
                                                     mode: "Subjects",
                                                     name: data["Heading"],
@@ -152,25 +172,29 @@ class _MyAppqState extends State<MyAppq> {
                                   .toLowerCase()
                                   .startsWith(name.toLowerCase())) {
                                 return Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 15.0, right: 10, top: 3),
+                                  padding: EdgeInsets.only(
+                                      left: widget.width * 15.0,
+                                      right: widget.width * 10,
+                                      top: widget.height * 3),
                                   child: InkWell(
                                     child: Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                           color: Colors.black38,
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(10))),
+                                              Radius.circular(
+                                                  widget.size * 10))),
                                       child: SingleChildScrollView(
                                         physics: const BouncingScrollPhysics(),
                                         child: Row(
                                           children: [
                                             Container(
-                                              width: 80.0,
-                                              height: 50.0,
+                                              width: widget.width * 80.0,
+                                              height: widget.height * 50.0,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.all(
-                                                    Radius.circular(8.0)),
+                                                    Radius.circular(
+                                                        widget.size * 8.0)),
                                                 color: Colors.black
                                                     .withOpacity(0.5),
                                                 image: DecorationImage(
@@ -181,8 +205,8 @@ class _MyAppqState extends State<MyAppq> {
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(
-                                              width: 10,
+                                            SizedBox(
+                                              width: widget.width * 10,
                                             ),
                                             Expanded(
                                                 child: Column(
@@ -193,19 +217,21 @@ class _MyAppqState extends State<MyAppq> {
                                               children: [
                                                 Text(
                                                   data['Heading'],
-                                                  style: const TextStyle(
-                                                    fontSize: 20.0,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        widget.size * 20.0,
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.w600,
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  height: 2,
+                                                  height: widget.height * 2,
                                                 ),
                                                 Text(
                                                   data['Description'],
-                                                  style: const TextStyle(
-                                                    fontSize: 13.0,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        widget.size * 13.0,
                                                     color: Color.fromRGBO(
                                                         204, 207, 222, 0.8),
                                                   ),
@@ -222,6 +248,7 @@ class _MyAppqState extends State<MyAppq> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   subjectUnitsData(
+                                                    branch: widget.branch,
                                                     ID: data['id'],
                                                     mode: "Subjects",
                                                     name: data["Heading"],
@@ -238,11 +265,15 @@ class _MyAppqState extends State<MyAppq> {
                   },
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 10, bottom: 3, top: 20),
+                  padding: EdgeInsets.only(
+                      left: widget.width * 10,
+                      bottom: widget.height * 3,
+                      top: widget.height * 20),
                   child: InkWell(
                     child: Text(
                       "Lab Subjects",
-                      style: TextStyle(color: Colors.white, fontSize: 30),
+                      style: TextStyle(
+                          color: Colors.white, fontSize: widget.size * 30),
                     ),
                     onTap: () {
                       Navigator.push(
@@ -276,25 +307,29 @@ class _MyAppqState extends State<MyAppq> {
 
                               if (name.isEmpty) {
                                 return Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 15.0, right: 10, top: 4),
+                                  padding: EdgeInsets.only(
+                                      left: widget.width * 15.0,
+                                      right: widget.width * 10,
+                                      top: widget.height * 4),
                                   child: InkWell(
                                     child: Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                           color: Colors.black38,
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(10))),
+                                              Radius.circular(
+                                                  widget.size * 10))),
                                       child: SingleChildScrollView(
                                         physics: const BouncingScrollPhysics(),
                                         child: Row(
                                           children: [
                                             Container(
-                                              width: 80.0,
-                                              height: 50.0,
+                                              width: widget.width * 80.0,
+                                              height: widget.height * 50.0,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.all(
-                                                    Radius.circular(8.0)),
+                                                    Radius.circular(
+                                                        widget.size * 8.0)),
                                                 color: Colors.black
                                                     .withOpacity(0.5),
                                                 image: DecorationImage(
@@ -305,8 +340,8 @@ class _MyAppqState extends State<MyAppq> {
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(
-                                              width: 10,
+                                            SizedBox(
+                                              width: widget.width * 10,
                                             ),
                                             Expanded(
                                                 child: Column(
@@ -317,25 +352,27 @@ class _MyAppqState extends State<MyAppq> {
                                               children: [
                                                 Text(
                                                   data['Heading'],
-                                                  style: const TextStyle(
-                                                    fontSize: 20.0,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        widget.size * 20.0,
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.w600,
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  height: 2,
+                                                  height: widget.height * 2,
                                                 ),
                                                 Text(
                                                   data['Description'],
-                                                  style: const TextStyle(
-                                                    fontSize: 13.0,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        widget.size * 13.0,
                                                     color: Color.fromRGBO(
                                                         204, 207, 222, 0.8),
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  height: 1,
+                                                  height: widget.height * 1,
                                                 ),
                                               ],
                                             ))
@@ -349,6 +386,7 @@ class _MyAppqState extends State<MyAppq> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   subjectUnitsData(
+                                                    branch: widget.branch,
                                                     ID: data['id'],
                                                     mode: "LabSubjects",
                                                     name: data["Heading"],
@@ -365,25 +403,29 @@ class _MyAppqState extends State<MyAppq> {
                                   .toLowerCase()
                                   .startsWith(name.toLowerCase())) {
                                 return Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 15.0, right: 10, top: 3),
+                                  padding: EdgeInsets.only(
+                                      left: widget.width * 15.0,
+                                      right: widget.width * 10,
+                                      top: widget.height * 3),
                                   child: InkWell(
                                     child: Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                           color: Colors.black38,
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(10))),
+                                              Radius.circular(
+                                                  widget.size * 10))),
                                       child: SingleChildScrollView(
                                         physics: const BouncingScrollPhysics(),
                                         child: Row(
                                           children: [
                                             Container(
-                                              width: 80.0,
-                                              height: 50.0,
+                                              width: widget.width * 80.0,
+                                              height: widget.height * 50.0,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.all(
-                                                    Radius.circular(8.0)),
+                                                    Radius.circular(
+                                                        widget.size * 8.0)),
                                                 color: Colors.black
                                                     .withOpacity(0.5),
                                                 image: DecorationImage(
@@ -394,8 +436,8 @@ class _MyAppqState extends State<MyAppq> {
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(
-                                              width: 10,
+                                            SizedBox(
+                                              width: widget.width * 10,
                                             ),
                                             Expanded(
                                                 child: Column(
@@ -406,19 +448,21 @@ class _MyAppqState extends State<MyAppq> {
                                               children: [
                                                 Text(
                                                   data['Heading'],
-                                                  style: const TextStyle(
-                                                    fontSize: 20.0,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        widget.size * 20.0,
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.w600,
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  height: 2,
+                                                  height: widget.height * 2,
                                                 ),
                                                 Text(
                                                   data['Description'],
-                                                  style: const TextStyle(
-                                                    fontSize: 13.0,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        widget.size * 13.0,
                                                     color: Color.fromRGBO(
                                                         204, 207, 222, 0.8),
                                                   ),
@@ -435,6 +479,7 @@ class _MyAppqState extends State<MyAppq> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   subjectUnitsData(
+                                                    branch: widget.branch,
                                                     ID: data['id'],
                                                     mode: "LabSubjects",
                                                     name: data["Heading"],
@@ -650,6 +695,9 @@ class _MyAppqState extends State<MyAppq> {
                 //         });
                 //   },
                 // ),
+                SizedBox(
+                  height: 120,
+                )
               ],
             ),
           ),
@@ -658,22 +706,24 @@ class _MyAppqState extends State<MyAppq> {
             left: 0,
             right: 0,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(
+                  horizontal: widget.width * 20, vertical: widget.height * 10),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.3),
                   border: Border.all(color: Colors.white60),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(widget.size * 12),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 20),
+                  padding: EdgeInsets.only(left: widget.width * 20),
                   child: TextField(
                     onChanged: (val) {
                       setState(() {
                         name = val;
                       });
                     },
-                    style: TextStyle(color: Colors.white, fontSize: 25),
+                    style: TextStyle(
+                        color: Colors.white, fontSize: widget.size * 25),
                     decoration: InputDecoration(
                       icon: Icon(
                         Icons.search,
@@ -692,9 +742,4 @@ class _MyAppqState extends State<MyAppq> {
       ),
     );
   }
-}
-
-Future showToast(String message) async {
-  await Fluttertoast.cancel();
-  Fluttertoast.showToast(msg: message, fontSize: 18);
 }

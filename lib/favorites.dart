@@ -1,19 +1,27 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import 'HomePage.dart';
 import 'SubPages.dart';
 import 'TextField.dart';
 import 'add subjects.dart';
+import 'functins.dart';
 
 class favorites extends StatefulWidget {
-  const favorites({Key? key}) : super(key: key);
+  final String branch;
+  final double size;
+  final double height;
+  final double width;
+  const favorites(
+      {Key? key,
+      required this.branch,
+      required this.width,
+      required this.size,
+      required this.height})
+      : super(key: key);
 
   @override
   State<favorites> createState() => _favoritesState();
@@ -45,11 +53,11 @@ class _favoritesState extends State<favorites> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(widget.size * 10.0),
             child: Text(
               "Favorites",
               style: TextStyle(
-                  fontSize: 35,
+                  fontSize: widget.size * 35,
                   fontWeight: FontWeight.w500,
                   color: Colors.deepOrange),
             ),
@@ -81,19 +89,22 @@ class _favoritesState extends State<favorites> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 8, left: 25, bottom: 10),
+                                      padding: EdgeInsets.only(
+                                          top: widget.height * 8,
+                                          left: widget.width * 25,
+                                          bottom: widget.height * 10),
                                       child: Text(
                                         "Favorite Subjects",
                                         style: TextStyle(
                                             color: Colors.deepOrangeAccent,
-                                            fontSize: 25,
+                                            fontSize: widget.size * 25,
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20, right: 10),
+                                      padding: EdgeInsets.only(
+                                          left: widget.width * 20,
+                                          right: widget.width * 10),
                                       child: ListView.separated(
                                           physics:
                                               const BouncingScrollPhysics(),
@@ -113,24 +124,25 @@ class _favoritesState extends State<favorites> {
                                                 width: double.infinity,
                                                 decoration: BoxDecoration(
                                                     color: Colors.black38,
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                10))),
+                                                    borderRadius: BorderRadius
+                                                        .all(Radius.circular(
+                                                            widget.size * 10))),
                                                 child: SingleChildScrollView(
                                                   physics:
                                                       const BouncingScrollPhysics(),
                                                   child: Row(
                                                     children: [
                                                       Container(
-                                                        width: 90.0,
-                                                        height: 70.0,
+                                                        width:
+                                                            widget.width * 90.0,
+                                                        height: widget.height *
+                                                            70.0,
                                                         decoration:
                                                             BoxDecoration(
                                                           borderRadius:
                                                               BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
+                                                                  Radius.circular(
+                                                                      widget.size *
                                                                           8.0)),
                                                           color:
                                                               Colors.redAccent,
@@ -142,8 +154,9 @@ class _favoritesState extends State<favorites> {
                                                           ),
                                                         ),
                                                       ),
-                                                      const SizedBox(
-                                                        width: 10,
+                                                      SizedBox(
+                                                        width:
+                                                            widget.width * 10,
                                                       ),
                                                       Expanded(
                                                           child: Column(
@@ -159,9 +172,10 @@ class _favoritesState extends State<favorites> {
                                                               Text(
                                                                 Favourite.name,
                                                                 style:
-                                                                    const TextStyle(
+                                                                    TextStyle(
                                                                   fontSize:
-                                                                      20.0,
+                                                                      widget.size *
+                                                                          20.0,
                                                                   color: Colors
                                                                       .orangeAccent,
                                                                   fontWeight:
@@ -171,18 +185,19 @@ class _favoritesState extends State<favorites> {
                                                               ),
                                                               Spacer(),
                                                               Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .only(
-                                                                        right:
-                                                                            20),
+                                                                padding: EdgeInsets.only(
+                                                                    right: widget
+                                                                            .width *
+                                                                        20),
                                                                 child: InkWell(
                                                                   child: Icon(
                                                                     Icons
                                                                         .highlight_remove_outlined,
                                                                     color: Colors
                                                                         .red,
-                                                                    size: 28,
+                                                                    size: widget
+                                                                            .size *
+                                                                        28,
                                                                   ),
                                                                   onTap: () {
                                                                     showDialog(
@@ -192,7 +207,7 @@ class _favoritesState extends State<favorites> {
                                                                           (context) {
                                                                         return Dialog(
                                                                           shape:
-                                                                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(widget.size * 20)),
                                                                           elevation:
                                                                               16,
                                                                           child:
@@ -200,23 +215,23 @@ class _favoritesState extends State<favorites> {
                                                                             decoration:
                                                                                 BoxDecoration(
                                                                               border: Border.all(color: Colors.tealAccent),
-                                                                              borderRadius: BorderRadius.circular(20),
+                                                                              borderRadius: BorderRadius.circular(widget.size * 20),
                                                                             ),
                                                                             child:
                                                                                 ListView(
                                                                               shrinkWrap: true,
                                                                               children: <Widget>[
-                                                                                SizedBox(height: 10),
-                                                                                SizedBox(height: 5),
+                                                                                SizedBox(height: widget.height * 10),
+                                                                                SizedBox(height: widget.height * 5),
                                                                                 Padding(
-                                                                                  padding: const EdgeInsets.only(left: 15),
+                                                                                  padding: EdgeInsets.only(left: widget.width * 15),
                                                                                   child: Text(
                                                                                     "Do you want Remove from Favourites",
-                                                                                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 18),
+                                                                                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: widget.size * 18),
                                                                                   ),
                                                                                 ),
                                                                                 SizedBox(
-                                                                                  height: 5,
+                                                                                  height: widget.height * 5,
                                                                                 ),
                                                                                 Center(
                                                                                   child: Row(
@@ -229,10 +244,10 @@ class _favoritesState extends State<favorites> {
                                                                                           decoration: BoxDecoration(
                                                                                             color: Colors.black26,
                                                                                             border: Border.all(color: Colors.black),
-                                                                                            borderRadius: BorderRadius.circular(25),
+                                                                                            borderRadius: BorderRadius.circular(widget.size * 25),
                                                                                           ),
                                                                                           child: Padding(
-                                                                                            padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+                                                                                            padding: EdgeInsets.only(left: widget.width * 15, right: widget.width * 15, top: widget.height * 5, bottom: widget.height * 5),
                                                                                             child: Text("Back"),
                                                                                           ),
                                                                                         ),
@@ -241,17 +256,17 @@ class _favoritesState extends State<favorites> {
                                                                                         },
                                                                                       ),
                                                                                       SizedBox(
-                                                                                        width: 10,
+                                                                                        width: widget.width * 10,
                                                                                       ),
                                                                                       InkWell(
                                                                                         child: Container(
                                                                                           decoration: BoxDecoration(
                                                                                             color: Colors.red,
                                                                                             border: Border.all(color: Colors.black),
-                                                                                            borderRadius: BorderRadius.circular(25),
+                                                                                            borderRadius: BorderRadius.circular(widget.size * 25),
                                                                                           ),
                                                                                           child: Padding(
-                                                                                            padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+                                                                                            padding: EdgeInsets.only(left: widget.width * 15, right: widget.width * 15, top: widget.height * 5, bottom: widget.height * 5),
                                                                                             child: Text(
                                                                                               "Delete",
                                                                                               style: TextStyle(color: Colors.white),
@@ -261,17 +276,17 @@ class _favoritesState extends State<favorites> {
                                                                                         onTap: () {
                                                                                           FirebaseFirestore.instance.collection('user').doc(FirebaseAuth.instance.currentUser!.email!).collection("FavouriteSubject").doc(Favourite.id).delete();
                                                                                           Navigator.pop(context);
-                                                                                          showToast("${Favourite.name} as been removed");
+                                                                                          showToastText("${Favourite.name} as been removed");
                                                                                         },
                                                                                       ),
                                                                                       SizedBox(
-                                                                                        width: 20,
+                                                                                        width: widget.width * 20,
                                                                                       ),
                                                                                     ],
                                                                                   ),
                                                                                 ),
                                                                                 SizedBox(
-                                                                                  height: 10,
+                                                                                  height: widget.height * 10,
                                                                                 ),
                                                                               ],
                                                                             ),
@@ -285,26 +300,32 @@ class _favoritesState extends State<favorites> {
                                                             ],
                                                           ),
                                                           SizedBox(
-                                                            height: 2,
+                                                            height:
+                                                                widget.height *
+                                                                    2,
                                                           ),
                                                           Text(
                                                             Favourite
                                                                 .description,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 13.0,
+                                                            style: TextStyle(
+                                                              fontSize:
+                                                                  widget.size *
+                                                                      13.0,
                                                               color: Colors
                                                                   .lightBlueAccent,
                                                             ),
                                                           ),
                                                           SizedBox(
-                                                            height: 1,
+                                                            height:
+                                                                widget.height *
+                                                                    1,
                                                           ),
                                                           Text(
                                                             'Added :${Favourite.date}',
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 9.0,
+                                                            style: TextStyle(
+                                                              fontSize:
+                                                                  widget.size *
+                                                                      9.0,
                                                               color: Colors
                                                                   .white60,
                                                               //   fontWeight: FontWeight.bold,
@@ -322,6 +343,8 @@ class _favoritesState extends State<favorites> {
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             subjectUnitsData(
+                                                              branch:
+                                                                  widget.branch,
                                                               ID: Favourite
                                                                   .subjectId,
                                                               mode: "Subjects",
@@ -337,11 +360,12 @@ class _favoritesState extends State<favorites> {
                                             );
                                           },
                                           separatorBuilder: (context, index) =>
-                                              const SizedBox(
-                                                height: 10,
+                                              SizedBox(
+                                                height: widget.height * 10,
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
-                                                      left: 20, right: 20),
+                                                      left: widget.width * 20,
+                                                      right: widget.width * 20),
                                                   child: Divider(
                                                     color: Colors.white,
                                                   ),
@@ -353,17 +377,19 @@ class _favoritesState extends State<favorites> {
                               else
                                 return Center(
                                   child: Padding(
-                                    padding: const EdgeInsets.only(top: 10),
+                                    padding: EdgeInsets.only(
+                                        top: widget.height * 10),
                                     child: InkWell(
                                         child: Container(
                                           decoration: BoxDecoration(
                                             border: Border.all(
                                                 color: Colors.tealAccent),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
+                                            borderRadius: BorderRadius.circular(
+                                                widget.size * 20),
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding: EdgeInsets.all(
+                                                widget.size * 8.0),
                                             child: Text(
                                               "No Favorite Subjects",
                                               style: TextStyle(
@@ -372,7 +398,7 @@ class _favoritesState extends State<favorites> {
                                           ),
                                         ),
                                         onTap: () {
-                                          showToast("Add Subjects");
+                                          showToastText("Add Subjects");
                                         }),
                                   ),
                                 );
@@ -400,19 +426,22 @@ class _favoritesState extends State<favorites> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 15, left: 20, bottom: 10),
+                                      padding: EdgeInsets.only(
+                                          top: widget.height * 15,
+                                          left: widget.width * 20,
+                                          bottom: widget.height * 10),
                                       child: Text(
                                         "Favorite Lab Subjects",
                                         style: TextStyle(
                                             color: Colors.deepOrangeAccent,
-                                            fontSize: 25,
+                                            fontSize: widget.size * 25,
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20, right: 10),
+                                      padding: EdgeInsets.only(
+                                          left: widget.width * 20,
+                                          right: widget.width * 10),
                                       child: ListView.separated(
                                           physics:
                                               const BouncingScrollPhysics(),
@@ -442,14 +471,16 @@ class _favoritesState extends State<favorites> {
                                                   child: Row(
                                                     children: [
                                                       Container(
-                                                        width: 90.0,
-                                                        height: 70.0,
+                                                        width:
+                                                            widget.width * 90.0,
+                                                        height: widget.height *
+                                                            70.0,
                                                         decoration:
                                                             BoxDecoration(
                                                           borderRadius:
                                                               BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
+                                                                  Radius.circular(
+                                                                      widget.size *
                                                                           8.0)),
                                                           color:
                                                               Colors.redAccent,
@@ -461,8 +492,9 @@ class _favoritesState extends State<favorites> {
                                                           ),
                                                         ),
                                                       ),
-                                                      const SizedBox(
-                                                        width: 10,
+                                                      SizedBox(
+                                                        width:
+                                                            widget.width * 10,
                                                       ),
                                                       Expanded(
                                                           child: Column(
@@ -478,9 +510,10 @@ class _favoritesState extends State<favorites> {
                                                               Text(
                                                                 Favourite.name,
                                                                 style:
-                                                                    const TextStyle(
+                                                                    TextStyle(
                                                                   fontSize:
-                                                                      20.0,
+                                                                      widget.size *
+                                                                          20.0,
                                                                   color: Colors
                                                                       .orangeAccent,
                                                                   fontWeight:
@@ -490,18 +523,19 @@ class _favoritesState extends State<favorites> {
                                                               ),
                                                               Spacer(),
                                                               Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .only(
-                                                                        right:
-                                                                            20),
+                                                                padding: EdgeInsets.only(
+                                                                    right: widget
+                                                                            .width *
+                                                                        20),
                                                                 child: InkWell(
                                                                   child: Icon(
                                                                     Icons
                                                                         .highlight_remove_outlined,
                                                                     color: Colors
                                                                         .red,
-                                                                    size: 28,
+                                                                    size: widget
+                                                                            .size *
+                                                                        28,
                                                                   ),
                                                                   onTap: () {
                                                                     showDialog(
@@ -511,7 +545,7 @@ class _favoritesState extends State<favorites> {
                                                                           (context) {
                                                                         return Dialog(
                                                                           shape:
-                                                                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(widget.size * 20)),
                                                                           elevation:
                                                                               16,
                                                                           child:
@@ -519,23 +553,22 @@ class _favoritesState extends State<favorites> {
                                                                             decoration:
                                                                                 BoxDecoration(
                                                                               border: Border.all(color: Colors.tealAccent),
-                                                                              borderRadius: BorderRadius.circular(20),
+                                                                              borderRadius: BorderRadius.circular(widget.size * 20),
                                                                             ),
                                                                             child:
                                                                                 ListView(
                                                                               shrinkWrap: true,
                                                                               children: <Widget>[
-                                                                                SizedBox(height: 10),
-                                                                                SizedBox(height: 5),
+                                                                                SizedBox(height: widget.height * 15),
                                                                                 Padding(
-                                                                                  padding: const EdgeInsets.only(left: 15),
+                                                                                  padding: EdgeInsets.only(left: widget.width * 15),
                                                                                   child: Text(
                                                                                     "Do you want Remove from Favourites",
-                                                                                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 18),
+                                                                                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: widget.size * 18),
                                                                                   ),
                                                                                 ),
                                                                                 SizedBox(
-                                                                                  height: 5,
+                                                                                  height: widget.height * 5,
                                                                                 ),
                                                                                 Center(
                                                                                   child: Row(
@@ -548,10 +581,10 @@ class _favoritesState extends State<favorites> {
                                                                                           decoration: BoxDecoration(
                                                                                             color: Colors.black26,
                                                                                             border: Border.all(color: Colors.black),
-                                                                                            borderRadius: BorderRadius.circular(25),
+                                                                                            borderRadius: BorderRadius.circular(widget.size * 25),
                                                                                           ),
                                                                                           child: Padding(
-                                                                                            padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+                                                                                            padding: EdgeInsets.only(left: widget.width * 15, right: widget.width * 15, top: widget.height * 5, bottom: widget.height * 5),
                                                                                             child: Text("Back"),
                                                                                           ),
                                                                                         ),
@@ -560,17 +593,17 @@ class _favoritesState extends State<favorites> {
                                                                                         },
                                                                                       ),
                                                                                       SizedBox(
-                                                                                        width: 10,
+                                                                                        width: widget.width * 10,
                                                                                       ),
                                                                                       InkWell(
                                                                                         child: Container(
                                                                                           decoration: BoxDecoration(
                                                                                             color: Colors.red,
                                                                                             border: Border.all(color: Colors.black),
-                                                                                            borderRadius: BorderRadius.circular(25),
+                                                                                            borderRadius: BorderRadius.circular(widget.size * 25),
                                                                                           ),
                                                                                           child: Padding(
-                                                                                            padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+                                                                                            padding: EdgeInsets.only(left: widget.width * 15, right: widget.width * 15, top: widget.height * 5, bottom: widget.height * 5),
                                                                                             child: Text(
                                                                                               "Delete",
                                                                                               style: TextStyle(color: Colors.white),
@@ -583,13 +616,13 @@ class _favoritesState extends State<favorites> {
                                                                                         },
                                                                                       ),
                                                                                       SizedBox(
-                                                                                        width: 20,
+                                                                                        width: widget.width * 20,
                                                                                       ),
                                                                                     ],
                                                                                   ),
                                                                                 ),
                                                                                 SizedBox(
-                                                                                  height: 10,
+                                                                                  height: widget.height * 10,
                                                                                 ),
                                                                               ],
                                                                             ),
@@ -603,26 +636,32 @@ class _favoritesState extends State<favorites> {
                                                             ],
                                                           ),
                                                           SizedBox(
-                                                            height: 2,
+                                                            height:
+                                                                widget.height *
+                                                                    2,
                                                           ),
                                                           Text(
                                                             Favourite
                                                                 .description,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 13.0,
+                                                            style: TextStyle(
+                                                              fontSize:
+                                                                  widget.size *
+                                                                      13.0,
                                                               color: Colors
                                                                   .lightBlueAccent,
                                                             ),
                                                           ),
                                                           SizedBox(
-                                                            height: 1,
+                                                            height:
+                                                                widget.height *
+                                                                    1,
                                                           ),
                                                           Text(
                                                             'Added :${Favourite.date}',
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 9.0,
+                                                            style: TextStyle(
+                                                              fontSize:
+                                                                  widget.size *
+                                                                      9.0,
                                                               color: Colors
                                                                   .white60,
                                                               //   fontWeight: FontWeight.bold,
@@ -640,6 +679,8 @@ class _favoritesState extends State<favorites> {
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             subjectUnitsData(
+                                                              branch:
+                                                                  widget.branch,
                                                               ID: Favourite
                                                                   .subjectId,
                                                               mode:
@@ -656,11 +697,12 @@ class _favoritesState extends State<favorites> {
                                             );
                                           },
                                           separatorBuilder: (context, index) =>
-                                              const SizedBox(
-                                                height: 10,
+                                              SizedBox(
+                                                height: widget.height * 10,
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
-                                                      left: 20, right: 20),
+                                                      left: widget.width * 20,
+                                                      right: widget.width * 20),
                                                   child: Divider(
                                                     color: Colors.white,
                                                   ),
@@ -671,18 +713,20 @@ class _favoritesState extends State<favorites> {
                                 );
                               else
                                 return Padding(
-                                  padding: const EdgeInsets.only(top: 15),
+                                  padding:
+                                      EdgeInsets.only(top: widget.height * 15),
                                   child: Center(
                                     child: InkWell(
                                         child: Container(
                                           decoration: BoxDecoration(
                                             border: Border.all(
                                                 color: Colors.tealAccent),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
+                                            borderRadius: BorderRadius.circular(
+                                                widget.size * 20),
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding: EdgeInsets.all(
+                                                widget.size * 8.0),
                                             child: Text(
                                               "No Favorite Lab Subjects",
                                               style: TextStyle(
@@ -691,7 +735,7 @@ class _favoritesState extends State<favorites> {
                                           ),
                                         ),
                                         onTap: () {
-                                          showToast("Add La Subjects");
+                                          showToastText("Add La Subjects");
                                         }),
                                   ),
                                 );
@@ -719,18 +763,20 @@ class _favoritesState extends State<favorites> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 20, left: 20, bottom: 10),
+                                      padding: EdgeInsets.only(
+                                          top: widget.height * 20,
+                                          left: widget.width * 20,
+                                          bottom: widget.height * 10),
                                       child: Text(
                                         "Based on ECE",
                                         style: TextStyle(
                                             color: Colors.deepOrangeAccent,
-                                            fontSize: 25,
+                                            fontSize: widget.size * 25,
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ),
                                     Container(
-                                      height: 130,
+                                      height: widget.height * 130,
                                       child: ListView.separated(
                                         physics: BouncingScrollPhysics(),
                                         scrollDirection: Axis.horizontal,
@@ -754,12 +800,13 @@ class _favoritesState extends State<favorites> {
 
                                           return InkWell(
                                             child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10),
+                                              padding: EdgeInsets.only(
+                                                  left: widget.width * 10),
                                               child: Container(
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.circular(15),
+                                                      BorderRadius.circular(
+                                                          widget.size * 15),
                                                   color: Colors.black
                                                       .withOpacity(0.3),
                                                   // border: Border.all(color: Colors.white),
@@ -770,7 +817,9 @@ class _favoritesState extends State<favorites> {
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(15),
+                                                                .circular(widget
+                                                                        .size *
+                                                                    15),
                                                         color: Colors.black
                                                             .withOpacity(0.4),
                                                         image: DecorationImage(
@@ -779,15 +828,16 @@ class _favoritesState extends State<favorites> {
                                                           fit: BoxFit.cover,
                                                         ),
                                                       ),
-                                                      height: 130,
-                                                      width: 90,
+                                                      height:
+                                                          widget.height * 130,
+                                                      width: widget.width * 90,
                                                     ),
                                                     Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
+                                                      padding: EdgeInsets.all(
+                                                          widget.size * 8.0),
                                                       child: Container(
-                                                        width: 140,
+                                                        width:
+                                                            widget.width * 140,
                                                         child:
                                                             SingleChildScrollView(
                                                           child: Column(
@@ -802,11 +852,10 @@ class _favoritesState extends State<favorites> {
                                                                 children: [
                                                                   Spacer(),
                                                                   Padding(
-                                                                    padding: const EdgeInsets
-                                                                            .only(
-                                                                        left:
+                                                                    padding: EdgeInsets.only(
+                                                                        left: widget.width *
                                                                             10,
-                                                                        right:
+                                                                        right: widget.width *
                                                                             2),
                                                                     child:
                                                                         InkWell(
@@ -816,7 +865,7 @@ class _favoritesState extends State<favorites> {
                                                                             .highlight_remove_outlined,
                                                                         color: Colors
                                                                             .red,
-                                                                        size:
+                                                                        size: widget.size *
                                                                             28,
                                                                       ),
                                                                       onTap:
@@ -827,27 +876,26 @@ class _favoritesState extends State<favorites> {
                                                                           builder:
                                                                               (context) {
                                                                             return Dialog(
-                                                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(widget.size * 20)),
                                                                               elevation: 16,
                                                                               child: Container(
                                                                                 decoration: BoxDecoration(
                                                                                   border: Border.all(color: Colors.tealAccent),
-                                                                                  borderRadius: BorderRadius.circular(20),
+                                                                                  borderRadius: BorderRadius.circular(widget.size * 20),
                                                                                 ),
                                                                                 child: ListView(
                                                                                   shrinkWrap: true,
                                                                                   children: <Widget>[
-                                                                                    SizedBox(height: 10),
-                                                                                    SizedBox(height: 5),
+                                                                                    SizedBox(height: widget.height * 15),
                                                                                     Padding(
-                                                                                      padding: const EdgeInsets.only(left: 15),
+                                                                                      padding: EdgeInsets.only(left: widget.width * 15),
                                                                                       child: Text(
                                                                                         "Do you want Remove from Favourites",
-                                                                                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 18),
+                                                                                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: widget.size * 18),
                                                                                       ),
                                                                                     ),
                                                                                     SizedBox(
-                                                                                      height: 5,
+                                                                                      height: widget.height * 5,
                                                                                     ),
                                                                                     Center(
                                                                                       child: Row(
@@ -860,10 +908,10 @@ class _favoritesState extends State<favorites> {
                                                                                               decoration: BoxDecoration(
                                                                                                 color: Colors.black26,
                                                                                                 border: Border.all(color: Colors.black),
-                                                                                                borderRadius: BorderRadius.circular(25),
+                                                                                                borderRadius: BorderRadius.circular(widget.size * 25),
                                                                                               ),
                                                                                               child: Padding(
-                                                                                                padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+                                                                                                padding: EdgeInsets.only(left: widget.width * 15, right: widget.width * 15, top: widget.height * 5, bottom: widget.height * 5),
                                                                                                 child: Text("Back"),
                                                                                               ),
                                                                                             ),
@@ -872,17 +920,17 @@ class _favoritesState extends State<favorites> {
                                                                                             },
                                                                                           ),
                                                                                           SizedBox(
-                                                                                            width: 10,
+                                                                                            width: widget.width * 10,
                                                                                           ),
                                                                                           InkWell(
                                                                                             child: Container(
                                                                                               decoration: BoxDecoration(
                                                                                                 color: Colors.red,
                                                                                                 border: Border.all(color: Colors.black),
-                                                                                                borderRadius: BorderRadius.circular(25),
+                                                                                                borderRadius: BorderRadius.circular(widget.size * 25),
                                                                                               ),
                                                                                               child: Padding(
-                                                                                                padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+                                                                                                padding: EdgeInsets.only(left: widget.width * 15, right: widget.width * 15, top: widget.height * 5, bottom: widget.height * 5),
                                                                                                 child: Text(
                                                                                                   "Delete",
                                                                                                   style: TextStyle(color: Colors.white),
@@ -895,13 +943,13 @@ class _favoritesState extends State<favorites> {
                                                                                             },
                                                                                           ),
                                                                                           SizedBox(
-                                                                                            width: 20,
+                                                                                            width: widget.width * 20,
                                                                                           ),
                                                                                         ],
                                                                                       ),
                                                                                     ),
                                                                                     SizedBox(
-                                                                                      height: 10,
+                                                                                      height: widget.height * 10,
                                                                                     ),
                                                                                   ],
                                                                                 ),
@@ -927,7 +975,8 @@ class _favoritesState extends State<favorites> {
                                                                         FontWeight
                                                                             .w500,
                                                                     fontSize:
-                                                                        16,
+                                                                        widget.size *
+                                                                            16,
                                                                     color: Colors
                                                                         .orangeAccent),
                                                               ),
@@ -944,7 +993,8 @@ class _favoritesState extends State<favorites> {
                                                                         FontWeight
                                                                             .w400,
                                                                     fontSize:
-                                                                        13,
+                                                                        widget.size *
+                                                                            13,
                                                                     color: Colors
                                                                         .lightBlueAccent),
                                                               ),
@@ -961,7 +1011,8 @@ class _favoritesState extends State<favorites> {
                                                                         FontWeight
                                                                             .w400,
                                                                     fontSize:
-                                                                        13,
+                                                                        widget.size *
+                                                                            13,
                                                                     color: Colors
                                                                         .white
                                                                         .withOpacity(
@@ -980,12 +1031,15 @@ class _favoritesState extends State<favorites> {
                                                                         FontWeight
                                                                             .w300,
                                                                     fontSize:
-                                                                        13,
+                                                                        widget.size *
+                                                                            13,
                                                                     color: Colors
                                                                         .yellowAccent),
                                                               ),
                                                               SizedBox(
-                                                                height: 1,
+                                                                height: widget
+                                                                        .height *
+                                                                    1,
                                                               ),
                                                               if (file1
                                                                   .existsSync())
@@ -995,7 +1049,8 @@ class _favoritesState extends State<favorites> {
                                                                       decoration:
                                                                           BoxDecoration(
                                                                         borderRadius:
-                                                                            BorderRadius.circular(8),
+                                                                            BorderRadius.circular(widget.size *
+                                                                                8),
                                                                         color: Colors
                                                                             .black
                                                                             .withOpacity(0.5),
@@ -1005,11 +1060,11 @@ class _favoritesState extends State<favorites> {
                                                                       ),
                                                                       child:
                                                                           Padding(
-                                                                        padding: const EdgeInsets.only(
-                                                                            left:
+                                                                        padding: EdgeInsets.only(
+                                                                            left: widget.width *
                                                                                 3,
                                                                             right:
-                                                                                3),
+                                                                                widget.width * 3),
                                                                         child:
                                                                             Row(
                                                                           children: [
@@ -1019,11 +1074,11 @@ class _favoritesState extends State<favorites> {
                                                                             ),
                                                                             Text(
                                                                               " & ",
-                                                                              style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                              style: TextStyle(color: Colors.white, fontSize: widget.size * 20),
                                                                             ),
                                                                             Text(
                                                                               "Open",
-                                                                              style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                              style: TextStyle(color: Colors.white, fontSize: widget.size * 20),
                                                                             ),
                                                                             Icon(
                                                                               Icons.open_in_new,
@@ -1046,7 +1101,7 @@ class _favoritesState extends State<favorites> {
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       borderRadius:
-                                                                          BorderRadius.circular(
+                                                                          BorderRadius.circular(widget.size *
                                                                               8),
                                                                       color: Colors
                                                                           .black
@@ -1058,12 +1113,11 @@ class _favoritesState extends State<favorites> {
                                                                     ),
                                                                     child:
                                                                         Padding(
-                                                                      padding: const EdgeInsets
-                                                                              .only(
-                                                                          left:
+                                                                      padding: EdgeInsets.only(
+                                                                          left: widget.width *
                                                                               3,
                                                                           right:
-                                                                              3),
+                                                                              widget.width * 3),
                                                                       child:
                                                                           Row(
                                                                         children: [
@@ -1075,12 +1129,12 @@ class _favoritesState extends State<favorites> {
                                                                           Text(
                                                                             " & ",
                                                                             style:
-                                                                                TextStyle(color: Colors.white, fontSize: 20),
+                                                                                TextStyle(color: Colors.white, fontSize: widget.size * 20),
                                                                           ),
                                                                           Text(
                                                                             "Open",
                                                                             style:
-                                                                                TextStyle(color: Colors.white, fontSize: 20),
+                                                                                TextStyle(color: Colors.white, fontSize: widget.size * 20),
                                                                           ),
                                                                           Icon(
                                                                             Icons.open_in_new,
@@ -1093,7 +1147,7 @@ class _favoritesState extends State<favorites> {
                                                                   ),
                                                                   onTap:
                                                                       () async {
-                                                                    showToast(
+                                                                    showToastText(
                                                                         "Downloading");
                                                                     await download(
                                                                         Favourites[index]
@@ -1101,7 +1155,7 @@ class _favoritesState extends State<favorites> {
                                                                         "pdfs");
                                                                     setState(
                                                                         () {
-                                                                      showToast(
+                                                                      showToastText(
                                                                           "Downloaded");
                                                                     });
                                                                   },
@@ -1112,7 +1166,7 @@ class _favoritesState extends State<favorites> {
                                                       ),
                                                     ),
                                                     SizedBox(
-                                                      width: 2,
+                                                      width: widget.width * 2,
                                                     )
                                                   ],
                                                 ),
@@ -1122,8 +1176,8 @@ class _favoritesState extends State<favorites> {
                                         },
                                         shrinkWrap: true,
                                         separatorBuilder: (context, index) =>
-                                            const SizedBox(
-                                          width: 9,
+                                            SizedBox(
+                                          width: widget.width * 9,
                                         ),
                                       ),
                                     ),
@@ -1133,16 +1187,18 @@ class _favoritesState extends State<favorites> {
                                 return Center(
                                   child: InkWell(
                                       child: Padding(
-                                        padding: const EdgeInsets.only(top: 15),
+                                        padding: EdgeInsets.only(
+                                            top: widget.height * 15),
                                         child: Container(
                                           decoration: BoxDecoration(
                                             border: Border.all(
                                                 color: Colors.tealAccent),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
+                                            borderRadius: BorderRadius.circular(
+                                                widget.width * 20),
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding: EdgeInsets.all(
+                                                widget.width * 8.0),
                                             child: Text(
                                               "No Favorites Books",
                                               style: TextStyle(
@@ -1152,7 +1208,7 @@ class _favoritesState extends State<favorites> {
                                         ),
                                       ),
                                       onTap: () {
-                                        showToast("Add Books");
+                                        showToastText("Add Books");
                                         // showDialog(
                                         //   context: context,
                                         //   builder: (context) {
@@ -1442,23 +1498,4 @@ class FavouriteBooksConvertor {
         date: json["Date"],
         edition: json["Edition"],
       );
-}
-
-_LaunchUrl(String url) async {
-  final Uri urlIn = Uri.parse(url);
-  if (!await launchUrl(urlIn, mode: LaunchMode.inAppWebView)) {
-    throw 'Could not launch $urlIn';
-  }
-}
-
-void _ExternalLaunchUrl(String url) async {
-  final Uri urlIn = Uri.parse(url);
-  if (!await launchUrl(urlIn, mode: LaunchMode.externalApplication)) {
-    throw 'Could not launch $urlIn';
-  }
-}
-
-Future showToast(String message) async {
-  await Fluttertoast.cancel();
-  Fluttertoast.showToast(msg: message, fontSize: 18);
 }

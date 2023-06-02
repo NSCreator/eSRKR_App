@@ -1,22 +1,19 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 import 'package:path_provider/path_provider.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:srkr_study_app/HomePage.dart';
 import 'package:srkr_study_app/settings.dart';
-
-import 'package:flutter/gestures.dart';
-
 import 'ads.dart';
-import 'package:flutter/foundation.dart';
+import 'functins.dart';
 
 class unseenImages extends StatefulWidget {
+  final String branch;
+  const unseenImages({Key? key, required this.branch}) : super(key: key);
   @override
   _unseenImagesState createState() => _unseenImagesState();
 }
@@ -156,7 +153,7 @@ class _unseenImagesState extends State<unseenImages> {
                         Padding(
                           padding: const EdgeInsets.only(left: 20),
                           child: Text(
-                            "ECE Updates Images",
+                            "Updates Images",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 25,
@@ -179,7 +176,8 @@ class _unseenImagesState extends State<unseenImages> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Images(
-                                  path: "ece_updates",
+                                  path:
+                                      "${widget.branch.toLowerCase()}_updates",
                                   heading: 'Saved Updates',
                                 )));
                   },
@@ -207,7 +205,7 @@ class _unseenImagesState extends State<unseenImages> {
                         Padding(
                           padding: const EdgeInsets.only(left: 20),
                           child: Text(
-                            "ECE News Images",
+                            "${widget.branch} News Images",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 25,
@@ -230,7 +228,7 @@ class _unseenImagesState extends State<unseenImages> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Images(
-                                  path: "ece_news",
+                                  path: "${widget.branch.toLowerCase()}_news",
                                   heading: 'Saved News',
                                 )));
                   },
@@ -281,7 +279,8 @@ class _unseenImagesState extends State<unseenImages> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Images(
-                                  path: "ece_timetable",
+                                  path:
+                                      "${widget.branch.toLowerCase()}_timetable",
                                   heading: 'Time Table Images',
                                 )));
                   },
@@ -332,7 +331,8 @@ class _unseenImagesState extends State<unseenImages> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Images(
-                                  path: "ece_subjects",
+                                  path:
+                                      "${widget.branch.toLowerCase()}_subjects",
                                   heading: 'Saved Subjects',
                                 )));
                   },
@@ -383,7 +383,8 @@ class _unseenImagesState extends State<unseenImages> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Images(
-                                  path: "ece_labsubjects",
+                                  path:
+                                      "${widget.branch.toLowerCase()}_labsubjects",
                                   heading: 'Saved Lab Subjects',
                                 )));
                   },
@@ -434,7 +435,7 @@ class _unseenImagesState extends State<unseenImages> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Images(
-                                  path: "ece_books",
+                                  path: "${widget.branch.toLowerCase()}_books",
                                   heading: 'Saved Books',
                                 )));
                   },
@@ -524,7 +525,7 @@ class _unseenImagesState extends State<unseenImages> {
                               if (file.existsSync()) {
                                 await file.delete();
                               }
-                              showToast(
+                              showToastText(
                                   "${_imagePaths[index].split("/").last} has been deleted");
                             },
                           )
@@ -683,7 +684,7 @@ class _ImagesState extends State<Images> {
                                     if (file.existsSync()) {
                                       await file.delete();
                                     }
-                                    showToast(
+                                    showToastText(
                                         "${_imagePaths[index].split("/").last} has been deleted");
                                   },
                                 )
@@ -796,6 +797,7 @@ class _PdfViewerPageState extends State<PdfViewerPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
         body: Stack(
           children: [
@@ -1003,9 +1005,4 @@ class _PdfViewerPageState extends State<PdfViewerPage>
               )),
         ));
   }
-}
-
-showToast(String message) async {
-  await Fluttertoast.cancel();
-  Fluttertoast.showToast(msg: message, fontSize: 18);
 }

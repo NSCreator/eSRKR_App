@@ -1,28 +1,29 @@
 // ignore_for_file: use_build_context_synchronously, camel_case_types, non_constant_identifier_names
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 import '../HomePage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'TextField.dart';
 import 'add subjects.dart';
-import 'auth_page.dart';
-import 'colorsConstant.dart';
+import 'functins.dart';
 
 int currentIndex = 0;
-String branchTitle = "none";
-String className = "Year";
+File file = File("");
 String imageUrl =
     "https://drive.google.com/uc?export=view&id=12yZolNq49Fikqi-lh67f7sxQelEb_3Zt";
 
 class settings extends StatefulWidget {
   final String reg, branch;
-  const settings({Key? key, required this.reg, required this.branch})
+  final int index;
+  const settings(
+      {Key? key, required this.reg, required this.branch, required this.index})
       : super(key: key);
 
   @override
@@ -95,7 +96,7 @@ class _settingsState extends State<settings> {
                           ),
                           Center(
                             child: Text(
-                              branchTitle,
+                              widget.branch,
                               style: const TextStyle(
                                 color: Color.fromRGBO(220, 220, 227, 1),
                                 fontSize: 28,
@@ -113,9 +114,7 @@ class _settingsState extends State<settings> {
                                 radius: 30,
                               ),
                             ),
-                            onTap: () => _showSecondPage(context,
-                                "https://drive.google.com/uc?export=view&id=1Mzx8ioES4Y10-xQqEIiQlMl09N8WDk-M"),
-                          ),
+                          )
                         ],
                       ),
                     ),
@@ -456,6 +455,65 @@ class _settingsState extends State<settings> {
                   ],
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          'Set Default Index: ${widget.index}',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        subtitle: Text(
+                            "Note: Changes are applied after restarting the App"),
+                        trailing: PopupMenuButton<int>(
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: 1,
+                              child: Text('Home'),
+                            ),
+                            PopupMenuItem(
+                              value: 2,
+                              child: Text('Favorite'),
+                            ),
+                            PopupMenuItem(
+                              value: 3,
+                              child: Text('Search'),
+                            ),
+                          ],
+                          onSelected: (value) {
+                            // Handle menu item selection
+                            switch (value) {
+                              case 1:
+                                FirebaseFirestore.instance
+                                    .collection("user")
+                                    .doc(fullUserId())
+                                    .update({"index": 0});
+                                break;
+                              case 2:
+                                FirebaseFirestore.instance
+                                    .collection("user")
+                                    .doc(fullUserId())
+                                    .update({"index": 1});
+                                break;
+                              case 3:
+                                FirebaseFirestore.instance
+                                    .collection("user")
+                                    .doc(fullUserId())
+                                    .update({"index": 2});
+                                break;
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   physics: BouncingScrollPhysics(),
@@ -524,7 +582,7 @@ class _settingsState extends State<settings> {
                                     child: Row(
                                       children: [
                                         Text(
-                                          "   Create ECE News",
+                                          "   Create ${widget.branch} News",
                                           style: TextStyle(
                                               fontSize: 22,
                                               color: Colors.white,
@@ -653,7 +711,9 @@ class _settingsState extends State<settings> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => unseenImages()));
+                                    builder: (context) => unseenImages(
+                                          branch: widget.branch,
+                                        )));
                           },
                         ),
                       ),
@@ -710,7 +770,7 @@ class _settingsState extends State<settings> {
                                       onTap: () {
                                         if (SettingsData[index].title ==
                                             "Report") {
-                                          _sendingMails(
+                                          sendingMails(
                                               "sujithnimmala03@gmail.com");
                                         } else if (SettingsData[index].title ==
                                             "About") {
@@ -720,7 +780,7 @@ class _settingsState extends State<settings> {
                                                   builder: (context) =>
                                                       const about()));
                                         } else {
-                                          _ExternallaunchUrl(
+                                          ExternalLaunchUrl(
                                               "https://github.com/NSCreator/PRIVACY_POLACY/blob/main/Privacy-policy");
                                         }
                                       },
@@ -852,16 +912,16 @@ class _settingsState extends State<settings> {
                                               onTap: () {
                                                 if (Books[index].name ==
                                                     "Gmail") {
-                                                  _sendingMails(
+                                                  sendingMails(
                                                       Books[index].link);
                                                 } else {
                                                   if (Books[index]
                                                       .link
                                                       .isNotEmpty)
-                                                    _ExternallaunchUrl(
+                                                    ExternalLaunchUrl(
                                                         Books[index].link);
                                                   else
-                                                    showToast(
+                                                    showToastText(
                                                         "No ${Books[index].name} Link");
                                                 }
                                               },
@@ -919,7 +979,7 @@ class _settingsState extends State<settings> {
                       )),
                       Center(
                         child: Text(
-                          "v3.0.0",
+                          "v3.0.5",
                           style: TextStyle(
                             fontSize: 9.0,
                             color: Colors.white70,
@@ -948,69 +1008,6 @@ class mainSettings {
   mainSettings(
     this.title,
   );
-}
-
-int branchIndex = 0;
-
-class BranchApi {
-  static Future<List<Branch>> getUsers() async {
-    var url = Uri.parse('https://nscreator.github.io/srkr/srkrAppData.json');
-    var response = await http.get(url);
-    final body = jsonDecode(response.body);
-    return body.map<Branch>(Branch.fromJson).toList();
-  }
-}
-
-class Branch {
-  final String heading;
-  final String imageUrl, sublink, labsublink;
-  final int subjects;
-  final int labSubjects;
-
-  const Branch({
-    required this.heading,
-    required this.subjects,
-    required this.labSubjects,
-    required this.imageUrl,
-    required this.sublink,
-    required this.labsublink,
-  });
-
-  static Branch fromJson(json) => Branch(
-      heading: json['name'],
-      subjects: json['subjects'].length,
-      labSubjects: json['labSubjects'].length,
-      imageUrl: json['imageLink'],
-      sublink: json["subjectsLink"],
-      labsublink: json['labSubjectsLink']);
-}
-
-class ClassApi {
-  static Future<List<Class>> getUsers() async {
-    var url = Uri.parse('https://nscreator.github.io/srkr/srkrAppData.json');
-    var response = await http.get(url);
-    final body = jsonDecode(response.body)[branchIndex]["classLink"];
-    print(body);
-    return body.map<Class>(Class.fromJson).toList();
-  }
-}
-
-class Class {
-  final String heading;
-  final String syllabusLink;
-  final String modelPaperLink;
-
-  const Class({
-    required this.syllabusLink,
-    required this.modelPaperLink,
-    required this.heading,
-  });
-
-  static Class fromJson(json) => Class(
-        heading: json['class'],
-        syllabusLink: json['syllabus'],
-        modelPaperLink: json['model papers'],
-      );
 }
 
 class about extends StatelessWidget {
@@ -1113,7 +1110,7 @@ class about extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  _ExternallaunchUrl(about.url);
+                  ExternalLaunchUrl(about.url);
                 },
               );
             },
@@ -1261,7 +1258,7 @@ class appDevelopmentTeam extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          _sendingMails("sujithnimmala03@gmail.com");
+                          sendingMails("sujithnimmala03@gmail.com");
                         },
                       ),
                       StreamBuilder<List<studentConvertor>>(
@@ -1428,7 +1425,7 @@ class appDevelopmentTeam extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                _sendingMails(facultyData.email);
+                sendingMails(facultyData.email);
               },
             );
           },
@@ -1509,7 +1506,7 @@ class appDevelopmentTeam extends StatelessWidget {
               ),
             ),
             onTap: () {
-              _sendingMails(studentData.email);
+              sendingMails(studentData.email);
             },
           );
         },
@@ -1639,46 +1636,6 @@ class FacultyConvertor {
       };
 }
 
-_showSecondPage(BuildContext context, String url) {
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (ctx) => Scaffold(
-        backgroundColor: const Color.fromRGBO(38, 39, 43, 0.4),
-        body: Center(
-          child: Hero(tag: 'magnifier', child: Image.network(url)),
-        ),
-      ),
-    ),
-  );
-}
-
-_sendingMails(String urlIn) async {
-  var url = Uri.parse("mailto:$urlIn");
-  if (!await launchUrl(url)) throw 'Could not launch $url';
-}
-
-_ExternallaunchUrl(String url) async {
-  final Uri urlIn = Uri.parse(url);
-  if (!await launchUrl(urlIn, mode: LaunchMode.externalApplication)) {
-    throw 'Could not launch $urlIn';
-  }
-}
-
-user0Id() {
-  var user = FirebaseAuth.instance.currentUser!.email!.split("@");
-  return user[0];
-}
-
-userId() {
-  var user = FirebaseAuth.instance.currentUser!.email!.split("@");
-  return user[1];
-}
-
-fullUserId() {
-  var user = FirebaseAuth.instance.currentUser!.email!;
-  return user;
-}
-
 Stream<List<followUsConvertor>> readfollowUs() => FirebaseFirestore.instance
     .collection('FollowUs')
     .orderBy("name", descending: false)
@@ -1703,9 +1660,4 @@ class followUsConvertor {
           name: json["name"],
           link: json["link"],
           photoUrl: json["photoUrl"]);
-}
-
-showToast(String message) async {
-  await Fluttertoast.cancel();
-  Fluttertoast.showToast(msg: message, fontSize: 18);
 }

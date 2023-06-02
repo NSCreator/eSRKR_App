@@ -1,8 +1,10 @@
+// ignore_for_file: must_be_immutable, unnecessary_import
+import 'package:http/http.dart' as http;
+
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:srkr_study_app/SubPages.dart';
@@ -13,20 +15,30 @@ import 'TextField.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'add subjects.dart';
-import 'ads.dart';
-import 'auth_page.dart';
+
 import 'favorites.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:http/http.dart' as http;
 
-import 'net.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+import 'functins.dart';
+import 'main.dart';
 
 class HomePage extends StatefulWidget {
   final String branch;
   final String reg;
-  const HomePage({Key? key, required this.branch, required this.reg})
+  final int index;
+  final double size;
+  final double height;
+  final double width;
+  const HomePage(
+      {Key? key,
+      required this.branch,
+      required this.reg,
+      required this.index,
+      required this.width,
+      required this.size,
+      required this.height})
       : super(key: key);
   @override
   State<HomePage> createState() => _HomePageState();
@@ -69,6 +81,7 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: 60,
                 ),
+
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
@@ -106,19 +119,27 @@ class _HomePageState extends State<HomePage> {
                                               MainAxisAlignment.start,
                                           children: [
                                             Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10, bottom: 10),
+                                              padding: EdgeInsets.only(
+                                                  left:
+                                                      screenWidth(context) * 10,
+                                                  bottom: screenWidth(context) *
+                                                      10),
                                               child: Text(
                                                 "Updates",
                                                 style: TextStyle(
-                                                    fontSize: 25,
+                                                    fontSize:
+                                                        screenWidth(context) *
+                                                            25,
                                                     fontWeight: FontWeight.w500,
                                                     color: Colors.orange),
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 20, right: 10),
+                                              padding: EdgeInsets.only(
+                                                  left:
+                                                      screenWidth(context) * 20,
+                                                  right: screenWidth(context) *
+                                                      10),
                                               child: ListView.separated(
                                                   physics:
                                                       const BouncingScrollPhysics(),
@@ -144,8 +165,12 @@ class _HomePageState extends State<HomePage> {
                                                             Column(
                                                               children: [
                                                                 Container(
-                                                                  width: 30,
-                                                                  height: 30,
+                                                                  width: screenWidth(
+                                                                          context) *
+                                                                      30,
+                                                                  height: screenHeight(
+                                                                          context) *
+                                                                      30,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     borderRadius:
@@ -204,11 +229,11 @@ class _HomePageState extends State<HomePage> {
                                                           if (HomeUpdate
                                                                   .link.length >
                                                               0) {
-                                                            _ExternalLaunchUrl(
+                                                            ExternalLaunchUrl(
                                                                 HomeUpdate
                                                                     .link);
                                                           } else {
-                                                            showToast(
+                                                            showToastText(
                                                                 "No Link");
                                                           }
                                                         },
@@ -285,11 +310,11 @@ class _HomePageState extends State<HomePage> {
                                                           if (HomeUpdate
                                                                   .link.length >
                                                               0) {
-                                                            _ExternalLaunchUrl(
+                                                            ExternalLaunchUrl(
                                                                 HomeUpdate
                                                                     .link);
                                                           } else {
-                                                            showToast(
+                                                            showToastText(
                                                                 "No Link");
                                                           }
                                                         },
@@ -811,12 +836,12 @@ class _HomePageState extends State<HomePage> {
                                                                             await FirebaseFirestore.instance.collection(widget.branch).doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).get().then((docSnapshot) {
                                                                               if (docSnapshot.exists) {
                                                                                 FirebaseFirestore.instance.collection(widget.branch).doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).delete();
-                                                                                showToast("Unliked");
+                                                                                showToastText("Unliked");
                                                                               } else {
                                                                                 FirebaseFirestore.instance.collection(widget.branch).doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).set({
                                                                                   "id": fullUserId()
                                                                                 });
-                                                                                showToast("Liked");
+                                                                                showToastText("Liked");
                                                                               }
                                                                             });
                                                                           } catch (e) {
@@ -885,10 +910,10 @@ class _HomePageState extends State<HomePage> {
                                                                             await FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).get().then((docSnapshot) {
                                                                               if (docSnapshot.exists) {
                                                                                 FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
-                                                                                showToast("Removed from saved list");
+                                                                                showToastText("Removed from saved list");
                                                                               } else {
                                                                                 FavouriteSubjects(SubjectId: SubjectsData.id, name: SubjectsData.heading, description: SubjectsData.description, photoUrl: SubjectsData.PhotoUrl);
-                                                                                showToast("${SubjectsData.heading} in favorites");
+                                                                                showToastText("${SubjectsData.heading} in favorites");
                                                                               }
                                                                             });
                                                                           } catch (e) {
@@ -996,6 +1021,8 @@ class _HomePageState extends State<HomePage> {
                                                                 builder:
                                                                     (context) =>
                                                                         subjectUnitsData(
+                                                                          branch:
+                                                                              widget.branch,
                                                                           ID: SubjectsData
                                                                               .id,
                                                                           mode:
@@ -1115,12 +1142,12 @@ class _HomePageState extends State<HomePage> {
                                                                             await FirebaseFirestore.instance.collection(widget.branch).doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).get().then((docSnapshot) {
                                                                               if (docSnapshot.exists) {
                                                                                 FirebaseFirestore.instance.collection(widget.branch).doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).delete();
-                                                                                showToast("Unliked");
+                                                                                showToastText("Unliked");
                                                                               } else {
                                                                                 FirebaseFirestore.instance.collection(widget.branch).doc("Subjects").collection("Subjects").doc(SubjectsData.id).collection("likes").doc(fullUserId()).set({
                                                                                   "id": fullUserId()
                                                                                 });
-                                                                                showToast("Liked");
+                                                                                showToastText("Liked");
                                                                               }
                                                                             });
                                                                           } catch (e) {
@@ -1189,10 +1216,10 @@ class _HomePageState extends State<HomePage> {
                                                                             await FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).get().then((docSnapshot) {
                                                                               if (docSnapshot.exists) {
                                                                                 FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
-                                                                                showToast("Removed from saved list");
+                                                                                showToastText("Removed from saved list");
                                                                               } else {
                                                                                 FavouriteSubjects(SubjectId: SubjectsData.id, name: SubjectsData.heading, description: SubjectsData.description, photoUrl: SubjectsData.PhotoUrl);
-                                                                                showToast("${SubjectsData.heading} in favorites");
+                                                                                showToastText("${SubjectsData.heading} in favorites");
                                                                               }
                                                                             });
                                                                           } catch (e) {
@@ -1302,6 +1329,8 @@ class _HomePageState extends State<HomePage> {
                                                                 builder:
                                                                     (context) =>
                                                                         subjectUnitsData(
+                                                                          branch:
+                                                                              widget.branch,
                                                                           ID: SubjectsData
                                                                               .id,
                                                                           mode:
@@ -1588,12 +1617,12 @@ class _HomePageState extends State<HomePage> {
                                                                                 await FirebaseFirestore.instance.collection(widget.branch).doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).get().then((docSnapshot) {
                                                                                   if (docSnapshot.exists) {
                                                                                     FirebaseFirestore.instance.collection(widget.branch).doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).delete();
-                                                                                    showToast("Unliked");
+                                                                                    showToastText("Unliked");
                                                                                   } else {
                                                                                     FirebaseFirestore.instance.collection(widget.branch).doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).set({
                                                                                       "id": fullUserId()
                                                                                     });
-                                                                                    showToast("Liked");
+                                                                                    showToastText("Liked");
                                                                                   }
                                                                                 });
                                                                               } catch (e) {
@@ -1647,10 +1676,10 @@ class _HomePageState extends State<HomePage> {
                                                                                 await FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).get().then((docSnapshot) {
                                                                                   if (docSnapshot.exists) {
                                                                                     FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
-                                                                                    showToast("Removed from saved list");
+                                                                                    showToastText("Removed from saved list");
                                                                                   } else {
                                                                                     FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id, name: LabSubjectsData.heading, description: LabSubjectsData.description, photoUrl: LabSubjectsData.PhotoUrl);
-                                                                                    showToast("${LabSubjectsData.heading} in favorites");
+                                                                                    showToastText("${LabSubjectsData.heading} in favorites");
                                                                                   }
                                                                                 });
                                                                               } catch (e) {
@@ -1742,6 +1771,7 @@ class _HomePageState extends State<HomePage> {
                                                                     builder:
                                                                         (context) =>
                                                                             subjectUnitsData(
+                                                                              branch: widget.branch,
                                                                               ID: LabSubjectsData.id,
                                                                               mode: "LabSubjects",
                                                                               name: LabSubjectsData.heading,
@@ -1873,12 +1903,12 @@ class _HomePageState extends State<HomePage> {
                                                                                 await FirebaseFirestore.instance.collection(widget.branch).doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).get().then((docSnapshot) {
                                                                                   if (docSnapshot.exists) {
                                                                                     FirebaseFirestore.instance.collection(widget.branch).doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).delete();
-                                                                                    showToast("Unliked");
+                                                                                    showToastText("Unliked");
                                                                                   } else {
                                                                                     FirebaseFirestore.instance.collection(widget.branch).doc("LabSubjects").collection("LabSubjects").doc(LabSubjectsData.id).collection("likes").doc(fullUserId()).set({
                                                                                       "id": fullUserId()
                                                                                     });
-                                                                                    showToast("Liked");
+                                                                                    showToastText("Liked");
                                                                                   }
                                                                                 });
                                                                               } catch (e) {
@@ -1932,10 +1962,10 @@ class _HomePageState extends State<HomePage> {
                                                                                 await FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).get().then((docSnapshot) {
                                                                                   if (docSnapshot.exists) {
                                                                                     FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
-                                                                                    showToast("Removed from saved list");
+                                                                                    showToastText("Removed from saved list");
                                                                                   } else {
                                                                                     FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id, name: LabSubjectsData.heading, description: LabSubjectsData.description, photoUrl: LabSubjectsData.PhotoUrl);
-                                                                                    showToast("${LabSubjectsData.heading} in favorites");
+                                                                                    showToastText("${LabSubjectsData.heading} in favorites");
                                                                                   }
                                                                                 });
                                                                               } catch (e) {
@@ -2027,6 +2057,7 @@ class _HomePageState extends State<HomePage> {
                                                                     builder:
                                                                         (context) =>
                                                                             subjectUnitsData(
+                                                                              branch: widget.branch,
                                                                               ID: LabSubjectsData.id,
                                                                               mode: "LabSubjects",
                                                                               name: LabSubjectsData.heading,
@@ -2213,7 +2244,7 @@ class _HomePageState extends State<HomePage> {
                                               uri.pathSegments.last;
                                           var name = fileName.split("/").last;
                                           final file = File(
-                                              "${folderPath}/ece_books/$name");
+                                              "${folderPath}/${widget.branch.toLowerCase()}_books/$name");
 
                                           final Uri uri1 =
                                               Uri.parse(Books[index].link);
@@ -2437,7 +2468,7 @@ class _HomePageState extends State<HomePage> {
                                                                     ),
                                                                     onTap:
                                                                         () async {
-                                                                      showToast(
+                                                                      showToastText(
                                                                           "Downloading...");
                                                                       await download(
                                                                           Books[index]
@@ -2445,7 +2476,7 @@ class _HomePageState extends State<HomePage> {
                                                                           "pdfs");
                                                                       setState(
                                                                           () {
-                                                                        showToast(
+                                                                        showToastText(
                                                                             "Downloaded");
                                                                       });
                                                                     },
@@ -2462,10 +2493,7 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                               ),
-                                              onTap: () async {
-                                                _BooksBottomSheet(context,
-                                                    Books[index], file, file1);
-                                              },
+                                              onTap: () async {},
                                             );
                                           } else {
                                             download(Books[index].photoUrl,
@@ -2707,10 +2735,7 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                               ),
-                                              onTap: () async {
-                                                _BooksBottomSheet(context,
-                                                    Books[index], file, file1);
-                                              },
+                                              onTap: () async {},
                                             );
                                           }
                                         },
@@ -2734,22 +2759,24 @@ class _HomePageState extends State<HomePage> {
             right: 0,
             top: 0,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding:
+                  EdgeInsets.symmetric(horizontal: screenWidth(context) * 10),
               child: Container(
                 decoration: BoxDecoration(
                     color: Colors.white12,
                     borderRadius: BorderRadius.circular(15)),
                 child: Padding(
-                  padding: const EdgeInsets.all(5.0),
+                  padding: EdgeInsets.all(screenWidth(context) * 5.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       InkWell(
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 5),
+                            padding:
+                                EdgeInsets.only(left: screenWidth(context) * 5),
                             child: Container(
-                              height: 35,
-                              width: 80,
+                              height: screenHeight(context) * 35,
+                              width: screenWidth(context) * 80,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
                                   color: Colors.white.withOpacity(0.7),
@@ -2765,15 +2792,17 @@ class _HomePageState extends State<HomePage> {
                                 MaterialPageRoute(
                                     builder: (context) => SRKRPage()));
                           }),
-                      Center(
+                      InkWell(
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 30, right: 20),
+                          padding: EdgeInsets.only(
+                              left: screenWidth(context) * 30,
+                              right: screenWidth(context) * 20),
                           child: Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(18),
                                 color: Colors.black.withOpacity(0.7)),
                             child: Padding(
-                              padding: const EdgeInsets.all(7.0),
+                              padding: EdgeInsets.all(7.0),
                               child: ShaderMask(
                                 shaderCallback: (Rect bounds) {
                                   return RadialGradient(
@@ -2789,7 +2818,7 @@ class _HomePageState extends State<HomePage> {
                                 child: Text(
                                   "${widget.branch}",
                                   style: TextStyle(
-                                      fontSize: 30,
+                                      fontSize: screenWidth(context) * 30,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500),
                                 ),
@@ -2797,22 +2826,54 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                backgroundColor: Colors.black.withOpacity(0.8),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        screenWidth(context) * 20)),
+                                elevation: 16,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.white38),
+                                    borderRadius: BorderRadius.circular(
+                                        screenWidth(context) * 20),
+                                  ),
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    children: <Widget>[
+                                      branchYear(
+                                        isUpdate: true,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
                       Row(
                         children: [
                           InkWell(
                               child: Padding(
-                                padding: const EdgeInsets.only(right: 10),
+                                padding: EdgeInsets.only(
+                                    right: screenWidth(context) * 10),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(13),
+                                      borderRadius: BorderRadius.circular(
+                                          screenWidth(context) * 13),
                                       color: Colors.white10),
                                   child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
+                                    padding: EdgeInsets.all(
+                                        screenWidth(context) * 4.0),
                                     child: Icon(
                                       Icons.notifications_active_outlined,
                                       color: Colors.white,
-                                      size: 30,
+                                      size: screenWidth(context) * 30,
                                     ),
                                   ),
                                 ),
@@ -2821,21 +2882,26 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => notifications()));
+                                        builder: (context) => notifications(
+                                              branch: widget.branch,
+                                            )));
                               }),
                           InkWell(
                               child: Padding(
-                                padding: const EdgeInsets.only(right: 5),
+                                padding: EdgeInsets.only(
+                                    right: screenWidth(context) * 5),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(13),
+                                      borderRadius: BorderRadius.circular(
+                                          screenWidth(context) * 13),
                                       color: Colors.white10),
                                   child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
+                                    padding: EdgeInsets.all(
+                                        screenWidth(context) * 4.0),
                                     child: Icon(
                                       Icons.person_outline,
                                       color: Colors.white,
-                                      size: 30,
+                                      size: screenWidth(context) * 30,
                                     ),
                                   ),
                                 ),
@@ -2845,6 +2911,7 @@ class _HomePageState extends State<HomePage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => settings(
+                                              index: widget.index,
                                               reg: widget.reg,
                                               branch: widget.branch,
                                             )));
@@ -2891,7 +2958,7 @@ Future createHomeUpdate(
   final flash = HomeUpdateConvertor(
       id: docflash.id,
       heading: heading,
-      date: getTime(),
+      date: getDate(),
       photoUrl: photoUrl,
       link: link);
   final json = flash.toJson();
@@ -3273,602 +3340,6 @@ class BooksConvertor {
       );
 }
 
-Future showToast(String message) async {
-  await Fluttertoast.cancel();
-  Fluttertoast.showToast(msg: message, fontSize: 18);
-}
-
-_ExternalLaunchUrl(String url) async {
-  final Uri urlIn = Uri.parse(url);
-  if (!await launchUrl(urlIn, mode: LaunchMode.externalApplication)) {
-    throw 'Could not launch $urlIn';
-  }
-}
-
-_LaunchUrl(String url) async {
-  final Uri urlIn = Uri.parse(url);
-  if (!await launchUrl(urlIn, mode: LaunchMode.inAppWebView)) {
-    throw 'Could not launch $urlIn';
-  }
-}
-
-void _BooksBottomSheet(
-    BuildContext context, BooksConvertor data, File file, File file1) {
-  showModalBottomSheet(
-    backgroundColor: Colors.black54,
-    context: context,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-      top: Radius.circular(30),
-    )),
-    builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.4,
-        maxChildSize: 0.55,
-        minChildSize: 0.32,
-        expand: false,
-        builder: (context, scrollController) {
-          return SingleChildScrollView(
-            controller: scrollController,
-            child: Stack(
-              alignment: AlignmentDirectional.topCenter,
-              clipBehavior: Clip.none,
-              children: [
-                Positioned(
-                  top: -15,
-                  child: Container(
-                    width: 60,
-                    height: 7,
-                    margin: const EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 20,
-                            ),
-                            Flexible(
-                              flex: 2,
-                              fit: FlexFit.tight,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Colors.white.withOpacity(0.3),
-                                    border: Border.all(color: Colors.white),
-                                    image: DecorationImage(
-                                        image: FileImage(file),
-                                        fit: BoxFit.fill)),
-                                height: 130,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Flexible(
-                              flex: 5,
-                              //fit: FlexFit.tight,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      child: Text(
-                                        '${data.heading}',
-                                        overflow: TextOverflow.clip,
-                                        style: TextStyle(
-                                            color: Colors.orange,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      "Author : ${data.Author}",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      "Edition : ${data.edition}",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Spacer(),
-                            Text(
-                              "Date : ${data.date}",
-                              style: TextStyle(
-                                  color: Colors.white.withOpacity(0.6),
-                                  fontWeight: FontWeight.w400),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          "Description : \n",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Text(
-                            "       ${data.description}",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 5, bottom: 10),
-                          child: Text(
-                            "Download options : ",
-                            style: TextStyle(
-                                color: Colors.tealAccent,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w900),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            InkWell(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                        color: Colors.white.withOpacity(0.3)),
-                                    color: Colors.black.withOpacity(0.5)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.download_outlined,
-                                        color: Colors.white,
-                                      ),
-                                      Text(
-                                        "Download",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              onTap: () async {
-                                showToast("Downloading...");
-                                final Uri uri = Uri.parse(data.link);
-                                final String fileName = uri.pathSegments.last;
-                                var name = fileName.split("/").last;
-                                final response =
-                                    await http.get(Uri.parse(data.link));
-
-                                final file =
-                                    File('/storage/emulated/0/Download/$name');
-                                await file.writeAsBytes(response.bodyBytes);
-                                showToast(file.path);
-                                showToast("Downloaded");
-                              },
-                            ),
-                            SizedBox(
-                              width: 20,
-                            ),
-                            InkWell(
-                              child: StreamBuilder<DocumentSnapshot>(
-                                stream: FirebaseFirestore.instance
-                                    .collection('user')
-                                    .doc(fullUserId())
-                                    .collection("FavouriteBooks")
-                                    .doc(data.id)
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    if (snapshot.data!.exists) {
-                                      return InkWell(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              border: Border.all(
-                                                  color: Colors.white
-                                                      .withOpacity(0.3)),
-                                              color: Colors.black
-                                                  .withOpacity(0.5)),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.save,
-                                                  color: Colors.white,
-                                                ),
-                                                Text(
-                                                  "Saved",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          try {
-                                            await FirebaseFirestore.instance
-                                                .collection('user')
-                                                .doc(fullUserId())
-                                                .collection("FavouriteBooks")
-                                                .doc(data.id)
-                                                .get()
-                                                .then((docSnapshot) {
-                                              if (docSnapshot.exists) {
-                                                FirebaseFirestore.instance
-                                                    .collection('user')
-                                                    .doc(fullUserId())
-                                                    .collection(
-                                                        "FavouriteBooks")
-                                                    .doc(data.id)
-                                                    .delete();
-                                                showToast(
-                                                    "Removed from saved list");
-                                              } else {
-                                                FavouriteBooksSubjects(
-                                                    description:
-                                                        data.description,
-                                                    heading: data.heading,
-                                                    link: data.link,
-                                                    photoUrl: data.photoUrl,
-                                                    Author: data.Author,
-                                                    edition: data.edition,
-                                                    date: data.date,
-                                                    id: data.id);
-                                                showToast(
-                                                    "${data.heading} in favorites");
-                                              }
-                                            });
-                                          } catch (e) {
-                                            print(e);
-                                          }
-                                        },
-                                      );
-                                    } else {
-                                      return InkWell(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              border: Border.all(
-                                                  color: Colors.white
-                                                      .withOpacity(0.3)),
-                                              color: Colors.black
-                                                  .withOpacity(0.5)),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.save,
-                                                  color: Colors.white,
-                                                ),
-                                                Text(
-                                                  "Save",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          try {
-                                            await FirebaseFirestore.instance
-                                                .collection('user')
-                                                .doc(fullUserId())
-                                                .collection("FavouriteBooks")
-                                                .doc(data.id)
-                                                .get()
-                                                .then((docSnapshot) {
-                                              if (docSnapshot.exists) {
-                                                FirebaseFirestore.instance
-                                                    .collection('user')
-                                                    .doc(fullUserId())
-                                                    .collection(
-                                                        "FavouriteBooks")
-                                                    .doc(data.id)
-                                                    .delete();
-                                                showToast(
-                                                    "Removed from saved list");
-                                              } else {
-                                                FavouriteBooksSubjects(
-                                                    description:
-                                                        data.description,
-                                                    heading: data.heading,
-                                                    link: data.link,
-                                                    photoUrl: data.photoUrl,
-                                                    Author: data.Author,
-                                                    edition: data.edition,
-                                                    date: data.date,
-                                                    id: data.id);
-                                                showToast(
-                                                    "${data.heading} in favorites");
-                                              }
-                                            });
-                                          } catch (e) {
-                                            print(e);
-                                          }
-                                        },
-                                      );
-                                    }
-                                  } else {
-                                    return InkWell(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color: Colors.white
-                                                    .withOpacity(0.3)),
-                                            color:
-                                                Colors.black.withOpacity(0.5)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.save,
-                                                color: Colors.white,
-                                              ),
-                                              Text(
-                                                "Saved",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        showToast("Saved in app");
-                                      },
-                                    );
-                                  }
-                                },
-                              ),
-                              onTap: () async {
-                                try {
-                                  await FirebaseFirestore.instance
-                                      .collection('user')
-                                      .doc(fullUserId())
-                                      .collection("FavouriteBooks")
-                                      .doc(data.id)
-                                      .get()
-                                      .then((docSnapshot) {
-                                    if (docSnapshot.exists) {
-                                      FirebaseFirestore.instance
-                                          .collection('user')
-                                          .doc(fullUserId())
-                                          .collection("FavouriteBooks")
-                                          .doc(data.id)
-                                          .delete();
-                                      showToast("Removed from saved list");
-                                    } else {
-                                      FavouriteBooksSubjects(
-                                          description: data.description,
-                                          heading: data.heading,
-                                          link: data.link,
-                                          photoUrl: data.photoUrl,
-                                          Author: data.Author,
-                                          edition: data.edition,
-                                          date: data.date,
-                                          id: data.id);
-                                      showToast("${data.heading} in favorites");
-                                    }
-                                  });
-                                } catch (e) {
-                                  print(e);
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                "View :     ",
-                                style: TextStyle(
-                                    color: Colors.cyanAccent, fontSize: 20),
-                              ),
-                              if (file1.existsSync())
-                                Row(
-                                  children: [
-                                    InkWell(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            color:
-                                                Colors.black.withOpacity(0.5),
-                                            border:
-                                                Border.all(color: Colors.green),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 3, right: 3),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.download_outlined,
-                                                  color: Colors.green,
-                                                ),
-                                                Text(
-                                                  " & ",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20),
-                                                ),
-                                                Text(
-                                                  "Open",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20),
-                                                ),
-                                                Icon(
-                                                  Icons.open_in_new,
-                                                  color: Colors.greenAccent,
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        onTap: () {
-                                          // Navigator
-                                          //     .push(
-                                          //     context,
-                                          //     MaterialPageRoute(
-                                          //         builder: (context) =>
-                                          //             PdfViewerPage(
-                                          //                 pdfUrl: "${folderPath}/pdfs/$name1")));
-                                        }),
-                                  ],
-                                )
-                              else
-                                Row(
-                                  children: [
-                                    InkWell(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            color:
-                                                Colors.black.withOpacity(0.5),
-                                            border:
-                                                Border.all(color: Colors.white),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 3, right: 3),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.download_outlined,
-                                                  color: Colors.red,
-                                                ),
-                                                Text(
-                                                  " & ",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20),
-                                                ),
-                                                Text(
-                                                  "Open",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20),
-                                                ),
-                                                Icon(
-                                                  Icons.open_in_new,
-                                                  color: Colors.greenAccent,
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          showDialog(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (context) => Center(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        CircularProgressIndicator(),
-                                                        Text(
-                                                          "Downloading",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ));
-                                          try {
-                                            await download(data.link, "pdfs");
-                                          } on FirebaseException catch (e) {
-                                            print(e);
-                                            Utils.showSnackBar(e.message);
-                                          }
-                                          Navigator.pop(context);
-                                        }),
-                                  ],
-                                )
-                            ],
-                          ),
-                        )
-                      ]),
-                )
-              ],
-            ),
-          );
-        }),
-  );
-}
-
 class ImageZoom extends StatefulWidget {
   String url;
   File file;
@@ -3932,7 +3403,7 @@ class _ImageZoomState extends State<ImageZoom> {
                         ),
                       ),
                       onTap: () async {
-                        showToast("Downloading...");
+                        showToastText("Downloading...");
                         final Uri uri = Uri.parse(widget.url);
                         final String fileName = uri.pathSegments.last;
                         var name = fileName.split("/").last;
@@ -3940,8 +3411,8 @@ class _ImageZoomState extends State<ImageZoom> {
 
                         final file = File('/storage/emulated/0/Download/$name');
                         await file.writeAsBytes(response.bodyBytes);
-                        showToast(file.path);
-                        showToast("Downloaded");
+                        showToastText(file.path);
+                        showToastText("Downloaded");
                       },
                     ),
                     SizedBox(
@@ -3973,31 +3444,12 @@ class _ImageZoomState extends State<ImageZoom> {
                       ),
                       onTap: () {
                         download(widget.url, fullUserId());
-                        showToast("Saved in app");
+                        showToastText("Saved in app");
                       },
                     ),
                   ],
                 ))
           ],
         ));
-  }
-}
-
-download(String photoUrl, String path) async {
-  final Uri uri = Uri.parse(photoUrl);
-  final String fileName = uri.pathSegments.last;
-  var name = fileName.split("/").last;
-  final response = await http.get(Uri.parse(photoUrl));
-  final documentDirectory = await getApplicationDocumentsDirectory();
-  final newDirectory = Directory('${documentDirectory.path}/$path');
-  if (!await newDirectory.exists()) {
-    await newDirectory.create(recursive: true);
-    final file = File('${newDirectory.path}/${name}');
-    await file.writeAsBytes(response.bodyBytes);
-    showToast(file.path);
-  } else {
-    final file = File('${newDirectory.path}/${name}');
-    await file.writeAsBytes(response.bodyBytes);
-    showToast(file.path);
   }
 }

@@ -1,18 +1,15 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'TextField.dart';
-import 'main.dart';
+import 'functins.dart';
 import 'notification.dart';
-import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -614,7 +611,7 @@ class _LoginPageState extends State<LoginPage> {
                       fontSize: 18),
                 ),
                 onTap: () {
-                  _sendingMails("sujithnimmala03@gmail.com");
+                  sendingMails("sujithnimmala03@gmail.com");
                 },
               ),
             ],
@@ -643,14 +640,16 @@ class _LoginPageState extends State<LoginPage> {
             title: "Welcome to eSRKR app!",
             body: "Your Successfully Registered!");
         updateToken();
+        Navigator.pop(context);
       } on FirebaseException catch (e) {
         print(e);
         Utils.showSnackBar(e.message);
+        Navigator.pop(context);
       }
     } else {
+      Navigator.pop(context);
       Utils.showSnackBar("Enter email using @srkrec.ac.in");
     }
-    Navigator.pop(context);
   }
 
   Future signIn() async {
@@ -667,11 +666,10 @@ class _LoginPageState extends State<LoginPage> {
       NotificationService()
           .showNotification(title: "Welcome back to eSRKR!", body: null);
       updateToken();
+      Navigator.pop(context);
     } on FirebaseException catch (e) {
-      print(e);
       Utils.showSnackBar(e.message);
     }
-    Navigator.pop(context);
   }
 
   Future resetPassword() async {
@@ -684,6 +682,8 @@ class _LoginPageState extends State<LoginPage> {
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: emailController.text.trim());
+      NotificationService().showNotification(
+          title: "Reset Password", body: "Reset Link is Send To Your Email");
       Utils.showSnackBar("Password Reset Email Sent");
     } on FirebaseAuthException catch (e) {
       print(e);
@@ -692,36 +692,6 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pop(context);
     return Navigator.pop(context);
   }
-}
-
-final messengerKey = GlobalKey<ScaffoldMessengerState>();
-
-class Utils {
-  static showSnackBar(String? text) {
-    if (text == null) return;
-    final snackBar =
-        SnackBar(content: Text(text), backgroundColor: Colors.orange);
-    messengerKey.currentState!
-      ..removeCurrentSnackBar()
-      ..showSnackBar(snackBar);
-  }
-}
-
-_sendingMails(String urlIn) async {
-  var url = Uri.parse("mailto:$urlIn");
-  if (!await launchUrl(url)) throw 'Could not launch $url';
-}
-
-showToast(String message) async {
-  await Fluttertoast.cancel();
-  Fluttertoast.showToast(msg: message, fontSize: 18);
-}
-
-class Constants {
-  static final String BASE_URL = 'https://fcm.googleapis.com/fcm/send';
-  static final String KEY_SERVER =
-      'AAAA9CTzPoM:APA91bHTk4DcD6fSCJh-EaGH7KreA92u9kpri6o6Sl8euReOgCduR7595Eup4SYfGH6xg1tSaXcZ659kJlQ-ae48H66Ufx-a2xNLl4rlho4EI2A1grpmmuU0JbIsT_Fu7KndWzyDFz9C';
-  static final String SENDER_ID = '1048591941251';
 }
 
 Future<void> hi(String email) async {
@@ -747,7 +717,7 @@ Future<void> hi(String email) async {
             .set({
           "id": email,
           "Name": email,
-          "Time": getTime(),
+          "Time": getDate(),
           "Description": "Forgot Password@$token",
           "Link": ""
         });
@@ -763,13 +733,5 @@ Future<void> hi(String email) async {
     }
   }).catchError((error) {
     print("An error occurred while retrieving data: $error");
-  });
-}
-
-Future<void> updateToken() async {
-  final token = await FirebaseMessaging.instance.getToken() ?? "";
-  await FirebaseFirestore.instance.collection("tokens").doc(fullUserId()).set({
-    "id": fullUserId(),
-    "token": token,
   });
 }

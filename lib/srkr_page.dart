@@ -1,15 +1,5 @@
-import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:srkr_study_app/HomePage.dart';
-import 'package:srkr_study_app/HomePage.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
-import 'settings.dart';
 
 class SRKRPage extends StatefulWidget {
   const SRKRPage({Key? key}) : super(key: key);

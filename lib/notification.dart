@@ -1,13 +1,9 @@
 import 'dart:core';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'TextField.dart';
 import 'auth_page.dart';
+import 'functins.dart';
 
 _ExternalLaunchUrl(String url) async {
   final Uri urlIn = Uri.parse(url);
@@ -25,7 +22,8 @@ _ExternalLaunchUrl(String url) async {
 }
 
 class notifications extends StatefulWidget {
-  const notifications({Key? key}) : super(key: key);
+  final String branch;
+  const notifications({Key? key, required this.branch}) : super(key: key);
 
   @override
   State<notifications> createState() => _notificationsState();
@@ -137,7 +135,9 @@ class _notificationsState extends State<notifications>
                 children: [
                   StreamBuilder<List<NotificationsConvertor>>(
                       stream: readNotifications(
-                          c0: "ECE", d0: "Notification", c1: "AllNotification"),
+                          c0: widget.branch,
+                          d0: "Notification",
+                          c1: "AllNotification"),
                       builder: (context, snapshot) {
                         final Notifications = snapshot.data;
                         switch (snapshot.connectionState) {
@@ -291,7 +291,7 @@ class _notificationsState extends State<notifications>
                                             userDomain() == "gmail.com") {
                                           final deleteFlashNews =
                                               FirebaseFirestore.instance
-                                                  .collection("ECE")
+                                                  .collection(widget.branch)
                                                   .doc("Notification")
                                                   .collection("AllNotification")
                                                   .doc(Notification.id);
@@ -911,7 +911,7 @@ Future<void> pushNotificationsSpecificPerson(
             .set({
           "id": getID(),
           "Name": myEmail,
-          "Time": getTime(),
+          "Time": getDate(),
           "Description": message,
           "Link": ""
         });
@@ -923,7 +923,7 @@ Future<void> pushNotificationsSpecificPerson(
             .set({
           "id": getID(),
           "Name": myEmail,
-          "Time": getTime(),
+          "Time": getDate(),
           "Description": message,
           "Link": ""
         });

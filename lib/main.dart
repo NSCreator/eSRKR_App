@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -6,11 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 import 'HomePage.dart';
 import 'auth_page.dart';
 import 'favorites.dart';
+import 'functins.dart';
 import 'notification.dart';
 import 'search bar.dart';
 import 'settings.dart';
@@ -87,7 +86,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      scaffoldMessengerKey: messengerKey,
       navigatorKey: navigatorKey,
       theme: ThemeData(
         splashColor: Colors.transparent,
@@ -97,7 +95,7 @@ class _MyAppState extends State<MyApp> {
       title: 'e-SRKR',
       builder: (context, child) {
         return MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaleFactor: 0.8),
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 0.85),
             child: child!);
       },
       home: StreamBuilder<User?>(
@@ -127,6 +125,15 @@ class _MyAppState extends State<MyApp> {
                                     .isNotEmpty &&
                                 mainsnapshot.data!['branch']
                                     .toString()
+                                    .isNotEmpty &&
+                                mainsnapshot.data!['index']
+                                    .toString()
+                                    .isNotEmpty &&
+                                mainsnapshot.data!['width']
+                                    .toString()
+                                    .isNotEmpty &&
+                                mainsnapshot.data!['height']
+                                    .toString()
                                     .isNotEmpty) {
                               isTheir = true;
                             }
@@ -135,12 +142,27 @@ class _MyAppState extends State<MyApp> {
                           }
                           if (isTheir) {
                             return Nav(
-                                branch: mainsnapshot.data!["branch"].toString(),
-                                reg: mainsnapshot.data!['reg'].toString());
+                              height: double.parse(
+                                      mainsnapshot.data!['height'].toString()) /
+                                  850,
+                              width: double.parse(
+                                      mainsnapshot.data!['width'].toString()) /
+                                  400,
+                              branch: mainsnapshot.data!["branch"].toString(),
+                              reg: mainsnapshot.data!['reg'].toString(),
+                              index: mainsnapshot.data!['index'],
+                              size: (double.parse(mainsnapshot.data!['width']
+                                              .toString()) /
+                                          400 +
+                                      double.parse(mainsnapshot.data!['height']
+                                              .toString()) /
+                                          850) /
+                                  2,
+                            );
                           } else {
                             return Scaffold(
                               backgroundColor: Color.fromRGBO(4, 48, 46, 1),
-                              body: branchYear(),
+                              body: SafeArea(child: branchYear()),
                             );
                           }
                         }
@@ -156,199 +178,208 @@ class _MyAppState extends State<MyApp> {
 }
 
 class branchYear extends StatefulWidget {
-  const branchYear({Key? key}) : super(key: key);
+  final bool isUpdate;
+  const branchYear({Key? key, this.isUpdate = false}) : super(key: key);
 
   @override
   State<branchYear> createState() => _branchYearState();
 }
 
 class _branchYearState extends State<branchYear> {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<branchesConvertor>>(
+        stream: readbranches(),
+        builder: (context, snapshot) {
+          final Favourites = snapshot.data;
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return const Center(
+                  child: CircularProgressIndicator(
+                strokeWidth: 0.3,
+                color: Colors.cyan,
+              ));
+            default:
+              if (snapshot.hasError) {
+                return Center(child: Text("Error"));
+              } else {
+                if (Favourites!.length > 0)
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 15, left: 20, bottom: 10),
+                        child: Text(
+                          "Select Branch",
+                          style: TextStyle(
+                              color: Colors.lightBlueAccent,
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: Favourites.length,
+                        itemBuilder: (context, int index) {
+                          final Favourite = Favourites[index];
+
+                          return years(
+                            id: Favourite.id,
+                            isUpdate: widget.isUpdate,
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                else
+                  return Text("No Branches Avaliable");
+              }
+          }
+        });
+  }
+}
+
+class years extends StatefulWidget {
+  final String id;
+  final bool isUpdate;
+  const years({Key? key, required this.id, required this.isUpdate})
+      : super(key: key);
+
+  @override
+  State<years> createState() => _yearsState();
+}
+
+class _yearsState extends State<years> {
   bool isReg = false;
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: StreamBuilder<List<branchesConvertor>>(
-          stream: readbranches(),
-          builder: (context, snapshot) {
-            final Favourites = snapshot.data;
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-                return const Center(
-                    child: CircularProgressIndicator(
-                  strokeWidth: 0.3,
-                  color: Colors.cyan,
-                ));
-              default:
-                if (snapshot.hasError) {
-                  return Center(child: Text("Error"));
-                } else {
-                  if (Favourites!.length > 0)
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 15, left: 20, bottom: 10),
+    return Column(
+      children: [
+        InkWell(
+          child: Text(
+            widget.id,
+            style: TextStyle(
+                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          onTap: () {
+            if (!widget.isUpdate) {
+              FirebaseFirestore.instance
+                  .collection("user")
+                  .doc(fullUserId())
+                  .set({"branch": widget.id, "index": 0});
+            } else {
+              FirebaseFirestore.instance
+                  .collection("user")
+                  .doc(fullUserId())
+                  .update({"branch": widget.id});
+            }
+            setState(() {
+              isReg = !isReg;
+            });
+          },
+        ),
+        if (isReg)
+          StreamBuilder<List<RegulationConvertor>>(
+              stream: readRegulation(widget.id),
+              builder: (context, snapshot) {
+                final user = snapshot.data;
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const Center(
+                        child: CircularProgressIndicator(
+                      strokeWidth: 0.3,
+                      color: Colors.cyan,
+                    ));
+                  default:
+                    if (snapshot.hasError) {
+                      return const Center(
                           child: Text(
-                            "Select Branch",
-                            style: TextStyle(
-                                color: Colors.lightBlueAccent,
-                                fontSize: 25,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: Favourites.length,
-                          itemBuilder: (context, int index) {
-                            final Favourite = Favourites[index];
-
-                            return Column(
-                              children: [
-                                InkWell(
-                                  child: Text(
-                                    Favourite.id,
-                                    style: TextStyle(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
-                                  ),
-                                  onTap: () {
-                                    FirebaseFirestore.instance
-                                        .collection("user")
-                                        .doc(fullUserId())
-                                        .set({"branch": Favourite.id});
-                                    setState(() {
-                                      isReg = true;
-                                    });
+                              'Error with TextBooks Data or\n Check Internet Connection'));
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 2,
+                                width: 30,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8)),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: user!.length,
+                                  itemBuilder: (context, int index) {
+                                    final SubjectsData = user[index];
+                                    return Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        InkWell(
+                                          child: Text(
+                                            SubjectsData.id,
+                                            style: TextStyle(
+                                                color: Colors.lightGreenAccent,
+                                                fontSize: 30),
+                                          ),
+                                          onTap: () {
+                                            FirebaseFirestore.instance
+                                                .collection("user")
+                                                .doc(fullUserId())
+                                                .update(
+                                                    {"reg": SubjectsData.id});
+                                            if (widget.isUpdate) {
+                                              Navigator.pop(context);
+                                            }
+                                          },
+                                        )
+                                      ],
+                                    );
                                   },
                                 ),
-                                if (isReg)
-                                  StreamBuilder<List<RegulationConvertor>>(
-                                      stream: readRegulation(Favourite.id),
-                                      builder: (context, snapshot) {
-                                        final user = snapshot.data;
-                                        switch (snapshot.connectionState) {
-                                          case ConnectionState.waiting:
-                                            return const Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                              strokeWidth: 0.3,
-                                              color: Colors.cyan,
-                                            ));
-                                          default:
-                                            if (snapshot.hasError) {
-                                              return const Center(
-                                                  child: Text(
-                                                      'Error with TextBooks Data or\n Check Internet Connection'));
-                                            } else {
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 20),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white
-                                                          .withOpacity(0.1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8)),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Container(
-                                                        height: 2,
-                                                        width: 30,
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8)),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: ListView.builder(
-                                                          physics:
-                                                              const BouncingScrollPhysics(),
-                                                          shrinkWrap: true,
-                                                          itemCount:
-                                                              user!.length,
-                                                          itemBuilder: (context,
-                                                              int index) {
-                                                            final SubjectsData =
-                                                                user[index];
-                                                            return Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                InkWell(
-                                                                  child: Text(
-                                                                    SubjectsData
-                                                                        .id,
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .lightGreenAccent,
-                                                                        fontSize:
-                                                                            30),
-                                                                  ),
-                                                                  onTap: () {
-                                                                    FirebaseFirestore
-                                                                        .instance
-                                                                        .collection(
-                                                                            "user")
-                                                                        .doc(
-                                                                            fullUserId())
-                                                                        .update({
-                                                                      "reg":
-                                                                          SubjectsData
-                                                                              .id
-                                                                    });
-                                                                  },
-                                                                )
-                                                              ],
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                        }
-                                      }),
-                              ],
-                            );
-                          },
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    );
-                  else
-                    return Text("No Branches Avaliable");
+                      );
+                    }
                 }
-            }
-          }),
+              }),
+      ],
     );
   }
 }
 
 class Nav extends StatefulWidget {
   final String branch;
+  final double height;
+  final double width;
+  final double size;
   final String reg;
-  const Nav({Key? key, required this.branch, required this.reg})
+  final int index;
+  const Nav(
+      {Key? key,
+      required this.branch,
+      required this.reg,
+      this.index = 0,
+      required this.height,
+      required this.width,
+      required this.size})
       : super(key: key);
 
   @override
@@ -357,18 +388,38 @@ class Nav extends StatefulWidget {
 
 class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
-
-  List<Widget> createWidgetOptions(String branch, String reg) {
+  List<Widget> createWidgetOptions(
+      String branch, String reg, double width, double height, double size) {
     return [
       HomePage(
+        height: height,
+        width: width,
+        size: size,
         branch: branch,
         reg: reg,
+        index: _selectedIndex,
       ),
-      favorites(),
+      favorites(
+        branch: branch,
+        size: size,
+        width: width,
+        height: height,
+      ),
       MyAppq(
         branch: branch,
+        height: height,
+        width: width,
+        size: size,
       ),
     ];
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _selectedIndex = widget.index;
+    _onItemTap(_selectedIndex);
   }
 
   void _onItemTap(int index) {
@@ -398,20 +449,26 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
               child: Container(
                   color: Colors.black.withOpacity(0.8),
                   child: createWidgetOptions(
-                      widget.branch, widget.reg)[_selectedIndex]),
+                      widget.branch,
+                      widget.reg,
+                      widget.width,
+                      widget.height,
+                      widget.size)[_selectedIndex]),
             ),
             Positioned(
               left: 0,
               right: 0,
-              bottom: 25,
+              bottom: 20,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 80),
+                padding: EdgeInsets.symmetric(horizontal: widget.width * 95),
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.blueGrey,
-                      borderRadius: BorderRadius.circular(15)),
+                      color: Color.fromRGBO(8, 37, 38, 0.91),
+                      borderRadius: BorderRadius.circular(widget.size * 15),
+                      border: Border.all(color: Colors.white.withOpacity(0.5))),
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 3, bottom: 2),
+                    padding: EdgeInsets.only(
+                        top: widget.height * 3, bottom: widget.width * 2),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -422,9 +479,17 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
                                 _selectedIndex == 0
                                     ? Icons.home
                                     : Icons.home_outlined,
-                                size: 30,
+                                size: widget.width * 30,
+                                color: _selectedIndex == 0
+                                    ? Color.fromRGBO(98, 240, 245, 1)
+                                    : Color.fromRGBO(63, 155, 158, 1),
                               ),
-                              Text("Home")
+                              Text(
+                                "Home",
+                                style: TextStyle(
+                                    color: Colors.white54,
+                                    fontSize: widget.width * 15),
+                              )
                             ],
                           ),
                           onTap: () {
@@ -438,8 +503,17 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
                                 _selectedIndex == 1
                                     ? Icons.favorite
                                     : Icons.favorite_border,
+                                size: widget.width * 30,
+                                color: _selectedIndex == 1
+                                    ? Color.fromRGBO(98, 240, 245, 1)
+                                    : Color.fromRGBO(63, 155, 158, 1),
                               ),
-                              Text("Favorite")
+                              Text(
+                                "Favorite",
+                                style: TextStyle(
+                                    color: Colors.white54,
+                                    fontSize: widget.width * 15),
+                              )
                             ],
                           ),
                           onTap: () {
@@ -453,8 +527,17 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
                                 _selectedIndex == 2
                                     ? Icons.manage_search
                                     : Icons.search,
+                                size: widget.width * 30,
+                                color: _selectedIndex == 2
+                                    ? Color.fromRGBO(98, 240, 245, 1)
+                                    : Color.fromRGBO(63, 155, 158, 1),
                               ),
-                              Text("Search")
+                              Text(
+                                "Search",
+                                style: TextStyle(
+                                    color: Colors.white54,
+                                    fontSize: widget.width * 15),
+                              )
                             ],
                           ),
                           onTap: () {
