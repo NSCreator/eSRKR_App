@@ -20,7 +20,12 @@ _ExternalLaunchUrl(String url) async {
 
 class notifications extends StatefulWidget {
   final String branch;
-  const notifications({Key? key, required this.branch}) : super(key: key);
+  final double size;
+  final double height;
+  final double width;
+  const notifications({Key? key, required this.branch,      required this.width,
+    required this.size,
+    required this.height}) : super(key: key);
 
   @override
   State<notifications> createState() => _notificationsState();
@@ -90,23 +95,23 @@ class _notificationsState extends State<notifications>
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  padding:  EdgeInsets.symmetric(vertical: widget.width *10),
                   child: Text(
                     "Notifications",
-                    style: TextStyle(color: Colors.white70, fontSize: 30),
+                    style: TextStyle(color: Colors.white70, fontSize:widget.size * 30),
                   ),
                 ),
                 Container(
                   decoration: BoxDecoration(
                       color: Colors.black,
-                      borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(widget.size *10)),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding:  EdgeInsets.all(widget.size *8.0),
                     child: Text(
                       "Custom +",
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: widget.size *20,
                           fontWeight: FontWeight.w600),
                     ),
                   ),
@@ -114,29 +119,29 @@ class _notificationsState extends State<notifications>
               ],
             ),
             Container(
-              height: 35,
+              height: widget.height *35,
               child: Center(
                 child: TabBar(
                   indicator: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(widget.size *12),
                       color: Colors.orange),
                   controller: _tabController,
                   isScrollable: true,
-                  labelPadding: EdgeInsets.symmetric(horizontal: 30),
+                  labelPadding: EdgeInsets.symmetric(horizontal: widget.width *30),
                   tabs: [
                     Tab(
                       child: Text(
                         "All",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 25,
+                          fontSize: widget.size *25,
                         ),
                       ),
                     ),
                     Tab(
                       child: Text(
                         "For You",
-                        style: TextStyle(color: Colors.white, fontSize: 25),
+                        style: TextStyle(color: Colors.white, fontSize: widget.size *25),
                       ),
                     )
                   ],
@@ -144,7 +149,7 @@ class _notificationsState extends State<notifications>
               ),
             ),
             SizedBox(
-              height: 10,
+              height: widget.height *10,
             ),
             Expanded(
               child: TabBarView(
@@ -183,9 +188,9 @@ class _notificationsState extends State<notifications>
                                         padding:
                                             Notification.Name == fullUserId()
                                                 ? EdgeInsets.only(
-                                                    left: 45, right: 5, top: 5)
+                                                    left: widget.width *45, right:widget.width * 5, top:widget.height * 5)
                                                 : EdgeInsets.only(
-                                                    right: 45, left: 5, top: 5),
+                                                    right: widget.width *45, left: widget.width *5, top: widget.height *5),
                                         child: Container(
                                           width: double.infinity,
                                           alignment: Alignment.center,
@@ -195,13 +200,13 @@ class _notificationsState extends State<notifications>
                                                   borderRadius:
                                                       BorderRadius.only(
                                                     topLeft:
-                                                        Radius.circular(25),
+                                                        Radius.circular(widget.size *25),
                                                     bottomLeft:
-                                                        Radius.circular(25),
+                                                        Radius.circular(widget.size *25),
                                                     topRight:
-                                                        Radius.circular(25),
+                                                        Radius.circular(widget.size *25),
                                                     bottomRight:
-                                                        Radius.circular(5),
+                                                        Radius.circular(widget.size *5),
                                                   ),
                                                   color: Colors.black
                                                       .withOpacity(0.8),
@@ -213,13 +218,13 @@ class _notificationsState extends State<notifications>
                                                   borderRadius:
                                                       BorderRadius.only(
                                                     topLeft:
-                                                        Radius.circular(25),
+                                                        Radius.circular(widget.size *25),
                                                     bottomLeft:
-                                                        Radius.circular(5),
+                                                        Radius.circular(widget.size *5),
                                                     topRight:
-                                                        Radius.circular(25),
+                                                        Radius.circular(widget.size *25),
                                                     bottomRight:
-                                                        Radius.circular(25),
+                                                        Radius.circular(widget.size *25),
                                                   ),
                                                   color: Colors.black
                                                       .withOpacity(0.5),
@@ -233,8 +238,8 @@ class _notificationsState extends State<notifications>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              const SizedBox(
-                                                width: 2,
+                                               SizedBox(
+                                                width:widget.width * 2,
                                               ),
                                               Expanded(
                                                   child: Column(
@@ -247,26 +252,26 @@ class _notificationsState extends State<notifications>
                                                     children: [
                                                       Text(
                                                         "       @${Notification.Name}",
-                                                        style: const TextStyle(
-                                                          fontSize: 12.0,
+                                                        style:  TextStyle(
+                                                          fontSize:widget.size * 12.0,
                                                           color: Colors.white54,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                         ),
                                                       ),
-                                                      const Spacer(),
+                                                       Spacer(),
                                                       Padding(
                                                         padding:
-                                                            const EdgeInsets
+                                                             EdgeInsets
                                                                     .fromLTRB(
-                                                                8, 1, 25, 1),
+                                                                 widget.size *8, widget.size *1, widget.size *25, widget.size *1),
                                                         child: Column(
                                                           children: [
                                                             Text(
                                                               '${Notification.Time}',
                                                               style:
-                                                                  const TextStyle(
-                                                                fontSize: 9.0,
+                                                                   TextStyle(
+                                                                fontSize: widget.size *9.0,
                                                                 color: Colors
                                                                     .white70,
                                                                 //   fontWeight: FontWeight.bold,
@@ -279,11 +284,11 @@ class _notificationsState extends State<notifications>
                                                   ),
                                                   Padding(
                                                     padding:
-                                                        const EdgeInsets.only(
-                                                            left: 8,
-                                                            bottom: 6,
-                                                            right: 3,
-                                                            top: 3),
+                                                         EdgeInsets.only(
+                                                            left:widget.size * 8,
+                                                            bottom: widget.size *6,
+                                                            right: widget.size *3,
+                                                            top:widget.size * 3),
                                                     child: NotificationText(
                                                         Notification
                                                             .description),
@@ -292,8 +297,8 @@ class _notificationsState extends State<notifications>
                                                       3)
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsets.all(
-                                                              3.0),
+                                                           EdgeInsets.all(
+                                                               widget.size *3.0),
                                                       child: Image.network(
                                                           Notification.Url),
                                                     )
@@ -323,8 +328,8 @@ class _notificationsState extends State<notifications>
                                     );
                                   },
                                   separatorBuilder: (context, index) =>
-                                      const SizedBox(
-                                        height: 1,
+                                       SizedBox(
+                                        height: widget.height *1,
                                       ));
                             }
                         }
@@ -360,9 +365,9 @@ class _notificationsState extends State<notifications>
                                         padding:
                                             Notification.Name == fullUserId()
                                                 ? EdgeInsets.only(
-                                                    left: 45, right: 5)
+                                                    left: widget.size *45, right:widget.size * 5)
                                                 : EdgeInsets.only(
-                                                    right: 45, left: 5),
+                                                    right:widget.size * 45, left: widget.size *5),
                                         child: Container(
                                           width: double.infinity,
                                           alignment: Alignment.center,
@@ -372,13 +377,13 @@ class _notificationsState extends State<notifications>
                                                   borderRadius:
                                                       BorderRadius.only(
                                                     topLeft:
-                                                        Radius.circular(25),
+                                                        Radius.circular(widget.size *25),
                                                     bottomLeft:
-                                                        Radius.circular(25),
+                                                        Radius.circular(widget.size *25),
                                                     topRight:
-                                                        Radius.circular(25),
+                                                        Radius.circular(widget.size *25),
                                                     bottomRight:
-                                                        Radius.circular(5),
+                                                        Radius.circular(widget.size *5),
                                                   ),
                                                   color: Colors.black
                                                       .withOpacity(0.8),
@@ -390,13 +395,13 @@ class _notificationsState extends State<notifications>
                                                   borderRadius:
                                                       BorderRadius.only(
                                                     topLeft:
-                                                        Radius.circular(25),
+                                                        Radius.circular(widget.size *25),
                                                     bottomLeft:
-                                                        Radius.circular(5),
+                                                        Radius.circular(widget.size *5),
                                                     topRight:
-                                                        Radius.circular(25),
+                                                        Radius.circular(widget.size *25),
                                                     bottomRight:
-                                                        Radius.circular(25),
+                                                        Radius.circular(widget.size *25),
                                                   ),
                                                   color: Colors.black
                                                       .withOpacity(0.5),
@@ -410,8 +415,8 @@ class _notificationsState extends State<notifications>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              const SizedBox(
-                                                width: 2,
+                                               SizedBox(
+                                                width: widget.width *2,
                                               ),
                                               Expanded(
                                                   child: Column(
@@ -424,26 +429,26 @@ class _notificationsState extends State<notifications>
                                                     children: [
                                                       Text(
                                                         "       @${Notification.Name}",
-                                                        style: const TextStyle(
-                                                          fontSize: 12.0,
+                                                        style:  TextStyle(
+                                                          fontSize: widget.size *12.0,
                                                           color: Colors.white54,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                         ),
                                                       ),
-                                                      const Spacer(),
+                                                       Spacer(),
                                                       Padding(
                                                         padding:
-                                                            const EdgeInsets
+                                                             EdgeInsets
                                                                     .fromLTRB(
-                                                                8, 1, 25, 1),
+                                                                 widget.size *8,widget.size * 1, widget.size *25,widget.size * 1),
                                                         child: Column(
                                                           children: [
                                                             Text(
                                                               '${Notification.Time}',
                                                               style:
-                                                                  const TextStyle(
-                                                                fontSize: 9.0,
+                                                                   TextStyle(
+                                                                fontSize: widget.size *9.0,
                                                                 color: Colors
                                                                     .white70,
                                                                 //   fontWeight: FontWeight.bold,
@@ -460,11 +465,11 @@ class _notificationsState extends State<notifications>
                                                       "Forgot Password ")
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsets.only(
-                                                              left: 8,
-                                                              bottom: 6,
-                                                              right: 3,
-                                                              top: 3),
+                                                           EdgeInsets.only(
+                                                              left: widget.size *8,
+                                                              bottom:widget.size * 6,
+                                                              right:widget.size * 3,
+                                                              top:widget.size * 3),
                                                       child: Text(
                                                         Notification.description
                                                             .split("@")
@@ -477,11 +482,11 @@ class _notificationsState extends State<notifications>
                                                   else
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsets.only(
-                                                              left: 8,
-                                                              bottom: 6,
-                                                              right: 3,
-                                                              top: 3),
+                                                           EdgeInsets.only(
+                                                              left: widget.size *8,
+                                                              bottom:widget.size * 6,
+                                                              right: widget.size *3,
+                                                              top:widget.size * 3),
                                                       child: NotificationText(
                                                           Notification
                                                               .description),
@@ -490,8 +495,8 @@ class _notificationsState extends State<notifications>
                                                       3)
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsets.all(
-                                                              3.0),
+                                                           EdgeInsets.all(
+                                                              widget.size *3.0),
                                                       child: Image.network(
                                                           Notification.Url),
                                                     )
@@ -507,8 +512,8 @@ class _notificationsState extends State<notifications>
                                     );
                                   },
                                   separatorBuilder: (context, index) =>
-                                      const SizedBox(
-                                        height: 1,
+                                       SizedBox(
+                                        height: widget.height *1,
                                       ));
                             }
                         }
@@ -517,6 +522,9 @@ class _notificationsState extends State<notifications>
               ),
             ),
             searchBar(
+              width: widget.width,
+              height: widget.height,
+              size: widget.size,
               branch: widget.branch,
               tabController: _tabController,
               user: emailController,
@@ -540,12 +548,17 @@ class searchBar extends StatefulWidget {
   final TabController tabController;
   final TextEditingController user;
   final String branch;
-
+  final double size;
+  final double height;
+  final double width;
   const searchBar(
       {Key? key,
       required this.tabController,
       required this.user,
-      required this.branch})
+      required this.branch,
+        required this.width,
+        required this.size,
+        required this.height})
       : super(key: key);
 
   @override

@@ -25,6 +25,7 @@ class HomePage extends StatefulWidget {
   final double size;
   final double height;
   final double width;
+
   const HomePage(
       {Key? key,
       required this.branch,
@@ -34,6 +35,7 @@ class HomePage extends StatefulWidget {
       required this.size,
       required this.height})
       : super(key: key);
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -2310,8 +2312,8 @@ class _HomePageState extends State<HomePage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 10, bottom: 10),
+                                      padding:  EdgeInsets.only(
+                                          left: widget.width *10, bottom:widget.height * 10),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -2320,18 +2322,18 @@ class _HomePageState extends State<HomePage> {
                                             "Based on ${widget.branch}",
                                             style: TextStyle(
                                                 color: Colors.deepOrange,
-                                                fontSize: 25,
+                                                fontSize:widget.size * 25,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           InkWell(
                                               child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 20),
+                                                padding:  EdgeInsets.only(
+                                                    right: widget.width *20),
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            8),
+                                                            widget.size * 8),
                                                     color: Colors.black
                                                         .withOpacity(0.7),
                                                     border: Border.all(
@@ -2340,16 +2342,16 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        const EdgeInsets.only(
-                                                            left: 10,
-                                                            right: 10,
-                                                            top: 5,
-                                                            bottom: 5),
+                                                         EdgeInsets.only(
+                                                            left:widget.width * 10,
+                                                            right:widget.width * 10,
+                                                            top:widget.height * 5,
+                                                            bottom: widget.height *5),
                                                     child: Text(
                                                       "See More",
                                                       style: TextStyle(
                                                           color: Colors.white,
-                                                          fontSize: 20,
+                                                          fontSize: widget.size *20,
                                                           fontWeight:
                                                               FontWeight.w500),
                                                     ),
@@ -2370,7 +2372,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                     Container(
-                                      height: 125,
+                                      height: widget.height *125,
                                       child: ListView.builder(
                                         physics: BouncingScrollPhysics(),
                                         scrollDirection: Axis.horizontal,
@@ -2395,13 +2397,13 @@ class _HomePageState extends State<HomePage> {
                                           if (file.existsSync()) {
                                             return InkWell(
                                               child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10),
+                                                padding:  EdgeInsets.only(
+                                                    left: widget.width *10),
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            15),
+                                                            widget.size *15),
                                                     color: Colors.black
                                                         .withOpacity(0.3),
                                                     // border: Border.all(color: Colors.white),
@@ -2413,7 +2415,7 @@ class _HomePageState extends State<HomePage> {
                                                             BoxDecoration(
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(15),
+                                                                  .circular(widget.size *15),
                                                           color: Colors.black
                                                               .withOpacity(0.4),
                                                           image:
@@ -2423,15 +2425,15 @@ class _HomePageState extends State<HomePage> {
                                                             fit: BoxFit.cover,
                                                           ),
                                                         ),
-                                                        height: 140,
-                                                        width: 90,
+                                                        height: widget.height *140,
+                                                        width: widget.width *90,
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
+                                                             EdgeInsets
+                                                                .all(widget.size *8.0),
                                                         child: Container(
-                                                          width: 120,
+                                                          width: widget.width *120,
                                                           child:
                                                               SingleChildScrollView(
                                                             physics:
@@ -2456,7 +2458,7 @@ class _HomePageState extends State<HomePage> {
                                                                           FontWeight
                                                                               .w500,
                                                                       fontSize:
-                                                                          16,
+                                                                      widget.size *16,
                                                                       color: Colors
                                                                           .orange),
                                                                 ),
@@ -2472,7 +2474,7 @@ class _HomePageState extends State<HomePage> {
                                                                           FontWeight
                                                                               .w400,
                                                                       fontSize:
-                                                                          13,
+                                                                      widget.size *13,
                                                                       color: Colors
                                                                           .blue),
                                                                 ),
@@ -2488,7 +2490,7 @@ class _HomePageState extends State<HomePage> {
                                                                           FontWeight
                                                                               .w400,
                                                                       fontSize:
-                                                                          13,
+                                                                      widget.size *13,
                                                                       color: Colors
                                                                           .lightBlueAccent),
                                                                 ),
@@ -2504,12 +2506,12 @@ class _HomePageState extends State<HomePage> {
                                                                           FontWeight
                                                                               .w300,
                                                                       fontSize:
-                                                                          13,
+                                                                      widget.size *13,
                                                                       color: Colors
                                                                           .limeAccent),
                                                                 ),
                                                                 SizedBox(
-                                                                  height: 5,
+                                                                  height: widget.height *5,
                                                                 ),
                                                                 if (file1
                                                                     .existsSync())
@@ -2528,9 +2530,9 @@ class _HomePageState extends State<HomePage> {
                                                                         ),
                                                                         child:
                                                                             Padding(
-                                                                          padding: const EdgeInsets.only(
-                                                                              left: 3,
-                                                                              right: 3),
+                                                                          padding:  EdgeInsets.only(
+                                                                              left: widget.width *3,
+                                                                              right: widget.width *3),
                                                                           child:
                                                                               Row(
                                                                             children: [
@@ -2540,11 +2542,11 @@ class _HomePageState extends State<HomePage> {
                                                                               ),
                                                                               Text(
                                                                                 " & ",
-                                                                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                style: TextStyle(color: Colors.white, fontSize: widget.size *20),
                                                                               ),
                                                                               Text(
                                                                                 "Open",
-                                                                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                style: TextStyle(color: Colors.white, fontSize: widget.size *20),
                                                                               ),
                                                                               Icon(
                                                                                 Icons.open_in_new,
@@ -2567,7 +2569,7 @@ class _HomePageState extends State<HomePage> {
                                                                       decoration:
                                                                           BoxDecoration(
                                                                         borderRadius:
-                                                                            BorderRadius.circular(8),
+                                                                            BorderRadius.circular(widget.size *8),
                                                                         color: Colors
                                                                             .black
                                                                             .withOpacity(0.5),
@@ -2577,11 +2579,11 @@ class _HomePageState extends State<HomePage> {
                                                                       ),
                                                                       child:
                                                                           Padding(
-                                                                        padding: const EdgeInsets.only(
+                                                                        padding:  EdgeInsets.only(
                                                                             left:
-                                                                                3,
+                                                                            widget.width *  3,
                                                                             right:
-                                                                                3),
+                                                                            widget.width * 3),
                                                                         child:
                                                                             Row(
                                                                           children: [
@@ -2591,11 +2593,11 @@ class _HomePageState extends State<HomePage> {
                                                                             ),
                                                                             Text(
                                                                               " & ",
-                                                                              style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                              style: TextStyle(color: Colors.white, fontSize:widget.size * 20),
                                                                             ),
                                                                             Text(
                                                                               "Open",
-                                                                              style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                              style: TextStyle(color: Colors.white, fontSize: widget.size *20),
                                                                             ),
                                                                             Icon(
                                                                               Icons.open_in_new,
@@ -2626,7 +2628,7 @@ class _HomePageState extends State<HomePage> {
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                        width: 20,
+                                                        width: widget.width *20,
                                                       )
                                                     ],
                                                   ),
@@ -2639,13 +2641,13 @@ class _HomePageState extends State<HomePage> {
                                                 "${widget.branch.toLowerCase()}_books");
                                             return InkWell(
                                               child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10),
+                                                padding:  EdgeInsets.only(
+                                                    left: widget.width *10),
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            15),
+                                                            widget.size *15),
                                                     color: Colors.black
                                                         .withOpacity(0.3),
                                                     // border: Border.all(color: Colors.white),
@@ -2657,12 +2659,12 @@ class _HomePageState extends State<HomePage> {
                                                             BoxDecoration(
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(15),
+                                                                  .circular(widget.size *15),
                                                           color: Colors.black
                                                               .withOpacity(0.4),
                                                         ),
-                                                        height: 140,
-                                                        width: 90,
+                                                        height:widget.height * 140,
+                                                        width:widget.width * 90,
                                                         child:
                                                             CachedNetworkImage(
                                                           imageUrl: Books[index]
@@ -2677,10 +2679,10 @@ class _HomePageState extends State<HomePage> {
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
+                                                             EdgeInsets
+                                                                .all(widget.size *8.0),
                                                         child: Container(
-                                                          width: 120,
+                                                          width: widget.width *120,
                                                           child:
                                                               SingleChildScrollView(
                                                             physics:
@@ -2705,7 +2707,7 @@ class _HomePageState extends State<HomePage> {
                                                                           FontWeight
                                                                               .w500,
                                                                       fontSize:
-                                                                          16,
+                                                                      widget.size *16,
                                                                       color: Colors
                                                                           .white),
                                                                 ),
@@ -2721,7 +2723,7 @@ class _HomePageState extends State<HomePage> {
                                                                           FontWeight
                                                                               .w400,
                                                                       fontSize:
-                                                                          13,
+                                                                      widget.size * 13,
                                                                       color: Colors
                                                                           .white),
                                                                 ),
@@ -2737,7 +2739,8 @@ class _HomePageState extends State<HomePage> {
                                                                           FontWeight
                                                                               .w400,
                                                                       fontSize:
-                                                                          13,
+                                                                          widget.size *
+                                                                              13,
                                                                       color: Colors
                                                                           .white),
                                                                 ),
@@ -2753,12 +2756,15 @@ class _HomePageState extends State<HomePage> {
                                                                           FontWeight
                                                                               .w300,
                                                                       fontSize:
-                                                                          13,
+                                                                          widget.size *
+                                                                              13,
                                                                       color: Colors
                                                                           .white),
                                                                 ),
                                                                 SizedBox(
-                                                                  height: 5,
+                                                                  height: widget
+                                                                          .height *
+                                                                      5,
                                                                 ),
                                                                 if (file1
                                                                     .existsSync())
@@ -2768,7 +2774,7 @@ class _HomePageState extends State<HomePage> {
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
-                                                                              BorderRadius.circular(8),
+                                                                              BorderRadius.circular(widget.size * 8),
                                                                           color: Colors
                                                                               .black
                                                                               .withOpacity(0.5),
@@ -2777,9 +2783,9 @@ class _HomePageState extends State<HomePage> {
                                                                         ),
                                                                         child:
                                                                             Padding(
-                                                                          padding: const EdgeInsets.only(
-                                                                              left: 3,
-                                                                              right: 3),
+                                                                          padding: EdgeInsets.only(
+                                                                              left: widget.width * 3,
+                                                                              right: widget.width * 3),
                                                                           child:
                                                                               Row(
                                                                             children: [
@@ -2789,11 +2795,11 @@ class _HomePageState extends State<HomePage> {
                                                                               ),
                                                                               Text(
                                                                                 " & ",
-                                                                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                style: TextStyle(color: Colors.white, fontSize: widget.size * 20),
                                                                               ),
                                                                               Text(
                                                                                 "Open",
-                                                                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                                style: TextStyle(color: Colors.white, fontSize: widget.size * 20),
                                                                               ),
                                                                               Icon(
                                                                                 Icons.open_in_new,
@@ -2816,7 +2822,8 @@ class _HomePageState extends State<HomePage> {
                                                                       decoration:
                                                                           BoxDecoration(
                                                                         borderRadius:
-                                                                            BorderRadius.circular(8),
+                                                                            BorderRadius.circular(widget.size *
+                                                                                8),
                                                                         color: Colors
                                                                             .black
                                                                             .withOpacity(0.5),
@@ -2826,11 +2833,11 @@ class _HomePageState extends State<HomePage> {
                                                                       ),
                                                                       child:
                                                                           Padding(
-                                                                        padding: const EdgeInsets.only(
-                                                                            left:
+                                                                        padding: EdgeInsets.only(
+                                                                            left: widget.width *
                                                                                 3,
                                                                             right:
-                                                                                3),
+                                                                                widget.width * 3),
                                                                         child:
                                                                             Row(
                                                                           children: [
@@ -2840,11 +2847,11 @@ class _HomePageState extends State<HomePage> {
                                                                             ),
                                                                             Text(
                                                                               " & ",
-                                                                              style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                              style: TextStyle(color: Colors.white, fontSize: widget.size * 20),
                                                                             ),
                                                                             Text(
                                                                               "Open",
-                                                                              style: TextStyle(color: Colors.white, fontSize: 20),
+                                                                              style: TextStyle(color: Colors.white, fontSize: widget.size * 20),
                                                                             ),
                                                                             Icon(
                                                                               Icons.open_in_new,
@@ -2868,7 +2875,8 @@ class _HomePageState extends State<HomePage> {
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                        width: 20,
+                                                        width:
+                                                            widget.width * 20,
                                                       )
                                                     ],
                                                   ),
@@ -2888,7 +2896,7 @@ class _HomePageState extends State<HomePage> {
                       }),
                 ),
                 SizedBox(
-                  height: 100,
+                  height: widget.height * 100,
                 ),
               ],
             ),
@@ -3021,6 +3029,9 @@ class _HomePageState extends State<HomePage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => notifications(
+                                          width: widget.width,
+                                              size: widget.size,
+                                              height: widget.height,
                                               branch: widget.branch,
                                             )));
                               }),
