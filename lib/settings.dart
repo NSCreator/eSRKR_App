@@ -11,7 +11,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'TextField.dart';
-import 'add subjects.dart';
 import 'functins.dart';
 
 int currentIndex = 0;

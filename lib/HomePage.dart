@@ -649,7 +649,7 @@ class _HomePageState extends State<HomePage> {
                                                         shrinkWrap: true,
                                                         scrollDirection:
                                                             Axis.horizontal,
-                                                        itemCount: user!.length,
+                                                        itemCount: user.length,
                                                         itemBuilder: (context,
                                                             int index) {
                                                           final classess =

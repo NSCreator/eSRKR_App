@@ -3,16 +3,13 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:srkr_study_app/TextField.dart';
 import 'package:srkr_study_app/HomePage.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'add subjects.dart';
 import 'package:flutter/material.dart';
 import 'favorites.dart';
 import 'functins.dart';
-import 'settings.dart';
 import 'package:http/http.dart' as http;
 
 class NewsPage extends StatefulWidget {

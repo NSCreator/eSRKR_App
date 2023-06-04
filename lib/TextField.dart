@@ -3,8 +3,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:srkr_study_app/HomePage.dart';
 import 'package:srkr_study_app/SubPages.dart';
 import 'package:firebase_storage/firebase_storage.dart';

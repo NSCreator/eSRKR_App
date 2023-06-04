@@ -12,7 +12,6 @@ import 'favorites.dart';
 import 'functins.dart';
 import 'notification.dart';
 import 'search bar.dart';
-import 'settings.dart';
 
 Future<void> backgroundHandler(RemoteMessage message) async {
   print(message.data.toString());
