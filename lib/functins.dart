@@ -70,7 +70,7 @@ user0Id() {
 
 userId() {
   var user = FirebaseAuth.instance.currentUser!.email!.split("@");
-  return user[1];
+  return user[1] == "gmail.com";
 }
 
 fullUserId() {
@@ -113,10 +113,10 @@ download(String photoUrl, String path) async {
     await newDirectory.create(recursive: true);
     final file = File('${newDirectory.path}/${name}');
     await file.writeAsBytes(response.bodyBytes);
-    showToast(file.path);
+    showToastText(file.path);
   } else {
     final file = File('${newDirectory.path}/${name}');
     await file.writeAsBytes(response.bodyBytes);
-    showToast(file.path);
+    showToastText(file.path);
   }
 }

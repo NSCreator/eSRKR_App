@@ -64,7 +64,9 @@ class _MyAppState extends State<MyApp> {
       if (message.notification != null) {}
       print(message.notification!.title);
       NotificationService().showNotification(
-          title: message.notification!.title, body: message.notification!.body);
+        title: message.notification!.title,
+        body: message.notification!.body,
+      );
     });
 
     ///When the app is in background but opened and user taps

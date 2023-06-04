@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable, unnecessary_import
 import 'package:http/http.dart' as http;
-
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,15 +11,10 @@ import 'package:srkr_study_app/notification.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'package:srkr_study_app/srkr_page.dart';
 import 'TextField.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'add subjects.dart';
-
 import 'favorites.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
 import 'package:cached_network_image/cached_network_image.dart';
-
 import 'functins.dart';
 import 'main.dart';
 
@@ -79,23 +73,23 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 60,
+                  height: widget.height * 60,
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(widget.size * 8.0),
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.black.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(15)),
+                        borderRadius: BorderRadius.circular(widget.size * 15)),
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(widget.size * 8.0),
                       child: Column(
                         children: [
-                          StreamBuilder<List<HomeUpdateConvertor>>(
-                              stream: readHomeUpdate(widget.branch),
+                          StreamBuilder<List<UpdateConvertor>>(
+                              stream: readUpdate(widget.branch),
                               builder: (context, snapshot) {
-                                final HomeUpdates = snapshot.data;
+                                final Updates = snapshot.data;
                                 switch (snapshot.connectionState) {
                                   case ConnectionState.waiting:
                                     return const Center(
@@ -109,9 +103,9 @@ class _HomePageState extends State<HomePage> {
                                           child: Text(
                                               'Error with updates Data or\n Check Internet Connection'));
                                     } else {
-                                      if (HomeUpdates!.length == 0) {
+                                      if (Updates!.length == 0) {
                                         return Container();
-                                      } else
+                                      } else {
                                         return Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -120,277 +114,281 @@ class _HomePageState extends State<HomePage> {
                                           children: [
                                             Padding(
                                               padding: EdgeInsets.only(
-                                                  left:
-                                                      screenWidth(context) * 10,
-                                                  bottom: screenWidth(context) *
-                                                      10),
-                                              child: Text(
-                                                "Updates",
-                                                style: TextStyle(
-                                                    fontSize:
-                                                        screenWidth(context) *
-                                                            25,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.orange),
+                                                  left: widget.width * 10,
+                                                  bottom: widget.height * 10),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Updates",
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                            widget.size * 25,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.orange),
+                                                  ),
+                                                  InkWell(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 10),
+                                                      child: Icon(
+                                                        Icons.info_outline,
+                                                        color: Colors.white,
+                                                        size: 25,
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
                                               ),
                                             ),
                                             Padding(
                                               padding: EdgeInsets.only(
-                                                  left:
-                                                      screenWidth(context) * 20,
-                                                  right: screenWidth(context) *
-                                                      10),
-                                              child: ListView.separated(
-                                                  physics:
-                                                      const BouncingScrollPhysics(),
-                                                  shrinkWrap: true,
-                                                  itemCount: HomeUpdates.length,
-                                                  itemBuilder:
-                                                      (context, int index) {
-                                                    final HomeUpdate =
-                                                        HomeUpdates[index];
-                                                    final Uri uri = Uri.parse(
-                                                        HomeUpdate.photoUrl);
-                                                    final String fileName =
-                                                        uri.pathSegments.last;
-                                                    var name = fileName
-                                                        .split("/")
-                                                        .last;
-                                                    final file = File(
-                                                        "${folderPath}/${widget.branch.toLowerCase()}_updates/$name");
-                                                    if (file.existsSync()) {
-                                                      return InkWell(
-                                                        child: Row(
-                                                          children: [
-                                                            Column(
-                                                              children: [
-                                                                Container(
-                                                                  width: screenWidth(
-                                                                          context) *
-                                                                      30,
-                                                                  height: screenHeight(
-                                                                          context) *
-                                                                      30,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            15),
-                                                                    image:
-                                                                        DecorationImage(
-                                                                      image: FileImage(
-                                                                          file),
-                                                                      fit: BoxFit
-                                                                          .cover,
+                                                  left: widget.width * 20,
+                                                  right: widget.width * 10),
+                                              child: Column(
+                                                children: [
+                                                  ListView.builder(
+                                                    physics:
+                                                        const BouncingScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    itemCount: Updates.length,
+                                                    itemBuilder:
+                                                        (context, int index) {
+                                                      final Update =
+                                                          Updates[index];
+                                                      final Uri uri = Uri.parse(
+                                                          Update.photoUrl);
+                                                      final String fileName =
+                                                          uri.pathSegments.last;
+                                                      var name = fileName
+                                                          .split("/")
+                                                          .last;
+                                                      final file = File(
+                                                          "${folderPath}/updates/$name");
+                                                      if (file.existsSync()) {
+                                                        return InkWell(
+                                                          child: Row(
+                                                            children: [
+                                                              Column(
+                                                                children: [
+                                                                  Container(
+                                                                    width: widget
+                                                                            .width *
+                                                                        30,
+                                                                    height:
+                                                                        widget.height *
+                                                                            30,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(widget.size *
+                                                                              15),
+                                                                      image:
+                                                                          DecorationImage(
+                                                                        image: FileImage(
+                                                                            file),
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      ),
                                                                     ),
                                                                   ),
-                                                                ),
-                                                                Text(
-                                                                  splitDate(
-                                                                      HomeUpdate
-                                                                          .date),
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .lightBlueAccent,
-                                                                      fontSize:
-                                                                          8),
-                                                                )
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Expanded(
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        5.0),
-                                                                child: Container(
-                                                                    child: Text(
-                                                                  HomeUpdate
-                                                                      .heading,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        15.0,
-                                                                    color: Colors
-                                                                        .lightBlueAccent,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                  ),
-                                                                )),
+                                                                  Text(
+                                                                    splitDate(
+                                                                        Update
+                                                                            .date),
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .lightBlueAccent,
+                                                                        fontSize:
+                                                                            widget.size *
+                                                                                8),
+                                                                  )
+                                                                ],
                                                               ),
-                                                            )
-                                                          ],
-                                                        ),
-                                                        onTap: () {
-                                                          if (HomeUpdate
-                                                                  .link.length >
-                                                              0) {
-                                                            ExternalLaunchUrl(
-                                                                HomeUpdate
-                                                                    .link);
-                                                          } else {
-                                                            showToastText(
-                                                                "No Link");
-                                                          }
-                                                        },
-                                                      );
-                                                    } else {
-                                                      download(
-                                                          HomeUpdate.photoUrl,
-                                                          "${widget.branch.toLowerCase()}_updates");
-                                                      return InkWell(
-                                                        child: Row(
-                                                          children: [
-                                                            Column(
-                                                              children: [
-                                                                Container(
-                                                                  width: 30,
-                                                                  height: 30,
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Expanded(
+                                                                child: Padding(
+                                                                  padding: EdgeInsets
+                                                                      .all(widget
+                                                                              .size *
+                                                                          5.0),
                                                                   child:
-                                                                      CachedNetworkImage(
-                                                                    imageUrl:
-                                                                        HomeUpdate
-                                                                            .photoUrl,
-                                                                    placeholder:
-                                                                        (context,
-                                                                                url) =>
-                                                                            CircularProgressIndicator(),
-                                                                    errorWidget: (context,
-                                                                            url,
-                                                                            error) =>
-                                                                        Icon(Icons
-                                                                            .error),
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  splitDate(
-                                                                      HomeUpdate
-                                                                          .date),
-                                                                  style: TextStyle(
+                                                                      Container(
+                                                                          child:
+                                                                              Text(
+                                                                    Update
+                                                                        .heading,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          widget.size *
+                                                                              15.0,
                                                                       color: Colors
                                                                           .lightBlueAccent,
-                                                                      fontSize:
-                                                                          8),
-                                                                )
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Expanded(
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        5.0),
-                                                                child: Container(
-                                                                    child: Text(
-                                                                  HomeUpdate
-                                                                      .heading,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        15.0,
-                                                                    color: Colors
-                                                                        .yellowAccent,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                    ),
+                                                                  )),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          onTap: () {
+                                                            if (Update.link
+                                                                    .length >
+                                                                0) {
+                                                              ExternalLaunchUrl(
+                                                                  Update.link);
+                                                            } else {
+                                                              showToastText(
+                                                                  "No Link");
+                                                            }
+                                                          },
+                                                          onLongPress: () {
+                                                            if (userId())
+                                                              FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      "update")
+                                                                  .doc(
+                                                                      Update.id)
+                                                                  .delete();
+                                                          },
+                                                        );
+                                                      } else {
+                                                        download(
+                                                            Update.photoUrl,
+                                                            "${widget.branch.toLowerCase()}_updates");
+                                                        return InkWell(
+                                                          child: Row(
+                                                            children: [
+                                                              Column(
+                                                                children: [
+                                                                  Container(
+                                                                    width: widget
+                                                                            .width *
+                                                                        30,
+                                                                    height:
+                                                                        widget.height *
+                                                                            30,
+                                                                    child:
+                                                                        CachedNetworkImage(
+                                                                      imageUrl:
+                                                                          Update
+                                                                              .photoUrl,
+                                                                      placeholder:
+                                                                          (context, url) =>
+                                                                              CircularProgressIndicator(),
+                                                                      errorWidget: (context,
+                                                                              url,
+                                                                              error) =>
+                                                                          Icon(Icons
+                                                                              .error),
+                                                                    ),
                                                                   ),
-                                                                )),
+                                                                  Text(
+                                                                    splitDate(
+                                                                        Update
+                                                                            .date),
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .lightBlueAccent,
+                                                                        fontSize:
+                                                                            widget.size *
+                                                                                8),
+                                                                  )
+                                                                ],
                                                               ),
-                                                            )
-                                                          ],
-                                                        ),
-                                                        onTap: () {
-                                                          if (HomeUpdate
-                                                                  .link.length >
-                                                              0) {
-                                                            ExternalLaunchUrl(
-                                                                HomeUpdate
-                                                                    .link);
-                                                          } else {
-                                                            showToastText(
-                                                                "No Link");
-                                                          }
-                                                        },
-                                                      );
-                                                    }
-                                                  },
-                                                  separatorBuilder:
-                                                      (context, index) =>
-                                                          const SizedBox(
-                                                            height: 5,
-                                                          )),
+                                                              SizedBox(
+                                                                width: widget
+                                                                        .width *
+                                                                    5,
+                                                              ),
+                                                              Expanded(
+                                                                child: Padding(
+                                                                  padding: EdgeInsets
+                                                                      .all(widget
+                                                                              .size *
+                                                                          5.0),
+                                                                  child:
+                                                                      Container(
+                                                                          child:
+                                                                              Text(
+                                                                    Update
+                                                                        .heading,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          widget.size *
+                                                                              15.0,
+                                                                      color: Colors
+                                                                          .yellowAccent,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                    ),
+                                                                  )),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          onTap: () {
+                                                            if (Update.link
+                                                                    .length >
+                                                                0) {
+                                                              ExternalLaunchUrl(
+                                                                  Update.link);
+                                                            } else {
+                                                              showToastText(
+                                                                  "No Link");
+                                                            }
+                                                          },
+                                                          onLongPress: () {
+                                                            if (userId())
+                                                              FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      "update")
+                                                                  .doc(
+                                                                      Update.id)
+                                                                  .delete();
+                                                          },
+                                                        );
+                                                      }
+                                                    },
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Container(
+                                                    height: widget.height * 1,
+                                                    width: double.infinity,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white70,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(widget
+                                                                        .size *
+                                                                    3)),
+                                                  )
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         );
+                                      }
                                     }
                                 }
                               }),
                           //Branch News
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Container(
-                            height: 1,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                                color: Colors.white70,
-                                borderRadius: BorderRadius.circular(3)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, top: 15, bottom: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "${widget.branch} News",
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.orange),
-                                ),
-                                InkWell(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.7),
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: Border.all(
-                                          color: Colors.white.withOpacity(0.3)),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 10,
-                                          right: 10,
-                                          top: 3,
-                                          bottom: 3),
-                                      child: Text(
-                                        "see more",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 18),
-                                      ),
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => NewsPage(
-                                                  branch: widget.branch,
-                                                )));
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+
                           StreamBuilder<List<BranchNewConvertor>>(
                               stream: readBranchNew(widget.branch),
                               builder: (context, snapshot) {
@@ -416,65 +414,156 @@ class _HomePageState extends State<HomePage> {
                                               color: Colors.lightBlueAccent),
                                         ));
                                       } else
-                                        return CarouselSlider(
-                                          items: List.generate(
-                                              BranchNews.length, (int index) {
-                                            final BranchNew = BranchNews[index];
-                                            final Uri uri =
-                                                Uri.parse(BranchNew.photoUrl);
-                                            final String fileName =
-                                                uri.pathSegments.last;
-                                            var name = fileName.split("/").last;
-                                            final file = File(
-                                                "${folderPath}/${widget.branch.toLowerCase()}_news/$name");
-                                            if (file.existsSync()) {
-                                              return InkWell(
-                                                child: Image.file(file),
-                                                onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ImageZoom(
-                                                                url: "",
-                                                                file: file,
-                                                              )));
-                                                },
-                                              );
-                                            } else {
-                                              download(BranchNew.photoUrl,
-                                                  "${widget.branch.toLowerCase()}_news");
-                                              return InkWell(
-                                                child: CachedNetworkImage(
-                                                  imageUrl: BranchNew.photoUrl,
-                                                  placeholder: (context, url) =>
-                                                      CircularProgressIndicator(),
-                                                  errorWidget:
-                                                      (context, url, error) =>
+                                        return Column(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: widget.width * 10,
+                                                  top: widget.height * 15,
+                                                  bottom: widget.height * 10),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "${widget.branch} News",
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                            widget.size * 25,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.orange),
+                                                  ),
+                                                  InkWell(
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.black
+                                                            .withOpacity(0.7),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(widget
+                                                                        .size *
+                                                                    8),
+                                                        border: Border.all(
+                                                            color: Colors.white
+                                                                .withOpacity(
+                                                                    0.3)),
+                                                      ),
+                                                      child: Padding(
+                                                        padding: EdgeInsets.only(
+                                                            left: widget.width *
+                                                                10,
+                                                            right:
+                                                                widget.width *
+                                                                    10,
+                                                            top: widget.height *
+                                                                3,
+                                                            bottom:
+                                                                widget.height *
+                                                                    3),
+                                                        child: Text(
+                                                          "see more",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontSize:
+                                                                  widget.size *
+                                                                      18),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      NewsPage(
+                                                                        branch:
+                                                                            widget.branch,
+                                                                      )));
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            CarouselSlider(
+                                              items: List.generate(
+                                                  BranchNews.length,
+                                                  (int index) {
+                                                final BranchNew =
+                                                    BranchNews[index];
+                                                final Uri uri = Uri.parse(
+                                                    BranchNew.photoUrl);
+                                                final String fileName =
+                                                    uri.pathSegments.last;
+                                                var name =
+                                                    fileName.split("/").last;
+                                                final file = File(
+                                                    "${folderPath}/${widget.branch.toLowerCase()}_news/$name");
+                                                if (file.existsSync()) {
+                                                  return InkWell(
+                                                    child: Image.file(file),
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      ImageZoom(
+                                                                        url: "",
+                                                                        file:
+                                                                            file,
+                                                                      )));
+                                                    },
+                                                  );
+                                                } else {
+                                                  download(BranchNew.photoUrl,
+                                                      "${widget.branch.toLowerCase()}_news");
+                                                  return InkWell(
+                                                    child: CachedNetworkImage(
+                                                      imageUrl:
+                                                          BranchNew.photoUrl,
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          CircularProgressIndicator(),
+                                                      errorWidget: (context,
+                                                              url, error) =>
                                                           Icon(Icons.error),
-                                                ),
-                                                onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ImageZoom(
-                                                                url: "",
-                                                                file: file,
-                                                              )));
-                                                },
-                                              );
-                                            }
-                                          }),
-                                          //Slider Container properties
-                                          options: CarouselOptions(
-                                            viewportFraction: 0.85,
-                                            enlargeCenterPage: true,
-                                            height: 210,
-                                            autoPlayAnimationDuration:
-                                                Duration(milliseconds: 1800),
-                                            autoPlay: true,
-                                          ),
+                                                    ),
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      ImageZoom(
+                                                                        url: "",
+                                                                        file:
+                                                                            file,
+                                                                      )));
+                                                    },
+                                                  );
+                                                }
+                                              }),
+                                              //Slider Container properties
+                                              options: CarouselOptions(
+                                                viewportFraction: 0.85,
+                                                enlargeCenterPage: true,
+                                                height: widget.height * 210,
+                                                autoPlayAnimationDuration:
+                                                    Duration(
+                                                        milliseconds: 1800),
+                                                autoPlay: BranchNews.length > 1
+                                                    ? true
+                                                    : false,
+                                              ),
+                                            ),
+                                          ],
                                         );
                                     }
                                 }
@@ -487,36 +576,29 @@ class _HomePageState extends State<HomePage> {
                 //Subjects
 
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(widget.size * 8.0),
                   child: Container(
                       decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(15)),
+                          borderRadius:
+                              BorderRadius.circular(widget.size * 15)),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: 10,
+                            height: widget.height * 10,
                           ),
                           if (widget.reg.isNotEmpty)
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 20, right: 8, bottom: 8),
+                              padding: EdgeInsets.only(
+                                  left: widget.width * 20,
+                                  right: widget.width * 8,
+                                  bottom: widget.height * 8),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: Text(
-                                      "Time Table :",
-                                      style: TextStyle(
-                                          color: Colors.orange,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                  ),
                                   StreamBuilder<List<TimeTableConvertor>>(
                                       stream: readTimeTable(
                                           reg: widget.reg,
@@ -537,104 +619,134 @@ class _HomePageState extends State<HomePage> {
                                                   child: Text(
                                                       'Error with TextBooks Data or\n Check Internet Connection'));
                                             } else {
-                                              return SizedBox(
-                                                height: 74,
-                                                child: ListView.builder(
-                                                  physics:
-                                                      const BouncingScrollPhysics(),
-                                                  shrinkWrap: true,
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  itemCount: user!.length,
-                                                  itemBuilder:
-                                                      (context, int index) {
-                                                    final classess =
-                                                        user[index];
-                                                    final Uri uri = Uri.parse(
-                                                        classess.photoUrl);
-                                                    final String fileName =
-                                                        uri.pathSegments.last;
-                                                    var name = fileName
-                                                        .split("/")
-                                                        .last;
-                                                    final file = File(
-                                                        "${folderPath}/${widget.branch.toLowerCase()}_timetable/$name");
-                                                    if (file.existsSync()) {
-                                                      return InkWell(
-                                                        child: Column(
-                                                          children: [
-                                                            Container(
-                                                              height: 60,
-                                                              width: 70,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              40),
-                                                                  image: DecorationImage(
-                                                                      image: FileImage(
-                                                                          file),
-                                                                      fit: BoxFit
-                                                                          .fill)),
-                                                            ),
-                                                            Text(
-                                                              "${classess.heading}",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .lightBlueAccent),
-                                                            )
-                                                          ],
-                                                        ),
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          ImageZoom(
-                                                                            url:
-                                                                                "",
-                                                                            file:
-                                                                                file,
-                                                                          )));
-                                                        },
-                                                      );
-                                                    } else {
-                                                      download(
-                                                          classess.photoUrl,
-                                                          "${widget.branch.toLowerCase()}_timetable");
+                                              if (user!.length > 0)
+                                                return Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          bottom:
+                                                              widget.height *
+                                                                  10),
+                                                      child: Text(
+                                                        "Time Table :",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.orange,
+                                                            fontSize:
+                                                                widget.size *
+                                                                    20,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w700),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height:
+                                                          widget.height * 74,
+                                                      child: ListView.builder(
+                                                        physics:
+                                                            const BouncingScrollPhysics(),
+                                                        shrinkWrap: true,
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        itemCount: user!.length,
+                                                        itemBuilder: (context,
+                                                            int index) {
+                                                          final classess =
+                                                              user[index];
+                                                          final Uri uri =
+                                                              Uri.parse(classess
+                                                                  .photoUrl);
+                                                          final String
+                                                              fileName = uri
+                                                                  .pathSegments
+                                                                  .last;
+                                                          var name = fileName
+                                                              .split("/")
+                                                              .last;
+                                                          final file = File(
+                                                              "${folderPath}/${widget.branch.toLowerCase()}_timetable/$name");
+                                                          if (file
+                                                              .existsSync()) {
+                                                            return InkWell(
+                                                              child: Column(
+                                                                children: [
+                                                                  Container(
+                                                                    height:
+                                                                        widget.height *
+                                                                            60,
+                                                                    width: widget
+                                                                            .width *
+                                                                        70,
+                                                                    decoration: BoxDecoration(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(widget.size *
+                                                                                40),
+                                                                        image: DecorationImage(
+                                                                            image:
+                                                                                FileImage(file),
+                                                                            fit: BoxFit.fill)),
+                                                                  ),
+                                                                  Text(
+                                                                    "${classess.heading}",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .lightBlueAccent),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            ImageZoom(
+                                                                              url: "",
+                                                                              file: file,
+                                                                            )));
+                                                              },
+                                                            );
+                                                          } else {
+                                                            download(
+                                                                classess
+                                                                    .photoUrl,
+                                                                "${widget.branch.toLowerCase()}_timetable");
 
-                                                      return InkWell(
-                                                        child: Container(
-                                                          width: 70,
-                                                          decoration: BoxDecoration(
-                                                              color:
-                                                                  Colors.white,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          40),
-                                                              image: DecorationImage(
-                                                                  image: NetworkImage(
-                                                                      classess
-                                                                          .photoUrl),
-                                                                  fit: BoxFit
-                                                                      .fill)),
-                                                          child: Center(
-                                                              child: Text(
-                                                            "${classess.heading}",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .lightBlueAccent),
-                                                          )),
-                                                        ),
-                                                      );
-                                                    }
-                                                  },
-                                                ),
-                                              );
+                                                            return InkWell(
+                                                              child: Container(
+                                                                width: widget
+                                                                        .width *
+                                                                    70,
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(widget.size *
+                                                                            40),
+                                                                    image: DecorationImage(
+                                                                        image: NetworkImage(classess
+                                                                            .photoUrl),
+                                                                        fit: BoxFit
+                                                                            .fill)),
+                                                                child: Center(
+                                                                    child: Text(
+                                                                  "${classess.heading}",
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .lightBlueAccent),
+                                                                )),
+                                                              ),
+                                                            );
+                                                          }
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              else
+                                                return Container();
                                             }
                                         }
                                       }),
@@ -645,12 +757,13 @@ class _HomePageState extends State<HomePage> {
                             Row(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 20),
+                                  padding:
+                                      EdgeInsets.only(left: widget.width * 20),
                                   child: Text(
                                     "Subjects",
                                     style: TextStyle(
                                         color: Colors.deepOrangeAccent,
-                                        fontSize: 25,
+                                        fontSize: widget.size * 25,
                                         fontWeight: FontWeight.w500),
                                   ),
                                 ),
@@ -661,18 +774,20 @@ class _HomePageState extends State<HomePage> {
                                       color: Colors.black.withOpacity(0.5),
                                       border: Border.all(
                                           color: Colors.white.withOpacity(0.3)),
-                                      borderRadius: BorderRadius.circular(25),
+                                      borderRadius: BorderRadius.circular(
+                                          widget.size * 8),
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 10,
-                                          right: 10,
-                                          top: 3,
-                                          bottom: 3),
+                                      padding: EdgeInsets.only(
+                                          left: widget.width * 10,
+                                          right: widget.width * 10,
+                                          top: widget.height * 3,
+                                          bottom: widget.height * 3),
                                       child: Text(
                                         "see more",
                                         style: TextStyle(
-                                            color: Colors.white, fontSize: 18),
+                                            color: Colors.white,
+                                            fontSize: widget.size * 20),
                                       ),
                                     ),
                                   ),
@@ -686,14 +801,17 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 ),
                                 SizedBox(
-                                  width: 20,
+                                  width: widget.width * 20,
                                 )
                               ],
                             ),
                           if (widget.reg.isNotEmpty)
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 10, left: 20, right: 10, bottom: 5),
+                              padding: EdgeInsets.only(
+                                  top: widget.height * 10,
+                                  left: widget.width * 20,
+                                  right: widget.width * 10,
+                                  bottom: widget.height * 5),
                               child: StreamBuilder<List<FlashConvertor>>(
                                   stream: readFlashNews(widget.branch),
                                   builder: (context, snapshot) {
@@ -737,11 +855,10 @@ class _HomePageState extends State<HomePage> {
                                                         decoration: BoxDecoration(
                                                             color:
                                                                 Colors.black38,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            10))),
+                                                            borderRadius: BorderRadius.all(
+                                                                Radius.circular(
+                                                                    widget.size *
+                                                                        10))),
                                                         child:
                                                             SingleChildScrollView(
                                                           physics:
@@ -749,13 +866,17 @@ class _HomePageState extends State<HomePage> {
                                                           child: Row(
                                                             children: [
                                                               Container(
-                                                                width: 90.0,
-                                                                height: 70.0,
+                                                                width: widget
+                                                                        .width *
+                                                                    90.0,
+                                                                height: widget
+                                                                        .height *
+                                                                    70.0,
                                                                 decoration:
                                                                     BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius.all(
-                                                                          Radius.circular(
+                                                                  borderRadius: BorderRadius.all(
+                                                                      Radius.circular(
+                                                                          widget.size *
                                                                               8.0)),
                                                                   color: Colors
                                                                       .black,
@@ -769,8 +890,10 @@ class _HomePageState extends State<HomePage> {
                                                                   ),
                                                                 ),
                                                               ),
-                                                              const SizedBox(
-                                                                width: 10,
+                                                              SizedBox(
+                                                                width: widget
+                                                                        .width *
+                                                                    10,
                                                               ),
                                                               Expanded(
                                                                   child: Column(
@@ -787,9 +910,9 @@ class _HomePageState extends State<HomePage> {
                                                                         SubjectsData
                                                                             .heading,
                                                                         style:
-                                                                            const TextStyle(
+                                                                            TextStyle(
                                                                           fontSize:
-                                                                              20.0,
+                                                                              widget.size * 20.0,
                                                                           color:
                                                                               Colors.orangeAccent,
                                                                           fontWeight:
@@ -813,16 +936,16 @@ class _HomePageState extends State<HomePage> {
                                                                               (context, snapshot) {
                                                                             if (snapshot.hasData) {
                                                                               if (snapshot.data!.exists) {
-                                                                                return const Icon(
+                                                                                return Icon(
                                                                                   Icons.favorite,
                                                                                   color: Colors.red,
-                                                                                  size: 26,
+                                                                                  size: widget.size * 26,
                                                                                 );
                                                                               } else {
-                                                                                return const Icon(
+                                                                                return Icon(
                                                                                   Icons.favorite_border,
                                                                                   color: Colors.red,
-                                                                                  size: 26,
+                                                                                  size: widget.size * 26,
                                                                                 );
                                                                               }
                                                                             } else {
@@ -866,7 +989,7 @@ class _HomePageState extends State<HomePage> {
                                                                               .hasData) {
                                                                             return Text(
                                                                               " ${snapshot.data!.docs.length}",
-                                                                              style: const TextStyle(fontSize: 16, color: Colors.white),
+                                                                              style: TextStyle(fontSize: widget.size * 16, color: Colors.white),
                                                                             );
                                                                           } else {
                                                                             return const Text("0");
@@ -875,7 +998,8 @@ class _HomePageState extends State<HomePage> {
                                                                       ),
                                                                       SizedBox(
                                                                         width:
-                                                                            5,
+                                                                            widget.width *
+                                                                                5,
                                                                       ),
                                                                       InkWell(
                                                                         child: StreamBuilder<
@@ -891,11 +1015,11 @@ class _HomePageState extends State<HomePage> {
                                                                               (context, snapshot) {
                                                                             if (snapshot.hasData) {
                                                                               if (snapshot.data!.exists) {
-                                                                                return const Icon(Icons.library_add_check, size: 26, color: Colors.cyanAccent);
+                                                                                return Icon(Icons.library_add_check, size: widget.size * 26, color: Colors.cyanAccent);
                                                                               } else {
-                                                                                return const Icon(
+                                                                                return Icon(
                                                                                   Icons.library_add_outlined,
-                                                                                  size: 26,
+                                                                                  size: widget.size * 26,
                                                                                   color: Colors.cyanAccent,
                                                                                 );
                                                                               }
@@ -912,7 +1036,7 @@ class _HomePageState extends State<HomePage> {
                                                                                 FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
                                                                                 showToastText("Removed from saved list");
                                                                               } else {
-                                                                                FavouriteSubjects(SubjectId: SubjectsData.id, name: SubjectsData.heading, description: SubjectsData.description, photoUrl: SubjectsData.PhotoUrl);
+                                                                                FavouriteSubjects(SubjectId: SubjectsData.id, name: SubjectsData.heading, description: SubjectsData.description, photoUrl: SubjectsData.PhotoUrl, branch: widget.branch);
                                                                                 showToastText("${SubjectsData.heading} in favorites");
                                                                               }
                                                                             });
@@ -924,51 +1048,55 @@ class _HomePageState extends State<HomePage> {
                                                                     ],
                                                                   ),
                                                                   SizedBox(
-                                                                    height: 2,
+                                                                    height:
+                                                                        widget.height *
+                                                                            2,
                                                                   ),
                                                                   Text(
                                                                     SubjectsData
                                                                         .description,
-                                                                    style: const TextStyle(
+                                                                    style: TextStyle(
                                                                         fontSize:
-                                                                            13.0,
+                                                                            widget.size *
+                                                                                13.0,
                                                                         color: Colors
                                                                             .lightBlueAccent),
                                                                   ),
                                                                   SizedBox(
-                                                                    height: 1,
+                                                                    height:
+                                                                        widget.height *
+                                                                            1,
                                                                   ),
                                                                   Text(
                                                                     'Added :${SubjectsData.Date}',
                                                                     style:
-                                                                        const TextStyle(
+                                                                        TextStyle(
                                                                       fontSize:
-                                                                          9.0,
+                                                                          widget.size *
+                                                                              9.0,
                                                                       color: Colors
                                                                           .white54,
                                                                       //   fontWeight: FontWeight.bold,
                                                                     ),
                                                                   ),
-                                                                  if (userId() ==
-                                                                      "gmail.com")
+                                                                  if (userId())
                                                                     Padding(
-                                                                      padding: const EdgeInsets
-                                                                              .only(
+                                                                      padding: EdgeInsets.only(
                                                                           right:
-                                                                              10),
+                                                                              widget.width * 10),
                                                                       child:
                                                                           Container(
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
-                                                                              BorderRadius.circular(15),
+                                                                              BorderRadius.circular(widget.size * 15),
                                                                           color: Colors
                                                                               .black
                                                                               .withOpacity(0.3),
                                                                           border:
                                                                               Border.all(color: Colors.white.withOpacity(0.5)),
                                                                         ),
-                                                                        width:
+                                                                        width: widget.width *
                                                                             70,
                                                                         child:
                                                                             InkWell(
@@ -976,17 +1104,17 @@ class _HomePageState extends State<HomePage> {
                                                                               Row(
                                                                             children: [
                                                                               SizedBox(
-                                                                                width: 5,
+                                                                                width: widget.width * 5,
                                                                               ),
                                                                               Icon(
                                                                                 Icons.edit,
                                                                                 color: Colors.white,
                                                                               ),
                                                                               Padding(
-                                                                                padding: const EdgeInsets.only(left: 3, right: 3),
+                                                                                padding: EdgeInsets.only(left: widget.width * 3, right: widget.width * 3),
                                                                                 child: Text(
                                                                                   "Edit",
-                                                                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 18),
+                                                                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: widget.size * 18),
                                                                                 ),
                                                                               ),
                                                                             ],
@@ -1046,11 +1174,10 @@ class _HomePageState extends State<HomePage> {
                                                         decoration: BoxDecoration(
                                                             color:
                                                                 Colors.black38,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            10))),
+                                                            borderRadius: BorderRadius.all(
+                                                                Radius.circular(
+                                                                    widget.size *
+                                                                        10))),
                                                         child:
                                                             SingleChildScrollView(
                                                           physics:
@@ -1058,8 +1185,12 @@ class _HomePageState extends State<HomePage> {
                                                           child: Row(
                                                             children: [
                                                               Container(
-                                                                width: 90.0,
-                                                                height: 70.0,
+                                                                width: widget
+                                                                        .width *
+                                                                    90.0,
+                                                                height: widget
+                                                                        .height *
+                                                                    70.0,
                                                                 child:
                                                                     CachedNetworkImage(
                                                                   imageUrl:
@@ -1075,8 +1206,10 @@ class _HomePageState extends State<HomePage> {
                                                                           .error),
                                                                 ),
                                                               ),
-                                                              const SizedBox(
-                                                                width: 10,
+                                                              SizedBox(
+                                                                width: widget
+                                                                        .width *
+                                                                    10,
                                                               ),
                                                               Expanded(
                                                                   child: Column(
@@ -1093,9 +1226,9 @@ class _HomePageState extends State<HomePage> {
                                                                         SubjectsData
                                                                             .heading,
                                                                         style:
-                                                                            const TextStyle(
+                                                                            TextStyle(
                                                                           fontSize:
-                                                                              20.0,
+                                                                              widget.size * 20.0,
                                                                           color:
                                                                               Colors.orangeAccent,
                                                                           fontWeight:
@@ -1119,16 +1252,16 @@ class _HomePageState extends State<HomePage> {
                                                                               (context, snapshot) {
                                                                             if (snapshot.hasData) {
                                                                               if (snapshot.data!.exists) {
-                                                                                return const Icon(
+                                                                                return Icon(
                                                                                   Icons.favorite,
                                                                                   color: Colors.red,
-                                                                                  size: 26,
+                                                                                  size: widget.size * 26,
                                                                                 );
                                                                               } else {
-                                                                                return const Icon(
+                                                                                return Icon(
                                                                                   Icons.favorite_border,
                                                                                   color: Colors.red,
-                                                                                  size: 26,
+                                                                                  size: widget.size * 26,
                                                                                 );
                                                                               }
                                                                             } else {
@@ -1172,7 +1305,7 @@ class _HomePageState extends State<HomePage> {
                                                                               .hasData) {
                                                                             return Text(
                                                                               " ${snapshot.data!.docs.length}",
-                                                                              style: const TextStyle(fontSize: 16, color: Colors.white),
+                                                                              style: TextStyle(fontSize: widget.size * 16, color: Colors.white),
                                                                             );
                                                                           } else {
                                                                             return const Text("0");
@@ -1181,7 +1314,8 @@ class _HomePageState extends State<HomePage> {
                                                                       ),
                                                                       SizedBox(
                                                                         width:
-                                                                            5,
+                                                                            widget.width *
+                                                                                5,
                                                                       ),
                                                                       InkWell(
                                                                         child: StreamBuilder<
@@ -1197,11 +1331,11 @@ class _HomePageState extends State<HomePage> {
                                                                               (context, snapshot) {
                                                                             if (snapshot.hasData) {
                                                                               if (snapshot.data!.exists) {
-                                                                                return const Icon(Icons.library_add_check, size: 26, color: Colors.cyanAccent);
+                                                                                return Icon(Icons.library_add_check, size: widget.size * 26, color: Colors.cyanAccent);
                                                                               } else {
-                                                                                return const Icon(
+                                                                                return Icon(
                                                                                   Icons.library_add_outlined,
-                                                                                  size: 26,
+                                                                                  size: widget.size * 26,
                                                                                   color: Colors.cyanAccent,
                                                                                 );
                                                                               }
@@ -1218,7 +1352,7 @@ class _HomePageState extends State<HomePage> {
                                                                                 FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteSubject").doc(SubjectsData.id).delete();
                                                                                 showToastText("Removed from saved list");
                                                                               } else {
-                                                                                FavouriteSubjects(SubjectId: SubjectsData.id, name: SubjectsData.heading, description: SubjectsData.description, photoUrl: SubjectsData.PhotoUrl);
+                                                                                FavouriteSubjects(branch: widget.branch, SubjectId: SubjectsData.id, name: SubjectsData.heading, description: SubjectsData.description, photoUrl: SubjectsData.PhotoUrl);
                                                                                 showToastText("${SubjectsData.heading} in favorites");
                                                                               }
                                                                             });
@@ -1230,53 +1364,57 @@ class _HomePageState extends State<HomePage> {
                                                                     ],
                                                                   ),
                                                                   SizedBox(
-                                                                    height: 2,
+                                                                    height:
+                                                                        widget.height *
+                                                                            2,
                                                                   ),
                                                                   Text(
                                                                     SubjectsData
                                                                         .description,
                                                                     style:
-                                                                        const TextStyle(
+                                                                        TextStyle(
                                                                       fontSize:
-                                                                          13.0,
+                                                                          widget.size *
+                                                                              13.0,
                                                                       color: Colors
                                                                           .lightBlueAccent,
                                                                     ),
                                                                   ),
                                                                   SizedBox(
-                                                                    height: 1,
+                                                                    height:
+                                                                        widget.height *
+                                                                            1,
                                                                   ),
                                                                   Text(
                                                                     'Added :${SubjectsData.Date}',
                                                                     style:
-                                                                        const TextStyle(
+                                                                        TextStyle(
                                                                       fontSize:
-                                                                          9.0,
+                                                                          widget.size *
+                                                                              9.0,
                                                                       color: Colors
                                                                           .white54,
                                                                       //   fontWeight: FontWeight.bold,
                                                                     ),
                                                                   ),
-                                                                  if (userId() ==
-                                                                      "gmail.com")
+                                                                  if (userId())
                                                                     Padding(
-                                                                      padding: const EdgeInsets
-                                                                              .only(
+                                                                      padding: EdgeInsets.only(
                                                                           right:
-                                                                              10),
+                                                                              widget.width * 10),
                                                                       child:
                                                                           Container(
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
-                                                                              BorderRadius.circular(15),
+                                                                              BorderRadius.circular(widget.size * 15),
                                                                           color: Colors
                                                                               .black
                                                                               .withOpacity(0.3),
                                                                           border:
                                                                               Border.all(color: Colors.white.withOpacity(0.5)),
                                                                         ),
-                                                                        width:
+                                                                        width: widget.width *
                                                                             70,
                                                                         child:
                                                                             InkWell(
@@ -1284,17 +1422,17 @@ class _HomePageState extends State<HomePage> {
                                                                               Row(
                                                                             children: [
                                                                               SizedBox(
-                                                                                width: 5,
+                                                                                width: widget.width * 5,
                                                                               ),
                                                                               Icon(
                                                                                 Icons.edit,
                                                                                 color: Colors.white,
                                                                               ),
                                                                               Padding(
-                                                                                padding: const EdgeInsets.only(left: 3, right: 3),
+                                                                                padding: EdgeInsets.only(left: widget.width * 3, right: widget.width * 3),
                                                                                 child: Text(
                                                                                   "Edit",
-                                                                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 18),
+                                                                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: widget.size * 18),
                                                                                 ),
                                                                               ),
                                                                             ],
@@ -1356,11 +1494,12 @@ class _HomePageState extends State<HomePage> {
                                                 border: Border.all(
                                                     color: Colors.tealAccent),
                                                 borderRadius:
-                                                    BorderRadius.circular(20),
+                                                    BorderRadius.circular(
+                                                        widget.size * 20),
                                               ),
                                               child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
+                                                padding: EdgeInsets.all(
+                                                    widget.size * 8.0),
                                                 child: Text(
                                                     "No Subjects in this Regulation"),
                                               ),
@@ -1382,14 +1521,15 @@ class _HomePageState extends State<HomePage> {
                                     decoration: BoxDecoration(
                                       color: Colors.white54,
                                       border: Border.all(color: Colors.white),
-                                      borderRadius: BorderRadius.circular(25),
+                                      borderRadius: BorderRadius.circular(
+                                          widget.size * 25),
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 10,
-                                          right: 10,
-                                          top: 5,
-                                          bottom: 5),
+                                      padding: EdgeInsets.only(
+                                          left: widget.width * 10,
+                                          right: widget.width * 10,
+                                          top: widget.height * 5,
+                                          bottom: widget.height * 5),
                                       child: Text("see more"),
                                     ),
                                   ),
@@ -1423,11 +1563,11 @@ class _HomePageState extends State<HomePage> {
                                     } else {
                                       if (Subjects!.length > 0)
                                         return Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20,
-                                              top: 10,
-                                              bottom: 10,
-                                              right: 10),
+                                          padding: EdgeInsets.only(
+                                              left: widget.width * 20,
+                                              top: widget.height * 10,
+                                              bottom: widget.height * 10,
+                                              right: widget.width * 10),
                                           child: Column(
                                             children: [
                                               Row(
@@ -1437,7 +1577,8 @@ class _HomePageState extends State<HomePage> {
                                                     style: TextStyle(
                                                         color: Colors
                                                             .deepOrangeAccent,
-                                                        fontSize: 25,
+                                                        fontSize:
+                                                            widget.size * 25,
                                                         fontWeight:
                                                             FontWeight.w500),
                                                   ),
@@ -1453,22 +1594,30 @@ class _HomePageState extends State<HomePage> {
                                                                     0.3)),
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(25),
+                                                                .circular(widget
+                                                                        .size *
+                                                                    8),
                                                       ),
                                                       child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                left: 10,
-                                                                right: 10,
-                                                                top: 3,
-                                                                bottom: 3),
+                                                        padding: EdgeInsets.only(
+                                                            left: widget.width *
+                                                                10,
+                                                            right:
+                                                                widget.width *
+                                                                    10,
+                                                            top: widget.height *
+                                                                3,
+                                                            bottom:
+                                                                widget.height *
+                                                                    3),
                                                         child: Text(
                                                           "see more",
                                                           style: TextStyle(
                                                               color:
                                                                   Colors.white,
-                                                              fontSize: 18,
+                                                              fontSize:
+                                                                  widget.size *
+                                                                      20,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w500),
@@ -1488,12 +1637,12 @@ class _HomePageState extends State<HomePage> {
                                                     },
                                                   ),
                                                   SizedBox(
-                                                    width: 10,
+                                                    width: widget.width * 10,
                                                   )
                                                 ],
                                               ),
                                               SizedBox(
-                                                height: 10,
+                                                height: widget.height * 10,
                                               ),
                                               ListView.builder(
                                                 physics:
@@ -1519,12 +1668,15 @@ class _HomePageState extends State<HomePage> {
                                                         "${folderPath}/${widget.branch.toLowerCase()}_labsubjects/$name");
                                                     if (file.existsSync()) {
                                                       return Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                bottom: 5,
-                                                                left: 5,
-                                                                right: 5),
+                                                        padding: EdgeInsets.only(
+                                                            bottom:
+                                                                widget.height *
+                                                                    5,
+                                                            left: widget.width *
+                                                                5,
+                                                            right:
+                                                                widget.width *
+                                                                    5),
                                                         child: InkWell(
                                                           child: Container(
                                                             width:
@@ -1532,9 +1684,9 @@ class _HomePageState extends State<HomePage> {
                                                             decoration: BoxDecoration(
                                                                 color: Colors
                                                                     .black38,
-                                                                borderRadius: BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
+                                                                borderRadius: BorderRadius.all(
+                                                                    Radius.circular(
+                                                                        widget.size *
                                                                             10))),
                                                             child:
                                                                 SingleChildScrollView(
@@ -1543,14 +1695,17 @@ class _HomePageState extends State<HomePage> {
                                                               child: Row(
                                                                 children: [
                                                                   Container(
-                                                                    width: 90.0,
-                                                                    height:
+                                                                    width: widget
+                                                                            .width *
+                                                                        90.0,
+                                                                    height: widget
+                                                                            .height *
                                                                         70.0,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       borderRadius:
-                                                                          BorderRadius.all(
-                                                                              Radius.circular(8.0)),
+                                                                          BorderRadius.all(Radius.circular(widget.size *
+                                                                              8.0)),
                                                                       color: Colors
                                                                           .redAccent,
                                                                       image:
@@ -1562,8 +1717,10 @@ class _HomePageState extends State<HomePage> {
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                  const SizedBox(
-                                                                    width: 10,
+                                                                  SizedBox(
+                                                                    width: widget
+                                                                            .width *
+                                                                        10,
                                                                   ),
                                                                   Expanded(
                                                                       child:
@@ -1580,8 +1737,8 @@ class _HomePageState extends State<HomePage> {
                                                                           Text(
                                                                             LabSubjectsData.heading,
                                                                             style:
-                                                                                const TextStyle(
-                                                                              fontSize: 20.0,
+                                                                                TextStyle(
+                                                                              fontSize: widget.size * 20.0,
                                                                               color: Colors.orangeAccent,
                                                                               fontWeight: FontWeight.w600,
                                                                             ),
@@ -1594,16 +1751,16 @@ class _HomePageState extends State<HomePage> {
                                                                               builder: (context, snapshot) {
                                                                                 if (snapshot.hasData) {
                                                                                   if (snapshot.data!.exists) {
-                                                                                    return const Icon(
+                                                                                    return Icon(
                                                                                       Icons.favorite,
                                                                                       color: Colors.red,
-                                                                                      size: 26,
+                                                                                      size: widget.size * 26,
                                                                                     );
                                                                                   } else {
-                                                                                    return const Icon(
+                                                                                    return Icon(
                                                                                       Icons.favorite_border,
                                                                                       color: Colors.red,
-                                                                                      size: 26,
+                                                                                      size: widget.size * 26,
                                                                                     );
                                                                                   }
                                                                                 } else {
@@ -1639,7 +1796,7 @@ class _HomePageState extends State<HomePage> {
                                                                               if (snapshot.hasData) {
                                                                                 return Text(
                                                                                   " ${snapshot.data!.docs.length}",
-                                                                                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                                                                                  style: TextStyle(fontSize: widget.size * 16, color: Colors.white),
                                                                                 );
                                                                               } else {
                                                                                 return const Text("0");
@@ -1648,7 +1805,7 @@ class _HomePageState extends State<HomePage> {
                                                                           ),
                                                                           SizedBox(
                                                                             width:
-                                                                                5,
+                                                                                widget.width * 5,
                                                                           ),
                                                                           InkWell(
                                                                             child:
@@ -1657,11 +1814,11 @@ class _HomePageState extends State<HomePage> {
                                                                               builder: (context, snapshot) {
                                                                                 if (snapshot.hasData) {
                                                                                   if (snapshot.data!.exists) {
-                                                                                    return const Icon(Icons.library_add_check, size: 26, color: Colors.cyanAccent);
+                                                                                    return Icon(Icons.library_add_check, size: widget.size * 26, color: Colors.cyanAccent);
                                                                                   } else {
-                                                                                    return const Icon(
+                                                                                    return Icon(
                                                                                       Icons.library_add_outlined,
-                                                                                      size: 26,
+                                                                                      size: widget.size * 26,
                                                                                       color: Colors.cyanAccent,
                                                                                     );
                                                                                   }
@@ -1678,7 +1835,7 @@ class _HomePageState extends State<HomePage> {
                                                                                     FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
                                                                                     showToastText("Removed from saved list");
                                                                                   } else {
-                                                                                    FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id, name: LabSubjectsData.heading, description: LabSubjectsData.description, photoUrl: LabSubjectsData.PhotoUrl);
+                                                                                    FavouriteLabSubjectsSubjects(branch: widget.branch, SubjectId: LabSubjectsData.id, name: LabSubjectsData.heading, description: LabSubjectsData.description, photoUrl: LabSubjectsData.PhotoUrl);
                                                                                     showToastText("${LabSubjectsData.heading} in favorites");
                                                                                   }
                                                                                 });
@@ -1689,57 +1846,58 @@ class _HomePageState extends State<HomePage> {
                                                                           ),
                                                                           SizedBox(
                                                                             width:
-                                                                                10,
+                                                                                widget.width * 10,
                                                                           )
                                                                         ],
                                                                       ),
                                                                       SizedBox(
                                                                         height:
-                                                                            2,
+                                                                            widget.height *
+                                                                                2,
                                                                       ),
                                                                       Text(
                                                                         LabSubjectsData
                                                                             .description,
                                                                         style:
-                                                                            const TextStyle(
+                                                                            TextStyle(
                                                                           fontSize:
-                                                                              13.0,
+                                                                              widget.size * 13.0,
                                                                           color:
                                                                               Colors.lightBlueAccent,
                                                                         ),
                                                                       ),
                                                                       SizedBox(
                                                                         height:
-                                                                            1,
+                                                                            widget.height *
+                                                                                1,
                                                                       ),
                                                                       Text(
                                                                         'Added :${LabSubjectsData.Date}',
                                                                         style:
-                                                                            const TextStyle(
+                                                                            TextStyle(
                                                                           fontSize:
-                                                                              9.0,
+                                                                              widget.size * 9.0,
                                                                           color:
                                                                               Colors.white54,
                                                                           //   fontWeight: FontWeight.bold,
                                                                         ),
                                                                       ),
-                                                                      if (userId() ==
-                                                                          "gmail.com")
+                                                                      if (userId())
                                                                         Padding(
                                                                           padding:
-                                                                              const EdgeInsets.only(right: 10),
+                                                                              EdgeInsets.only(right: widget.width * 10),
                                                                           child:
                                                                               Container(
                                                                             decoration:
                                                                                 BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(15),
+                                                                              borderRadius: BorderRadius.circular(widget.size * 15),
                                                                               color: Colors.white.withOpacity(0.5),
                                                                               border: Border.all(color: Colors.white),
                                                                             ),
                                                                             child:
                                                                                 InkWell(
                                                                               child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                                                                padding: EdgeInsets.only(left: widget.width * 10, right: widget.width * 10, top: widget.height * 5, bottom: widget.height * 5),
                                                                                 child: Text("+Add"),
                                                                               ),
                                                                               onTap: () {
@@ -1781,6 +1939,8 @@ class _HomePageState extends State<HomePage> {
                                                           },
                                                           onLongPress: () {
                                                             FavouriteLabSubjectsSubjects(
+                                                                branch: widget
+                                                                    .branch,
                                                                 SubjectId:
                                                                     LabSubjectsData
                                                                         .id,
@@ -1802,12 +1962,15 @@ class _HomePageState extends State<HomePage> {
                                                               .PhotoUrl,
                                                           "${widget.branch.toLowerCase()}_labsubjects");
                                                       return Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                bottom: 5,
-                                                                left: 5,
-                                                                right: 5),
+                                                        padding: EdgeInsets.only(
+                                                            bottom:
+                                                                widget.height *
+                                                                    5,
+                                                            left: widget.width *
+                                                                5,
+                                                            right:
+                                                                widget.width *
+                                                                    5),
                                                         child: InkWell(
                                                           child: Container(
                                                             width:
@@ -1815,9 +1978,9 @@ class _HomePageState extends State<HomePage> {
                                                             decoration: BoxDecoration(
                                                                 color: Colors
                                                                     .black38,
-                                                                borderRadius: BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
+                                                                borderRadius: BorderRadius.all(
+                                                                    Radius.circular(
+                                                                        widget.size *
                                                                             10))),
                                                             child:
                                                                 SingleChildScrollView(
@@ -1826,8 +1989,11 @@ class _HomePageState extends State<HomePage> {
                                                               child: Row(
                                                                 children: [
                                                                   Container(
-                                                                    width: 90.0,
-                                                                    height:
+                                                                    width: widget
+                                                                            .width *
+                                                                        90.0,
+                                                                    height: widget
+                                                                            .height *
                                                                         70.0,
                                                                     child:
                                                                         CachedNetworkImage(
@@ -1848,8 +2014,10 @@ class _HomePageState extends State<HomePage> {
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                  const SizedBox(
-                                                                    width: 10,
+                                                                  SizedBox(
+                                                                    width: widget
+                                                                            .width *
+                                                                        10,
                                                                   ),
                                                                   Expanded(
                                                                       child:
@@ -1866,8 +2034,8 @@ class _HomePageState extends State<HomePage> {
                                                                           Text(
                                                                             LabSubjectsData.heading,
                                                                             style:
-                                                                                const TextStyle(
-                                                                              fontSize: 20.0,
+                                                                                TextStyle(
+                                                                              fontSize: widget.size * 20.0,
                                                                               color: Colors.orangeAccent,
                                                                               fontWeight: FontWeight.w600,
                                                                             ),
@@ -1880,16 +2048,16 @@ class _HomePageState extends State<HomePage> {
                                                                               builder: (context, snapshot) {
                                                                                 if (snapshot.hasData) {
                                                                                   if (snapshot.data!.exists) {
-                                                                                    return const Icon(
+                                                                                    return Icon(
                                                                                       Icons.favorite,
                                                                                       color: Colors.red,
-                                                                                      size: 26,
+                                                                                      size: widget.size * 26,
                                                                                     );
                                                                                   } else {
-                                                                                    return const Icon(
+                                                                                    return Icon(
                                                                                       Icons.favorite_border,
                                                                                       color: Colors.red,
-                                                                                      size: 26,
+                                                                                      size: widget.size * 26,
                                                                                     );
                                                                                   }
                                                                                 } else {
@@ -1925,7 +2093,7 @@ class _HomePageState extends State<HomePage> {
                                                                               if (snapshot.hasData) {
                                                                                 return Text(
                                                                                   " ${snapshot.data!.docs.length}",
-                                                                                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                                                                                  style: TextStyle(fontSize: widget.size * 16, color: Colors.white),
                                                                                 );
                                                                               } else {
                                                                                 return const Text("0");
@@ -1934,7 +2102,7 @@ class _HomePageState extends State<HomePage> {
                                                                           ),
                                                                           SizedBox(
                                                                             width:
-                                                                                5,
+                                                                                widget.width * 5,
                                                                           ),
                                                                           InkWell(
                                                                             child:
@@ -1943,11 +2111,11 @@ class _HomePageState extends State<HomePage> {
                                                                               builder: (context, snapshot) {
                                                                                 if (snapshot.hasData) {
                                                                                   if (snapshot.data!.exists) {
-                                                                                    return const Icon(Icons.library_add_check, size: 26, color: Colors.cyanAccent);
+                                                                                    return Icon(Icons.library_add_check, size: widget.size * 26, color: Colors.cyanAccent);
                                                                                   } else {
-                                                                                    return const Icon(
+                                                                                    return Icon(
                                                                                       Icons.library_add_outlined,
-                                                                                      size: 26,
+                                                                                      size: widget.size * 26,
                                                                                       color: Colors.cyanAccent,
                                                                                     );
                                                                                   }
@@ -1964,7 +2132,7 @@ class _HomePageState extends State<HomePage> {
                                                                                     FirebaseFirestore.instance.collection('user').doc(fullUserId()).collection("FavouriteLabSubjects").doc(LabSubjectsData.id).delete();
                                                                                     showToastText("Removed from saved list");
                                                                                   } else {
-                                                                                    FavouriteLabSubjectsSubjects(SubjectId: LabSubjectsData.id, name: LabSubjectsData.heading, description: LabSubjectsData.description, photoUrl: LabSubjectsData.PhotoUrl);
+                                                                                    FavouriteLabSubjectsSubjects(branch: widget.branch, SubjectId: LabSubjectsData.id, name: LabSubjectsData.heading, description: LabSubjectsData.description, photoUrl: LabSubjectsData.PhotoUrl);
                                                                                     showToastText("${LabSubjectsData.heading} in favorites");
                                                                                   }
                                                                                 });
@@ -1975,57 +2143,58 @@ class _HomePageState extends State<HomePage> {
                                                                           ),
                                                                           SizedBox(
                                                                             width:
-                                                                                10,
+                                                                                widget.width * 10,
                                                                           )
                                                                         ],
                                                                       ),
                                                                       SizedBox(
                                                                         height:
-                                                                            2,
+                                                                            widget.height *
+                                                                                2,
                                                                       ),
                                                                       Text(
                                                                         LabSubjectsData
                                                                             .description,
                                                                         style:
-                                                                            const TextStyle(
+                                                                            TextStyle(
                                                                           fontSize:
-                                                                              13.0,
+                                                                              widget.size * 13.0,
                                                                           color:
                                                                               Colors.lightBlueAccent,
                                                                         ),
                                                                       ),
                                                                       SizedBox(
                                                                         height:
-                                                                            1,
+                                                                            widget.height *
+                                                                                1,
                                                                       ),
                                                                       Text(
                                                                         'Added :${LabSubjectsData.Date}',
                                                                         style:
-                                                                            const TextStyle(
+                                                                            TextStyle(
                                                                           fontSize:
-                                                                              9.0,
+                                                                              widget.size * 9.0,
                                                                           color:
                                                                               Colors.white54,
                                                                           //   fontWeight: FontWeight.bold,
                                                                         ),
                                                                       ),
-                                                                      if (userId() ==
-                                                                          "gmail.com")
+                                                                      if (userId())
                                                                         Padding(
                                                                           padding:
-                                                                              const EdgeInsets.only(right: 10),
+                                                                              EdgeInsets.only(right: widget.width * 10),
                                                                           child:
                                                                               Container(
                                                                             decoration:
                                                                                 BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(15),
+                                                                              borderRadius: BorderRadius.circular(widget.size * 15),
                                                                               color: Colors.white.withOpacity(0.5),
                                                                               border: Border.all(color: Colors.white),
                                                                             ),
                                                                             child:
                                                                                 InkWell(
                                                                               child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                                                                padding: EdgeInsets.only(left: widget.width * 10, right: widget.width * 10, top: widget.height * 5, bottom: widget.height * 5),
                                                                                 child: Text("+Add"),
                                                                               ),
                                                                               onTap: () {
@@ -2067,6 +2236,8 @@ class _HomePageState extends State<HomePage> {
                                                           },
                                                           onLongPress: () {
                                                             FavouriteLabSubjectsSubjects(
+                                                                branch: widget
+                                                                    .branch,
                                                                 SubjectId:
                                                                     LabSubjectsData
                                                                         .id,
@@ -2104,8 +2275,8 @@ class _HomePageState extends State<HomePage> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.only(
-                    top: 10,
+                  padding: EdgeInsets.only(
+                    top: widget.height * 10,
                   ),
                   child: StreamBuilder<List<BooksConvertor>>(
                       stream: ReadBook(widget.branch),
@@ -2142,6 +2313,8 @@ class _HomePageState extends State<HomePage> {
                                       padding: const EdgeInsets.only(
                                           left: 10, bottom: 10),
                                       child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             "Based on ${widget.branch}",
@@ -2150,67 +2323,36 @@ class _HomePageState extends State<HomePage> {
                                                 fontSize: 25,
                                                 fontWeight: FontWeight.w500),
                                           ),
-                                          Spacer(),
-                                          if (userId() == "gmail.com")
-                                            InkWell(
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  color: Colors.white
-                                                      .withOpacity(0.5),
-                                                  border: Border.all(
-                                                      color: Colors.white),
-                                                ),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 10,
-                                                          right: 10,
-                                                          top: 5,
-                                                          bottom: 5),
-                                                  child: Text("+Add"),
-                                                ),
-                                              ),
-                                              onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            BooksCreator(
-                                                              branch:
-                                                                  widget.branch,
-                                                            )));
-                                              },
-                                            ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
                                           InkWell(
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  color: Colors.black
-                                                      .withOpacity(0.7),
-                                                  border: Border.all(
-                                                      color: Colors.white
-                                                          .withOpacity(0.3)),
-                                                ),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 10,
-                                                          right: 10,
-                                                          top: 5,
-                                                          bottom: 5),
-                                                  child: Text(
-                                                    "See More",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.w500),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 20),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    color: Colors.black
+                                                        .withOpacity(0.7),
+                                                    border: Border.all(
+                                                        color: Colors.white
+                                                            .withOpacity(0.3)),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10,
+                                                            right: 10,
+                                                            top: 5,
+                                                            bottom: 5),
+                                                    child: Text(
+                                                      "See More",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -2224,9 +2366,6 @@ class _HomePageState extends State<HomePage> {
                                                                   widget.branch,
                                                             )));
                                               }),
-                                          SizedBox(
-                                            width: 20,
-                                          )
                                         ],
                                       ),
                                     ),
@@ -2759,26 +2898,25 @@ class _HomePageState extends State<HomePage> {
             right: 0,
             top: 0,
             child: Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: screenWidth(context) * 10),
+              padding: EdgeInsets.symmetric(horizontal: widget.width * 10),
               child: Container(
                 decoration: BoxDecoration(
                     color: Colors.white12,
-                    borderRadius: BorderRadius.circular(15)),
+                    borderRadius: BorderRadius.circular(widget.size * 15)),
                 child: Padding(
-                  padding: EdgeInsets.all(screenWidth(context) * 5.0),
+                  padding: EdgeInsets.all(widget.size * 5.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       InkWell(
                           child: Padding(
-                            padding:
-                                EdgeInsets.only(left: screenWidth(context) * 5),
+                            padding: EdgeInsets.only(left: widget.size * 5),
                             child: Container(
-                              height: screenHeight(context) * 35,
-                              width: screenWidth(context) * 80,
+                              height: widget.height * 35,
+                              width: widget.width * 80,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
+                                  borderRadius:
+                                      BorderRadius.circular(widget.size * 5),
                                   color: Colors.white.withOpacity(0.7),
                                   image: DecorationImage(
                                       image: NetworkImage(
@@ -2795,14 +2933,15 @@ class _HomePageState extends State<HomePage> {
                       InkWell(
                         child: Padding(
                           padding: EdgeInsets.only(
-                              left: screenWidth(context) * 30,
-                              right: screenWidth(context) * 20),
+                              left: widget.width * 30,
+                              right: widget.width * 20),
                           child: Container(
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(18),
+                                borderRadius:
+                                    BorderRadius.circular(widget.size * 18),
                                 color: Colors.black.withOpacity(0.7)),
                             child: Padding(
-                              padding: EdgeInsets.all(7.0),
+                              padding: EdgeInsets.all(widget.size * 7.0),
                               child: ShaderMask(
                                 shaderCallback: (Rect bounds) {
                                   return RadialGradient(
@@ -2818,7 +2957,7 @@ class _HomePageState extends State<HomePage> {
                                 child: Text(
                                   "${widget.branch}",
                                   style: TextStyle(
-                                      fontSize: screenWidth(context) * 30,
+                                      fontSize: widget.size * 30,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500),
                                 ),
@@ -2834,13 +2973,13 @@ class _HomePageState extends State<HomePage> {
                                 backgroundColor: Colors.black.withOpacity(0.8),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(
-                                        screenWidth(context) * 20)),
+                                        widget.size * 20)),
                                 elevation: 16,
                                 child: Container(
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.white38),
-                                    borderRadius: BorderRadius.circular(
-                                        screenWidth(context) * 20),
+                                    borderRadius:
+                                        BorderRadius.circular(widget.size * 20),
                                   ),
                                   child: ListView(
                                     shrinkWrap: true,
@@ -2860,20 +2999,19 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           InkWell(
                               child: Padding(
-                                padding: EdgeInsets.only(
-                                    right: screenWidth(context) * 10),
+                                padding:
+                                    EdgeInsets.only(right: widget.width * 10),
                                 child: Container(
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(
-                                          screenWidth(context) * 13),
+                                          widget.size * 13),
                                       color: Colors.white10),
                                   child: Padding(
-                                    padding: EdgeInsets.all(
-                                        screenWidth(context) * 4.0),
+                                    padding: EdgeInsets.all(widget.size * 4.0),
                                     child: Icon(
                                       Icons.notifications_active_outlined,
                                       color: Colors.white,
-                                      size: screenWidth(context) * 30,
+                                      size: widget.size * 30,
                                     ),
                                   ),
                                 ),
@@ -2888,20 +3026,19 @@ class _HomePageState extends State<HomePage> {
                               }),
                           InkWell(
                               child: Padding(
-                                padding: EdgeInsets.only(
-                                    right: screenWidth(context) * 5),
+                                padding:
+                                    EdgeInsets.only(right: widget.width * 5),
                                 child: Container(
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(
-                                          screenWidth(context) * 13),
+                                          widget.size * 13),
                                       color: Colors.white10),
                                   child: Padding(
-                                    padding: EdgeInsets.all(
-                                        screenWidth(context) * 4.0),
+                                    padding: EdgeInsets.all(widget.size * 4.0),
                                     child: Icon(
                                       Icons.person_outline,
                                       color: Colors.white,
-                                      size: screenWidth(context) * 30,
+                                      size: widget.size * 30,
                                     ),
                                   ),
                                 ),
@@ -2933,29 +3070,20 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-Stream<List<HomeUpdateConvertor>> readHomeUpdate(String branch) =>
+Stream<List<UpdateConvertor>> readUpdate(String branch) =>
     FirebaseFirestore.instance
-        .collection(branch)
-        .doc("update")
         .collection("update")
         .orderBy("date", descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
-            .map((doc) => HomeUpdateConvertor.fromJson(doc.data()))
+            .map((doc) => UpdateConvertor.fromJson(doc.data()))
             .toList());
 
 Future createHomeUpdate(
-    {required String branch,
-    required String heading,
-    required String Date,
-    required String photoUrl,
-    required link}) async {
-  final docflash = FirebaseFirestore.instance
-      .collection(branch)
-      .doc("update")
-      .collection("update")
-      .doc();
-  final flash = HomeUpdateConvertor(
+    {required String heading, required String photoUrl, required link}) async {
+  final docflash = FirebaseFirestore.instance.collection("update").doc();
+
+  final flash = UpdateConvertor(
       id: docflash.id,
       heading: heading,
       date: getDate(),
@@ -2965,11 +3093,11 @@ Future createHomeUpdate(
   await docflash.set(json);
 }
 
-class HomeUpdateConvertor {
+class UpdateConvertor {
   String id;
   final String heading, photoUrl, date, link;
 
-  HomeUpdateConvertor(
+  UpdateConvertor(
       {this.id = "",
       required this.heading,
       required this.date,
@@ -2984,13 +3112,12 @@ class HomeUpdateConvertor {
         "link": link
       };
 
-  static HomeUpdateConvertor fromJson(Map<String, dynamic> json) =>
-      HomeUpdateConvertor(
-          link: json["link"],
-          id: json['id'],
-          heading: json["heading"],
-          date: json["date"],
-          photoUrl: json["photoUrl"]);
+  static UpdateConvertor fromJson(Map<String, dynamic> json) => UpdateConvertor(
+      link: json["link"],
+      id: json['id'],
+      heading: json["heading"],
+      date: json["date"],
+      photoUrl: json["photoUrl"]);
 }
 
 Stream<List<RegulationConvertor>> readRegulation(String branch) =>

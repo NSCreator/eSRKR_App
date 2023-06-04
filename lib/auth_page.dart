@@ -349,10 +349,10 @@ class _LoginPageState extends State<LoginPage> {
                                       "srkrec.ac.in") {
                                     hi(emailController.text.trim());
                                     emailController.clear();
-                                    showToast("Message Has Been Send.");
+                                    showToastText("Message Has Been Send.");
                                     Navigator.pop(context);
                                   } else {
-                                    showToast(
+                                    showToastText(
                                         "Plase Enter Your College Mail Id");
                                     emailController.clear();
                                     Navigator.pop(context);

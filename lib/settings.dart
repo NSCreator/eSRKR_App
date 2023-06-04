@@ -521,7 +521,7 @@ class _settingsState extends State<settings> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (userId() == "gmail.com")
+                      if (userId())
                         Padding(
                           padding: const EdgeInsets.only(left: 20, right: 20),
                           child: Column(
@@ -566,7 +566,13 @@ class _settingsState extends State<settings> {
                                       ],
                                     ),
                                   ),
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                updateCreator()));
+                                  },
                                 ),
                               ),
                               Padding(
@@ -687,36 +693,36 @@ class _settingsState extends State<settings> {
                             ],
                           ),
                         ),
-                      Center(
-                        child: InkWell(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: Colors.white.withOpacity(0.1),
-                              border: Border.all(
-                                  color: Colors.white.withOpacity(0.3)),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Text(
-                                "Saved Images and PDFs ( In App )",
-                                style: TextStyle(
-                                    fontSize: 22,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => unseenImages(
-                                          branch: widget.branch,
-                                        )));
-                          },
-                        ),
-                      ),
+                      // Center(
+                      //   child: InkWell(
+                      //     child: Container(
+                      //       decoration: BoxDecoration(
+                      //         borderRadius: BorderRadius.circular(15),
+                      //         color: Colors.white.withOpacity(0.1),
+                      //         border: Border.all(
+                      //             color: Colors.white.withOpacity(0.3)),
+                      //       ),
+                      //       child: Padding(
+                      //         padding: const EdgeInsets.all(5.0),
+                      //         child: Text(
+                      //           "Saved Images and PDFs ( In App )",
+                      //           style: TextStyle(
+                      //               fontSize: 22,
+                      //               color: Colors.white,
+                      //               fontWeight: FontWeight.w500),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     onTap: () {
+                      //       Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(
+                      //               builder: (context) => unseenImages(
+                      //                     branch: widget.branch,
+                      //                   )));
+                      //     },
+                      //   ),
+                      // ),
                       Padding(
                         padding: const EdgeInsets.only(top: 20),
                         child: const Center(

@@ -709,6 +709,7 @@ class _MyAppqState extends State<MyAppq> {
               padding: EdgeInsets.symmetric(
                   horizontal: widget.width * 20, vertical: widget.height * 10),
               child: Container(
+                height: widget.height * 45,
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.3),
                   border: Border.all(color: Colors.white60),
@@ -728,10 +729,12 @@ class _MyAppqState extends State<MyAppq> {
                       icon: Icon(
                         Icons.search,
                         color: Colors.white,
+                        size: widget.size * 25,
                       ),
                       border: InputBorder.none,
                       hintText: 'Search Bar',
-                      hintStyle: TextStyle(color: Colors.white60),
+                      hintStyle: TextStyle(
+                          color: Colors.white60, fontSize: widget.size * 23),
                     ),
                   ),
                 ),

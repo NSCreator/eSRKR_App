@@ -12,6 +12,428 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import 'functins.dart';
+import 'notification.dart';
+
+class updateCreator extends StatefulWidget {
+  String NewsId;
+  String heading;
+  String link;
+  String photoUrl;
+
+  updateCreator({
+    this.NewsId = "",
+    this.link = '',
+    this.heading = "",
+    this.photoUrl = "",
+  });
+
+  @override
+  State<updateCreator> createState() => _updateCreatorState();
+}
+
+class _updateCreatorState extends State<updateCreator> {
+  final FirebaseStorage storage = FirebaseStorage.instance;
+
+  final MessageController = TextEditingController();
+  final PhotoUrlController = TextEditingController();
+  final LinkController = TextEditingController();
+  bool _isImage = false;
+  void AutoFill() async {
+    MessageController.text = widget.heading;
+    PhotoUrlController.text = widget.photoUrl;
+    LinkController.text = widget.link;
+    if (widget.photoUrl.length > 3) {
+      setState(() {
+        _isImage = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    AutoFill();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    MessageController.dispose();
+    PhotoUrlController.dispose();
+    LinkController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blueGrey.shade800,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(40),
+        child: AppBar(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ),
+          ),
+          centerTitle: true,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30)),
+              color: Color.fromRGBO(7, 7, 23, 1.0),
+            ),
+          ),
+          title: Text(
+            "Updater",
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.w500),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 15, top: 8, bottom: 5),
+              child: Text(
+                "Message",
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, bottom: 3, right: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: TextFormField(
+                    controller: MessageController,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Heading',
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15, top: 8, bottom: 5),
+              child: Text(
+                "Link",
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, bottom: 3, right: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: TextFormField(
+                    //obscureText: true,
+                    controller: LinkController,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Description or Full name',
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            if (_isImage == true)
+              Padding(
+                padding: const EdgeInsets.only(left: 10, top: 20),
+                child: Row(
+                  children: [
+                    Container(
+                        height: 110,
+                        width: 180,
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(14),
+                            image: DecorationImage(
+                                image: NetworkImage(
+                                    PhotoUrlController.text.trim()),
+                                fit: BoxFit.fill))),
+                    InkWell(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 30, top: 10, bottom: 10, right: 10),
+                        child: Text(
+                          "Delete",
+                          style: TextStyle(
+                              fontSize: 30,
+                              color: CupertinoColors.destructiveRed),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (_isImage == false)
+              InkWell(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 20, bottom: 10),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.upload,
+                        size: 35,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "Upload Photo",
+                        style: TextStyle(fontSize: 30, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+                onTap: () async {
+                  final pickedFile = await ImagePicker()
+                      .pickImage(source: ImageSource.gallery);
+                  File file = File(pickedFile!.path);
+                  final Reference ref = storage
+                      .ref()
+                      .child('update/${DateTime.now().toString()}.image');
+                  final TaskSnapshot task = await ref.putFile(file);
+                  final String url = await task.ref.getDownloadURL();
+                  PhotoUrlController.text = url;
+                  bool _isLoading = false;
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        backgroundColor: Colors.black.withOpacity(0.1),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        elevation: 16,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.white.withOpacity(0.1)),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: ListView(
+                            physics: BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            children: <Widget>[
+                              const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Image",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.blue),
+                                  ),
+                                ),
+                              ),
+                              Stack(
+                                children: <Widget>[
+                                  Image.network(
+                                    url,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, progress) {
+                                      if (progress == null) {
+                                        _isLoading = false;
+                                      }
+                                      return progress == null
+                                          ? child
+                                          : Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                    },
+                                  ),
+                                  if (_isLoading)
+                                    Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  InkWell(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(
+                                        "Cancel & Delete",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ),
+                                    onTap: () async {
+                                      final Uri uri = Uri.parse(url);
+                                      final String fileName =
+                                          uri.pathSegments.last;
+                                      final Reference ref =
+                                          storage.ref().child("/${fileName}");
+                                      try {
+                                        await ref.delete();
+                                        showToastText(
+                                            'Image deleted successfully');
+                                      } catch (e) {
+                                        showToastText(
+                                            'Error deleting image: $e');
+                                      }
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  InkWell(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(
+                                        "Okay",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        PhotoUrlController.text = url;
+                                        _isImage = true;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Spacer(),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Back..."),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                InkWell(
+                  onTap: () {
+                    if (widget.NewsId.length > 3) {
+                      // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
+                      FirebaseFirestore.instance
+                          .collection("update")
+                          .doc(widget.NewsId)
+                          .update({
+                        "heading": MessageController.text.trim(),
+                        "link": LinkController.text.trim(),
+                        "date": getDate(),
+                        "photoUrl": PhotoUrlController.text
+                      });
+                    } else {
+                      createHomeUpdate(
+                          heading: MessageController.text,
+                          photoUrl: PhotoUrlController.text.isNotEmpty
+                              ? PhotoUrlController.text
+                              : " ",
+                          link: LinkController.text);
+
+                      SendMessage("Update", MessageController.text, "");
+                    }
+                    MessageController.clear();
+                    LinkController.clear();
+                    PhotoUrlController.clear();
+                    Navigator.pop(context);
+                  },
+                  child: widget.NewsId.length < 3
+                      ? Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[500],
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(color: Colors.white),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, top: 5, bottom: 5),
+                            child: Text("Create"),
+                          ),
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[500],
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(color: Colors.white),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, top: 5, bottom: 5),
+                            child: Text("Update"),
+                          ),
+                        ),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class NewsCreator extends StatefulWidget {
   String NewsId;
@@ -391,7 +813,11 @@ class _NewsCreatorState extends State<NewsCreator> {
                           heading: HeadingController.text.trim(),
                           description: DescriptionController.text.trim(),
                           Date: getDate(),
-                          photoUrl: PhotoUrlController.text.trim());
+                          photoUrl: PhotoUrlController.text.isNotEmpty
+                              ? PhotoUrlController.text
+                              : " ");
+                      SendMessage("${HeadingController.text} News",
+                          DescriptionController.text, widget.branch);
                     }
                     HeadingController.clear();
                     DescriptionController.clear();

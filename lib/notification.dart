@@ -1,12 +1,14 @@
 import 'dart:core';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -89,12 +91,32 @@ class _notificationsState extends State<notifications>
         backgroundColor: Color.fromRGBO(2, 22, 38, 1),
         body: SafeArea(
           child: Column(children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text(
-                "Notifications",
-                style: TextStyle(color: Colors.white70, fontSize: 30),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    "Notifications",
+                    style: TextStyle(color: Colors.white70, fontSize: 30),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Custom +",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                )
+              ],
             ),
             Container(
               height: 35,
@@ -296,10 +318,10 @@ class _notificationsState extends State<notifications>
                                                   .collection("AllNotification")
                                                   .doc(Notification.id);
                                           deleteFlashNews.delete();
-                                          showToast(
+                                          showToastText(
                                               "Your Message has been Deleted");
                                         } else {
-                                          showToast(
+                                          showToastText(
                                               "You are not message user to delete");
                                         }
                                       },
@@ -500,6 +522,7 @@ class _notificationsState extends State<notifications>
               ),
             ),
             searchBar(
+              branch: widget.branch,
               tabController: _tabController,
               user: emailController,
             )
@@ -521,8 +544,13 @@ class _notificationsState extends State<notifications>
 class searchBar extends StatefulWidget {
   final TabController tabController;
   final TextEditingController user;
+  final String branch;
 
-  const searchBar({Key? key, required this.tabController, required this.user})
+  const searchBar(
+      {Key? key,
+      required this.tabController,
+      required this.user,
+      required this.branch})
       : super(key: key);
 
   @override
@@ -575,114 +603,116 @@ class _searchBarState extends State<searchBar> {
       alignment: Alignment.bottomCenter,
       child: Column(
         children: [
-          if (currentIndex == 1)
-            Row(
-              children: [
-                Flexible(
-                  flex: 7,
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: Container(
-                      height: 35,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        border:
-                            Border.all(color: Colors.white.withOpacity(0.5)),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: TextField(
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                          cursorColor: Colors.white,
-                          cursorHeight: 10,
-                          controller: emailController,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Enter Email',
-                            hintStyle: TextStyle(
-                              color: Colors.white.withOpacity(0.6),
+          Row(
+            children: [
+              Flexible(
+                flex: 7,
+                child: currentIndex == 1
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        child: Container(
+                          height: 35,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            border: Border.all(
+                                color: Colors.white.withOpacity(0.5)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: TextField(
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                              cursorColor: Colors.white,
+                              cursorHeight: 10,
+                              controller: emailController,
+                              textInputAction: TextInputAction.next,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Enter Email',
+                                hintStyle: TextStyle(
+                                  color: Colors.white.withOpacity(0.6),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                ),
-                Flexible(
-                    flex: 4,
-                    //fit: FlexFit.tight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: InkWell(
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds: 300),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white.withOpacity(0.1),
-                            image: DecorationImage(
-                                image: NetworkImage(isExp ? Url : ""),
-                                fit: BoxFit.fill),
-                            border: Border.all(
-                                color: Colors.white.withOpacity(0.1)),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              AspectRatio(
-                                aspectRatio: isExp ? 16 / 9 : 4 / 1,
-                                child: !isExp
-                                    ? InkWell(
-                                        child: Center(
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "Upload Photo",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16),
-                                              ),
-                                              SizedBox(
-                                                width: 3,
-                                              ),
-                                              Icon(
-                                                Icons.upload,
-                                                color: Colors.blue,
-                                              )
-                                            ],
-                                          ),
+                      )
+                    : Container(),
+              ),
+              Flexible(
+                  flex: 4,
+                  //fit: FlexFit.tight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: InkWell(
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 300),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.white.withOpacity(0.1),
+                          image: DecorationImage(
+                              image: NetworkImage(isExp ? Url : ""),
+                              fit: BoxFit.fill),
+                          border:
+                              Border.all(color: Colors.white.withOpacity(0.1)),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            AspectRatio(
+                              aspectRatio: isExp ? 16 / 9 : 4 / 1,
+                              child: !isExp
+                                  ? InkWell(
+                                      child: Center(
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Upload Photo",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16),
+                                            ),
+                                            SizedBox(
+                                              width: 3,
+                                            ),
+                                            Icon(
+                                              Icons.upload,
+                                              color: Colors.blue,
+                                            )
+                                          ],
                                         ),
-                                        onTap: () async {
-                                          final pickedFile = await ImagePicker()
-                                              .pickImage(
-                                                  source: ImageSource.gallery);
-                                          final Reference ref = storage.ref().child(
-                                              'notification/${fullUserId()}/${pickedFile!.path.split("/").last}');
-                                          final TaskSnapshot task = await ref
-                                              .putFile(File(pickedFile.path));
-                                          Url = await task.ref.getDownloadURL();
-                                          setState(() {
-                                            Url;
-                                          });
-                                          isExp = true;
-                                        },
-                                      )
-                                    : null,
-                              ),
-                            ],
-                          ),
+                                      ),
+                                      onTap: () async {
+                                        final pickedFile = await ImagePicker()
+                                            .pickImage(
+                                                source: ImageSource.gallery);
+                                        final Reference ref = storage.ref().child(
+                                            'notification/${fullUserId()}/${pickedFile!.path.split("/").last}');
+                                        final TaskSnapshot task = await ref
+                                            .putFile(File(pickedFile.path));
+                                        Url = await task.ref.getDownloadURL();
+                                        setState(() {
+                                          Url;
+                                        });
+                                        isExp = true;
+                                      },
+                                    )
+                                  : null,
+                            ),
+                          ],
                         ),
                       ),
-                    ))
-              ],
-            ),
+                    ),
+                  ))
+            ],
+          ),
           Row(
             children: [
               Flexible(
@@ -751,8 +781,15 @@ class _searchBarState extends State<searchBar> {
                         ),
                       ),
                       onTap: () {
-                        pushNotificationsSpecificPerson(fullUserId(),
-                            emailController.text.trim(), bodyController.text);
+                        if (currentIndex == 0) {
+                          SendMessageInBackground(
+                              widget.branch, bodyController.text.trim(), Url);
+                        } else {
+                          pushNotificationsSpecificPerson(
+                              emailController.text.trim(),
+                              bodyController.text,
+                              Url);
+                        }
                       },
                     ),
                   ))
@@ -764,9 +801,232 @@ class _searchBarState extends State<searchBar> {
   }
 }
 
-Future showToast(String message) async {
-  await Fluttertoast.cancel();
-  Fluttertoast.showToast(msg: message, fontSize: 18);
+Future<bool> pushNotificationsSpecificDevice({
+  required String token,
+  required String title,
+  required String body,
+}) async {
+  String dataNotifications = '{ "to" : "$token",'
+      ' "notification" : {'
+      ' "title":"$title",'
+      '"body":"$body"'
+      ' }'
+      ' }';
+
+  await http.post(
+    Uri.parse(Constants.BASE_URL),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'key= ${Constants.KEY_SERVER}',
+    },
+    body: dataNotifications,
+  );
+  return true;
+}
+
+Future<void> pushNotificationsSpecificPerson(
+    String sendTo, String message, String url) async {
+  FirebaseFirestore.instance
+      .collection("tokens")
+      .doc(
+          sendTo) // Replace "documentId" with the ID of the document you want to retrieve
+      .get()
+      .then((DocumentSnapshot snapshot) {
+    if (snapshot.exists) {
+      var data = snapshot.data();
+      if (data != null && data is Map<String, dynamic>) {
+        // Access the dictionary values
+        String value = data['token'];
+
+        FirebaseFirestore.instance
+            .collection("user")
+            .doc(sendTo)
+            .collection("Notification")
+            .doc(getID())
+            .set({
+          "id": getID(),
+          "Name": fullUserId(),
+          "Time": getDate(),
+          "Description": message,
+          "Link": url
+        });
+        FirebaseFirestore.instance
+            .collection("user")
+            .doc(fullUserId())
+            .collection("Notification")
+            .doc(getID())
+            .set({
+          "id": getID(),
+          "Name": fullUserId(),
+          "Time": getDate(),
+          "Description": message,
+          "Link": url
+        });
+
+        pushNotificationsSpecificDevice(
+          title: fullUserId(),
+          body: message,
+          token: value,
+        );
+      }
+    } else {
+      print("Document does not exist.");
+    }
+  }).catchError((error) {
+    print("An error occurred while retrieving data: $error");
+  });
+}
+
+void SendMessage(String title, String message, String branch) async {
+  int count = 0;
+  final CollectionReference collectionRef = FirebaseFirestore.instance
+      .collection('tokens'); // Replace with your collection name
+
+  try {
+    final QuerySnapshot querySnapshot = await collectionRef.get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+      for (final document in documents) {
+        final data = document.data() as Map<String, dynamic>;
+        if (branch.isNotEmpty) {
+          if (data["branch"] == branch) {
+            await pushNotificationsSpecificDevice(
+              title: title,
+              body: "$message",
+              token: data["token"],
+            );
+          }
+        } else {
+          await pushNotificationsSpecificDevice(
+            title: title,
+            body: "$message",
+            token: data["token"],
+          );
+        }
+        count++;
+        NotificationService().showNotification(
+            id: 0,
+            title: "Notification :$title",
+            body: "Send to $count members");
+      }
+    } else {
+      print('No documents found');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+
+void SendMessageInBackground(String branch, String message, String url) async {
+  int count = 0;
+  final CollectionReference collectionRef = FirebaseFirestore.instance
+      .collection('tokens'); // Replace with your collection name
+
+  try {
+    final QuerySnapshot querySnapshot = await collectionRef.get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+      if (userId()) {
+        if (branch.isNotEmpty) {
+          FirebaseFirestore.instance
+              .collection(branch)
+              .doc("Notification")
+              .collection("AllNotification")
+              .doc(getID())
+              .set({
+            "id": getID(),
+            "Name": "${fullUserId()}",
+            "Time": getDate(),
+            "Description": message,
+            "Link": url
+          });
+        } else {
+          List B = ["EEE", "ECE"];
+          for (final b in B) {
+            FirebaseFirestore.instance
+                .collection(b)
+                .doc("Notification")
+                .collection("AllNotification")
+                .doc(getID())
+                .set({
+              "id": getID(),
+              "Name": "${fullUserId()} (owner)",
+              "Time": getDate(),
+              "Description": message,
+              "Link": url
+            });
+          }
+        }
+        for (final document in documents) {
+          final data = document.data() as Map<String, dynamic>;
+          if (branch.isNotEmpty) {
+            if (data["branch"] == branch) {
+              await pushNotificationsSpecificDevice(
+                title: fullUserId(),
+                body: "$message",
+                token: data["token"],
+              );
+              count++;
+            }
+          } else {
+            await pushNotificationsSpecificDevice(
+              title: fullUserId(),
+              body: "$message",
+              token: data["token"],
+            );
+            count++;
+          }
+
+          NotificationService().showNotification(
+              id: 0,
+              title: "Notification Update",
+              body: "Send to $count members");
+        }
+      }
+    } else {
+      print('No documents found');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+
+class NotificationService {
+  final FlutterLocalNotificationsPlugin notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  Future<void> initNotification() async {
+    AndroidInitializationSettings initializationSettingsAndroid =
+        const AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    var initializationSettingsIOS = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        onDidReceiveLocalNotification:
+            (int id, String? title, String? body, String? payload) async {});
+
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    await notificationsPlugin.initialize(initializationSettings,
+        onDidReceiveNotificationResponse:
+            (NotificationResponse notificationResponse) async {});
+  }
+
+  notificationDetails() {
+    return const NotificationDetails(
+        android: AndroidNotificationDetails('channelId', 'channelName',
+            importance: Importance.max),
+        iOS: DarwinNotificationDetails());
+  }
+
+  Future showNotification(
+      {int id = 1, String? title, String? body, String? payLoad}) async {
+    return notificationsPlugin.show(
+        id, title, body, await notificationDetails());
+  }
 }
 
 Stream<List<NotificationsConvertor>> readNotifications(
@@ -828,171 +1088,4 @@ Future createNotifications(
   );
   final json = flash.toJson();
   await docflash.set(json);
-}
-
-class NotificationService {
-  final FlutterLocalNotificationsPlugin notificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
-  Future<void> initNotification() async {
-    AndroidInitializationSettings initializationSettingsAndroid =
-        const AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    var initializationSettingsIOS = DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-        onDidReceiveLocalNotification:
-            (int id, String? title, String? body, String? payload) async {});
-
-    var initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    await notificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse:
-            (NotificationResponse notificationResponse) async {});
-  }
-
-  notificationDetails() {
-    return const NotificationDetails(
-        android: AndroidNotificationDetails('channelId', 'channelName',
-            importance: Importance.max),
-        iOS: DarwinNotificationDetails());
-  }
-
-  Future showNotification(
-      {int id = 0, String? title, String? body, String? payLoad}) async {
-    return notificationsPlugin.show(
-        id, title, body, await notificationDetails());
-  }
-}
-
-Future<bool> pushNotificationsSpecificDevice({
-  required String token,
-  required String title,
-  required String body,
-}) async {
-  String dataNotifications = '{ "to" : "$token",'
-      ' "notification" : {'
-      ' "title":"$title",'
-      '"body":"$body"'
-      ' }'
-      ' }';
-
-  await http.post(
-    Uri.parse(Constants.BASE_URL),
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'key= ${Constants.KEY_SERVER}',
-    },
-    body: dataNotifications,
-  );
-  return true;
-}
-
-Future<void> pushNotificationsSpecificPerson(
-    String myEmail, String sendTo, String message) async {
-  FirebaseFirestore.instance
-      .collection("tokens")
-      .doc(
-          sendTo) // Replace "documentId" with the ID of the document you want to retrieve
-      .get()
-      .then((DocumentSnapshot snapshot) {
-    if (snapshot.exists) {
-      var data = snapshot.data();
-      if (data != null && data is Map<String, dynamic>) {
-        // Access the dictionary values
-        String value = data['token'];
-
-        FirebaseFirestore.instance
-            .collection("user")
-            .doc(sendTo)
-            .collection("Notification")
-            .doc(getID())
-            .set({
-          "id": getID(),
-          "Name": myEmail,
-          "Time": getDate(),
-          "Description": message,
-          "Link": ""
-        });
-        FirebaseFirestore.instance
-            .collection("user")
-            .doc(myEmail)
-            .collection("Notification")
-            .doc(getID())
-            .set({
-          "id": getID(),
-          "Name": myEmail,
-          "Time": getDate(),
-          "Description": message,
-          "Link": ""
-        });
-
-        pushNotificationsSpecificDevice(
-          title: myEmail,
-          body: message,
-          token: value,
-        );
-      }
-    } else {
-      print("Document does not exist.");
-    }
-  }).catchError((error) {
-    print("An error occurred while retrieving data: $error");
-  });
-}
-
-Future<bool> pushNotificationsGroupDevice({
-  required String title,
-  required String body,
-}) async {
-  String dataNotifications = '{'
-      '"operation": "create",'
-      '"notification_key_name": "appUser-testUser",'
-      '"registration_ids":["dV5pjB2aS_KAE1CuCrBPRG:APA91bHDjwDJbEBYVYtaBXdJ9hNHt2yNnoNhGU5k16AMvGcCFTAdK7h9GHWUu8rlthR8oQXbFJi5EBQQ1okFOZJC94m98manc6Or6CZr5TTDB-B8zzlMT1RrLzPakDg2kvM0Mir460bG","d1Kudv_ERRSY4ELxKjss-c:APA91bFMm-S56N35a6u8WAMiV88I3fNXKvhcLa8KbMrbjG7CdiVVCikJd3dyc0SgBkqlm3bsAJpU7rueX5esTYjOhILAUUNI8JXXZXDNXfWzi-wOWerYBfHFNR1JgL2N6c41iNJi8vaB"],'
-      '"notification" : {'
-      '"title":"$title",'
-      '"body":"$body"'
-      ' }'
-      ' }';
-
-  var response = await http.post(
-    Uri.parse(Constants.BASE_URL),
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'key= ${Constants.KEY_SERVER}',
-      'project_id': "${Constants.SENDER_ID}"
-    },
-    body: dataNotifications,
-  );
-
-  print(response.body.toString());
-
-  return true;
-}
-
-Future<bool> pushNotificationsAllUsers({
-  required String title,
-  required String body,
-}) async {
-  // FirebaseMessaging.instance.subscribeToTopic("myTopic1");
-
-  String dataNotifications = '{ '
-      ' "to" : "/topics/myTopic1" , '
-      ' "notification" : {'
-      ' "title":"$title" , '
-      ' "body":"$body" '
-      ' } '
-      ' } ';
-
-  var response = await http.post(
-    Uri.parse(Constants.BASE_URL),
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'key= ${Constants.KEY_SERVER}',
-    },
-    body: dataNotifications,
-  );
-  print(response.body.toString());
-  return true;
 }

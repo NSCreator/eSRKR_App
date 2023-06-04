@@ -204,7 +204,7 @@ class _NewsPageState extends State<NewsPage> {
                                                                 FontWeight
                                                                     .w300)),
                                                   ),
-                                                if (userId() == "gmail.com")
+                                                if (userId())
                                                   Row(
                                                     children: [
                                                       Spacer(),
@@ -744,6 +744,8 @@ class _SubjectsState extends State<Subjects> {
                                                                           "Removed from saved list");
                                                                     } else {
                                                                       FavouriteSubjects(
+                                                                          branch: widget
+                                                                              .branch,
                                                                           SubjectId: SubjectsData
                                                                               .id,
                                                                           name: SubjectsData
@@ -789,8 +791,7 @@ class _SubjectsState extends State<Subjects> {
                                                             //   fontWeight: FontWeight.bold,
                                                           ),
                                                         ),
-                                                        if (userId() ==
-                                                            "gmail.com")
+                                                        if (userId())
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
@@ -1186,6 +1187,8 @@ class _SubjectsState extends State<Subjects> {
                                                                           "Removed from saved list");
                                                                     } else {
                                                                       FavouriteSubjects(
+                                                                          branch: widget
+                                                                              .branch,
                                                                           SubjectId: SubjectsData
                                                                               .id,
                                                                           name: SubjectsData
@@ -1231,8 +1234,7 @@ class _SubjectsState extends State<Subjects> {
                                                             //   fontWeight: FontWeight.bold,
                                                           ),
                                                         ),
-                                                        if (userId() ==
-                                                            "gmail.com")
+                                                        if (userId())
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
@@ -1772,6 +1774,8 @@ class _LabSubjectsState extends State<LabSubjects> {
                                                                           "Removed from saved list");
                                                                     } else {
                                                                       FavouriteLabSubjectsSubjects(
+                                                                          branch: widget
+                                                                              .branch,
                                                                           SubjectId: LabSubjectsData
                                                                               .id,
                                                                           name: LabSubjectsData
@@ -1820,8 +1824,7 @@ class _LabSubjectsState extends State<LabSubjects> {
                                                             //   fontWeight: FontWeight.bold,
                                                           ),
                                                         ),
-                                                        if (userId() ==
-                                                            "gmail.com")
+                                                        if (userId())
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
@@ -1900,6 +1903,7 @@ class _LabSubjectsState extends State<LabSubjects> {
                                             },
                                             onLongPress: () {
                                               FavouriteLabSubjectsSubjects(
+                                                  branch: widget.branch,
                                                   SubjectId: LabSubjectsData.id,
                                                   name: LabSubjectsData.heading,
                                                   description: LabSubjectsData
@@ -2211,6 +2215,8 @@ class _LabSubjectsState extends State<LabSubjects> {
                                                                           "Removed from saved list");
                                                                     } else {
                                                                       FavouriteLabSubjectsSubjects(
+                                                                          branch: widget
+                                                                              .branch,
                                                                           SubjectId: LabSubjectsData
                                                                               .id,
                                                                           name: LabSubjectsData
@@ -2259,8 +2265,7 @@ class _LabSubjectsState extends State<LabSubjects> {
                                                             //   fontWeight: FontWeight.bold,
                                                           ),
                                                         ),
-                                                        if (userId() ==
-                                                            "gmail.com")
+                                                        if (userId())
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
@@ -2339,6 +2344,7 @@ class _LabSubjectsState extends State<LabSubjects> {
                                             },
                                             onLongPress: () {
                                               FavouriteLabSubjectsSubjects(
+                                                  branch: widget.branch,
                                                   SubjectId: LabSubjectsData.id,
                                                   name: LabSubjectsData.heading,
                                                   description: LabSubjectsData
@@ -2833,7 +2839,7 @@ class _allBooksState extends State<allBooks> {
                                                                               photoUrl: Books[index].photoUrl,
                                                                               Author: Books[index].Author,
                                                                               edition: Books[index].edition,
-                                                                              date: Books[index].date,
+                                                                              branch: widget.branch,
                                                                               id: Books[index].id);
                                                                           showToastText(
                                                                               "${Books[index].heading} in favorites");
@@ -2854,7 +2860,7 @@ class _allBooksState extends State<allBooks> {
                                                 ),
                                               ],
                                             ),
-                                            if (userId() == "gmail.com")
+                                            if (userId())
                                               Row(
                                                 children: [
                                                   Spacer(),
@@ -3050,7 +3056,7 @@ class _allBooksState extends State<allBooks> {
                                                   ),
                                                 ],
                                               ),
-                                              if (userId() == "gmail.com")
+                                              if (userId())
                                                 Row(
                                                   children: [
                                                     Spacer(),
@@ -3276,7 +3282,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                       fontSize: 40,
                                       color: Colors.deepOrangeAccent),
                                 ),
-                                if (userId() == "gmail.com")
+                                if (userId())
                                   Padding(
                                     padding: const EdgeInsets.only(right: 10),
                                     child: InkWell(
@@ -4043,6 +4049,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                                                         "Removed from saved list");
                                                                   } else {
                                                                     FavouriteSubjects(
+                                                                        branch: widget
+                                                                            .branch,
                                                                         SubjectId:
                                                                             widget
                                                                                 .ID,
@@ -4158,6 +4166,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                                                         "Removed from saved list");
                                                                   } else {
                                                                     FavouriteLabSubjectsSubjects(
+                                                                        branch: widget
+                                                                            .branch,
                                                                         SubjectId:
                                                                             widget
                                                                                 .ID,
@@ -4880,7 +4890,7 @@ class _subUnitState extends State<subUnit> {
                       }),
                 ],
               ),
-            if (userId() == "gmail.com")
+            if (userId())
               Row(
                 children: [
                   InkWell(
