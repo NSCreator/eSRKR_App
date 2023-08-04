@@ -1,15 +1,20 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'SubPages.dart';
 
 class MyAppq extends StatefulWidget {
   final String branch;
+  final String reg;
   final double size;
   final double height;
   final double width;
   const MyAppq(
       {Key? key,
       required this.branch,
+      required this.reg,
       required this.width,
       required this.size,
       required this.height})
@@ -21,6 +26,22 @@ class MyAppq extends StatefulWidget {
 
 class _MyAppqState extends State<MyAppq> {
   String name = "";
+
+  String folderPath = "";
+
+  Future<void> getPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    setState(() {
+      folderPath = '${directory.path}';
+    });
+  }
+
+  @override
+  void initState() {
+    getPath();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -52,6 +73,10 @@ class _MyAppqState extends State<MyAppq> {
                           MaterialPageRoute(
                               builder: (context) => Subjects(
                                     branch: widget.branch,
+                                    reg: widget.reg,
+                                    width: widget.width,
+                                    height: widget.height,
+                                    size: widget.size,
                                   )));
                     },
                   ),
@@ -75,7 +100,11 @@ class _MyAppqState extends State<MyAppq> {
                             itemBuilder: (context, index) {
                               var data = snapshots.data!.docs[index].data()
                                   as Map<String, dynamic>;
-
+                              final Uri uri = Uri.parse(data["Photo Url"]);
+                              final String fileName = uri.pathSegments.last;
+                              var filename = fileName.split("/").last;
+                              final file = File(
+                                  "${folderPath}/${widget.branch.toLowerCase()}_subjects/$filename");
                               if (name.isEmpty) {
                                 return Padding(
                                   padding: EdgeInsets.only(
@@ -104,9 +133,7 @@ class _MyAppqState extends State<MyAppq> {
                                                 color: Colors.black
                                                     .withOpacity(0.5),
                                                 image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    data["Photo Url"],
-                                                  ),
+                                                  image: FileImage(file),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
@@ -154,6 +181,9 @@ class _MyAppqState extends State<MyAppq> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   subjectUnitsData(
+                                                    width: widget.width,
+                                                    height: widget.height,
+                                                    size: widget.size,
                                                     branch: widget.branch,
                                                     ID: data['id'],
                                                     mode: "Subjects",
@@ -197,9 +227,7 @@ class _MyAppqState extends State<MyAppq> {
                                                 color: Colors.black
                                                     .withOpacity(0.5),
                                                 image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    data["Photo Url"],
-                                                  ),
+                                                  image: FileImage(file),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
@@ -247,6 +275,9 @@ class _MyAppqState extends State<MyAppq> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   subjectUnitsData(
+                                                    width: widget.width,
+                                                    height: widget.height,
+                                                    size: widget.size,
                                                     branch: widget.branch,
                                                     ID: data['id'],
                                                     mode: "Subjects",
@@ -280,6 +311,10 @@ class _MyAppqState extends State<MyAppq> {
                           MaterialPageRoute(
                               builder: (context) => LabSubjects(
                                     branch: widget.branch,
+                                    reg: widget.reg,
+                                    width: widget.width,
+                                    height: widget.height,
+                                    size: widget.size,
                                   )));
                     },
                   ),
@@ -303,7 +338,11 @@ class _MyAppqState extends State<MyAppq> {
                             itemBuilder: (context, index) {
                               var data = snapshots.data!.docs[index].data()
                                   as Map<String, dynamic>;
-
+                              final Uri uri = Uri.parse(data["Photo Url"]);
+                              final String fileName = uri.pathSegments.last;
+                              var filename = fileName.split("/").last;
+                              final file = File(
+                                  "${folderPath}/${widget.branch.toLowerCase()}_labsubjects/$filename");
                               if (name.isEmpty) {
                                 return Padding(
                                   padding: EdgeInsets.only(
@@ -332,9 +371,7 @@ class _MyAppqState extends State<MyAppq> {
                                                 color: Colors.black
                                                     .withOpacity(0.5),
                                                 image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    data["Photo Url"],
-                                                  ),
+                                                  image: FileImage(file),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
@@ -385,6 +422,9 @@ class _MyAppqState extends State<MyAppq> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   subjectUnitsData(
+                                                    width: widget.width,
+                                                    height: widget.height,
+                                                    size: widget.size,
                                                     branch: widget.branch,
                                                     ID: data['id'],
                                                     mode: "LabSubjects",
@@ -428,9 +468,7 @@ class _MyAppqState extends State<MyAppq> {
                                                 color: Colors.black
                                                     .withOpacity(0.5),
                                                 image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    data["Photo Url"],
-                                                  ),
+                                                  image: FileImage(file),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
@@ -478,6 +516,9 @@ class _MyAppqState extends State<MyAppq> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   subjectUnitsData(
+                                                    width: widget.width,
+                                                    height: widget.height,
+                                                    size: widget.size,
                                                     branch: widget.branch,
                                                     ID: data['id'],
                                                     mode: "LabSubjects",

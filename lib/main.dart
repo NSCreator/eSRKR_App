@@ -13,34 +13,38 @@ import 'functins.dart';
 import 'notification.dart';
 import 'search bar.dart';
 
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 Future<void> backgroundHandler(RemoteMessage message) async {
   print(message.data.toString());
   print(message.notification!.title);
-  // await Firebase.initializeApp();
-  // FirebaseFirestore.instance
-  //     .collection('users')
-  //     .doc(fullUserId())
-  //     .collection("notifications")
-  //     .doc("projectId")
-  //     .set({
-  //   "id": message.notification!.title,
-  //   "name": message.notification!.body
-  // });
 }
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await NotificationService().initNotification();
   await Firebase.initializeApp();
   await MobileAds.instance.initialize();
+  await NotificationService().initNotification();
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  // if (true) {
+  //   await Firebase.initializeApp();
+  //   await MobileAds.instance.initialize();
+  //   await NotificationService().initNotification();
+  //   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  // } else {
+  //   await Firebase.initializeApp(
+  //       options: FirebaseOptions(
+  //     apiKey: "AIzaSyDP9ZNvcadcgO_cNmwOYEOxxW_Z_JPwoZ4",
+  //     projectId: "e-srkr",
+  //     messagingSenderId: "1048591941251",
+  //     appId: "1:1048591941251:web:40640c157719e08ca665b6",
+  //   ));
+  // }
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(MyApp());
   });
 }
-
-final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatefulWidget {
   @override
@@ -49,7 +53,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     FirebaseMessaging.instance.getInitialMessage().then((message) {
@@ -86,94 +89,98 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      theme: ThemeData(
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        hoverColor: Colors.transparent,
+    return DefaultTextStyle(
+      style: TextStyle(
+        fontFamily: DefaultTextStyle.of(context).style.fontFamily,
       ),
-      title: 'e-SRKR',
-      builder: (context, child) {
-        return MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaleFactor: 0.85),
-            child: child!);
-      },
-      home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return StreamBuilder<DocumentSnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection("user")
-                      .doc(fullUserId())
-                      .snapshots(),
-                  builder: (context, mainsnapshot) {
-                    switch (mainsnapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        return const Center(
-                            child: CircularProgressIndicator(
-                          strokeWidth: 0.3,
-                          color: Colors.cyan,
-                        ));
-                      default:
-                        {
-                          bool isTheir = false;
-                          try {
-                            if (mainsnapshot.data!.exists &&
-                                mainsnapshot.data!['reg']
-                                    .toString()
-                                    .isNotEmpty &&
-                                mainsnapshot.data!['branch']
-                                    .toString()
-                                    .isNotEmpty &&
-                                mainsnapshot.data!['index']
-                                    .toString()
-                                    .isNotEmpty &&
-                                mainsnapshot.data!['width']
-                                    .toString()
-                                    .isNotEmpty &&
-                                mainsnapshot.data!['height']
-                                    .toString()
-                                    .isNotEmpty) {
-                              isTheir = true;
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        title: 'e-SRKR',
+        builder: (context, child) {
+          return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaleFactor: 0.85,
+              ),
+              child: child!);
+        },
+        home: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection("user")
+                        .doc(fullUserId())
+                        .snapshots(),
+                    builder: (context, mainsnapshot) {
+                      switch (mainsnapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return const Center(
+                              child: CircularProgressIndicator(
+                            strokeWidth: 0.3,
+                            color: Colors.cyan,
+                          ));
+                        default:
+                          {
+                            bool isTheir = false;
+                            try {
+                              if (mainsnapshot.data!.exists &&
+                                  mainsnapshot.data!['reg']
+                                      .toString()
+                                      .isNotEmpty &&
+                                  mainsnapshot.data!['branch']
+                                      .toString()
+                                      .isNotEmpty &&
+                                  mainsnapshot.data!['index']
+                                      .toString()
+                                      .isNotEmpty &&
+                                  mainsnapshot.data!['width']
+                                      .toString()
+                                      .isNotEmpty &&
+                                  mainsnapshot.data!['height']
+                                      .toString()
+                                      .isNotEmpty) {
+                                isTheir = true;
+                              }
+                            } catch (Exception) {
+                              isTheir = false;
                             }
-                          } catch (Exception) {
-                            isTheir = false;
+                            if (isTheir) {
+                              return Nav(
+                                height: double.parse(mainsnapshot
+                                        .data!['height']
+                                        .toString()) /
+                                    850,
+                                width: double.parse(mainsnapshot.data!['width']
+                                        .toString()) /
+                                    400,
+                                branch: mainsnapshot.data!["branch"].toString(),
+                                reg: mainsnapshot.data!['reg'].toString(),
+                                index: mainsnapshot.data!['index'],
+                                size: (double.parse(mainsnapshot.data!['width']
+                                                .toString()) /
+                                            400 +
+                                        double.parse(mainsnapshot
+                                                .data!['height']
+                                                .toString()) /
+                                            850) /
+                                    2,
+                              );
+                            } else {
+                              return Scaffold(
+                                backgroundColor: Color.fromRGBO(4, 48, 46, 1),
+                                body: SafeArea(child: branchYear()),
+                              );
+                            }
                           }
-                          if (isTheir) {
-                            return Nav(
-                              height: double.parse(
-                                      mainsnapshot.data!['height'].toString()) /
-                                  850,
-                              width: double.parse(
-                                      mainsnapshot.data!['width'].toString()) /
-                                  400,
-                              branch: mainsnapshot.data!["branch"].toString(),
-                              reg: mainsnapshot.data!['reg'].toString(),
-                              index: mainsnapshot.data!['index'],
-                              size: (double.parse(mainsnapshot.data!['width']
-                                              .toString()) /
-                                          400 +
-                                      double.parse(mainsnapshot.data!['height']
-                                              .toString()) /
-                                          850) /
-                                  2,
-                            );
-                          } else {
-                            return Scaffold(
-                              backgroundColor: Color.fromRGBO(4, 48, 46, 1),
-                              body: SafeArea(child: branchYear()),
-                            );
-                          }
-                        }
-                    }
-                  });
-            } else {
-              return Scaffold(body: LoginPage());
-            }
-          }),
-      debugShowCheckedModeBanner: false,
+                      }
+                    });
+              } else {
+                return Scaffold(body: LoginPage());
+              }
+            }),
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }
@@ -265,18 +272,27 @@ class _yearsState extends State<years> {
             style: TextStyle(
                 fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
           ),
-          onTap: () {
+          onTap: () async {
             if (!widget.isUpdate) {
               FirebaseFirestore.instance
                   .collection("user")
                   .doc(fullUserId())
-                  .set({"branch": widget.id, "index": 0});
+                  .set({
+                "branch": widget.id,
+                "index": 0,
+                "width": screenWidth(context),
+                "height": screenHeight(context)
+              });
             } else {
               FirebaseFirestore.instance
                   .collection("user")
                   .doc(fullUserId())
                   .update({"branch": widget.id});
             }
+            await FirebaseFirestore.instance
+                .collection("tokens")
+                .doc(fullUserId())
+                .update({"branch": widget.id});
             setState(() {
               isReg = !isReg;
             });
@@ -389,8 +405,8 @@ class Nav extends StatefulWidget {
 
 class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
-  List<Widget> createWidgetOptions(
-      String branch, String reg, double width, double height, double size) {
+  List<Widget> createWidgetOptions(String branch, String reg, double width,
+      double height, double size, int index) {
     return [
       HomePage(
         height: height,
@@ -398,7 +414,7 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
         size: size,
         branch: branch,
         reg: reg,
-        index: _selectedIndex,
+        index: index,
       ),
       favorites(
         branch: branch,
@@ -407,11 +423,7 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
         height: height,
       ),
       MyAppq(
-        branch: branch,
-        height: height,
-        width: width,
-        size: size,
-      ),
+          branch: branch, height: height, width: width, size: size, reg: reg),
     ];
   }
 
@@ -419,6 +431,8 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
   void initState() {
     // TODO: implement initState
     super.initState();
+    downloadAllImages(
+        widget.branch, widget.reg, widget.height, widget.width, widget.size);
     _selectedIndex = widget.index;
     _onItemTap(_selectedIndex);
   }
@@ -454,7 +468,8 @@ class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
                       widget.reg,
                       widget.width,
                       widget.height,
-                      widget.size)[_selectedIndex]),
+                      widget.size,
+                      widget.index)[_selectedIndex]),
             ),
             Positioned(
               left: 0,

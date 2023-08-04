@@ -17,13 +17,22 @@ class updateCreator extends StatefulWidget {
   String heading;
   String link;
   String photoUrl;
+  String subMessage;
+  String branch;
+  final double size;
+  final double height;
+  final double width;
 
-  updateCreator({
-    this.NewsId = "",
-    this.link = '',
-    this.heading = "",
-    this.photoUrl = "",
-  });
+  updateCreator(
+      {this.NewsId = "",
+      this.link = '',
+      this.heading = "",
+      this.photoUrl = "",
+      this.subMessage = "",
+      required this.width,
+      required this.size,
+      required this.height,
+      required this.branch});
 
   @override
   State<updateCreator> createState() => _updateCreatorState();
@@ -31,14 +40,17 @@ class updateCreator extends StatefulWidget {
 
 class _updateCreatorState extends State<updateCreator> {
   final FirebaseStorage storage = FirebaseStorage.instance;
-
+  String Branch = "";
+  bool isBranch = false;
   final MessageController = TextEditingController();
+  final subMessageController = TextEditingController();
   final PhotoUrlController = TextEditingController();
   final LinkController = TextEditingController();
   bool _isImage = false;
   void AutoFill() async {
     MessageController.text = widget.heading;
     PhotoUrlController.text = widget.photoUrl;
+    subMessageController.text = widget.subMessage;
     LinkController.text = widget.link;
     if (widget.photoUrl.length > 3) {
       setState(() {
@@ -127,6 +139,38 @@ class _updateCreatorState extends State<updateCreator> {
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Heading',
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15, top: 8, bottom: 5),
+              child: Text(
+                "Description",
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, bottom: 3, right: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: TextFormField(
+                    //obscureText: true,
+                    controller: subMessageController,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Description',
                     ),
                   ),
                 ),
@@ -341,12 +385,41 @@ class _updateCreatorState extends State<updateCreator> {
                   );
                 },
               ),
-            SizedBox(
-              height: 20,
-            ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Spacer(),
+                InkWell(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(widget.size * 8),
+                      border: isBranch
+                          ? Border.all(color: Colors.green.withOpacity(1))
+                          : Border.all(color: Colors.white.withOpacity(0.3)),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          left: widget.width * 10,
+                          right: widget.width * 10,
+                          top: widget.height * 3,
+                          bottom: widget.height * 3),
+                      child: Text(
+                        "Branch",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: widget.size * 30),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      isBranch = !isBranch;
+                      isBranch ? Branch = widget.branch : Branch = "";
+                    });
+                    showToastText(Branch);
+                  },
+                ),
                 InkWell(
                   onTap: () {
                     Navigator.pop(context);
@@ -364,9 +437,6 @@ class _updateCreatorState extends State<updateCreator> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 15,
-                ),
                 InkWell(
                   onTap: () {
                     if (widget.NewsId.length > 3) {
@@ -382,6 +452,8 @@ class _updateCreatorState extends State<updateCreator> {
                       });
                     } else {
                       createHomeUpdate(
+                          branch: Branch,
+                          description: subMessageController.text,
                           heading: MessageController.text,
                           photoUrl: PhotoUrlController.text.isNotEmpty
                               ? PhotoUrlController.text
@@ -1057,7 +1129,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                         } catch (e) {
                           showToastText('Error deleting image: $e');
                         }
-                        PhotoUrlController.text = "";
+                        PhotoUrlController.text = " ";
                       },
                     ),
                   ],
@@ -1310,7 +1382,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                           "Heading": HeadingController.text.trim(),
                           "Description": DescriptionController.text.trim(),
                           "Date": getDate(),
-                          "Photo Url": PhotoUrlController.text.trim()
+                          "Photo Url": PhotoUrlController.text
                         });
                       } else {
                         FirebaseFirestore.instance
@@ -1322,7 +1394,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                           "Heading": HeadingController.text.trim(),
                           "Description": DescriptionController.text.trim(),
                           "Date": getDate(),
-                          "Photo Url": PhotoUrlController.text.trim()
+                          "Photo Url": PhotoUrlController.text
                         });
                       }
                     } else {
@@ -1332,7 +1404,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             regulation: "3-2",
                             heading: HeadingController.text.trim(),
                             description: DescriptionController.text.trim(),
-                            PhotoUrl: PhotoUrlController.text.trim(),
+                            PhotoUrl: PhotoUrlController.text,
                             Date: getDate());
                       } else {
                         createSubjects(
@@ -1340,7 +1412,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             heading: HeadingController.text.trim(),
                             description: DescriptionController.text.trim(),
                             date: getDate(),
-                            PhotoUrl: PhotoUrlController.text.trim(),
+                            PhotoUrl: PhotoUrlController.text,
                             regulation: "3-2");
                       }
                     }
@@ -2101,7 +2173,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                         "PDFLink": PDFUrlController.text.trim(),
                         "Description": DescriptionController.text.trim(),
                         "Date": getDate(),
-                        "PDFName": questionsController.text.trim()
+                        "questions": questionsController.text.trim()
                       });
                     }
                     Navigator.pop(context);

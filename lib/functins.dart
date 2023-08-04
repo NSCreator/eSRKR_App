@@ -26,21 +26,21 @@ Future<void> sendingMails(String urlIn) async {
 class Utils {
   static showSnackBar(String? text) {
     if (text == null) return;
-    final snackBar =
-        SnackBar(content: Text(text), backgroundColor: Colors.orange);
+
+    SnackBar(content: Text(text), backgroundColor: Colors.orange);
   }
 }
 
 double screenWidth(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
-  double screenWidth = mediaQuery.size.width / 400;
+  double screenWidth = mediaQuery.size.width;
 
   return screenWidth;
 }
 
 double screenHeight(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
-  double screenHeight = mediaQuery.size.height / 850;
+  double screenHeight = mediaQuery.size.height;
   return screenHeight;
 }
 
@@ -68,7 +68,12 @@ user0Id() {
   return user[0];
 }
 
-userId() {
+picText() {
+  var user = FirebaseAuth.instance.currentUser!.email!.split("@");
+  return user[0].substring(user[0].length - 3);
+}
+
+isUser() {
   var user = FirebaseAuth.instance.currentUser!.email!.split("@");
   return user[1] == "gmail.com";
 }
@@ -94,12 +99,20 @@ Future<void> LaunchUrl(String url) async {
 
 Future<void> updateToken() async {
   final token = await FirebaseMessaging.instance.getToken() ?? "";
-  await FirebaseFirestore.instance.collection("tokens").doc(fullUserId()).set({
-    "id": fullUserId(),
-    "token": token,
-  });
+  await FirebaseFirestore.instance
+      .collection("tokens")
+      .doc(fullUserId())
+      .set({"id": fullUserId(), "token": token, "branch": ""});
   NotificationService()
-      .showNotification(id: 1, title: "Message Token is Updated", body: null);
+      .showNotification(title: "Message Token is Updated", body: null);
+}
+
+void like(bool isAdd, String updateId) {
+  FirebaseFirestore.instance.collection("update").doc(updateId).update({
+    "likedBy": isAdd
+        ? FieldValue.arrayUnion([user0Id()])
+        : FieldValue.arrayRemove([user0Id()]),
+  });
 }
 
 download(String photoUrl, String path) async {
@@ -113,10 +126,14 @@ download(String photoUrl, String path) async {
     await newDirectory.create(recursive: true);
     final file = File('${newDirectory.path}/${name}');
     await file.writeAsBytes(response.bodyBytes);
-    showToastText(file.path);
   } else {
     final file = File('${newDirectory.path}/${name}');
     await file.writeAsBytes(response.bodyBytes);
-    showToastText(file.path);
   }
+  return true;
+}
+
+folderPath() async {
+  final directory = await getApplicationDocumentsDirectory();
+  return directory.path;
 }

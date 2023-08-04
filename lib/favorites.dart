@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'HomePage.dart';
 import 'SubPages.dart';
-import 'add subjects.dart';
 import 'functins.dart';
 
 class favorites extends StatefulWidget {
@@ -31,7 +31,7 @@ class _favoritesState extends State<favorites> {
     final directory = await getApplicationDocumentsDirectory();
 
     setState(() {
-      folderPath = '${directory.path}/';
+      folderPath = '${directory.path}';
     });
   }
 
@@ -310,6 +310,10 @@ class _favoritesState extends State<favorites> {
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           subjectUnitsData(
+                                                            width: widget.width,
+                                                            height:
+                                                                widget.height,
+                                                            size: widget.size,
                                                             branch: Favourite
                                                                 .branch,
                                                             ID: Favourite
@@ -617,6 +621,10 @@ class _favoritesState extends State<favorites> {
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           subjectUnitsData(
+                                                            width: widget.width,
+                                                            height:
+                                                                widget.height,
+                                                            size: widget.size,
                                                             branch: Favourite
                                                                 .branch,
                                                             ID: Favourite
@@ -703,416 +711,299 @@ class _favoritesState extends State<favorites> {
                                           fontWeight: FontWeight.w500),
                                     ),
                                   ),
-                                  Container(
-                                    height: widget.height * 130,
-                                    child: ListView.separated(
-                                      physics: BouncingScrollPhysics(),
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: Favourites.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        final Uri uri = Uri.parse(
-                                            Favourites[index].photoUrl);
-                                        final String fileName =
-                                            uri.pathSegments.last;
-                                        var name = fileName.split("/").last;
-                                        final file = File(
-                                            "${folderPath}/${widget.branch.toLowerCase()}_books/$name");
-                                        final Uri uri1 =
-                                            Uri.parse(Favourites[index].link);
-                                        final String fileName1 =
-                                            uri1.pathSegments.last;
-                                        var name1 = fileName1.split("/").last;
-                                        final file1 =
-                                            File("${folderPath}/pdfs/$name1");
-
-                                        return InkWell(
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                left: widget.width * 10),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        widget.size * 15),
-                                                color: Colors.black
-                                                    .withOpacity(0.3),
-                                                // border: Border.all(color: Colors.white),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              widget.size * 15),
-                                                      color: Colors.black
-                                                          .withOpacity(0.4),
-                                                      image: DecorationImage(
-                                                        image: FileImage(file),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                    height: widget.height * 130,
-                                                    width: widget.width * 90,
+                                  ListView.builder(
+                                    physics: BouncingScrollPhysics(),
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: Favourites.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      final Uri uri =
+                                          Uri.parse(Favourites[index].photoUrl);
+                                      final String fileName =
+                                          uri.pathSegments.last;
+                                      var name = fileName.split("/").last;
+                                      final file = File(
+                                          "${folderPath}/${widget.branch.toLowerCase()}_books/$name");
+                                      return InkWell(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: widget.width * 10),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          widget.size * 8),
+                                                  color: Colors.black
+                                                      .withOpacity(0.4),
+                                                  image: DecorationImage(
+                                                    image: FileImage(file),
+                                                    fit: BoxFit.cover,
                                                   ),
-                                                  Padding(
-                                                    padding: EdgeInsets.all(
-                                                        widget.size * 8.0),
-                                                    child: Container(
-                                                      width: widget.width * 140,
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Row(
-                                                              children: [
-                                                                Spacer(),
-                                                                Padding(
-                                                                  padding: EdgeInsets.only(
-                                                                      left: widget
-                                                                              .width *
-                                                                          10,
-                                                                      right:
-                                                                          widget.width *
-                                                                              2),
-                                                                  child:
-                                                                      InkWell(
-                                                                    child: Icon(
-                                                                      Icons
-                                                                          .highlight_remove_outlined,
-                                                                      color: Colors
-                                                                          .red,
-                                                                      size: widget
-                                                                              .size *
-                                                                          28,
-                                                                    ),
-                                                                    onTap: () {
-                                                                      showDialog(
-                                                                        context:
-                                                                            context,
-                                                                        builder:
-                                                                            (context) {
-                                                                          return Dialog(
-                                                                            shape:
-                                                                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(widget.size * 20)),
-                                                                            elevation:
-                                                                                16,
-                                                                            child:
-                                                                                Container(
-                                                                              decoration: BoxDecoration(
-                                                                                border: Border.all(color: Colors.tealAccent),
-                                                                                borderRadius: BorderRadius.circular(widget.size * 20),
-                                                                              ),
-                                                                              child: ListView(
-                                                                                shrinkWrap: true,
-                                                                                children: <Widget>[
-                                                                                  SizedBox(height: widget.height * 15),
-                                                                                  Padding(
-                                                                                    padding: EdgeInsets.only(left: widget.width * 15),
-                                                                                    child: Text(
-                                                                                      "Do you want Remove from Favourites",
-                                                                                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: widget.size * 18),
-                                                                                    ),
-                                                                                  ),
-                                                                                  SizedBox(
-                                                                                    height: widget.height * 5,
-                                                                                  ),
-                                                                                  Center(
-                                                                                    child: Row(
-                                                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                      children: [
-                                                                                        Spacer(),
-                                                                                        InkWell(
-                                                                                          child: Container(
-                                                                                            decoration: BoxDecoration(
-                                                                                              color: Colors.black26,
-                                                                                              border: Border.all(color: Colors.black),
-                                                                                              borderRadius: BorderRadius.circular(widget.size * 25),
-                                                                                            ),
-                                                                                            child: Padding(
-                                                                                              padding: EdgeInsets.only(left: widget.width * 15, right: widget.width * 15, top: widget.height * 5, bottom: widget.height * 5),
-                                                                                              child: Text("Back"),
-                                                                                            ),
-                                                                                          ),
-                                                                                          onTap: () {
-                                                                                            Navigator.pop(context);
-                                                                                          },
-                                                                                        ),
-                                                                                        SizedBox(
-                                                                                          width: widget.width * 10,
-                                                                                        ),
-                                                                                        InkWell(
-                                                                                          child: Container(
-                                                                                            decoration: BoxDecoration(
-                                                                                              color: Colors.red,
-                                                                                              border: Border.all(color: Colors.black),
-                                                                                              borderRadius: BorderRadius.circular(widget.size * 25),
-                                                                                            ),
-                                                                                            child: Padding(
-                                                                                              padding: EdgeInsets.only(left: widget.width * 15, right: widget.width * 15, top: widget.height * 5, bottom: widget.height * 5),
-                                                                                              child: Text(
-                                                                                                "Delete",
-                                                                                                style: TextStyle(color: Colors.white),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                          onTap: () {
-                                                                                            FirebaseFirestore.instance.collection('user').doc(FirebaseAuth.instance.currentUser!.email!).collection("FavouriteBooks").doc(Favourites[index].id).delete();
-                                                                                            Navigator.pop(context);
-                                                                                          },
-                                                                                        ),
-                                                                                        SizedBox(
-                                                                                          width: widget.width * 20,
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
-                                                                                  ),
-                                                                                  SizedBox(
-                                                                                    height: widget.height * 10,
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          );
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                )
-                                                              ],
+                                                ),
+                                                width: widget.width * 95,
+                                                height: 130,
+                                              ),
+                                              Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Spacer(),
+                                                        Padding(
+                                                          padding: EdgeInsets.only(
+                                                              left:
+                                                                  widget.width *
+                                                                      10,
+                                                              right:
+                                                                  widget.width *
+                                                                      2),
+                                                          child: InkWell(
+                                                            child: Icon(
+                                                              Icons
+                                                                  .highlight_remove_outlined,
+                                                              color: Colors.red,
+                                                              size:
+                                                                  widget.size *
+                                                                      28,
                                                             ),
-                                                            Text(
-                                                              Favourites[index]
-                                                                  .heading,
-                                                              maxLines: 2,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  fontSize:
-                                                                      widget.size *
-                                                                          16,
-                                                                  color: Colors
-                                                                      .orangeAccent),
-                                                            ),
-                                                            Text(
-                                                              Favourites[index]
-                                                                  .Author,
-                                                              maxLines: 1,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontSize:
-                                                                      widget.size *
-                                                                          13,
-                                                                  color: Colors
-                                                                      .lightBlueAccent),
-                                                            ),
-                                                            Text(
-                                                              Favourites[index]
-                                                                  .edition,
-                                                              maxLines: 1,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontSize:
-                                                                      widget.size *
-                                                                          13,
-                                                                  color: Colors
-                                                                      .white
-                                                                      .withOpacity(
-                                                                          0.7)),
-                                                            ),
-                                                            Text(
-                                                              Favourites[index]
-                                                                  .description,
-                                                              maxLines: 1,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w300,
-                                                                  fontSize:
-                                                                      widget.size *
-                                                                          13,
-                                                                  color: Colors
-                                                                      .yellowAccent),
-                                                            ),
-                                                            SizedBox(
-                                                              height: widget
-                                                                      .height *
-                                                                  1,
-                                                            ),
-                                                            if (file1
-                                                                .existsSync())
-                                                              InkWell(
-                                                                  child:
-                                                                      Container(
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(widget.size *
-                                                                              8),
-                                                                      color: Colors
-                                                                          .black
-                                                                          .withOpacity(
-                                                                              0.5),
-                                                                      border: Border.all(
-                                                                          color:
-                                                                              Colors.green),
-                                                                    ),
+                                                            onTap: () {
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) {
+                                                                  return Dialog(
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(widget.size *
+                                                                                20)),
+                                                                    elevation:
+                                                                        16,
                                                                     child:
-                                                                        Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          left: widget.width *
-                                                                              3,
-                                                                          right:
-                                                                              widget.width * 3),
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                Colors.tealAccent),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(widget.size *
+                                                                                20),
+                                                                      ),
                                                                       child:
-                                                                          Row(
-                                                                        children: [
-                                                                          Icon(
-                                                                            Icons.download_outlined,
-                                                                            color:
-                                                                                Colors.green,
+                                                                          ListView(
+                                                                        shrinkWrap:
+                                                                            true,
+                                                                        children: <Widget>[
+                                                                          SizedBox(
+                                                                              height: widget.height * 15),
+                                                                          Padding(
+                                                                            padding:
+                                                                                EdgeInsets.only(left: widget.width * 15),
+                                                                            child:
+                                                                                Text(
+                                                                              "Do you want Remove from Favourites",
+                                                                              style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: widget.size * 18),
+                                                                            ),
                                                                           ),
-                                                                          Text(
-                                                                            " & ",
-                                                                            style:
-                                                                                TextStyle(color: Colors.white, fontSize: widget.size * 20),
+                                                                          SizedBox(
+                                                                            height:
+                                                                                widget.height * 5,
                                                                           ),
-                                                                          Text(
-                                                                            "Open",
-                                                                            style:
-                                                                                TextStyle(color: Colors.white, fontSize: widget.size * 20),
+                                                                          Center(
+                                                                            child:
+                                                                                Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                                              children: [
+                                                                                Spacer(),
+                                                                                InkWell(
+                                                                                  child: Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: Colors.black26,
+                                                                                      border: Border.all(color: Colors.black),
+                                                                                      borderRadius: BorderRadius.circular(widget.size * 25),
+                                                                                    ),
+                                                                                    child: Padding(
+                                                                                      padding: EdgeInsets.only(left: widget.width * 15, right: widget.width * 15, top: widget.height * 5, bottom: widget.height * 5),
+                                                                                      child: Text("Back"),
+                                                                                    ),
+                                                                                  ),
+                                                                                  onTap: () {
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: widget.width * 10,
+                                                                                ),
+                                                                                InkWell(
+                                                                                  child: Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: Colors.red,
+                                                                                      border: Border.all(color: Colors.black),
+                                                                                      borderRadius: BorderRadius.circular(widget.size * 25),
+                                                                                    ),
+                                                                                    child: Padding(
+                                                                                      padding: EdgeInsets.only(left: widget.width * 15, right: widget.width * 15, top: widget.height * 5, bottom: widget.height * 5),
+                                                                                      child: Text(
+                                                                                        "Delete",
+                                                                                        style: TextStyle(color: Colors.white),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  onTap: () {
+                                                                                    FirebaseFirestore.instance.collection('user').doc(FirebaseAuth.instance.currentUser!.email!).collection("FavouriteBooks").doc(Favourites[index].id).delete();
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: widget.width * 20,
+                                                                                ),
+                                                                              ],
+                                                                            ),
                                                                           ),
-                                                                          Icon(
-                                                                            Icons.open_in_new,
-                                                                            color:
-                                                                                Colors.greenAccent,
-                                                                          )
+                                                                          SizedBox(
+                                                                            height:
+                                                                                widget.height * 10,
+                                                                          ),
                                                                         ],
                                                                       ),
                                                                     ),
-                                                                  ),
-                                                                  onTap: () {
-                                                                    Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                            builder: (context) =>
-                                                                                PdfViewerPage(pdfUrl: "${folderPath}/pdfs/$name1")));
-                                                                  })
-                                                            else
-                                                              InkWell(
-                                                                child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            widget.size *
-                                                                                8),
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            0.5),
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .white),
-                                                                  ),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        left: widget.width *
-                                                                            3,
-                                                                        right: widget.width *
-                                                                            3),
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                          Icons
-                                                                              .download_outlined,
-                                                                          color:
-                                                                              Colors.red,
-                                                                        ),
-                                                                        Text(
-                                                                          " & ",
-                                                                          style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 20),
-                                                                        ),
-                                                                        Text(
-                                                                          "Open",
-                                                                          style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 20),
-                                                                        ),
-                                                                        Icon(
-                                                                          Icons
-                                                                              .open_in_new,
-                                                                          color:
-                                                                              Colors.greenAccent,
-                                                                        )
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                onTap:
-                                                                    () async {
-                                                                  showToastText(
-                                                                      "Downloading");
-                                                                  await download(
-                                                                      Favourites[
-                                                                              index]
-                                                                          .link,
-                                                                      "pdfs");
-                                                                  setState(() {
-                                                                    showToastText(
-                                                                        "Downloaded");
-                                                                  });
+                                                                  );
                                                                 },
+                                                              );
+                                                            },
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius
+                                                            .horizontal(
+                                                                right: Radius
+                                                                    .circular(
+                                                                        10)),
+                                                        color: Colors.black
+                                                            .withOpacity(0.6),
+                                                        // border: Border.all(color: Colors.white),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          physics:
+                                                              BouncingScrollPhysics(),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                Favourites[
+                                                                        index]
+                                                                    .heading,
+                                                                maxLines: 2,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    fontSize:
+                                                                        widget.size *
+                                                                            16,
+                                                                    color: Colors
+                                                                        .orange),
+                                                              ),
+                                                              Text(
+                                                                Favourites[
+                                                                        index]
+                                                                    .Author,
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    fontSize:
+                                                                        widget.size *
+                                                                            13,
+                                                                    color: Colors
+                                                                        .blue),
+                                                              ),
+                                                              Text(
+                                                                Favourites[
+                                                                        index]
+                                                                    .edition,
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    fontSize:
+                                                                        widget.size *
+                                                                            13,
+                                                                    color: Colors
+                                                                        .lightBlueAccent),
+                                                              ),
+                                                              SizedBox(
+                                                                height: widget
+                                                                        .height *
+                                                                    5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  booksDownloadButton(
+                                                                    branch: widget
+                                                                        .branch,
+                                                                    width: widget
+                                                                        .width,
+                                                                    height: widget
+                                                                        .height,
+                                                                    size: widget
+                                                                        .size,
+                                                                    path:
+                                                                        folderPath,
+                                                                    pdfLink: Favourites[
+                                                                            index]
+                                                                        .link,
+                                                                  ),
+                                                                ],
                                                               )
-                                                          ],
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: widget.width * 2,
-                                                  )
-                                                ],
+                                                  ],
+                                                ),
                                               ),
-                                            ),
+                                              SizedBox(
+                                                width: widget.width * 20,
+                                              )
+                                            ],
                                           ),
-                                        );
-                                      },
-                                      shrinkWrap: true,
-                                      separatorBuilder: (context, index) =>
-                                          SizedBox(
-                                        width: widget.width * 9,
-                                      ),
-                                    ),
+                                        ),
+                                        onTap: () async {},
+                                      );
+                                    },
+                                    shrinkWrap: true,
                                   ),
                                 ],
                               );

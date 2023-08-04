@@ -3,13 +3,14 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'functins.dart';
+import 'main.dart';
 
 _ExternalLaunchUrl(String url) async {
   final Uri urlIn = Uri.parse(url);
@@ -23,9 +24,14 @@ class notifications extends StatefulWidget {
   final double size;
   final double height;
   final double width;
-  const notifications({Key? key, required this.branch,      required this.width,
-    required this.size,
-    required this.height}) : super(key: key);
+
+  const notifications(
+      {Key? key,
+      required this.branch,
+      required this.width,
+      required this.size,
+      required this.height})
+      : super(key: key);
 
   @override
   State<notifications> createState() => _notificationsState();
@@ -54,7 +60,6 @@ class _notificationsState extends State<notifications>
 
   @override
   void dispose() {
-    _tabController.dispose();
     emailController.dispose();
     super.dispose();
   }
@@ -95,53 +100,57 @@ class _notificationsState extends State<notifications>
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Padding(
-                  padding:  EdgeInsets.symmetric(vertical: widget.width *10),
+                  padding: EdgeInsets.symmetric(vertical: widget.width * 10),
                   child: Text(
                     "Notifications",
-                    style: TextStyle(color: Colors.white70, fontSize:widget.size * 30),
+                    style: TextStyle(
+                        color: Colors.white70, fontSize: widget.size * 30),
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(widget.size *10)),
-                  child: Padding(
-                    padding:  EdgeInsets.all(widget.size *8.0),
-                    child: Text(
-                      "Custom +",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: widget.size *20,
-                          fontWeight: FontWeight.w600),
+                if (isUser())
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(widget.size * 10)),
+                    child: Padding(
+                      padding: EdgeInsets.all(widget.size * 8.0),
+                      child: Text(
+                        "Custom +",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: widget.size * 20,
+                            fontWeight: FontWeight.w600),
+                      ),
                     ),
-                  ),
-                )
+                  )
               ],
             ),
             Container(
-              height: widget.height *35,
+              height: widget.height * 35,
               child: Center(
                 child: TabBar(
                   indicator: BoxDecoration(
-                      borderRadius: BorderRadius.circular(widget.size *12),
+                      borderRadius: BorderRadius.circular(widget.size * 12),
                       color: Colors.orange),
                   controller: _tabController,
                   isScrollable: true,
-                  labelPadding: EdgeInsets.symmetric(horizontal: widget.width *30),
+                  labelPadding:
+                      EdgeInsets.symmetric(horizontal: widget.width * 30),
                   tabs: [
                     Tab(
                       child: Text(
                         "All",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: widget.size *25,
+                          fontSize: widget.size * 25,
                         ),
                       ),
                     ),
                     Tab(
                       child: Text(
                         "For You",
-                        style: TextStyle(color: Colors.white, fontSize: widget.size *25),
+                        style: TextStyle(
+                            color: Colors.white, fontSize: widget.size * 25),
                       ),
                     )
                   ],
@@ -149,7 +158,7 @@ class _notificationsState extends State<notifications>
               ),
             ),
             SizedBox(
-              height: widget.height *10,
+              height: widget.height * 10,
             ),
             Expanded(
               child: TabBarView(
@@ -188,9 +197,13 @@ class _notificationsState extends State<notifications>
                                         padding:
                                             Notification.Name == fullUserId()
                                                 ? EdgeInsets.only(
-                                                    left: widget.width *45, right:widget.width * 5, top:widget.height * 5)
+                                                    left: widget.width * 45,
+                                                    right: widget.width * 5,
+                                                    top: widget.height * 5)
                                                 : EdgeInsets.only(
-                                                    right: widget.width *45, left: widget.width *5, top: widget.height *5),
+                                                    right: widget.width * 45,
+                                                    left: widget.width * 5,
+                                                    top: widget.height * 5),
                                         child: Container(
                                           width: double.infinity,
                                           alignment: Alignment.center,
@@ -199,14 +212,15 @@ class _notificationsState extends State<notifications>
                                               ? BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(widget.size *25),
-                                                    bottomLeft:
-                                                        Radius.circular(widget.size *25),
-                                                    topRight:
-                                                        Radius.circular(widget.size *25),
+                                                    topLeft: Radius.circular(
+                                                        widget.size * 25),
+                                                    bottomLeft: Radius.circular(
+                                                        widget.size * 25),
+                                                    topRight: Radius.circular(
+                                                        widget.size * 25),
                                                     bottomRight:
-                                                        Radius.circular(widget.size *5),
+                                                        Radius.circular(
+                                                            widget.size * 5),
                                                   ),
                                                   color: Colors.black
                                                       .withOpacity(0.8),
@@ -217,14 +231,15 @@ class _notificationsState extends State<notifications>
                                               : BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(widget.size *25),
-                                                    bottomLeft:
-                                                        Radius.circular(widget.size *5),
-                                                    topRight:
-                                                        Radius.circular(widget.size *25),
+                                                    topLeft: Radius.circular(
+                                                        widget.size * 25),
+                                                    bottomLeft: Radius.circular(
+                                                        widget.size * 5),
+                                                    topRight: Radius.circular(
+                                                        widget.size * 25),
                                                     bottomRight:
-                                                        Radius.circular(widget.size *25),
+                                                        Radius.circular(
+                                                            widget.size * 25),
                                                   ),
                                                   color: Colors.black
                                                       .withOpacity(0.5),
@@ -238,8 +253,8 @@ class _notificationsState extends State<notifications>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                               SizedBox(
-                                                width:widget.width * 2,
+                                              SizedBox(
+                                                width: widget.width * 2,
                                               ),
                                               Expanded(
                                                   child: Column(
@@ -252,26 +267,33 @@ class _notificationsState extends State<notifications>
                                                     children: [
                                                       Text(
                                                         "       @${Notification.Name}",
-                                                        style:  TextStyle(
-                                                          fontSize:widget.size * 12.0,
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              widget.size *
+                                                                  12.0,
                                                           color: Colors.white54,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                         ),
                                                       ),
-                                                       Spacer(),
+                                                      Spacer(),
                                                       Padding(
                                                         padding:
-                                                             EdgeInsets
-                                                                    .fromLTRB(
-                                                                 widget.size *8, widget.size *1, widget.size *25, widget.size *1),
+                                                            EdgeInsets.fromLTRB(
+                                                                widget.size * 8,
+                                                                widget.size * 1,
+                                                                widget.size *
+                                                                    25,
+                                                                widget.size *
+                                                                    1),
                                                         child: Column(
                                                           children: [
                                                             Text(
                                                               '${Notification.Time}',
-                                                              style:
-                                                                   TextStyle(
-                                                                fontSize: widget.size *9.0,
+                                                              style: TextStyle(
+                                                                fontSize: widget
+                                                                        .size *
+                                                                    9.0,
                                                                 color: Colors
                                                                     .white70,
                                                                 //   fontWeight: FontWeight.bold,
@@ -283,12 +305,11 @@ class _notificationsState extends State<notifications>
                                                     ],
                                                   ),
                                                   Padding(
-                                                    padding:
-                                                         EdgeInsets.only(
-                                                            left:widget.size * 8,
-                                                            bottom: widget.size *6,
-                                                            right: widget.size *3,
-                                                            top:widget.size * 3),
+                                                    padding: EdgeInsets.only(
+                                                        left: widget.size * 8,
+                                                        bottom: widget.size * 6,
+                                                        right: widget.size * 3,
+                                                        top: widget.size * 3),
                                                     child: NotificationText(
                                                         Notification
                                                             .description),
@@ -296,9 +317,8 @@ class _notificationsState extends State<notifications>
                                                   if (Notification.Url.length >
                                                       3)
                                                     Padding(
-                                                      padding:
-                                                           EdgeInsets.all(
-                                                               widget.size *3.0),
+                                                      padding: EdgeInsets.all(
+                                                          widget.size * 3.0),
                                                       child: Image.network(
                                                           Notification.Url),
                                                     )
@@ -309,8 +329,8 @@ class _notificationsState extends State<notifications>
                                         ),
                                       ),
                                       onLongPress: () {
-                                        if (Notification.Name == userId() ||
-                                            userDomain() == "gmail.com") {
+                                        if (Notification.Name == fullUserId() ||
+                                            isUser()) {
                                           final deleteFlashNews =
                                               FirebaseFirestore.instance
                                                   .collection(widget.branch)
@@ -328,8 +348,8 @@ class _notificationsState extends State<notifications>
                                     );
                                   },
                                   separatorBuilder: (context, index) =>
-                                       SizedBox(
-                                        height: widget.height *1,
+                                      SizedBox(
+                                        height: widget.height * 1,
                                       ));
                             }
                         }
@@ -365,9 +385,11 @@ class _notificationsState extends State<notifications>
                                         padding:
                                             Notification.Name == fullUserId()
                                                 ? EdgeInsets.only(
-                                                    left: widget.size *45, right:widget.size * 5)
+                                                    left: widget.size * 45,
+                                                    right: widget.size * 5)
                                                 : EdgeInsets.only(
-                                                    right:widget.size * 45, left: widget.size *5),
+                                                    right: widget.size * 45,
+                                                    left: widget.size * 5),
                                         child: Container(
                                           width: double.infinity,
                                           alignment: Alignment.center,
@@ -376,14 +398,15 @@ class _notificationsState extends State<notifications>
                                               ? BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(widget.size *25),
-                                                    bottomLeft:
-                                                        Radius.circular(widget.size *25),
-                                                    topRight:
-                                                        Radius.circular(widget.size *25),
+                                                    topLeft: Radius.circular(
+                                                        widget.size * 25),
+                                                    bottomLeft: Radius.circular(
+                                                        widget.size * 25),
+                                                    topRight: Radius.circular(
+                                                        widget.size * 25),
                                                     bottomRight:
-                                                        Radius.circular(widget.size *5),
+                                                        Radius.circular(
+                                                            widget.size * 5),
                                                   ),
                                                   color: Colors.black
                                                       .withOpacity(0.8),
@@ -394,14 +417,15 @@ class _notificationsState extends State<notifications>
                                               : BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(widget.size *25),
-                                                    bottomLeft:
-                                                        Radius.circular(widget.size *5),
-                                                    topRight:
-                                                        Radius.circular(widget.size *25),
+                                                    topLeft: Radius.circular(
+                                                        widget.size * 25),
+                                                    bottomLeft: Radius.circular(
+                                                        widget.size * 5),
+                                                    topRight: Radius.circular(
+                                                        widget.size * 25),
                                                     bottomRight:
-                                                        Radius.circular(widget.size *25),
+                                                        Radius.circular(
+                                                            widget.size * 25),
                                                   ),
                                                   color: Colors.black
                                                       .withOpacity(0.5),
@@ -415,8 +439,8 @@ class _notificationsState extends State<notifications>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                               SizedBox(
-                                                width: widget.width *2,
+                                              SizedBox(
+                                                width: widget.width * 2,
                                               ),
                                               Expanded(
                                                   child: Column(
@@ -429,26 +453,33 @@ class _notificationsState extends State<notifications>
                                                     children: [
                                                       Text(
                                                         "       @${Notification.Name}",
-                                                        style:  TextStyle(
-                                                          fontSize: widget.size *12.0,
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              widget.size *
+                                                                  12.0,
                                                           color: Colors.white54,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                         ),
                                                       ),
-                                                       Spacer(),
+                                                      Spacer(),
                                                       Padding(
                                                         padding:
-                                                             EdgeInsets
-                                                                    .fromLTRB(
-                                                                 widget.size *8,widget.size * 1, widget.size *25,widget.size * 1),
+                                                            EdgeInsets.fromLTRB(
+                                                                widget.size * 8,
+                                                                widget.size * 1,
+                                                                widget.size *
+                                                                    25,
+                                                                widget.size *
+                                                                    1),
                                                         child: Column(
                                                           children: [
                                                             Text(
                                                               '${Notification.Time}',
-                                                              style:
-                                                                   TextStyle(
-                                                                fontSize: widget.size *9.0,
+                                                              style: TextStyle(
+                                                                fontSize: widget
+                                                                        .size *
+                                                                    9.0,
                                                                 color: Colors
                                                                     .white70,
                                                                 //   fontWeight: FontWeight.bold,
@@ -464,12 +495,13 @@ class _notificationsState extends State<notifications>
                                                           .first ==
                                                       "Forgot Password ")
                                                     Padding(
-                                                      padding:
-                                                           EdgeInsets.only(
-                                                              left: widget.size *8,
-                                                              bottom:widget.size * 6,
-                                                              right:widget.size * 3,
-                                                              top:widget.size * 3),
+                                                      padding: EdgeInsets.only(
+                                                          left: widget.size * 8,
+                                                          bottom:
+                                                              widget.size * 6,
+                                                          right:
+                                                              widget.size * 3,
+                                                          top: widget.size * 3),
                                                       child: Text(
                                                         Notification.description
                                                             .split("@")
@@ -481,22 +513,22 @@ class _notificationsState extends State<notifications>
                                                     )
                                                   else
                                                     Padding(
-                                                      padding:
-                                                           EdgeInsets.only(
-                                                              left: widget.size *8,
-                                                              bottom:widget.size * 6,
-                                                              right: widget.size *3,
-                                                              top:widget.size * 3),
+                                                      padding: EdgeInsets.only(
+                                                          left: widget.size * 8,
+                                                          bottom:
+                                                              widget.size * 6,
+                                                          right:
+                                                              widget.size * 3,
+                                                          top: widget.size * 3),
                                                       child: NotificationText(
                                                           Notification
                                                               .description),
                                                     ),
                                                   if (Notification.Url.length >
-                                                      3)
+                                                      10)
                                                     Padding(
-                                                      padding:
-                                                           EdgeInsets.all(
-                                                              widget.size *3.0),
+                                                      padding: EdgeInsets.all(
+                                                          widget.size * 3.0),
                                                       child: Image.network(
                                                           Notification.Url),
                                                     )
@@ -507,13 +539,30 @@ class _notificationsState extends State<notifications>
                                         ),
                                       ),
                                       onLongPress: () {
+                                        if (Notification.Name == fullUserId() ||
+                                            isUser()) {
+                                          final deleteFlashNews =
+                                              FirebaseFirestore.instance
+                                                  .collection("user")
+                                                  .doc(fullUserId())
+                                                  .collection("Notification")
+                                                  .doc(Notification.id);
+                                          deleteFlashNews.delete();
+                                          showToastText(
+                                              "Your Message has been Deleted");
+                                        } else {
+                                          showToastText(
+                                              "You are not message user to delete");
+                                        }
+                                      },
+                                      onDoubleTap: () {
                                         onChage(Notification.Name);
                                       },
                                     );
                                   },
                                   separatorBuilder: (context, index) =>
-                                       SizedBox(
-                                        height: widget.height *1,
+                                      SizedBox(
+                                        height: widget.height * 1,
                                       ));
                             }
                         }
@@ -532,16 +581,6 @@ class _notificationsState extends State<notifications>
           ]),
         ));
   }
-
-  userId() {
-    var user = FirebaseAuth.instance.currentUser!.email!.split("@");
-    return user[0];
-  }
-
-  userDomain() {
-    var user = FirebaseAuth.instance.currentUser!.email!.split("@");
-    return user[1];
-  }
 }
 
 class searchBar extends StatefulWidget {
@@ -551,14 +590,15 @@ class searchBar extends StatefulWidget {
   final double size;
   final double height;
   final double width;
+
   const searchBar(
       {Key? key,
       required this.tabController,
       required this.user,
       required this.branch,
-        required this.width,
-        required this.size,
-        required this.height})
+      required this.width,
+      required this.size,
+      required this.height})
       : super(key: key);
 
   @override
@@ -566,7 +606,7 @@ class searchBar extends StatefulWidget {
 }
 
 class _searchBarState extends State<searchBar> {
-  late TextEditingController emailController = TextEditingController();
+  late TextEditingController emailController;
   final TextEditingController bodyController = TextEditingController();
   late TabController _tabController;
 
@@ -594,12 +634,17 @@ class _searchBarState extends State<searchBar> {
   @override
   void dispose() {
     _tabController.removeListener(_handleTabChange);
-    emailController.removeListener(_setUser);
-    _tabController.dispose();
-    emailController.dispose();
-    bodyController.dispose();
     super.dispose();
   }
+  // @override
+  // void dispose() {
+  //   _tabController.removeListener(_handleTabChange);
+  //   emailController.removeListener(_setUser);
+  //   _tabController.dispose();
+  //   emailController.dispose();
+  //   bodyController.dispose();
+  //   super.dispose();
+  // }
 
   bool isExp = false;
   late String Url = "";
@@ -652,73 +697,82 @@ class _searchBarState extends State<searchBar> {
               Flexible(
                   flex: 4,
                   //fit: FlexFit.tight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: InkWell(
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.white.withOpacity(0.1),
-                          image: DecorationImage(
-                              image: NetworkImage(isExp ? Url : ""),
-                              fit: BoxFit.fill),
-                          border:
-                              Border.all(color: Colors.white.withOpacity(0.1)),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            AspectRatio(
-                              aspectRatio: isExp ? 16 / 9 : 4 / 1,
-                              child: !isExp
-                                  ? InkWell(
-                                      child: Center(
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "Upload Photo",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16),
+                  child: isUser()
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: InkWell(
+                            child: AnimatedContainer(
+                              duration: Duration(milliseconds: 300),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white.withOpacity(0.1),
+                                image: DecorationImage(
+                                    image: NetworkImage(isExp
+                                        ? Url
+                                        : "https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/old-black-background-grunge-texture-dark-wallpaper-blackboard-chalkboard-room-wall_1258-28312.avif?alt=media&token=7435f44c-7a51-4000-9b90-bf33e008f75d"),
+                                    fit: BoxFit.fill),
+                                border: Border.all(
+                                    color: Colors.white.withOpacity(0.1)),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  AspectRatio(
+                                    aspectRatio: isExp ? 16 / 9 : 4 / 1,
+                                    child: !isExp
+                                        ? InkWell(
+                                            child: Center(
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "Upload Photo",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 16),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 3,
+                                                  ),
+                                                  Icon(
+                                                    Icons.upload,
+                                                    color: Colors.blue,
+                                                  )
+                                                ],
+                                              ),
                                             ),
-                                            SizedBox(
-                                              width: 3,
-                                            ),
-                                            Icon(
-                                              Icons.upload,
-                                              color: Colors.blue,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () async {
-                                        final pickedFile = await ImagePicker()
-                                            .pickImage(
-                                                source: ImageSource.gallery);
-                                        final Reference ref = storage.ref().child(
-                                            'notification/${fullUserId()}/${pickedFile!.path.split("/").last}');
-                                        final TaskSnapshot task = await ref
-                                            .putFile(File(pickedFile.path));
-                                        Url = await task.ref.getDownloadURL();
-                                        setState(() {
-                                          Url;
-                                        });
-                                        isExp = true;
-                                      },
-                                    )
-                                  : null,
+                                            onTap: () async {
+                                              final pickedFile =
+                                                  await ImagePicker().pickImage(
+                                                      source:
+                                                          ImageSource.gallery);
+                                              final Reference ref = storage
+                                                  .ref()
+                                                  .child(
+                                                      'notification/${fullUserId()}/${pickedFile!.path.split("/").last}');
+                                              final TaskSnapshot task =
+                                                  await ref.putFile(
+                                                      File(pickedFile.path));
+                                              Url = await task.ref
+                                                  .getDownloadURL();
+                                              setState(() {
+                                                Url;
+                                              });
+                                              isExp = true;
+                                            },
+                                          )
+                                        : Container(),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ))
+                          ),
+                        )
+                      : Container())
             ],
           ),
           Row(
@@ -798,6 +852,8 @@ class _searchBarState extends State<searchBar> {
                               bodyController.text,
                               Url);
                         }
+                        emailController.clear();
+                        bodyController.clear();
                       },
                     ),
                   ))
@@ -914,7 +970,7 @@ void SendMessage(String title, String message, String branch) async {
         }
         count++;
         NotificationService().showNotification(
-            id: 0,
+            id: 1,
             title: "Notification :$title",
             body: "Send to $count members");
       }
@@ -936,7 +992,7 @@ void SendMessageInBackground(String branch, String message, String url) async {
 
     if (querySnapshot.docs.isNotEmpty) {
       final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-      if (userId()) {
+      if (isUser()) {
         if (branch.isNotEmpty) {
           FirebaseFirestore.instance
               .collection(branch)
@@ -988,10 +1044,47 @@ void SendMessageInBackground(String branch, String message, String url) async {
           }
 
           NotificationService().showNotification(
-              id: 0,
+              id: 1,
               title: "Notification Update",
               body: "Send to $count members");
         }
+      } else {
+        FirebaseFirestore.instance
+            .collection(branch)
+            .doc("Notification")
+            .collection("AllNotification")
+            .doc(getID())
+            .set({
+          "id": getID(),
+          "Name": "${fullUserId()}",
+          "Time": getDate(),
+          "Description": message,
+          "Link": url
+        });
+        FirebaseFirestore.instance
+            .collection("tokens")
+            .doc(
+                "sujithnimmala03@gmail.com") // Replace "documentId" with the ID of the document you want to retrieve
+            .get()
+            .then((DocumentSnapshot snapshot) {
+          if (snapshot.exists) {
+            var data = snapshot.data();
+            if (data != null && data is Map<String, dynamic>) {
+              // Access the dictionary values
+              String value = data['token'];
+
+              pushNotificationsSpecificDevice(
+                title: "Alate Notification (All)",
+                body: message,
+                token: value,
+              );
+            }
+          } else {
+            print("Document does not exist.");
+          }
+        }).catchError((error) {
+          print("An error occurred while retrieving data: $error");
+        });
       }
     } else {
       print('No documents found');
@@ -1031,9 +1124,11 @@ class NotificationService {
   }
 
   Future showNotification(
-      {int id = 1, String? title, String? body, String? payLoad}) async {
-    return notificationsPlugin.show(
-        id, title, body, await notificationDetails());
+      {int id = 0, String? title, String? body, String? payLoad}) async {
+    final String notificationId = UniqueKey().toString();
+    showToastText("${notificationId}");
+    return notificationsPlugin.show(id > 0 ? id : notificationId.hashCode,
+        title, body, await notificationDetails());
   }
 }
 
@@ -1077,23 +1172,309 @@ class NotificationsConvertor {
           Time: json["Time"]);
 }
 
-Future createNotifications(
-    {required String User,
-    required String description,
-    required String Url,
-    required String Time}) async {
-  final docflash = FirebaseFirestore.instance
-      .collection("ECE")
-      .doc("Notification")
-      .collection("AllNotification")
-      .doc();
-  final flash = NotificationsConvertor(
-    id: docflash.id,
-    Time: Time,
-    Name: User,
-    Url: Url,
-    description: description,
+// downloadAllImages(
+//     String branch, String reg, double height, double width, double size) async {
+//   int count = 0;
+//   final directory = await getApplicationDocumentsDirectory();
+//   String folderPath = directory.path;
+//
+//   final CollectionReference subjects = FirebaseFirestore.instance
+//       .collection(branch)
+//       .doc("Subjects")
+//       .collection("Subjects");
+//   try {
+//     final QuerySnapshot querySnapshot = await subjects.get();
+//     if (querySnapshot.docs.isNotEmpty) {
+//       final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+//
+//       for (final document in documents) {
+//         final data = document.data() as Map<String, dynamic>;
+//         if (data["Photo Url"].toString().isNotEmpty) {
+//           final Uri uri = Uri.parse(data["Photo Url"]);
+//           final String fileName = uri.pathSegments.last;
+//           var name = fileName.split("/").last;
+//           final file = await File(
+//               "${folderPath}/${branch.toLowerCase()}_subjects/$name");
+//           if (!file.existsSync()) {
+//             await download(
+//                 data["Photo Url"], "${branch.toLowerCase()}_subjects");
+//             count++;
+//           }
+//         }
+//       }
+//     } else {
+//       print('No documents found');
+//     }
+//   } catch (e) {
+//     print('Error: $e');
+//   }
+//
+//   final CollectionReference labSubjects = FirebaseFirestore.instance
+//       .collection(branch)
+//       .doc("LabSubjects")
+//       .collection("LabSubjects");
+//
+//   try {
+//     final QuerySnapshot querySnapshot = await labSubjects.get();
+//     if (querySnapshot.docs.isNotEmpty) {
+//       final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+//       for (final document in documents) {
+//         final data = document.data() as Map<String, dynamic>;
+//         if (data["Photo Url"].toString().isNotEmpty) {
+//           final Uri uri = Uri.parse(data["Photo Url"]);
+//           final String fileName = uri.pathSegments.last;
+//           var name = fileName.split("/").last;
+//           final file = await File(
+//               "${folderPath}/${branch.toLowerCase()}_labsubjects/$name");
+//           if (!file.existsSync()) {
+//             await download(
+//                 data["Photo Url"], "${branch.toLowerCase()}_labsubjects");
+//             count++;
+//           }
+//         }
+//       }
+//     } else {
+//       print('No documents found');
+//     }
+//   } catch (e) {
+//     print('Error: $e');
+//   }
+//   final CollectionReference books = FirebaseFirestore.instance
+//       .collection(branch)
+//       .doc("Books")
+//       .collection("CoreBooks");
+//   try {
+//     final QuerySnapshot querySnapshot = await books.get();
+//     if (querySnapshot.docs.isNotEmpty) {
+//       final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+//       for (final document in documents) {
+//         final data = document.data() as Map<String, dynamic>;
+//         if (data["Photo Url"].toString().isNotEmpty) {
+//           final Uri uri = Uri.parse(data["Photo Url"]);
+//           final String fileName = uri.pathSegments.last;
+//           var name = fileName.split("/").last;
+//           final file =
+//               await File("${folderPath}/${branch.toLowerCase()}_books/$name");
+//           if (!file.existsSync()) {
+//             await download(data["Photo Url"], "${branch.toLowerCase()}_books");
+//             count++;
+//           }
+//         }
+//       }
+//     } else {
+//       print('No documents found');
+//     }
+//   } catch (e) {
+//     print('Error: $e');
+//   }
+//   if (count > 0) {
+//     NotificationService().showNotification(
+//         id: 1, title: "$count images are downloaded", body: null);
+//     navigatorKey.currentState?.pushAndRemoveUntil(
+//       MaterialPageRoute(
+//           builder: (context) => Nav(
+//               branch: branch,
+//               reg: reg,
+//               height: height,
+//               width: width,
+//               size: size)), // Replace MyApp with your root widget
+//       (route) => false,
+//     );
+//   }
+//   return true;
+// }
+
+Future<void> downloadAllImages(
+    String branch, String reg, double height, double width, double size) async {
+  int count = 0;
+  final directory = await getApplicationDocumentsDirectory();
+  String folderPath = directory.path;
+
+  final CollectionReference updates =
+      FirebaseFirestore.instance.collection("update");
+
+  try {
+    final QuerySnapshot querySnapshot = await updates.get();
+    if (querySnapshot.docs.isNotEmpty) {
+      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+
+      for (final document in documents) {
+        final data = document.data() as Map<String, dynamic>;
+        if (data["photoUrl"].length > 3) {
+          final Uri uri = Uri.parse(data["photoUrl"]);
+          final String fileName = uri.pathSegments.last;
+          var name = fileName.split("/").last;
+          final file = await File("${folderPath}/updates/$name");
+          if (!file.existsSync()) {
+            await download(data["photoUrl"], "updates");
+            count++;
+          }
+        }
+      }
+    } else {
+      print('No documents found');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+
+  final CollectionReference News = FirebaseFirestore.instance
+      .collection(branch)
+      .doc("${branch}News")
+      .collection("${branch}News");
+
+  try {
+    final QuerySnapshot querySnapshot = await News.get();
+    if (querySnapshot.docs.isNotEmpty) {
+      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+
+      for (final document in documents) {
+        final data = document.data() as Map<String, dynamic>;
+        if (data["Photo Url"].length > 3) {
+          final Uri uri = Uri.parse(data["Photo Url"]);
+          final String fileName = uri.pathSegments.last;
+          var name = fileName.split("/").last;
+          final file =
+              await File("${folderPath}/${branch.toLowerCase()}_news/$name");
+          if (!file.existsSync()) {
+            await download(data["Photo Url"], "${branch.toLowerCase()}_news");
+            count++;
+          }
+        }
+      }
+    } else {
+      print('No documents found');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+  final CollectionReference subjects = FirebaseFirestore.instance
+      .collection(branch)
+      .doc("Subjects")
+      .collection("Subjects");
+
+  try {
+    final QuerySnapshot querySnapshot = await subjects.get();
+    if (querySnapshot.docs.isNotEmpty) {
+      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+
+      for (final document in documents) {
+        final data = document.data() as Map<String, dynamic>;
+        if (data["Photo Url"].length > 3) {
+          final Uri uri = Uri.parse(data["Photo Url"]);
+          final String fileName = uri.pathSegments.last;
+          var name = fileName.split("/").last;
+          final file = await File(
+              "${folderPath}/${branch.toLowerCase()}_subjects/$name");
+          if (!file.existsSync()) {
+            await download(
+                data["Photo Url"], "${branch.toLowerCase()}_subjects");
+            count++;
+          }
+        }
+      }
+    } else {
+      print('No documents found');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+
+  final CollectionReference labSubjects = FirebaseFirestore.instance
+      .collection(branch)
+      .doc("LabSubjects")
+      .collection("LabSubjects");
+
+  try {
+    final QuerySnapshot querySnapshot = await labSubjects.get();
+    if (querySnapshot.docs.isNotEmpty) {
+      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+      for (final document in documents) {
+        final data = document.data() as Map<String, dynamic>;
+        if (data["Photo Url"].length > 3) {
+          final Uri uri = Uri.parse(data["Photo Url"]);
+          final String fileName = uri.pathSegments.last;
+          var name = fileName.split("/").last;
+          final file = await File(
+              "${folderPath}/${branch.toLowerCase()}_labsubjects/$name");
+          if (!file.existsSync()) {
+            await download(
+                data["Photo Url"], "${branch.toLowerCase()}_labsubjects");
+            count++;
+          }
+        }
+      }
+    } else {
+      print('No documents found');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+
+  final CollectionReference books = FirebaseFirestore.instance
+      .collection(branch)
+      .doc("Books")
+      .collection("CoreBooks");
+
+  try {
+    final QuerySnapshot querySnapshot = await books.get();
+    if (querySnapshot.docs.isNotEmpty) {
+      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+      for (final document in documents) {
+        final data = document.data() as Map<String, dynamic>;
+        if (data["Photo Url"].length > 3) {
+          final Uri uri = Uri.parse(data["Photo Url"]);
+          final String fileName = uri.pathSegments.last;
+          var name = fileName.split("/").last;
+          final file =
+              await File("${folderPath}/${branch.toLowerCase()}_books/$name");
+          if (!file.existsSync()) {
+            await download(data["Photo Url"], "${branch.toLowerCase()}_books");
+            count++;
+          }
+        }
+      }
+    } else {
+      print('No documents found');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+
+  if (count > 0) {
+    showNotification(count);
+    navigatorKey.currentState?.pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => Nav(
+          branch: branch,
+          reg: reg,
+          height: height,
+          width: width,
+          size: size,
+        ),
+      ),
+      (route) => false,
+    );
+  }
+}
+
+void showNotification(int count) {
+  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+      AndroidNotificationDetails(
+    'your_channel_id',
+    'your_channel_name',
+    importance: Importance.max,
+    priority: Priority.high,
+    showWhen: false,
   );
-  final json = flash.toJson();
-  await docflash.set(json);
+  const NotificationDetails platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+
+  flutterLocalNotificationsPlugin.show(
+    1,
+    '$count images downloaded',
+    null,
+    platformChannelSpecifics,
+  );
 }

@@ -37,8 +37,10 @@ class _SRKRPageState extends State<SRKRPage> {
       appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: const Text('SRKR Web (Beta)')),
-      body: WebViewWidget(
-        controller: controller,
+      body: SafeArea(
+        child: WebViewWidget(
+          controller: controller,
+        ),
       ),
     );
   }
