@@ -11,9 +11,9 @@ dependencies:
   cupertino_icons: ^1.0.5
   firebase_storage: ^11.2.5
   url_launcher: ^6.1.12
-  http: ^1.1.0
+  http: ^0.13.0
   fluttertoast: ^8.2.2
-  google_mobile_ads: ^3.0.0
+#  google_mobile_ads: ^3.0.0
   carousel_slider: ^4.2.1
   firebase_core: ^2.15.0
   cloud_firestore: ^4.8.4

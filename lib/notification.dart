@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:srkr_study_app/HomePage.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -1272,12 +1273,12 @@ class NotificationsConvertor {
 //         id: 1, title: "$count images are downloaded", body: null);
 //     navigatorKey.currentState?.pushAndRemoveUntil(
 //       MaterialPageRoute(
-//           builder: (context) => Nav(
+//           builder: (context) => HomePage(
 //               branch: branch,
 //               reg: reg,
 //               height: height,
 //               width: width,
-//               size: size)), // Replace MyApp with your root widget
+//               size: size, index: 0,)), // Replace MyApp with your root widget
 //       (route) => false,
 //     );
 //   }
@@ -1288,7 +1289,9 @@ Future<void> downloadAllImages(
     String branch, String reg, double height, double width, double size) async {
   int count = 0;
   final directory = await getApplicationDocumentsDirectory();
+
   String folderPath = directory.path;
+
 
   final CollectionReference updates =
       FirebaseFirestore.instance.collection("update");
@@ -1445,12 +1448,12 @@ Future<void> downloadAllImages(
     showNotification(count);
     navigatorKey.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(
-        builder: (context) => Nav(
+        builder: (context) => HomePage(
           branch: branch,
           reg: reg,
           height: height,
           width: width,
-          size: size,
+          size: size, index: 0,
         ),
       ),
       (route) => false,

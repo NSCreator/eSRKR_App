@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:async';
 import 'HomePage.dart';
@@ -28,7 +28,8 @@ Future main() async {
   await Firebase.initializeApp(
     // options: DefaultFicdrebaseOptions.currentPlatform,
   );
-
+   await NotificationService().initNotification();
+    FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   // final emulatorHost =
   // (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
   //     ? '10.0.2.2'
@@ -155,7 +156,21 @@ class _MyAppState extends State<MyApp> {
                               isTheir = false;
                             }
                             if (isTheir) {
-                              return Nav(
+                              downloadAllImages(
+                                  mainsnapshot.data!["branch"].toString(),mainsnapshot.data!['reg'].toString(), double.parse(mainsnapshot
+                                  .data!['height']
+                                  .toString()) /
+                                  850, double.parse(mainsnapshot.data!['width']
+                                  .toString()) /
+                                  400, (double.parse(mainsnapshot.data!['width']
+                                  .toString()) /
+                                  400 +
+                                  double.parse(mainsnapshot
+                                      .data!['height']
+                                      .toString()) /
+                                      850) /
+                                  2);
+                              return HomePage(
                                 height: double.parse(mainsnapshot
                                         .data!['height']
                                         .toString()) /
@@ -387,197 +402,6 @@ class _yearsState extends State<years> {
                 }
               }),
       ],
-    );
-  }
-}
-
-class Nav extends StatefulWidget {
-  final String branch;
-  final double height;
-  final double width;
-  final double size;
-  final String reg;
-  final int index;
-  const Nav(
-      {Key? key,
-      required this.branch,
-      required this.reg,
-      this.index = 0,
-      required this.height,
-      required this.width,
-      required this.size})
-      : super(key: key);
-
-  @override
-  State<Nav> createState() => _NavState();
-}
-
-class _NavState extends State<Nav> with SingleTickerProviderStateMixin {
-  int _selectedIndex = 0;
-  List<Widget> createWidgetOptions(String branch, String reg, double width,
-      double height, double size, int index) {
-    return [
-      HomePage(
-        height: height,
-        width: width,
-        size: size,
-        branch: branch,
-        reg: reg,
-        index: index,
-      ),
-      favorites(
-        branch: branch,
-        size: size,
-        width: width,
-        height: height,
-      ),
-      MyAppq(
-          branch: branch, height: height, width: width, size: size, reg: reg),
-    ];
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    downloadAllImages(
-        widget.branch, widget.reg, widget.height, widget.width, widget.size);
-    _selectedIndex = widget.index;
-    _onItemTap(_selectedIndex);
-  }
-
-  void _onItemTap(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: NetworkImage(
-                      "https://i.pinimg.com/736x/01/c7/f7/01c7f72511cc6ce7858e65b45d4f8c9c.jpg",
-                    ),
-                    fit: BoxFit.fill),
-              ),
-              child: Container(
-                  color: Colors.black.withOpacity(0.8),
-                  child: createWidgetOptions(
-                      widget.branch,
-                      widget.reg,
-                      widget.width,
-                      widget.height,
-                      widget.size,
-                      widget.index)[_selectedIndex]),
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 20,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: widget.width * 95),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Color.fromRGBO(8, 37, 38, 0.91),
-                      borderRadius: BorderRadius.circular(widget.size * 15),
-                      border: Border.all(color: Colors.white.withOpacity(0.5))),
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        top: widget.height * 3, bottom: widget.width * 2),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          child: Column(
-                            children: [
-                              Icon(
-                                _selectedIndex == 0
-                                    ? Icons.home
-                                    : Icons.home_outlined,
-                                size: widget.width * 30,
-                                color: _selectedIndex == 0
-                                    ? Color.fromRGBO(98, 240, 245, 1)
-                                    : Color.fromRGBO(63, 155, 158, 1),
-                              ),
-                              Text(
-                                "Home",
-                                style: TextStyle(
-                                    color: Colors.white54,
-                                    fontSize: widget.width * 15),
-                              )
-                            ],
-                          ),
-                          onTap: () {
-                            _onItemTap(0);
-                          },
-                        ),
-                        InkWell(
-                          child: Column(
-                            children: [
-                              Icon(
-                                _selectedIndex == 1
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                size: widget.width * 30,
-                                color: _selectedIndex == 1
-                                    ? Color.fromRGBO(98, 240, 245, 1)
-                                    : Color.fromRGBO(63, 155, 158, 1),
-                              ),
-                              Text(
-                                "Favorite",
-                                style: TextStyle(
-                                    color: Colors.white54,
-                                    fontSize: widget.width * 15),
-                              )
-                            ],
-                          ),
-                          onTap: () {
-                            _onItemTap(1);
-                          },
-                        ),
-                        InkWell(
-                          child: Column(
-                            children: [
-                              Icon(
-                                _selectedIndex == 2
-                                    ? Icons.manage_search
-                                    : Icons.search,
-                                size: widget.width * 30,
-                                color: _selectedIndex == 2
-                                    ? Color.fromRGBO(98, 240, 245, 1)
-                                    : Color.fromRGBO(63, 155, 158, 1),
-                              ),
-                              Text(
-                                "Search",
-                                style: TextStyle(
-                                    color: Colors.white54,
-                                    fontSize: widget.width * 15),
-                              )
-                            ],
-                          ),
-                          onTap: () {
-                            _onItemTap(2);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

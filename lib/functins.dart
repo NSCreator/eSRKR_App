@@ -45,6 +45,8 @@ double screenHeight(BuildContext context) {
 }
 
 String getDate() {
+
+
   var now = new DateTime.now();
   var formatter = new DateFormat('dd-MM-yyyy');
   String formattedDate = formatter.format(now);
@@ -52,6 +54,7 @@ String getDate() {
 }
 
 String getID() {
+
   var now = new DateTime.now();
   return DateFormat('d.M.y-kk:mm:ss').format(now);
 }
@@ -133,7 +136,3 @@ download(String photoUrl, String path) async {
   return true;
 }
 
-folderPath() async {
-  final directory = await getApplicationDocumentsDirectory();
-  return directory.path;
-}
