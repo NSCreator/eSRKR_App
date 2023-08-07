@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,10 +11,11 @@ import 'dart:async';
 import 'HomePage.dart';
 import 'auth_page.dart';
 import 'favorites.dart';
+import 'firebase_options.dart';
 import 'functins.dart';
 import 'notification.dart';
 import 'search bar.dart';
-
+import 'package:flutter/cupertino.dart';
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> backgroundHandler(RemoteMessage message) async {
@@ -22,10 +25,16 @@ Future<void> backgroundHandler(RemoteMessage message) async {
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await MobileAds.instance.initialize();
-  await NotificationService().initNotification();
-  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  await Firebase.initializeApp(
+    // options: DefaultFicdrebaseOptions.currentPlatform,
+  );
+
+  // final emulatorHost =
+  // (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+  //     ? '10.0.2.2'
+  //     : 'localhost';
+  //
+  // await FirebaseStorage.instance.useStorageEmulator(emulatorHost, 9199);
   // if (true) {
   //   await Firebase.initializeApp();
   //   await MobileAds.instance.initialize();

@@ -10,6 +10,42 @@
       "client_info": {
         "mobilesdk_app_id": "1:1048591941251:android:525992ce19cab401a665b6",
         "android_client_info": {
+          "package_name": "com.nimmalasujith.eSRKR"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1048591941251-f0gfe05vfo0ek43ocam9ernic9er96jf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA571aMLOiKnsZzJCPRy-1aFQYTDhrSjbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1048591941251-f0gfe05vfo0ek43ocam9ernic9er96jf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1048591941251-0lcl93elb7hso8mu9tvn6u2qqckhe90r.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.nimmalasujith.esrkr"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1048591941251:android:9a334212055c4e96a665b6",
+        "android_client_info": {
           "package_name": "com.nimmalasujith.esrkr"
         }
       },
@@ -30,6 +66,13 @@
             {
               "client_id": "1048591941251-f0gfe05vfo0ek43ocam9ernic9er96jf.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1048591941251-0lcl93elb7hso8mu9tvn6u2qqckhe90r.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.nimmalasujith.esrkr"
+              }
             }
           ]
         }
