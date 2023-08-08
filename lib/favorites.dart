@@ -307,6 +307,9 @@ class _favoritesState extends State<favorites> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         subjectUnitsData(
+                                                          date: "2012",
+                                                          req: Favourite.name,
+                                                          pdfs: 0,
                                                           width: widget.width,
                                                           height:
                                                               widget.height,
@@ -618,6 +621,9 @@ class _favoritesState extends State<favorites> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         subjectUnitsData(
+                                                          date: "2012",
+                                                          req:Favourite.name,
+                                                          pdfs:0,
                                                           width: widget.width,
                                                           height:
                                                               widget.height,

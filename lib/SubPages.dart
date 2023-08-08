@@ -1,5 +1,6 @@
 // ignore_for_file: camel_case_types, non_constant_identifier_names
 import 'dart:io';
+import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
@@ -442,7 +443,7 @@ class _SubjectsState extends State<Subjects> {
                 physics: BouncingScrollPhysics(),
                 child: Padding(
                   padding: EdgeInsets.only(
-                      top: widget.height * 40, bottom: widget.height * 100),
+                      top: widget.height * 50, bottom: widget.height * 100),
                   child: StreamBuilder<List<FlashConvertor>>(
                       stream: readFlashNews(widget.branch),
                       builder: (context, snapshot) {
@@ -793,6 +794,9 @@ class _SubjectsState extends State<Subjects> {
                                                         animation,
                                                         secondaryAnimation) =>
                                                     subjectUnitsData(
+                                                      date: SubjectsData.Date.split("-").last,
+                                                      req: SubjectsData.regulation,
+                                                      pdfs: 0,
                                                   width: widget.width,
                                                   height: widget.height,
                                                   size: widget.size,
@@ -847,30 +851,23 @@ class _SubjectsState extends State<Subjects> {
                   top: 0,
                   left: 0,
                   right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child:Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      backButton(),
                       Padding(
-                        padding: EdgeInsets.all(widget.size * 3.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(widget.size * 5),
-                              color: Colors.white.withOpacity(0.3)),
-                          child: Padding(
-                            padding: EdgeInsets.all(widget.size * 8.0),
-                            child: Text(
-                              "${widget.branch} Subjects",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ),
+                        padding: EdgeInsets.only(bottom: widget.width * 10),
+                        child: Text(
+                          "${widget.branch} Subjects",
+                          style: TextStyle(
+                              color: Colors.white, fontSize: widget.size * 30,fontWeight: FontWeight.w600),
                         ),
                       ),
+                      SizedBox(width: 45,)
                     ],
-                  ))
+                  ),
+
+              )
             ]),
           ),
         ),
@@ -935,7 +932,7 @@ class _LabSubjectsState extends State<LabSubjects> {
                 physics: BouncingScrollPhysics(),
                 child: Padding(
                   padding: EdgeInsets.only(
-                      top: widget.height * 40, bottom: widget.height * 100),
+                      top: widget.height * 50, bottom: widget.height * 100),
                   child: StreamBuilder<List<LabSubjectsConvertor>>(
                       stream: readLabSubjects(widget.branch),
                       builder: (context, snapshot) {
@@ -1258,6 +1255,9 @@ class _LabSubjectsState extends State<LabSubjects> {
                                             pageBuilder: (context, animation,
                                                     secondaryAnimation) =>
                                                 subjectUnitsData(
+                                                  date: LabSubjectsData.Date.split("-").last,
+                                                  req: LabSubjectsData.regulation,
+                                                  pdfs: 0,
                                               width: widget.width,
                                               height: widget.height,
                                               size: widget.size,
@@ -1317,29 +1317,20 @@ class _LabSubjectsState extends State<LabSubjects> {
                   left: 0,
                   right: 0,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      backButton(),
                       Padding(
-                        padding: EdgeInsets.all(widget.size * 3.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(widget.size * 5),
-                              color: Colors.white.withOpacity(0.3)),
-                          child: Padding(
-                            padding: EdgeInsets.all(widget.size * 8.0),
-                            child: Text(
-                              "${widget.branch} Lab Subjects",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ),
+                        padding: EdgeInsets.only(bottom: widget.width * 10),
+                        child: Text(
+                          "${widget.branch} Lab Subjects",
+                          style: TextStyle(
+                              color: Colors.white, fontSize: widget.size * 30,fontWeight: FontWeight.w600),
                         ),
                       ),
+                      SizedBox(width: 45,)
                     ],
-                  ))
+                  ),)
             ]),
           ),
         ),
@@ -1793,15 +1784,21 @@ class subjectUnitsData extends StatefulWidget {
   String fullName;
   String photoUrl;
   String branch;
+  String req;
+  String date;
   final double size;
   final double height;
   final double width;
+  final int pdfs;
 
   subjectUnitsData(
       {required this.ID,
       required this.mode,
       required this.photoUrl,
       required this.branch,
+      required this.req,
+      required this.date,
+      required this.pdfs,
       this.name = "Subjects",
       required this.fullName,
       required this.width,
@@ -1854,214 +1851,289 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                   image: NetworkImage(
                       "https://i.pinimg.com/736x/01/c7/f7/01c7f72511cc6ce7858e65b45d4f8c9c.jpg"),
                   fit: BoxFit.fill)),
-          child: Container(
-            color: Colors.black.withOpacity(0.9),
-            child: SafeArea(
-              child: Stack(
-                children: [
-                  SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          top: widget.height * 145,
-                          bottom: widget.height * 100),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: widget.width * 10,
-                                bottom: widget.height * 3),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Units",
-                                  style: TextStyle(
-                                      fontSize: widget.size * 40,
-                                      color: Colors.deepOrangeAccent),
-                                ),
-                                if (isUser())
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        right: widget.width * 10),
-                                    child: InkWell(
-                                      child: Chip(
-                                        elevation: 20,
-                                        backgroundColor: Colors.white38,
-                                        avatar: CircleAvatar(
-                                            backgroundColor: Colors.black,
-                                            child: Icon(
-                                              Icons.add,
-                                            )),
-                                        label: Text(
-                                          "Edit",
-                                          style: TextStyle(color: Colors.black),
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    UnitsCreator(
-                                                      branch: widget.branch,
-                                                      id: widget.ID,
-                                                      mode: widget.mode,
-                                                    )));
-                                      },
-                                    ),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Container(
+              color: Colors.black.withOpacity(0.5),
+              child: SafeArea(
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: widget.height * 185,
+                            bottom: widget.height * 100),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: widget.width * 10,
+                                  bottom: widget.height * 3),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Units",
+                                    style: TextStyle(
+                                        fontSize: widget.size * 40,
+                                        color: Colors.deepOrangeAccent),
                                   ),
-                              ],
+                                  if (isUser())
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          right: widget.width * 10),
+                                      child: InkWell(
+                                        child: Chip(
+                                          elevation: 20,
+                                          backgroundColor: Colors.white38,
+                                          avatar: CircleAvatar(
+                                              backgroundColor: Colors.black,
+                                              child: Icon(
+                                                Icons.add,
+                                              )),
+                                          label: Text(
+                                            "Edit",
+                                            style: TextStyle(color: Colors.black),
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      UnitsCreator(
+                                                        branch: widget.branch,
+                                                        id: widget.ID,
+                                                        mode: widget.mode,
+                                                      )));
+                                        },
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
-                          ),
-                          StreamBuilder<List<UnitsConvertor>>(
-                              stream: readUnits(widget.ID, widget.branch),
-                              builder: (context, snapshot) {
-                                final Units = snapshot.data;
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.waiting:
-                                    return const Center(
-                                        child: CircularProgressIndicator(
-                                      strokeWidth: 0.3,
-                                      color: Colors.cyan,
-                                    ));
-                                  default:
-                                    if (snapshot.hasError) {
+                            StreamBuilder<List<UnitsConvertor>>(
+                                stream: readUnits(widget.ID, widget.branch),
+                                builder: (context, snapshot) {
+                                  final Units = snapshot.data;
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.waiting:
                                       return const Center(
-                                          child: Text(
-                                              'Error with TextBooks Data or\n Check Internet Connection'));
-                                    } else {
-                                      return Padding(
-                                          padding:
-                                              EdgeInsets.all(widget.size * 5.0),
-                                          child: ListView.separated(
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: Units!.length,
-                                              itemBuilder:
-                                                  (context, int index) {
-                                                final unit = Units[index];
+                                          child: CircularProgressIndicator(
+                                        strokeWidth: 0.3,
+                                        color: Colors.cyan,
+                                      ));
+                                    default:
+                                      if (snapshot.hasError) {
+                                        return const Center(
+                                            child: Text(
+                                                'Error with TextBooks Data or\n Check Internet Connection'));
+                                      } else {
+                                        return Padding(
+                                            padding:
+                                                EdgeInsets.all(widget.size * 5.0),
+                                            child: ListView.separated(
+                                                physics:
+                                                    const BouncingScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: Units!.length,
+                                                itemBuilder:
+                                                    (context, int index) {
+                                                  final unit = Units[index];
 
-                                                return subUnit(
-                                                  width: widget.width,
-                                                  height: widget.height,
-                                                  size: widget.size,
-                                                  ID: widget.ID,
-                                                  branch: widget.branch,
-                                                  unit: unit,
-                                                  mode: widget.mode,
-                                                  photoUrl: widget.photoUrl,
-                                                );
-                                              },
-                                              separatorBuilder: (context,
-                                                      index) =>
-                                                  SizedBox(
-                                                    height: widget.height * 5,
-                                                  )));
-                                    }
-                                }
-                              }),
-                        ],
+                                                  return subUnit(
+                                                    width: widget.width,
+                                                    height: widget.height,
+                                                    size: widget.size,
+                                                    ID: widget.ID,
+                                                    branch: widget.branch,
+                                                    unit: unit,
+                                                    mode: widget.mode,
+                                                    photoUrl: widget.photoUrl,
+                                                  );
+                                                },
+                                                separatorBuilder: (context,
+                                                        index) =>
+                                                    SizedBox(
+                                                      height: widget.height * 5,
+                                                    )));
+                                      }
+                                  }
+                                }),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      child: Padding(
-                        padding: EdgeInsets.all(widget.size * 8.0),
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              color: Color.fromRGBO(29, 38, 38, 0.9),
-                              borderRadius:
-                                  BorderRadius.circular(widget.size * 15)),
+                    Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: Padding(
+                          padding: EdgeInsets.all(widget.size * 8.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              backButton(),
                               Row(
                                 children: [
                                   Flexible(
-                                    flex: 1,
-                                    child: Container(
-                                      height: widget.height * 100,
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(
-                                                  widget.size * 15),
-                                              bottomRight: Radius.circular(
-                                                  widget.size * 15)),
-                                          image: DecorationImage(
-                                              image: FileImage(file),
-                                              fit: BoxFit.fill)),
+                                    flex: 2,
+                                    child: AspectRatio(
+                                      aspectRatio: 16/9,
+                                      child: Container(
+
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10),
+                                            border: Border.all(color: Colors.black),
+                                            image: DecorationImage(
+                                                image: FileImage(file),
+                                                fit: BoxFit.fill)),
+                                      ),
                                     ),
                                   ),
                                   Flexible(
-                                      flex: 1,
-                                      child: Padding(
-                                        padding:
-                                            EdgeInsets.all(widget.size * 5.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                widget.name,
-                                                style: TextStyle(
-                                                    fontSize: widget.size * 25,
-                                                    color: Colors.deepOrange,
-                                                    fontWeight:
-                                                        FontWeight.w500),
+                                      flex: 3,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(5),
+                                                  border: Border.all(color: Colors.white30)
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                                  child: Text(widget.req,style: TextStyle(color: Colors.white),),
+                                                ),
                                               ),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.black
-                                                          .withOpacity(0.3),
-                                                      border: Border.all(
-                                                          color:
-                                                              Colors.white38),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              widget.size * 8)),
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: widget.width * 10,
-                                                        right:
-                                                            widget.width * 10,
-                                                        top: widget.height * 3,
-                                                        bottom:
-                                                            widget.height * 3),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        if (widget.mode ==
-                                                            "Subjects")
-                                                          InkWell(
-                                                            child: StreamBuilder<
-                                                                DocumentSnapshot>(
-                                                              stream: FirebaseFirestore
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.circle,size: 8,color: Colors.white,),
+                                                  Text(" ${widget.pdfs} PDFS",style: TextStyle(color: Colors.white),),
+                                                ],
+                                              ),
+
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.circle,size: 8,color: Colors.white,),
+                                                  Text(widget.date,style: TextStyle(color: Colors.white),)
+                                                ],
+                                              ),
+
+                                            ],
+                                          ),
+                                          Text(
+                                            widget.name,
+                                            style: TextStyle(
+                                                fontSize: widget.size * 25,
+                                                color: Colors.deepOrange,
+                                                fontWeight:
+                                                    FontWeight.w500),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.black
+                                                        .withOpacity(0.3),
+                                                    border: Border.all(
+                                                        color:
+                                                            Colors.white38),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            widget.size * 15)),
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      if (widget.mode ==
+                                                          "Subjects")
+                                                        InkWell(
+                                                          child: StreamBuilder<
+                                                              DocumentSnapshot>(
+                                                            stream: FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'user')
+                                                                .doc(
+                                                                    fullUserId())
+                                                                .collection(
+                                                                    "FavouriteSubject")
+                                                                .doc(
+                                                                    widget.ID)
+                                                                .snapshots(),
+                                                            builder: (context,
+                                                                snapshot) {
+                                                              if (snapshot
+                                                                  .hasData) {
+                                                                if (snapshot
+                                                                    .data!
+                                                                    .exists) {
+                                                                  return Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .library_add_check,
+                                                                          size: widget.size *
+                                                                              23,
+                                                                          color:
+                                                                              Colors.cyanAccent),
+                                                                      Text(
+                                                                        " Saved",
+                                                                        style: TextStyle(
+                                                                            color: Colors.white,
+                                                                            fontSize: widget.size * 20),
+                                                                      )
+                                                                    ],
+                                                                  );
+                                                                } else {
+                                                                  return Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .library_add_outlined,
+                                                                        size: widget.size *
+                                                                            23,
+                                                                        color:
+                                                                            Colors.cyanAccent,
+                                                                      ),
+                                                                      Text(
+                                                                        " Save",
+                                                                        style: TextStyle(
+                                                                            color: Colors.white,
+                                                                            fontSize: widget.size * 20),
+                                                                      )
+                                                                    ],
+                                                                  );
+                                                                }
+                                                              } else {
+                                                                return Container();
+                                                              }
+                                                            },
+                                                          ),
+                                                          onTap: () async {
+                                                            try {
+                                                              await FirebaseFirestore
                                                                   .instance
                                                                   .collection(
                                                                       'user')
@@ -2069,245 +2141,74 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                                                                       fullUserId())
                                                                   .collection(
                                                                       "FavouriteSubject")
-                                                                  .doc(
-                                                                      widget.ID)
-                                                                  .snapshots(),
-                                                              builder: (context,
-                                                                  snapshot) {
-                                                                if (snapshot
-                                                                    .hasData) {
-                                                                  if (snapshot
-                                                                      .data!
-                                                                      .exists) {
-                                                                    return Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                            Icons
-                                                                                .library_add_check,
-                                                                            size: widget.size *
-                                                                                23,
-                                                                            color:
-                                                                                Colors.cyanAccent),
-                                                                        Text(
-                                                                          " Saved",
-                                                                          style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 20),
-                                                                        )
-                                                                      ],
-                                                                    );
-                                                                  } else {
-                                                                    return Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                          Icons
-                                                                              .library_add_outlined,
-                                                                          size: widget.size *
-                                                                              23,
-                                                                          color:
-                                                                              Colors.cyanAccent,
-                                                                        ),
-                                                                        Text(
-                                                                          " Save",
-                                                                          style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 20),
-                                                                        )
-                                                                      ],
-                                                                    );
-                                                                  }
+                                                                  .doc(widget
+                                                                      .ID)
+                                                                  .get()
+                                                                  .then(
+                                                                      (docSnapshot) {
+                                                                if (docSnapshot
+                                                                    .exists) {
+                                                                  FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'user')
+                                                                      .doc(
+                                                                          fullUserId())
+                                                                      .collection(
+                                                                          "FavouriteSubject")
+                                                                      .doc(widget
+                                                                          .ID)
+                                                                      .delete();
+                                                                  showToastText(
+                                                                      "Removed from saved list");
                                                                 } else {
-                                                                  return Container();
+                                                                  FavouriteSubjects(
+                                                                      branch: widget
+                                                                          .branch,
+                                                                      SubjectId:
+                                                                          widget
+                                                                              .ID,
+                                                                      name: widget
+                                                                          .name,
+                                                                      description:
+                                                                          widget
+                                                                              .fullName,
+                                                                      photoUrl:
+                                                                          widget.photoUrl);
+                                                                  showToastText(
+                                                                      "${widget.name} in favorites");
                                                                 }
-                                                              },
-                                                            ),
-                                                            onTap: () async {
-                                                              try {
-                                                                await FirebaseFirestore
-                                                                    .instance
-                                                                    .collection(
-                                                                        'user')
-                                                                    .doc(
-                                                                        fullUserId())
-                                                                    .collection(
-                                                                        "FavouriteSubject")
-                                                                    .doc(widget
-                                                                        .ID)
-                                                                    .get()
-                                                                    .then(
-                                                                        (docSnapshot) {
-                                                                  if (docSnapshot
-                                                                      .exists) {
-                                                                    FirebaseFirestore
-                                                                        .instance
-                                                                        .collection(
-                                                                            'user')
-                                                                        .doc(
-                                                                            fullUserId())
-                                                                        .collection(
-                                                                            "FavouriteSubject")
-                                                                        .doc(widget
-                                                                            .ID)
-                                                                        .delete();
-                                                                    showToastText(
-                                                                        "Removed from saved list");
-                                                                  } else {
-                                                                    FavouriteSubjects(
-                                                                        branch: widget
-                                                                            .branch,
-                                                                        SubjectId:
-                                                                            widget
-                                                                                .ID,
-                                                                        name: widget
-                                                                            .name,
-                                                                        description:
-                                                                            widget
-                                                                                .fullName,
-                                                                        photoUrl:
-                                                                            widget.photoUrl);
-                                                                    showToastText(
-                                                                        "${widget.name} in favorites");
-                                                                  }
-                                                                });
-                                                              } catch (e) {
-                                                                print(e);
-                                                              }
-                                                            },
-                                                          )
-                                                        else
-                                                          InkWell(
-                                                            child: StreamBuilder<
-                                                                DocumentSnapshot>(
-                                                              stream: FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      'user')
-                                                                  .doc(
-                                                                      fullUserId())
-                                                                  .collection(
-                                                                      "FavouriteLabSubjects")
-                                                                  .doc(
-                                                                      widget.ID)
-                                                                  .snapshots(),
-                                                              builder: (context,
-                                                                  snapshot) {
-                                                                if (snapshot
-                                                                    .hasData) {
-                                                                  if (snapshot
-                                                                      .data!
-                                                                      .exists) {
-                                                                    return Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                            Icons
-                                                                                .library_add_check,
-                                                                            size: widget.size *
-                                                                                26,
-                                                                            color:
-                                                                                Colors.cyanAccent),
-                                                                        Text(
-                                                                          " Saved",
-                                                                          style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 16),
-                                                                        )
-                                                                      ],
-                                                                    );
-                                                                  } else {
-                                                                    return Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                          Icons
-                                                                              .library_add_outlined,
-                                                                          size: widget.size *
-                                                                              26,
-                                                                          color:
-                                                                              Colors.cyanAccent,
-                                                                        ),
-                                                                        Text(
-                                                                          " Save",
-                                                                          style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 16),
-                                                                        )
-                                                                      ],
-                                                                    );
-                                                                  }
-                                                                } else {
-                                                                  return Container();
-                                                                }
-                                                              },
-                                                            ),
-                                                            onTap: () async {
-                                                              try {
-                                                                await FirebaseFirestore
-                                                                    .instance
-                                                                    .collection(
-                                                                        'user')
-                                                                    .doc(
-                                                                        fullUserId())
-                                                                    .collection(
-                                                                        "FavouriteLabSubjects")
-                                                                    .doc(widget
-                                                                        .ID)
-                                                                    .get()
-                                                                    .then(
-                                                                        (docSnapshot) {
-                                                                  if (docSnapshot
-                                                                      .exists) {
-                                                                    FirebaseFirestore
-                                                                        .instance
-                                                                        .collection(
-                                                                            'user')
-                                                                        .doc(
-                                                                            fullUserId())
-                                                                        .collection(
-                                                                            "FavouriteLabSubjects")
-                                                                        .doc(widget
-                                                                            .ID)
-                                                                        .delete();
-                                                                    showToastText(
-                                                                        "Removed from saved list");
-                                                                  } else {
-                                                                    FavouriteLabSubjectsSubjects(
-                                                                        branch: widget
-                                                                            .branch,
-                                                                        SubjectId:
-                                                                            widget
-                                                                                .ID,
-                                                                        name: widget
-                                                                            .name,
-                                                                        description:
-                                                                            widget
-                                                                                .fullName,
-                                                                        photoUrl:
-                                                                            widget.photoUrl);
-                                                                    showToastText(
-                                                                        "${widget.name} in favorites");
-                                                                  }
-                                                                });
-                                                              } catch (e) {
-                                                                print(e);
-                                                              }
-                                                            },
-                                                          )
-                                                      ],
-                                                    ),
+                                                              });
+                                                            } catch (e) {
+                                                              print(e);
+                                                            }
+                                                          },
+                                                        )
+
+                                                    ],
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                                              ),
+                                              SizedBox(width: 10,),
+                                              Stack(
+                                                alignment: Alignment.center,
+                                                children: <Widget>[
+                                                  CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    value: 0.1,
+                                                  ),
+                                                  Icon(Icons.download_for_offline_outlined, size: 40.0),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       )),
                                 ],
                               ),
+
                               Padding(
-                                padding: EdgeInsets.only(
-                                    left: widget.width * 15,
-                                    top: widget.height * 2,
-                                    bottom: widget.height * 3,
-                                    right: widget.width * 10),
+                                padding: EdgeInsets.only(top: 5),
                                 child: Text(
                                   widget.fullName,
                                   style: TextStyle(
@@ -2320,9 +2221,9 @@ class _subjectUnitsDataState extends State<subjectUnitsData> {
                               )
                             ],
                           ),
-                        ),
-                      ))
-                ],
+                        ))
+                  ],
+                ),
               ),
             ),
           ),

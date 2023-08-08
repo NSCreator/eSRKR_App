@@ -73,7 +73,7 @@ user0Id() {
 
 picText() {
   var user = FirebaseAuth.instance.currentUser!.email!.split("@");
-  return user[0].substring(user[0].length - 3);
+  return user[0].substring(user[0].length - 3).toUpperCase();
 }
 
 isUser() {
@@ -92,6 +92,25 @@ Future<void> showToastText(String message) async {
     msg: message,
     fontSize: 18,
   );
+}
+class backButton extends StatefulWidget {
+  @override
+  State<backButton> createState() => _backButtonState();
+}
+
+class _backButtonState extends State<backButton> {
+  @override
+  Widget build(BuildContext context) {
+    return  InkWell(
+      child: Padding(
+        padding: const EdgeInsets.only(left:10,right: 10),
+        child: Icon(Icons.arrow_back,color: Colors.white,size: 30,),
+      ),
+      onTap: (){
+        Navigator.pop(context);
+      },
+    );
+  }
 }
 
 Future<void> LaunchUrl(String url) async {
