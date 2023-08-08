@@ -16,6 +16,11 @@ import 'main.dart';
 int currentIndex = 0;
 File file = File("");
 
+const TextStyle secondTabBarTextStyle =  TextStyle(
+  color: Colors.white,
+  fontSize:  18,
+);
+
 class settings extends StatefulWidget {
   final String reg, branch;
   final int index;

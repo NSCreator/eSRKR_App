@@ -154,4 +154,118 @@ download(String photoUrl, String path) async {
   }
   return true;
 }
+class downloadAllPdfs extends StatefulWidget {
+  String branch,SubjectID;
+  List pdfs;
+ downloadAllPdfs({required this.branch,required this.SubjectID,required this.pdfs});
+
+  @override
+  State<downloadAllPdfs> createState() => _downloadAllPdfsState();
+}
+
+class _downloadAllPdfsState extends State<downloadAllPdfs> {
+  bool isDownloaded = false;
+
+  double _downloadProgress =0;
+  double data=0;
+  download(String photoUrl, String path) async {
+    final Uri uri = Uri.parse(photoUrl);
+    final String fileName = uri.pathSegments.last;
+    var name = fileName.split("/").last;
+    if (photoUrl.startsWith('https://drive.google.com')) {
+      name = photoUrl.split('/d/')[1].split('/')[0];
+
+      photoUrl = "https://drive.google.com/uc?export=download&id=$name";
+    }
+    final response = await http.get(Uri.parse(photoUrl));
+    final documentDirectory = await getApplicationDocumentsDirectory();
+    final newDirectory = Directory('${documentDirectory.path}/$path');
+    if (!await newDirectory.exists()) {
+      await newDirectory.create(recursive: true);
+    }
+    final file = File('${newDirectory.path}/${name}');
+    await file.writeAsBytes(response.bodyBytes);
+
+
+  }
+  void _updateProgress(int downloadedBytes, int totalBytes) {
+    setState(() {
+      _downloadProgress = downloadedBytes / totalBytes;
+    });
+  }
+   downloadAllImages() async {
+
+    
+    final CollectionReference subjects = FirebaseFirestore.instance
+        .collection(widget.branch)
+        .doc("Subjects")
+        .collection("Subjects").doc(widget.SubjectID).collection("Units");
+
+    try {
+      final QuerySnapshot querySnapshot = await subjects.get();
+      if (querySnapshot.docs.isNotEmpty) {
+        int totalDownloadingCount=0;
+        int totalDownloadedCount = 0;
+        final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+        setState(() {
+          totalDownloadedCount = documents.length;
+        });
+        for (final document in documents) {
+          final data = document.data() as Map<String, dynamic>;
+          if (data["PDFLink"].length > 3) {
+           await download(data["PDFLink"],"pdfs" );
+           setState(() {
+             totalDownloadingCount++;
+             _updateProgress(totalDownloadingCount,totalDownloadedCount);
+           });
+          }
+        }
+
+        setState(() {
+          isDownloaded = false;
+        });
+      } else {
+        print('No documents found');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+   
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+
+          CircularProgressIndicator(
+             strokeWidth: 3,
+            color: Colors.green,
+            value:_downloadProgress,
+          ),
+          if(isDownloaded)SizedBox(
+            height: 40,
+            width: 40,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+
+              color: Colors.red,
+            ),
+          ),
+          Icon(isDownloaded?Icons.download_done:Icons.download_for_offline_outlined, size: 38.0,color: isDownloaded?Colors.greenAccent:Colors.white54,),
+        ],
+      ),
+      onTap: (){
+        setState(() {
+          isDownloaded=true;
+        });
+        downloadAllImages();
+      },
+    );
+  }
+}
+
 

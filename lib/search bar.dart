@@ -266,7 +266,11 @@ class _MyAppqState extends State<MyAppq> {
                                                 .toString()
                                                 .toLowerCase()
                                                 .startsWith(
-                                                    name.toLowerCase())) {
+                                                    name.toLowerCase())|| data['Description']
+                                                .toString()
+                                            .toLowerCase()
+                                                .startsWith(
+                                            name.toLowerCase()) ) {
                                               return Padding(
                                                 padding: EdgeInsets.only(
                                                     left: widget.width * 15.0,
@@ -607,7 +611,11 @@ class _MyAppqState extends State<MyAppq> {
                                                 .toString()
                                                 .toLowerCase()
                                                 .startsWith(
-                                                    name.toLowerCase())) {
+                                                    name.toLowerCase())|| data['Description']
+                                                .toString()
+                                                .toLowerCase()
+                                                .startsWith(
+                                                name.toLowerCase())) {
                                               return Padding(
                                                 padding: EdgeInsets.only(
                                                     left: widget.width * 15.0,

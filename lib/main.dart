@@ -1,20 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:async';
 import 'HomePage.dart';
 import 'auth_page.dart';
-import 'favorites.dart';
-import 'firebase_options.dart';
 import 'functins.dart';
 import 'notification.dart';
-import 'search bar.dart';
 import 'package:flutter/cupertino.dart';
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -30,6 +25,7 @@ Future main() async {
   );
    await NotificationService().initNotification();
     FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  // MobileAds.instance.initialize();
   // final emulatorHost =
   // (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
   //     ? '10.0.2.2'
