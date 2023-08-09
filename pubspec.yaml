@@ -30,6 +30,7 @@ dependencies:
   firebase_messaging: ^14.6.5
   webview_flutter: ^4.2.2
   marquee: ^2.2.3
+  shared_preferences: ^2.2.0
 
 
 

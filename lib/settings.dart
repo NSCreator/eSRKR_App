@@ -16,10 +16,14 @@ import 'main.dart';
 int currentIndex = 0;
 File file = File("");
 
-const TextStyle secondTabBarTextStyle =  TextStyle(
+const TextStyle secondTabBarTextStyle = TextStyle(
   color: Colors.white,
-  fontSize:  18,
+  fontSize: 18,
 );
+
+TextStyle secondHeadingTextStyle({Color color = Colors.white}) {
+  return TextStyle(color: color, fontSize: 30, fontWeight: FontWeight.w500);
+}
 
 class settings extends StatefulWidget {
   final String reg, branch;
@@ -69,484 +73,634 @@ class _settingsState extends State<settings> {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Scaffold(
-          backgroundColor: Colors.black.withOpacity(0.8),
-          body: SafeArea(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    backButton(),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: widget.width * 10),
-                      child: Text(
-                        "Settings",
-                        style: TextStyle(
-                            color: Colors.white, fontSize: widget.size * 30,fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    SizedBox(width: 45,)
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.all(widget.size * 8.0),
-                  child: Container(
-                    height: widget.height * 140,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(widget.size * 18),
-                      color: Colors.black,
-                      image: DecorationImage(
-                        image: NetworkImage(
-                          "https://images.pond5.com/blue-burning-eagle-animated-logo-footage-102505417_iconl.jpeg",
+            backgroundColor: Colors.black.withOpacity(0.8),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      backButton(),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: widget.width * 10),
+                        child: Text(
+                          "Settings",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: widget.size * 30,
+                              fontWeight: FontWeight.w500),
                         ),
-                        fit: BoxFit.cover,
                       ),
-                    ),
+                      SizedBox(
+                        width: 45,
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(widget.size * 8.0),
                     child: Container(
+                      height: widget.height * 140,
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.8),
                         borderRadius: BorderRadius.circular(widget.size * 18),
+                        color: Colors.black,
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            "https://images.pond5.com/blue-burning-eagle-animated-logo-footage-102505417_iconl.jpeg",
+                          ),
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: widget.width * 10,
-                                bottom: widget.height * 10),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: widget.height * 50,
-                                  width: widget.width * 50,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(widget.size * 25),
-                                    color: Colors.white30,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(widget.size * 18),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: widget.width * 10,
+                                  bottom: widget.height * 10),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: widget.height * 50,
+                                    width: widget.width * 50,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          widget.size * 25),
+                                      color: Colors.white30,
+                                    ),
+                                    child: Center(
+                                        child: Text(
+                                      picText(),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: widget.size * 25),
+                                    )),
                                   ),
-                                  child: Center(
+                                  Expanded(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.all(widget.size * 8.0),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            user0Id(),
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: widget.size * 30),
+                                          ),
+                                          Text(
+                                              "${widget.branch} - ${widget.reg}",
+                                              style: TextStyle(
+                                                  color: Colors.white70,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: widget.size * 20))
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                InkWell(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          widget.size * 8),
+                                      color: Colors.white24,
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: widget.height * 5,
+                                          horizontal: widget.width * 10),
                                       child: Text(
-                                        picText(),
+                                        "Change Branch",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: widget.size * 25),
-                                      )),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(widget.size * 8.0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          user0Id(),
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: widget.size * 30),
-                                        ),
-                                        Text("${widget.branch} - ${widget.reg}",
-                                            style: TextStyle(
-                                                color: Colors.white70,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: widget.size * 20))
-                                      ],
+                                            fontSize: widget.size * 22),
+                                      ),
                                     ),
                                   ),
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          backgroundColor:
+                                              Colors.black.withOpacity(0.8),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      widget.size * 20)),
+                                          elevation: 16,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.white38),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      widget.size * 20),
+                                            ),
+                                            child: ListView(
+                                              shrinkWrap: true,
+                                              children: <Widget>[
+                                                branchYear(
+                                                  isUpdate: true,
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                                InkWell(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          widget.size * 8),
+                                      color: Colors.white24,
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: widget.height * 5,
+                                          horizontal: widget.width * 10),
+                                      child: Text(
+                                        "Log Out",
+                                        style: TextStyle(
+                                            color:
+                                                Color.fromRGBO(5, 252, 223, 1),
+                                            fontSize: widget.size * 22,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          backgroundColor:
+                                              Colors.black.withOpacity(0.3),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      widget.size * 20)),
+                                          elevation: 16,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.tealAccent),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      widget.size * 20),
+                                            ),
+                                            child: ListView(
+                                              shrinkWrap: true,
+                                              children: <Widget>[
+                                                SizedBox(
+                                                    height: widget.height * 15),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: widget.width * 15),
+                                                  child: Text(
+                                                    "Do you want Log Out",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize:
+                                                            widget.size * 18),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: widget.height * 5,
+                                                ),
+                                                Center(
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Spacer(),
+                                                      InkWell(
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color:
+                                                                Colors.black26,
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .white
+                                                                    .withOpacity(
+                                                                        0.3)),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        widget.size *
+                                                                            25),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets.only(
+                                                                left: widget
+                                                                        .width *
+                                                                    15,
+                                                                right: widget
+                                                                        .width *
+                                                                    15,
+                                                                top: widget
+                                                                        .height *
+                                                                    5,
+                                                                bottom: widget
+                                                                        .height *
+                                                                    5),
+                                                            child: Text(
+                                                              "Back",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                      SizedBox(
+                                                        width:
+                                                            widget.width * 10,
+                                                      ),
+                                                      InkWell(
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.red,
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .black),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        widget.size *
+                                                                            25),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets.only(
+                                                                left: widget
+                                                                        .width *
+                                                                    15,
+                                                                right: widget
+                                                                        .width *
+                                                                    15,
+                                                                top: widget
+                                                                        .height *
+                                                                    5,
+                                                                bottom: widget
+                                                                        .height *
+                                                                    5),
+                                                            child: Text(
+                                                              "Log Out",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        onTap: () {
+                                                          FirebaseAuth.instance
+                                                              .signOut();
+                                                          Navigator.pop(
+                                                              context);
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                      SizedBox(
+                                                        width:
+                                                            widget.width * 20,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: widget.height * 10,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
                                 )
                               ],
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              InkWell(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(widget.size * 8),
-                                    color: Colors.white24,
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: widget.height * 5,
-                                        horizontal: widget.width * 10),
-                                    child: Text(
-                                      "Change Branch",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: widget.size * 22),
-                                    ),
-                                  ),
-                                ),
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return Dialog(
-                                        backgroundColor:
-                                        Colors.black.withOpacity(0.8),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 20)),
-                                        elevation: 16,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            border:
-                                            Border.all(color: Colors.white38),
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 20),
-                                          ),
-                                          child: ListView(
-                                            shrinkWrap: true,
-                                            children: <Widget>[
-                                              branchYear(
-                                                isUpdate: true,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                              InkWell(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(widget.size * 8),
-                                    color: Colors.white24,
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: widget.height * 5,
-                                        horizontal: widget.width * 10),
-                                    child: Text(
-                                      "Log Out",
-                                      style: TextStyle(
-                                          color: Color.fromRGBO(5, 252, 223, 1),
-                                          fontSize: widget.size * 22,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return Dialog(
-                                        backgroundColor:
-                                        Colors.black.withOpacity(0.3),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 20)),
-                                        elevation: 16,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.tealAccent),
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 20),
-                                          ),
-                                          child: ListView(
-                                            shrinkWrap: true,
-                                            children: <Widget>[
-                                              SizedBox(
-                                                  height: widget.height * 15),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: widget.width * 15),
-                                                child: Text(
-                                                  "Do you want Log Out",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.w600,
-                                                      fontSize: widget.size * 18),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: widget.height * 5,
-                                              ),
-                                              Center(
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                                  children: [
-                                                    Spacer(),
-                                                    InkWell(
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.black26,
-                                                          border: Border.all(
-                                                              color: Colors.white
-                                                                  .withOpacity(
-                                                                  0.3)),
-                                                          borderRadius:
-                                                          BorderRadius
-                                                              .circular(widget
-                                                              .size *
-                                                              25),
-                                                        ),
-                                                        child: Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left: widget.width *
-                                                                  15,
-                                                              right:
-                                                              widget.width *
-                                                                  15,
-                                                              top: widget.height *
-                                                                  5,
-                                                              bottom:
-                                                              widget.height *
-                                                                  5),
-                                                          child: Text(
-                                                            "Back",
-                                                            style: TextStyle(
-                                                                color:
-                                                                Colors.white),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      onTap: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                    SizedBox(
-                                                      width: widget.width * 10,
-                                                    ),
-                                                    InkWell(
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.red,
-                                                          border: Border.all(
-                                                              color:
-                                                              Colors.black),
-                                                          borderRadius:
-                                                          BorderRadius
-                                                              .circular(widget
-                                                              .size *
-                                                              25),
-                                                        ),
-                                                        child: Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left: widget.width *
-                                                                  15,
-                                                              right:
-                                                              widget.width *
-                                                                  15,
-                                                              top: widget.height *
-                                                                  5,
-                                                              bottom:
-                                                              widget.height *
-                                                                  5),
-                                                          child: Text(
-                                                            "Log Out",
-                                                            style: TextStyle(
-                                                                color:
-                                                                Colors.white),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      onTap: () {
-                                                        FirebaseAuth.instance
-                                                            .signOut();
-                                                        Navigator.pop(context);
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                    SizedBox(
-                                                      width: widget.width * 20,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: widget.height * 10,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              )
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                bottomBar(
-                  index: widget.index,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (isUser())
+                  bottomBar(
+                    index: widget.index,
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (isUser())
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: widget.height * 20,
+                                  horizontal: widget.width * 10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Color.fromRGBO(31, 48, 48, 1),
+                                    borderRadius: BorderRadius.circular(
+                                        widget.size * 15)),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.all(widget.size * 8.0),
+                                      child: Text(
+                                        "Create Here",
+                                        style: TextStyle(
+                                            fontSize: widget.size * 25,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: widget.width * 20),
+                                      child: InkWell(
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "Create Home Page Update",
+                                              style: TextStyle(
+                                                  fontSize: widget.size * 22,
+                                                  color: Colors.white70,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                            Spacer(),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: widget.width * 10),
+                                              child:
+                                                  Icon(Icons.arrow_forward_ios),
+                                            )
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      updateCreator(
+                                                        branch: widget.branch,
+                                                        width: widget.width,
+                                                        height: widget.height,
+                                                        size: widget.size,
+                                                      )));
+                                        },
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: widget.width * 20,
+                                          vertical: widget.height * 5),
+                                      child: InkWell(
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "Create ${widget.branch} News",
+                                              style: TextStyle(
+                                                  fontSize: widget.size * 22,
+                                                  color: Colors.white70,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                            Spacer(),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: widget.width * 10),
+                                              child:
+                                                  Icon(Icons.arrow_forward_ios),
+                                            )
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      NewsCreator(
+                                                        branch: widget.branch,
+                                                      )));
+                                        },
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: widget.width * 20),
+                                      child: InkWell(
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "Create Subject or Lab Subject",
+                                              style: TextStyle(
+                                                  fontSize: widget.size * 22,
+                                                  color: Colors.white70,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                            Spacer(),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: widget.width * 10),
+                                              child:
+                                                  Icon(Icons.arrow_forward_ios),
+                                            )
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SubjectsCreator(
+                                                        branch: widget.branch,
+                                                      )));
+                                        },
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: widget.width * 20,
+                                          vertical: widget.height * 5),
+                                      child: InkWell(
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "Create Books",
+                                              style: TextStyle(
+                                                  fontSize: widget.size * 22,
+                                                  color: Colors.white70,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                            Spacer(),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: widget.size * 10),
+                                              child:
+                                                  Icon(Icons.arrow_forward_ios),
+                                            )
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      BooksCreator(
+                                                        branch: widget.branch,
+                                                      )));
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                          // Center(
+                          //   child: InkWell(
+                          //     child: Container(
+                          //       decoration: BoxDecoration(
+                          //         borderRadius: BorderRadius.circular(15),
+                          //         color: Colors.white.withOpacity(0.1),
+                          //         border: Border.all(
+                          //             color: Colors.white.withOpacity(0.3)),
+                          //       ),
+                          //       child: Padding(
+                          //         padding: const EdgeInsets.all(5.0),
+                          //         child: Text(
+                          //           "Saved Images and PDFs ( In App )",
+                          //           style: TextStyle(
+                          //               fontSize: 22,
+                          //               color: Colors.white,
+                          //               fontWeight: FontWeight.w500),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     onTap: () {
+                          //       Navigator.push(
+                          //           context,
+                          //           MaterialPageRoute(
+                          //               builder: (context) => unseenImages(
+                          //                     branch: widget.branch,
+                          //                   )));
+                          //     },
+                          //   ),
+                          // ),
                           Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: widget.height * 20,
-                                horizontal: widget.width * 10),
+                            padding: EdgeInsets.only(top: widget.height * 20),
+                            child: Center(
+                                child: Text('Settings',
+                                    style: TextStyle(
+                                        fontSize: widget.size * 20,
+                                        color: Colors.white70))),
+                          ),
+                          SizedBox(height: widget.height * 5.0),
+                          Padding(
+                            padding: EdgeInsets.all(widget.size * 8.0),
                             child: Container(
+                              margin: EdgeInsets.all(widget.size * 3),
+                              width: double.infinity,
+                              alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: Color.fromRGBO(31, 48, 48, 1),
-                                  borderRadius:
-                                  BorderRadius.circular(widget.size * 15)),
+                                borderRadius:
+                                    BorderRadius.circular(widget.size * 22),
+                                color: Colors.white.withOpacity(0.3),
+                              ),
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(widget.size * 8.0),
-                                    child: Text(
-                                      "Create Here",
-                                      style: TextStyle(
-                                          fontSize: widget.size * 25,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: widget.width * 20),
-                                    child: InkWell(
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            "Create Home Page Update",
-                                            style: TextStyle(
-                                                fontSize: widget.size * 22,
-                                                color: Colors.white70,
-                                                fontWeight: FontWeight.w500),
+                                  GridView.count(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    childAspectRatio: 4,
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.all(widget.size * 3),
+                                    mainAxisSpacing: 3,
+                                    crossAxisCount: 2,
+                                    children: List.generate(
+                                      SettingsData.length,
+                                      (int index) {
+                                        return InkWell(
+                                          child: Container(
+                                            margin: EdgeInsets.all(
+                                                widget.size * 2.0),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      widget.size * 15),
+                                              color:
+                                                  Colors.black.withOpacity(0.7),
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.all(
+                                                  widget.size * 5.0),
+                                              child: Center(
+                                                  child: Text(
+                                                SettingsData[index].title,
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: widget.size * 13,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              )),
+                                            ),
                                           ),
-                                          Spacer(),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                right: widget.width * 10),
-                                            child: Icon(Icons.arrow_forward_ios),
-                                          )
-                                        ],
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    updateCreator(
-                                                      branch: widget.branch,
-                                                      width: widget.width,
-                                                      height: widget.height,
-                                                      size: widget.size,
-                                                    )));
-                                      },
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: widget.width * 20,
-                                        vertical: widget.height * 5),
-                                    child: InkWell(
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            "Create ${widget.branch} News",
-                                            style: TextStyle(
-                                                fontSize: widget.size * 22,
-                                                color: Colors.white70,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          Spacer(),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                right: widget.width * 10),
-                                            child: Icon(Icons.arrow_forward_ios),
-                                          )
-                                        ],
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => NewsCreator(
-                                                  branch: widget.branch,
-                                                )));
-                                      },
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: widget.width * 20),
-                                    child: InkWell(
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            "Create Subject or Lab Subject",
-                                            style: TextStyle(
-                                                fontSize: widget.size * 22,
-                                                color: Colors.white70,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          Spacer(),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                right: widget.width * 10),
-                                            child: Icon(Icons.arrow_forward_ios),
-                                          )
-                                        ],
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SubjectsCreator(
-                                                      branch: widget.branch,
-                                                    )));
-                                      },
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: widget.width * 20,
-                                        vertical: widget.height * 5),
-                                    child: InkWell(
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            "Create Books",
-                                            style: TextStyle(
-                                                fontSize: widget.size * 22,
-                                                color: Colors.white70,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          Spacer(),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                right: widget.size * 10),
-                                            child: Icon(Icons.arrow_forward_ios),
-                                          )
-                                        ],
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    BooksCreator(
-                                                      branch: widget.branch,
-                                                    )));
+                                          onTap: () {
+                                            if (SettingsData[index].title ==
+                                                "Report") {
+                                              sendingMails(
+                                                  "sujithnimmala03@gmail.com");
+                                            } else if (SettingsData[index]
+                                                    .title ==
+                                                "About") {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const about()));
+                                            } else {
+                                              ExternalLaunchUrl(
+                                                  "https://github.com/NSCreator/PRIVACY_POLACY/blob/main/Privacy-policy");
+                                            }
+                                          },
+                                        );
                                       },
                                     ),
                                   ),
@@ -554,337 +708,238 @@ class _settingsState extends State<settings> {
                               ),
                             ),
                           ),
-
-                        // Center(
-                        //   child: InkWell(
-                        //     child: Container(
-                        //       decoration: BoxDecoration(
-                        //         borderRadius: BorderRadius.circular(15),
-                        //         color: Colors.white.withOpacity(0.1),
-                        //         border: Border.all(
-                        //             color: Colors.white.withOpacity(0.3)),
-                        //       ),
-                        //       child: Padding(
-                        //         padding: const EdgeInsets.all(5.0),
-                        //         child: Text(
-                        //           "Saved Images and PDFs ( In App )",
-                        //           style: TextStyle(
-                        //               fontSize: 22,
-                        //               color: Colors.white,
-                        //               fontWeight: FontWeight.w500),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     onTap: () {
-                        //       Navigator.push(
-                        //           context,
-                        //           MaterialPageRoute(
-                        //               builder: (context) => unseenImages(
-                        //                     branch: widget.branch,
-                        //                   )));
-                        //     },
-                        //   ),
-                        // ),
-                        Padding(
-                          padding: EdgeInsets.only(top: widget.height * 20),
-                          child: Center(
-                              child: Text('Settings',
-                                  style: TextStyle(
-                                      fontSize: widget.size * 20,
-                                      color: Colors.white70))),
-                        ),
-                        SizedBox(height: widget.height * 5.0),
-                        Padding(
-                          padding: EdgeInsets.all(widget.size * 8.0),
-                          child: Container(
-                            margin: EdgeInsets.all(widget.size * 3),
-                            width: double.infinity,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              borderRadius:
-                              BorderRadius.circular(widget.size * 22),
-                              color: Colors.white.withOpacity(0.3),
-                            ),
-                            child: Column(
-                              children: [
-                                GridView.count(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  childAspectRatio: 4,
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.all(widget.size * 3),
-                                  mainAxisSpacing: 3,
-                                  crossAxisCount: 2,
-                                  children: List.generate(
-                                    SettingsData.length,
-                                        (int index) {
-                                      return InkWell(
-                                        child: Container(
-                                          margin:
-                                          EdgeInsets.all(widget.size * 2.0),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 15),
-                                            color: Colors.black.withOpacity(0.7),
-                                          ),
-                                          child: Padding(
-                                            padding:
-                                            EdgeInsets.all(widget.size * 5.0),
-                                            child: Center(
-                                                child: Text(
-                                                  SettingsData[index].title,
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: widget.size * 13,
-                                                      fontWeight: FontWeight.w500),
-                                                )),
-                                          ),
-                                        ),
-                                        onTap: () {
-                                          if (SettingsData[index].title ==
-                                              "Report") {
-                                            sendingMails(
-                                                "sujithnimmala03@gmail.com");
-                                          } else if (SettingsData[index].title ==
-                                              "About") {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                    const about()));
-                                          } else {
-                                            ExternalLaunchUrl(
-                                                "https://github.com/NSCreator/PRIVACY_POLACY/blob/main/Privacy-policy");
-                                          }
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        StreamBuilder<List<followUsConvertor>>(
-                            stream: readfollowUs(),
-                            builder: (context, snapshot) {
-                              final Books = snapshot.data;
-                              switch (snapshot.connectionState) {
-                                case ConnectionState.waiting:
-                                  return const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 0.3,
-                                        color: Colors.cyan,
-                                      ));
-                                default:
-                                  if (snapshot.hasError) {
+                          StreamBuilder<List<followUsConvertor>>(
+                              stream: readfollowUs(),
+                              builder: (context, snapshot) {
+                                final Books = snapshot.data;
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
                                     return const Center(
-                                        child: Text(
-                                            'Error with TextBooks Data or\n Check Internet Connection'));
-                                  } else {
-                                    if (Books!.isEmpty) {
-                                      return Center(
-                                        child: Padding(
-                                          padding:
-                                          EdgeInsets.all(widget.size * 8.0),
+                                        child: CircularProgressIndicator(
+                                      strokeWidth: 0.3,
+                                      color: Colors.cyan,
+                                    ));
+                                  default:
+                                    if (snapshot.hasError) {
+                                      return const Center(
                                           child: Text(
-                                            "Nothing To Follow",
-                                            style: TextStyle(
-                                              color: Color.fromRGBO(
-                                                  195, 228, 250, 1),
-                                            ),
-                                          ),
-                                        ),
-                                      );
+                                              'Error with TextBooks Data or\n Check Internet Connection'));
                                     } else {
-                                      return Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                left: widget.width * 10,
-                                                top: widget.height * 20,
-                                                bottom: widget.height * 8),
+                                      if (Books!.isEmpty) {
+                                        return Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(
+                                                widget.size * 8.0),
                                             child: Text(
-                                              "Follow Us",
+                                              "Nothing To Follow",
                                               style: TextStyle(
-                                                fontSize: widget.size * 20,
-                                                fontWeight: FontWeight.w500,
                                                 color: Color.fromRGBO(
                                                     195, 228, 250, 1),
                                               ),
                                             ),
                                           ),
-                                          SizedBox(
-                                            height: widget.height * 40,
-                                            child: ListView.separated(
-                                              physics: BouncingScrollPhysics(),
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: Books.length,
-                                              itemBuilder: (BuildContext context,
-                                                  int index) =>
-                                                  InkWell(
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: widget.width * 5,
-                                                          bottom: widget.height * 10),
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                          border: Border.all(
-                                                            color:
-                                                            const Color.fromRGBO(
-                                                                174,
-                                                                228,
-                                                                242,
-                                                                0.15),
-                                                          ),
-                                                          borderRadius:
-                                                          BorderRadius.circular(
-                                                              widget.size * 15),
-                                                          color: Colors.black
-                                                              .withOpacity(0.3),
-                                                          // border: Border.all(color: Colors.white),
-                                                        ),
-                                                        child: Row(
-                                                          children: [
-                                                            Container(
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    widget.size *
-                                                                        15),
-                                                                color: Colors.black
-                                                                    .withOpacity(0.4),
-                                                                image:
-                                                                DecorationImage(
-                                                                  image: NetworkImage(
-                                                                    Books[index]
-                                                                        .photoUrl,
-                                                                  ),
-                                                                  fit: BoxFit.cover,
-                                                                ),
-                                                              ),
-                                                              height:
-                                                              widget.height * 35,
-                                                              width:
-                                                              widget.width * 50,
-                                                            ),
-                                                            Padding(
-                                                              padding: EdgeInsets.all(
-                                                                  widget.size * 5.0),
-                                                              child: Text(
-                                                                Books[index].name,
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                    widget.size *
-                                                                        16,
-                                                                    color:
-                                                                    Colors.white),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    onTap: () {
-                                                      if (Books[index].name ==
-                                                          "Gmail") {
-                                                        sendingMails(
-                                                            Books[index].link);
-                                                      } else {
-                                                        if (Books[index]
-                                                            .link
-                                                            .isNotEmpty)
-                                                          ExternalLaunchUrl(
-                                                              Books[index].link);
-                                                        else
-                                                          showToastText(
-                                                              "No ${Books[index].name} Link");
-                                                      }
-                                                    },
-                                                  ),
-                                              shrinkWrap: true,
-                                              separatorBuilder:
-                                                  (context, index) => SizedBox(
-                                                width: widget.width * 9,
+                                        );
+                                      } else {
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: widget.width * 10,
+                                                  top: widget.height * 20,
+                                                  bottom: widget.height * 8),
+                                              child: Text(
+                                                "Follow Us",
+                                                style: TextStyle(
+                                                  fontSize: widget.size * 20,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Color.fromRGBO(
+                                                      195, 228, 250, 1),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      );
+                                            SizedBox(
+                                              height: widget.height * 40,
+                                              child: ListView.separated(
+                                                physics:
+                                                    BouncingScrollPhysics(),
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemCount: Books.length,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                            int index) =>
+                                                        InkWell(
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: widget.width * 5,
+                                                        bottom:
+                                                            widget.height * 10),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                          color: const Color
+                                                                  .fromRGBO(174,
+                                                              228, 242, 0.15),
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(widget
+                                                                        .size *
+                                                                    15),
+                                                        color: Colors.black
+                                                            .withOpacity(0.3),
+                                                        // border: Border.all(color: Colors.white),
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          widget.size *
+                                                                              15),
+                                                              color: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                      0.4),
+                                                              image:
+                                                                  DecorationImage(
+                                                                image:
+                                                                    NetworkImage(
+                                                                  Books[index]
+                                                                      .photoUrl,
+                                                                ),
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            ),
+                                                            height:
+                                                                widget.height *
+                                                                    35,
+                                                            width:
+                                                                widget.width *
+                                                                    50,
+                                                          ),
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .all(widget
+                                                                        .size *
+                                                                    5.0),
+                                                            child: Text(
+                                                              Books[index].name,
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      widget.size *
+                                                                          16,
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    if (Books[index].name ==
+                                                        "Gmail") {
+                                                      sendingMails(
+                                                          Books[index].link);
+                                                    } else {
+                                                      if (Books[index]
+                                                          .link
+                                                          .isNotEmpty)
+                                                        ExternalLaunchUrl(
+                                                            Books[index].link);
+                                                      else
+                                                        showToastText(
+                                                            "No ${Books[index].name} Link");
+                                                    }
+                                                  },
+                                                ),
+                                                shrinkWrap: true,
+                                                separatorBuilder:
+                                                    (context, index) =>
+                                                        SizedBox(
+                                                  width: widget.width * 9,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }
                                     }
-                                  }
-                              }
-                            }),
-                        Center(
-                          child: InkWell(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                BorderRadius.circular(widget.size * 15),
-                                color: Colors.white.withOpacity(0.1),
-                                border: Border.all(
-                                    color: Colors.white.withOpacity(0.3)),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.all(widget.size * 5.0),
-                                child: Text(
-                                  "APP DEVELOPMENT TEAM",
-                                  style: TextStyle(
-                                      fontSize: widget.size * 22,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500),
+                                }
+                              }),
+                          Center(
+                            child: InkWell(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.circular(widget.size * 15),
+                                  color: Colors.white.withOpacity(0.1),
+                                  border: Border.all(
+                                      color: Colors.white.withOpacity(0.3)),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.all(widget.size * 5.0),
+                                  child: Text(
+                                    "APP DEVELOPMENT TEAM",
+                                    style: TextStyle(
+                                        fontSize: widget.size * 22,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500),
+                                  ),
                                 ),
                               ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const appDevelopmentTeam()));
+                              },
                             ),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                      const appDevelopmentTeam()));
-                            },
                           ),
-                        ),
-                        SizedBox(
-                          height: widget.height * 30,
-                        ),
-                        Center(
+                          SizedBox(
+                            height: widget.height * 30,
+                          ),
+                          Center(
+                              child: Text(
+                            ".....eSRKR.....",
+                            style: TextStyle(color: Colors.white),
+                          )),
+                          Center(
                             child: Text(
-                              ".....eSRKR.....",
-                              style: TextStyle(color: Colors.white),
-                            )),
-                        Center(
-                          child: Text(
-                            "v3.0.10",
-                            style: TextStyle(
-                              fontSize: widget.size * 9.0,
-                              color: Colors.white70,
-                              fontWeight: FontWeight.bold,
+                              "v3.0.10",
+                              style: TextStyle(
+                                fontSize: widget.size * 9.0,
+                                color: Colors.white70,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: widget.height * 30,
-                        ),
-                      ],
+                          SizedBox(
+                            height: widget.height * 30,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          )
-        ),
+                ],
+              ),
+            )),
       ),
     );
-
   }
 }
 
 class bottomBar extends StatefulWidget {
   int index;
+
   bottomBar({Key? key, required this.index}) : super(key: key);
 
   @override
@@ -893,6 +948,7 @@ class bottomBar extends StatefulWidget {
 
 class _bottomBarState extends State<bottomBar> {
   late int selectedIndex = 0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -919,7 +975,7 @@ class _bottomBarState extends State<bottomBar> {
               GestureDetector(
                 onTap: () {
                   setState(() {
-                    selectedIndex = widget.index;
+                    selectedIndex = 0;
                     FirebaseFirestore.instance
                         .collection("user")
                         .doc(fullUserId())
@@ -959,7 +1015,7 @@ class _bottomBarState extends State<bottomBar> {
                       : Colors.transparent,
                   padding: EdgeInsets.all(8),
                   child: Text(
-                    'Favorite',
+                    'Regulation',
                     style: TextStyle(
                       color: selectedIndex == 1 ? Colors.white : Colors.black,
                     ),
@@ -986,7 +1042,7 @@ class _bottomBarState extends State<bottomBar> {
                   ),
                   padding: EdgeInsets.all(8),
                   child: Text(
-                    'Search',
+                    'Favorites',
                     style: TextStyle(
                       color: selectedIndex == 2 ? Colors.white : Colors.black,
                     ),

@@ -241,21 +241,25 @@ class _downloadAllPdfsState extends State<downloadAllPdfs> {
         alignment: Alignment.center,
         children: <Widget>[
 
-          CircularProgressIndicator(
-             strokeWidth: 3,
-            color: Colors.green,
-            value:_downloadProgress,
+          SizedBox(
+            height: 28,
+            width: 28,
+            child: CircularProgressIndicator(
+               strokeWidth: 3,
+              color: Colors.green,
+              value:_downloadProgress,
+            ),
           ),
           if(isDownloaded)SizedBox(
-            height: 40,
-            width: 40,
+            height: 34,
+            width: 34,
             child: CircularProgressIndicator(
               strokeWidth: 2,
 
               color: Colors.red,
             ),
           ),
-          Icon(isDownloaded?Icons.download_done:Icons.download_for_offline_outlined, size: 38.0,color: isDownloaded?Colors.greenAccent:Colors.white54,),
+          Icon(isDownloaded?Icons.download_done:Icons.download_for_offline_outlined, size: 30.0,color: isDownloaded?Colors.greenAccent:Colors.white54,),
         ],
       ),
       onTap: (){

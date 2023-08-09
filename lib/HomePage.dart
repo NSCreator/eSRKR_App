@@ -19,6 +19,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'favorites.dart';
 import 'functins.dart';
 import 'main.dart';
+import 'net.dart';
+
 
 class HomePage extends StatefulWidget {
   final String branch;
@@ -351,160 +353,675 @@ class _HomePageState extends State<HomePage> {
                     physics: NeverScrollableScrollPhysics(),
                     children: [
                       SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            homePageUpdate(
-                              branch: widget.branch,
-                              width: widget.width,
-                              height: widget.height,
-                              size: widget.size,
-                              path: folderPath,
+                            Row(
+                              children: [
+                                ElevatedButton(onPressed: (){
+                                  UpdateConvertor newUpdate = UpdateConvertor(
+                                    heading: 'Crux Event',
+                                    date: '15-07-2023', photoUrl: 'https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/update%2F2023-07-15%2013%3A15%3A05.616088.image?alt=media&token=8385ca9b-ad0e-4966-961f-b21cf8084519',
+                                    link: 'https://docs.google.com/forms/d/e/1FAIpQLSeUPtLr2bP2f_Qih7keGpLYPidVENhZiOhecpTQz1HbOPLPwQ/viewform',
+                                    branch: '', description: 'Registrations',
+                                    // ... other fields ...
+                                  );
+                                  UpdateConvertorUtil.addUpdateConvertor(newUpdate).then((_) {
+
+                                    showToastText('Update added successfully');
+
+                                  }).catchError((error) {
+
+                                    print('Error adding update: $error');
+                                  });
+
+                                }, child: Text("skjhdlksajd")),
+                                ElevatedButton(onPressed: (){
+                                  BranchNewConvertor newUpdate = BranchNewConvertor(
+                                      heading: 'CRUX',
+                                      photoUrl: 'https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/ece%2Fnews%2F2023-07-14%2020%3A35%3A11.794644.image?alt=media&token=d5fdc618-7e82-4b48-8b5b-e7169f10bc97',
+                                      description: 'From ECE Department',
+                                      Date: '06-08-2023',
+                                      link: ''
+
+                                  );
+                                  BranchNewConvertorUtil.addUpdateConvertor(newUpdate).then((_) {
+
+                                    showToastText('Update added successfully');
+
+                                  }).catchError((error) {
+
+                                    print('Error adding update: $error');
+                                  });
+
+                                },
+                                    child: Text("skjhdlksajd")),
+                              ],
                             ),
-                            StreamBuilder<List<BranchNewConvertor>>(
-                                stream: readBranchNew(widget.branch),
+                            FutureBuilder<List<UpdateConvertor>>(
+                              future: UpdateConvertorUtil.getUpdateConvertorList(),
+                              builder: (context, snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                    return const Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 0.3,
+                                        color: Colors.cyan,
+                                      ),
+                                    );
+                                  default:
+                                    if (snapshot.hasError) {
+                                      return const Center(
+                                        child: Text('Error with updates Data or\n Check Internet Connection'),
+                                      );
+                                    } else {
+                                      final List<UpdateConvertor> updates = snapshot.data ?? [];
+
+                                      if (updates.isEmpty) {
+                                        return Container();
+                                      } else {
+                                        final List<UpdateConvertor> updates = snapshot.data ?? [];
+                                        return updates.isEmpty?Container():Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: widget.height * 10,
+                                                  horizontal: widget.width * 15),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "New Updates",
+
+                                                    style:secondHeadingTextStyle()) ,
+
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              height: widget.height * 95,
+                                              child: ListView.builder(
+                                                physics: const BouncingScrollPhysics(),
+                                                scrollDirection: Axis.horizontal,
+                                                itemCount: min(
+                                                    updates.length, 5), // Display only top 5 items
+                                                itemBuilder: (context, int index) {
+                                                  final BranchNew = updates[index];
+                                                  final Uri uri = Uri.parse(BranchNew.photoUrl);
+                                                  final String fileName = uri.pathSegments.last;
+                                                  var name = fileName.split("/").last;
+                                                  final file = File("${folderPath}/updates/$name");
+
+                                                  return Padding(
+                                                    padding:
+                                                    EdgeInsets.only(left: widget.width * 10),
+                                                    child: InkWell(
+                                                      child: Container(
+                                                        padding: EdgeInsets.all(widget.size * 5),
+                                                        width: screenWidth(context) / 1.35,
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.black.withOpacity(0.8),
+                                                          borderRadius: BorderRadius.circular(
+                                                              widget.size * 15),
+                                                          border: Border.all(color: Colors.white10),
+                                                        ),
+                                                        child: Column(
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Container(
+                                                                  width: widget.width * 35,
+                                                                  height: widget.height * 35,
+                                                                  decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        widget.size * 17),
+                                                                    image: DecorationImage(
+                                                                      image: FileImage(file),
+                                                                      fit: BoxFit.cover,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Padding(
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                        widget.width * 5),
+                                                                    child: Text(
+                                                                      BranchNew.heading,
+                                                                      style: TextStyle(
+                                                                          color: Colors.white,
+                                                                          fontSize:
+                                                                          widget.size * 20,
+                                                                          fontWeight:
+                                                                          FontWeight.w500),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets.only(
+                                                                  left: widget.width * 45,
+                                                                  right: widget.width * 10,
+                                                                  bottom: widget.height * 5),
+                                                              child: Row(
+                                                                children: [
+                                                                  Text(
+                                                                    BranchNew.description,
+                                                                    style: TextStyle(
+                                                                        color: Colors.white70,
+                                                                        fontSize: widget.size * 15),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets.only(
+                                                                  left: widget.width * 40,
+                                                                  right: widget.width * 10),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment.spaceBetween,
+                                                                children: [
+                                                                  InkWell(
+                                                                    child: Container(
+                                                                      decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.circular(8),
+                                                                        border: Border.all(color: Colors.white30)
+                                                                      ),
+                                                                      child: Padding(
+                                                                        padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                                                        child: Text("Remove",
+                                                                          style: TextStyle(
+                                                                              color: Colors.red,
+                                                                              fontSize:
+                                                                              widget.size * 18),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    onTap: () {
+                                                                      setState(() {
+                                                                        UpdateConvertorUtil.removeUpdateConvertor(index);
+                                                                      });
+
+                                                                    },
+                                                                  ),
+                                                                  if (BranchNew.link.isNotEmpty)
+                                                                    InkWell(
+                                                                      child: Text(
+                                                                        "Open (Link)",
+                                                                        style: TextStyle(
+                                                                            color: Colors
+                                                                                .lightBlueAccent),
+                                                                      ),
+                                                                      onTap: () {
+                                                                        ExternalLaunchUrl(
+                                                                            BranchNew.link);
+                                                                      },
+                                                                    ),
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        top: widget.height * 5),
+                                                                    child: Text(
+                                                                      BranchNew.date,
+                                                                      style: TextStyle(
+                                                                          color: Colors.white38,
+                                                                          fontSize:
+                                                                          widget.size * 10),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+
+                                                          ],
+                                                        ),
+                                                      ),
+
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        );
+                                      }
+                                    }
+                                }
+                              },
+                            ),
+                            FutureBuilder<List<BranchNewConvertor>>(
+                              future: BranchNewConvertorUtil.getUpdateConvertorList(),
+                              builder: (context, snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                    return const Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 0.3,
+                                        color: Colors.cyan,
+                                      ),
+                                    );
+                                  default:
+                                    if (snapshot.hasError) {
+                                      return const Center(
+                                        child: Text('Error with updates Data or\n Check Internet Connection'),
+                                      );
+                                    } else {
+                                      final List<BranchNewConvertor> updates = snapshot.data ?? [];
+
+                                      if (updates.isEmpty) {
+                                        return Container();
+                                      } else {
+                                        final List<BranchNewConvertor> updates = snapshot.data ?? [];
+                                        return updates.isEmpty?Container():Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: widget.height * 10,
+                                                  horizontal: widget.width * 15),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "${widget.branch} News",
+                                                    style: secondHeadingTextStyle(),)
+
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              height: widget.height * 145,
+                                              child: ListView.builder(
+                                                physics: const BouncingScrollPhysics(),
+                                                scrollDirection: Axis.horizontal,
+                                                itemCount: min(
+                                                    updates.length, 5), // Display only top 5 items
+                                                itemBuilder: (context, int index) {
+                                                  final BranchNew = updates[index];
+                                                  final Uri uri = Uri.parse(BranchNew.photoUrl);
+                                                  final String fileName = uri.pathSegments.last;
+                                                  var name = fileName.split("/").last;
+                                                  final file = File("${folderPath}/${widget.branch.toLowerCase()}_news/$name");
+
+                                                  return Padding(
+                                                    padding:
+                                                    EdgeInsets.only(left: widget.width * 10),
+                                                    child: InkWell(
+                                                      child: Container(
+                                                        padding: EdgeInsets.all(widget.size * 5),
+                                                        width: screenWidth(context) / 1.35,
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.black.withOpacity(0.8),
+                                                          borderRadius: BorderRadius.circular(
+                                                              widget.size * 15),
+                                                          border: Border.all(color: Colors.white10),
+                                                        ),
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Container(
+                                                                  width: widget.width * 150,
+                                                                  height: widget.height * 100,
+                                                                  decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        widget.size * 17),
+                                                                    image: DecorationImage(
+                                                                      image: FileImage(file),
+                                                                      fit: BoxFit.cover,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child: Column(
+                                                                    children: [
+                                                                      InkWell(
+                                                                        child: Container(
+                                                                          decoration: BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(8),
+                                                                              border: Border.all(color: Colors.white30)
+                                                                          ),
+                                                                          child: Padding(
+                                                                            padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                                                            child: Text("Remove",
+                                                                              style: TextStyle(
+                                                                                  color: Colors.red,
+                                                                                  fontSize:
+                                                                                  widget.size * 18),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        onTap: () {
+                                                                          setState(() {
+                                                                            BranchNewConvertorUtil.removeUpdateConvertor(index);
+                                                                          });
+
+                                                                        },
+                                                                      ),
+                                                                      Padding(
+                                                                        padding: EdgeInsets.symmetric(
+                                                                            horizontal:
+                                                                            widget.width * 5,vertical: 5),
+                                                                        child: Text(
+                                                                          BranchNew.heading,
+                                                                          style: TextStyle(
+                                                                              color: Colors.white,
+                                                                              fontSize:
+                                                                              widget.size * 20,
+                                                                              fontWeight:
+                                                                              FontWeight.w700),
+                                                                        ),
+                                                                      ),
+                                                                      if (BranchNew.link.isNotEmpty)
+                                                                      InkWell(
+                                                                        child: Text(
+                                                                          "Open (Link)",
+                                                                          style: TextStyle(
+                                                                              color: Colors
+                                                                                  .lightBlueAccent,fontSize: 18,fontWeight: FontWeight.w800),
+                                                                        ),
+                                                                        onTap: () {
+                                                                          ExternalLaunchUrl(
+                                                                              BranchNew.link);
+                                                                        },
+                                                                      ),
+                                                                      Padding(
+                                                                        padding: EdgeInsets.only(
+                                                                            top: widget.height * 5),
+                                                                        child: Text(
+                                                                          BranchNew.Date,
+                                                                          style: TextStyle(
+                                                                              color: Colors.white54,
+                                                                              fontSize:
+                                                                              widget.size * 10,fontWeight: FontWeight.w700),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                                                              child: Row(
+                                                                children: [
+                                                                  Text(
+                                                                    BranchNew.description,
+                                                                    style: TextStyle(
+                                                                        color: Colors.white,
+                                                                        fontSize:
+                                                                        widget.size * 20,
+                                                                        fontWeight:
+                                                                        FontWeight.w600),
+                                                                    maxLines: 1,
+
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+
+                                                          ],
+                                                        ),
+                                                      ),
+
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        );
+                                      }
+                                    }
+                                }
+                              },
+                            ),
+                            StreamBuilder<List<FlashNewsConvertor>>(
+                                stream: readSRKRFlashNews(),
                                 builder: (context, snapshot) {
-                                  final BranchNews = snapshot.data;
+                                  final Favourites = snapshot.data;
                                   switch (snapshot.connectionState) {
                                     case ConnectionState.waiting:
                                       return const Center(
                                           child: CircularProgressIndicator(
-                                        strokeWidth: 0.3,
-                                        color: Colors.cyan,
-                                      ));
+                                            strokeWidth: 0.3,
+                                            color: Colors.cyan,
+                                          ));
                                     default:
                                       if (snapshot.hasError) {
-                                        return const Center(
-                                            child: Text(
-                                                'Error with TextBooks Data or\n Check Internet Connection'));
+                                        return Center(child: Text("Error"));
                                       } else {
-                                        if (BranchNews!.length == 0) {
-                                          return Center(
-                                              child: Text(
-                                            "No ${widget.branch} News",
-                                            style: TextStyle(
-                                                color: Colors.lightBlueAccent),
-                                          ));
-                                        } else
-                                          return Column(
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        widget.width * 15,
-                                                    vertical:
-                                                        widget.height * 10),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      "${widget.branch} News",
-                                                      style: TextStyle(
-                                                          fontSize:
-                                                              widget.size * 30,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Colors.white),
-                                                    ),
+                                        return Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text("Flash News",style: secondHeadingTextStyle(color: Colors.red),),
+                                            ),
+                                            CarouselSlider(
+                                            items: List.generate(
+                                            Favourites!.length,
+                                  (int index) {
+                                  final BranchNew =
+                                  Favourites[index];
 
-                                                  ],
-                                                ),
-                                              ),
-                                              CarouselSlider(
-                                                items: List.generate(
-                                                    BranchNews.length,
-                                                    (int index) {
-                                                  final BranchNew =
-                                                      BranchNews[index];
-                                                  final Uri uri = Uri.parse(
-                                                      BranchNew.photoUrl);
-                                                  final String fileName =
-                                                      uri.pathSegments.last;
-                                                  var name =
-                                                      fileName.split("/").last;
-                                                  final file = File(
-                                                      "${folderPath}/${widget.branch.toLowerCase()}_news/$name");
-                                                  return InkWell(
-                                                    child: Image.file(file),
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        PageRouteBuilder(
-                                                          transitionDuration:
-                                                              const Duration(
-                                                                  milliseconds:
-                                                                      300),
-                                                          pageBuilder: (context,
-                                                                  animation,
-                                                                  secondaryAnimation) =>
-                                                              ImageZoom(
-                                                            size: widget.size,
-                                                            width: widget.width,
-                                                            height:
-                                                                widget.height,
-                                                            url: "",
-                                                            file: file,
-                                                          ),
-                                                          transitionsBuilder:
-                                                              (context,
-                                                                  animation,
-                                                                  secondaryAnimation,
-                                                                  child) {
-                                                            final fadeTransition =
-                                                                FadeTransition(
-                                                              opacity:
-                                                                  animation,
-                                                              child: child,
-                                                            );
-
-                                                            return Container(
-                                                              color: Colors
-                                                                  .black
-                                                                  .withOpacity(
-                                                                      animation
-                                                                          .value),
-                                                              child: AnimatedOpacity(
-                                                                  duration: Duration(
-                                                                      milliseconds:
-                                                                          300),
-                                                                  opacity: animation
-                                                                      .value
-                                                                      .clamp(
-                                                                          0.3,
-                                                                          1.0),
-                                                                  child:
-                                                                      fadeTransition),
-                                                            );
-                                                          },
-                                                        ),
-                                                      );
-                                                    },
-                                                  );
-                                                }),
-                                                //Slider Container properties
-                                                options: CarouselOptions(
-                                                  viewportFraction: 0.85,
-                                                  enlargeCenterPage: true,
-                                                  height: widget.height * 210,
-                                                  autoPlayAnimationDuration:
-                                                      Duration(
-                                                          milliseconds: 1800),
-                                                  autoPlay:
-                                                      BranchNews.length > 1
-                                                          ? true
-                                                          : false,
-                                                ),
-                                              ),
-                                            ],
-                                          );
+                                  return InkWell(child:
+                                  Text(BranchNew.heading ,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 20),maxLines: 3,overflow: TextOverflow.ellipsis,),
+                                  onTap: (){
+                                    if(BranchNew.Url.isNotEmpty){
+                                      ExternalLaunchUrl(BranchNew.Url);
+                                    }else{
+                                      showToastText("No Url Found");
+                                    }
+                                  },
+                                  );
                                       }
-                                  }
-                                }),
+                                      ),
+                                   options: CarouselOptions(
+                                  viewportFraction:0.85,
+                                  enlargeCenterPage: true,
+                                  height:  60,
+                                  autoPlayAnimationDuration:
+                                  Duration(
+                                  milliseconds: 1800),
+                                  autoPlay:
+                                  Favourites.length > 1? true: false,
+                                  )),
+                                          ],
+                                        );}
+                                }}),
 
+                          ],
+                        ),
+                      ),
+                      SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            InkWell(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    border:
+                                    Border.all(color: Colors.white30)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 3, horizontal: 15),
+                                  child: Text(
+                                    "Your Regulation : ${widget.reg}",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Dialog(
+                                      backgroundColor:
+                                      Colors.black.withOpacity(0.8),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              widget.size * 20)),
+                                      elevation: 16,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          border:
+                                          Border.all(color: Colors.white38),
+                                          borderRadius: BorderRadius.circular(
+                                              widget.size * 20),
+                                        ),
+                                        child: ListView(
+                                          shrinkWrap: true,
+                                          children: <Widget>[
+                                            branchYear(
+                                              isUpdate: true,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                InkWell(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        border:
+                                            Border.all(color: Colors.white30)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 3, horizontal: 15),
+                                      child: Text(
+                                        " Theory ",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        transitionDuration:
+                                            const Duration(milliseconds: 300),
+                                        pageBuilder: (context, animation,
+                                                secondaryAnimation) =>
+                                            Subjects(
+                                          branch: widget.branch,
+                                          reg: widget.reg,
+                                          width: widget.width,
+                                          height: widget.height,
+                                          size: widget.size,
+                                        ),
+                                        transitionsBuilder: (context, animation,
+                                            secondaryAnimation, child) {
+                                          final fadeTransition = FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          );
+
+                                          return Container(
+                                            color: Colors.black
+                                                .withOpacity(animation.value),
+                                            child: AnimatedOpacity(
+                                                duration:
+                                                    Duration(milliseconds: 300),
+                                                opacity: animation.value
+                                                    .clamp(0.3, 1.0),
+                                                child: fadeTransition),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                ),
+                                InkWell(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        border:
+                                            Border.all(color: Colors.white30)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 3, horizontal: 15),
+                                      child: Text(
+                                        "Experiment",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        transitionDuration:
+                                            const Duration(milliseconds: 300),
+                                        pageBuilder: (context, animation,
+                                                secondaryAnimation) =>
+                                            LabSubjects(
+                                          branch: widget.branch,
+                                          reg: widget.reg,
+                                          width: widget.width,
+                                          height: widget.height,
+                                          size: widget.size,
+                                        ),
+                                        transitionsBuilder: (context, animation,
+                                            secondaryAnimation, child) {
+                                          final fadeTransition = FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          );
+
+                                          return Container(
+                                            color: Colors.black
+                                                .withOpacity(animation.value),
+                                            child: AnimatedOpacity(
+                                                duration:
+                                                    Duration(milliseconds: 300),
+                                                opacity: animation.value
+                                                    .clamp(0.3, 1.0),
+                                                child: fadeTransition),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
                             // if (widget.reg.isNotEmpty)
                             //   Padding(
                             //     padding: EdgeInsets.symmetric(
@@ -674,1270 +1191,6 @@ class _HomePageState extends State<HomePage> {
                             //     ),
                             //   ),
                             if (widget.reg.isNotEmpty)
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: widget.width * 15,
-                                    vertical: widget.height * 15),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Subjects",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: widget.size * 30,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    InkWell(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              widget.size * 8),
-                                          color: Colors.black.withOpacity(0.7),
-                                          border: Border.all(
-                                              color: Colors.white
-                                                  .withOpacity(0.3)),
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: widget.width * 10,
-                                              right: widget.width * 10,
-                                              top: widget.height * 5,
-                                              bottom: widget.height * 5),
-                                          child: Text(
-                                            "See More",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: widget.size * 20,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          PageRouteBuilder(
-                                            transitionDuration: const Duration(
-                                                milliseconds: 300),
-                                            pageBuilder: (context, animation,
-                                                    secondaryAnimation) =>
-                                                Subjects(
-                                              branch: widget.branch,
-                                              reg: widget.reg,
-                                              width: widget.width,
-                                              height: widget.height,
-                                              size: widget.size,
-                                            ),
-                                            transitionsBuilder: (context,
-                                                animation,
-                                                secondaryAnimation,
-                                                child) {
-                                              final fadeTransition =
-                                                  FadeTransition(
-                                                opacity: animation,
-                                                child: child,
-                                              );
-
-                                              return Container(
-                                                color: Colors.black.withOpacity(
-                                                    animation.value),
-                                                child: AnimatedOpacity(
-                                                    duration: Duration(
-                                                        milliseconds: 300),
-                                                    opacity: animation.value
-                                                        .clamp(0.3, 1.0),
-                                                    child: fadeTransition),
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            if (widget.reg.isNotEmpty)
-                              StreamBuilder<List<FlashConvertor>>(
-                                  stream: readFlashNews(widget.branch),
-                                  builder: (context, snapshot) {
-                                    final Favourites = snapshot.data;
-                                    switch (snapshot.connectionState) {
-                                      case ConnectionState.waiting:
-                                        return const Center(
-                                            child: CircularProgressIndicator(
-                                          strokeWidth: 0.3,
-                                          color: Colors.cyan,
-                                        ));
-                                      default:
-                                        if (snapshot.hasError) {
-                                          return Center(child: Text("Error"));
-                                        } else {
-                                          List<FlashConvertor> filteredItems =
-                                              Favourites!
-                                                  .where((item) => item
-                                                      .regulation
-                                                      .toString()
-                                                      .startsWith(widget.reg))
-                                                  .toList();
-                                          if (Favourites.length > 0)
-                                            return Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      widget.width * 20),
-                                              child: GridView.builder(
-                                                physics:
-                                                    const BouncingScrollPhysics(),
-                                                shrinkWrap: true,
-                                                gridDelegate:
-                                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                                  crossAxisSpacing:
-                                                      widget.size * 10,
-                                                  crossAxisCount: 3,
-                                                ),
-                                                itemCount: filteredItems.length,
-                                                itemBuilder:
-                                                    (context, int index) {
-                                                  final SubjectsData =
-                                                      filteredItems[index];
-                                                  final Uri uri = Uri.parse(
-                                                      SubjectsData.PhotoUrl);
-                                                  final String fileName =
-                                                      uri.pathSegments.last;
-                                                  var name =
-                                                      fileName.split("/").last;
-                                                  final file = File(
-                                                      "${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
-                                                  return InkWell(
-                                                    child: Column(
-                                                      children: [
-                                                        file.existsSync()
-                                                            ? AspectRatio(
-                                                                aspectRatio:
-                                                                    16 / 10,
-                                                                child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.all(Radius.circular(widget.size *
-                                                                            8.0)),
-                                                                    color: Colors
-                                                                        .black,
-                                                                    image:
-                                                                        DecorationImage(
-                                                                      image: FileImage(
-                                                                          file),
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    ),
-                                                                  ),
-                                                                  child: Align(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .bottomCenter,
-                                                                    child:
-                                                                        Container(
-                                                                      decoration: BoxDecoration(
-                                                                          borderRadius: BorderRadius.circular(widget.size *
-                                                                              8),
-                                                                          color: Colors
-                                                                              .black
-                                                                              .withOpacity(0.8)),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding:
-                                                                            EdgeInsets.all(widget.size *
-                                                                                5),
-                                                                        child:
-                                                                            Text(
-                                                                          SubjectsData
-                                                                              .heading,
-                                                                          style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 25,
-                                                                              fontWeight: FontWeight.w500),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              )
-                                                            : AspectRatio(
-                                                                aspectRatio:
-                                                                    16 / 10,
-                                                                child:
-                                                                    Container(
-                                                                  child: Align(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .bottomCenter,
-                                                                    child:
-                                                                        Container(
-                                                                      decoration: BoxDecoration(
-                                                                          borderRadius: BorderRadius.circular(widget.size *
-                                                                              8),
-                                                                          color: Colors
-                                                                              .black
-                                                                              .withOpacity(0.8)),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding:
-                                                                            EdgeInsets.all(widget.size *
-                                                                                5),
-                                                                        child:
-                                                                            Text(
-                                                                          SubjectsData
-                                                                              .heading,
-                                                                          style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 25,
-                                                                              fontWeight: FontWeight.w500),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                        SizedBox(
-                                                          height:
-                                                              widget.height * 3,
-                                                        ),
-                                                        Container(
-                                                          width:
-                                                              double.infinity,
-                                                          height:
-                                                              widget.height *
-                                                                  20,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius: BorderRadius.all(
-                                                                Radius.circular(
-                                                                    widget.size *
-                                                                        8.0)),
-                                                            color:
-                                                                Colors.black38,
-                                                          ),
-                                                          child: Marquee(
-                                                            text: SubjectsData
-                                                                    .description
-                                                                    .isNotEmpty
-                                                                ? SubjectsData
-                                                                    .description
-                                                                : "No Full Name",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: widget
-                                                                        .size *
-                                                                    18),
-                                                            scrollAxis:
-                                                                Axis.horizontal,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            blankSpace: 20.0,
-                                                            // Set the spacing between the end and the beginning of the text
-                                                            velocity: 50.0,
-                                                            // Set the scrolling speed
-                                                            pauseAfterRound:
-                                                                Duration(
-                                                                    seconds: 1),
-                                                            // Set the pause duration after each round
-                                                            startPadding: 0.0,
-                                                            // Set the initial padding at the start of the text
-                                                            accelerationDuration:
-                                                                Duration(
-                                                                    seconds: 1),
-                                                            // Set the duration for text acceleration
-                                                            accelerationCurve:
-                                                                Curves.linear,
-                                                            // Set the curve for text acceleration
-                                                            decelerationDuration:
-                                                                Duration(
-                                                                    milliseconds:
-                                                                        500),
-                                                            // Set the duration for text deceleration
-                                                            decelerationCurve:
-                                                                Curves
-                                                                    .easeOut, // Set the curve for text deceleration
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        PageRouteBuilder(
-                                                          transitionDuration:
-                                                              const Duration(
-                                                                  milliseconds:
-                                                                      300),
-                                                          pageBuilder: (context,
-                                                                  animation,
-                                                                  secondaryAnimation) =>
-                                                              subjectUnitsData(
-                                                            date: SubjectsData
-                                                                        .Date
-                                                                    .split("-")
-                                                                .last,
-                                                            req: SubjectsData
-                                                                .regulation,
-                                                            pdfs: 0,
-                                                            width: widget.width,
-                                                            height:
-                                                                widget.height,
-                                                            size: widget.size,
-                                                            branch:
-                                                                widget.branch,
-                                                            ID: SubjectsData.id,
-                                                            mode: "Subjects",
-                                                            name: SubjectsData
-                                                                .heading,
-                                                            fullName:
-                                                                SubjectsData
-                                                                    .description,
-                                                            photoUrl:
-                                                                SubjectsData
-                                                                    .PhotoUrl,
-                                                          ),
-                                                          transitionsBuilder:
-                                                              (context,
-                                                                  animation,
-                                                                  secondaryAnimation,
-                                                                  child) {
-                                                            final fadeTransition =
-                                                                FadeTransition(
-                                                              opacity:
-                                                                  animation,
-                                                              child: child,
-                                                            );
-
-                                                            return Container(
-                                                              color: Colors
-                                                                  .black
-                                                                  .withOpacity(
-                                                                      animation
-                                                                          .value),
-                                                              child: AnimatedOpacity(
-                                                                  duration: Duration(
-                                                                      milliseconds:
-                                                                          300),
-                                                                  opacity: animation
-                                                                      .value
-                                                                      .clamp(
-                                                                          0.3,
-                                                                          1.0),
-                                                                  child:
-                                                                      fadeTransition),
-                                                            );
-                                                          },
-                                                        ),
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                              ),
-                                            );
-                                          else
-                                            return Container(
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.tealAccent),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        widget.size * 20),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.all(
-                                                    widget.size * 8.0),
-                                                child: Text(
-                                                  "No Subjects in this Regulation",
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                            );
-                                        }
-                                    }
-                                  }),
-                            //Lab Subjects
-                            if (widget.reg.isNotEmpty)
-                              StreamBuilder<List<LabSubjectsConvertor>>(
-                                stream: readLabSubjects(widget.branch),
-                                builder: (context, snapshot) {
-                                  final Subjects = snapshot.data;
-                                  switch (snapshot.connectionState) {
-                                    case ConnectionState.waiting:
-                                      return const Center(
-                                          child: CircularProgressIndicator(
-                                        strokeWidth: 0.3,
-                                        color: Colors.cyan,
-                                      ));
-                                    default:
-                                      if (snapshot.hasError) {
-                                        return Text("Error with fireBase");
-                                      } else {
-                                        List<LabSubjectsConvertor>
-                                            filteredItems = Subjects!
-                                                .where((item) => item.regulation
-                                                    .toString()
-                                                    .startsWith(widget.reg))
-                                                .toList();
-                                        if (Subjects.length > 0)
-                                          return Column(
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        widget.width * 15),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      "Lab Subjects",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize:
-                                                              widget.size * 30,
-                                                          fontWeight:
-                                                              FontWeight.w500),
-                                                    ),
-                                                    InkWell(
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      widget.size *
-                                                                          8),
-                                                          color: Colors.black
-                                                              .withOpacity(0.7),
-                                                          border: Border.all(
-                                                              color: Colors
-                                                                  .white
-                                                                  .withOpacity(
-                                                                      0.3)),
-                                                        ),
-                                                        child: Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left:
-                                                                  widget.width *
-                                                                      10,
-                                                              right:
-                                                                  widget.width *
-                                                                      10,
-                                                              top: widget
-                                                                      .height *
-                                                                  5,
-                                                              bottom: widget
-                                                                      .height *
-                                                                  5),
-                                                          child: Text(
-                                                            "See More",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: widget
-                                                                        .size *
-                                                                    20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      onTap: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          PageRouteBuilder(
-                                                            transitionDuration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        300),
-                                                            pageBuilder: (context,
-                                                                    animation,
-                                                                    secondaryAnimation) =>
-                                                                LabSubjects(
-                                                              branch:
-                                                                  widget.branch,
-                                                              reg: widget.reg,
-                                                              width:
-                                                                  widget.width,
-                                                              height:
-                                                                  widget.height,
-                                                              size: widget.size,
-                                                            ),
-                                                            transitionsBuilder:
-                                                                (context,
-                                                                    animation,
-                                                                    secondaryAnimation,
-                                                                    child) {
-                                                              final fadeTransition =
-                                                                  FadeTransition(
-                                                                opacity:
-                                                                    animation,
-                                                                child: child,
-                                                              );
-
-                                                              return Container(
-                                                                color: Colors
-                                                                    .black
-                                                                    .withOpacity(
-                                                                        animation
-                                                                            .value),
-                                                                child: AnimatedOpacity(
-                                                                    duration: Duration(
-                                                                        milliseconds:
-                                                                            300),
-                                                                    opacity: animation
-                                                                        .value
-                                                                        .clamp(
-                                                                            0.3,
-                                                                            1.0),
-                                                                    child:
-                                                                        fadeTransition),
-                                                              );
-                                                            },
-                                                          ),
-                                                        );
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: widget.height * 10,
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        widget.width * 20),
-                                                child: GridView.builder(
-                                                    physics:
-                                                        const BouncingScrollPhysics(),
-                                                    shrinkWrap: true,
-                                                    gridDelegate:
-                                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                                      crossAxisSpacing:
-                                                          widget.width * 10,
-                                                      crossAxisCount: 3,
-                                                    ),
-                                                    itemCount:
-                                                        filteredItems.length,
-                                                    itemBuilder:
-                                                        (context, int index) {
-                                                      final LabSubjectsData =
-                                                          Subjects[index];
-                                                      if (LabSubjectsData
-                                                          .regulation
-                                                          .toString()
-                                                          .startsWith(
-                                                              widget.reg)) {
-                                                        final Uri uri =
-                                                            Uri.parse(
-                                                                LabSubjectsData
-                                                                    .PhotoUrl);
-                                                        final String fileName =
-                                                            uri.pathSegments
-                                                                .last;
-                                                        var name = fileName
-                                                            .split("/")
-                                                            .last;
-                                                        final file = File(
-                                                            "${folderPath}/${widget.branch.toLowerCase()}_labsubjects/$name");
-
-                                                        return InkWell(
-                                                          child: Column(
-                                                            children: [
-                                                              file.existsSync()
-                                                                  ? AspectRatio(
-                                                                      aspectRatio:
-                                                                          16 /
-                                                                              10,
-                                                                      child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          borderRadius:
-                                                                              BorderRadius.all(Radius.circular(widget.size * 8.0)),
-                                                                          color:
-                                                                              Colors.black,
-                                                                          image:
-                                                                              DecorationImage(
-                                                                            image:
-                                                                                FileImage(file),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                          ),
-                                                                        ),
-                                                                        child:
-                                                                            Align(
-                                                                          alignment:
-                                                                              Alignment.bottomCenter,
-                                                                          child:
-                                                                              Container(
-                                                                            decoration:
-                                                                                BoxDecoration(borderRadius: BorderRadius.circular(widget.size * 8), color: Colors.black.withOpacity(0.8)),
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: EdgeInsets.all(widget.size * 5),
-                                                                              child: Text(
-                                                                                LabSubjectsData.heading,
-                                                                                style: TextStyle(color: Colors.white, fontSize: widget.size * 25, fontWeight: FontWeight.w500),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                  : AspectRatio(
-                                                                      aspectRatio:
-                                                                          16 /
-                                                                              10,
-                                                                      child:
-                                                                          Container(
-                                                                        child:
-                                                                            Align(
-                                                                          alignment:
-                                                                              Alignment.bottomCenter,
-                                                                          child:
-                                                                              Container(
-                                                                            decoration:
-                                                                                BoxDecoration(borderRadius: BorderRadius.circular(widget.size * 8), color: Colors.black.withOpacity(0.8)),
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: EdgeInsets.all(widget.size * 5),
-                                                                              child: Text(
-                                                                                LabSubjectsData.heading,
-                                                                                style: TextStyle(color: Colors.white, fontSize: widget.size * 25, fontWeight: FontWeight.w500),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                              SizedBox(
-                                                                height: widget
-                                                                        .height *
-                                                                    3,
-                                                              ),
-                                                              Container(
-                                                                width: double
-                                                                    .infinity,
-                                                                height: widget
-                                                                        .height *
-                                                                    20,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius: BorderRadius.all(
-                                                                      Radius.circular(
-                                                                          widget.size *
-                                                                              8.0)),
-                                                                  color: Colors
-                                                                      .black38,
-                                                                ),
-                                                                child: Marquee(
-                                                                  text: LabSubjectsData
-                                                                          .description
-                                                                          .isNotEmpty
-                                                                      ? LabSubjectsData
-                                                                          .description
-                                                                      : "No Full Name",
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize:
-                                                                          widget.size *
-                                                                              18),
-                                                                  scrollAxis: Axis
-                                                                      .horizontal,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  blankSpace:
-                                                                      20.0,
-                                                                  // Set the spacing between the end and the beginning of the text
-                                                                  velocity:
-                                                                      50.0,
-                                                                  // Set the scrolling speed
-                                                                  pauseAfterRound:
-                                                                      Duration(
-                                                                          seconds:
-                                                                              1),
-                                                                  // Set the pause duration after each round
-                                                                  startPadding:
-                                                                      0.0,
-                                                                  // Set the initial padding at the start of the text
-                                                                  accelerationDuration:
-                                                                      Duration(
-                                                                          seconds:
-                                                                              1),
-                                                                  // Set the duration for text acceleration
-                                                                  accelerationCurve:
-                                                                      Curves
-                                                                          .linear,
-                                                                  // Set the curve for text acceleration
-                                                                  decelerationDuration:
-                                                                      Duration(
-                                                                          milliseconds:
-                                                                              500),
-                                                                  // Set the duration for text deceleration
-                                                                  decelerationCurve:
-                                                                      Curves
-                                                                          .easeOut, // Set the curve for text deceleration
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                              context,
-                                                              PageRouteBuilder(
-                                                                transitionDuration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            300),
-                                                                pageBuilder: (context,
-                                                                        animation,
-                                                                        secondaryAnimation) =>
-                                                                    subjectUnitsData(
-                                                                  date: LabSubjectsData
-                                                                              .Date
-                                                                          .split(
-                                                                              "-")
-                                                                      .last,
-                                                                  req: LabSubjectsData
-                                                                      .regulation,
-                                                                  pdfs: 0,
-                                                                  width: widget
-                                                                      .width,
-                                                                  height: widget
-                                                                      .height,
-                                                                  size: widget
-                                                                      .size,
-                                                                  branch: widget
-                                                                      .branch,
-                                                                  ID: LabSubjectsData
-                                                                      .id,
-                                                                  mode:
-                                                                      "LabSubjects",
-                                                                  name: LabSubjectsData
-                                                                      .heading,
-                                                                  fullName:
-                                                                      LabSubjectsData
-                                                                          .description,
-                                                                  photoUrl:
-                                                                      LabSubjectsData
-                                                                          .PhotoUrl,
-                                                                ),
-                                                                transitionsBuilder:
-                                                                    (context,
-                                                                        animation,
-                                                                        secondaryAnimation,
-                                                                        child) {
-                                                                  final fadeTransition =
-                                                                      FadeTransition(
-                                                                    opacity:
-                                                                        animation,
-                                                                    child:
-                                                                        child,
-                                                                  );
-
-                                                                  return Container(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            animation.value),
-                                                                    child: AnimatedOpacity(
-                                                                        duration: Duration(
-                                                                            milliseconds:
-                                                                                300),
-                                                                        opacity: animation.value.clamp(
-                                                                            0.3,
-                                                                            1.0),
-                                                                        child:
-                                                                            fadeTransition),
-                                                                  );
-                                                                },
-                                                              ),
-                                                            );
-                                                          },
-                                                        );
-                                                      }
-                                                      return Container();
-                                                    }),
-                                              ),
-                                            ],
-                                          );
-                                        else
-                                          return Center(
-                                              child: Text(
-                                                  "No Lab Subjects For Your Regulation"));
-                                      }
-                                  }
-                                },
-                              ),
-
-                            StreamBuilder<List<BooksConvertor>>(
-                                stream: ReadBook(widget.branch),
-                                builder: (context, snapshot) {
-                                  final Books = snapshot.data;
-                                  switch (snapshot.connectionState) {
-                                    case ConnectionState.waiting:
-                                      return const Center(
-                                          child: CircularProgressIndicator(
-                                        strokeWidth: 0.3,
-                                        color: Colors.cyan,
-                                      ));
-                                    default:
-                                      if (snapshot.hasError) {
-                                        return const Center(
-                                            child: Text(
-                                                'Error with TextBooks Data or\n Check Internet Connection'));
-                                      } else {
-                                        if (Books!.length < 1) {
-                                          return Center(
-                                            child: Padding(
-                                              padding: EdgeInsets.all(
-                                                  widget.size * 8.0),
-                                              child: Text(
-                                                "No ${widget.branch} Books",
-                                                style: TextStyle(
-                                                    color: Colors.blue),
-                                              ),
-                                            ),
-                                          );
-                                        } else
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        widget.width * 15,
-                                                    vertical:
-                                                        widget.height * 10),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      "Based on ${widget.branch}",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize:
-                                                              widget.size * 30,
-                                                          fontWeight:
-                                                              FontWeight.w500),
-                                                    ),
-                                                    InkWell(
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        widget.size *
-                                                                            8),
-                                                            color: Colors.black
-                                                                .withOpacity(
-                                                                    0.7),
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .white
-                                                                    .withOpacity(
-                                                                        0.3)),
-                                                          ),
-                                                          child: Padding(
-                                                            padding: EdgeInsets.only(
-                                                                left: widget
-                                                                        .width *
-                                                                    10,
-                                                                right: widget
-                                                                        .width *
-                                                                    10,
-                                                                top: widget
-                                                                        .height *
-                                                                    5,
-                                                                bottom: widget
-                                                                        .height *
-                                                                    5),
-                                                            child: Text(
-                                                              "See More",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize:
-                                                                      widget.size *
-                                                                          20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            PageRouteBuilder(
-                                                              transitionDuration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          300),
-                                                              pageBuilder: (context,
-                                                                      animation,
-                                                                      secondaryAnimation) =>
-                                                                  allBooks(
-                                                                reg: widget.reg,
-                                                                size:
-                                                                    widget.size,
-                                                                height: widget
-                                                                    .height,
-                                                                width: widget
-                                                                    .width,
-                                                                branch: widget
-                                                                    .branch,
-                                                              ),
-                                                              transitionsBuilder:
-                                                                  (context,
-                                                                      animation,
-                                                                      secondaryAnimation,
-                                                                      child) {
-                                                                final fadeTransition =
-                                                                    FadeTransition(
-                                                                  opacity:
-                                                                      animation,
-                                                                  child: child,
-                                                                );
-
-                                                                return Container(
-                                                                  color: Colors
-                                                                      .black
-                                                                      .withOpacity(
-                                                                          animation
-                                                                              .value),
-                                                                  child: AnimatedOpacity(
-                                                                      duration: Duration(
-                                                                          milliseconds:
-                                                                              300),
-                                                                      opacity: animation
-                                                                          .value
-                                                                          .clamp(
-                                                                              0.3,
-                                                                              1.0),
-                                                                      child:
-                                                                          fadeTransition),
-                                                                );
-                                                              },
-                                                            ),
-                                                          );
-                                                        }),
-                                                  ],
-                                                ),
-                                              ),
-                                              Container(
-                                                height: widget.height * 125,
-                                                child: ListView.builder(
-                                                  physics:
-                                                      BouncingScrollPhysics(),
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  itemCount: Books.length,
-                                                  itemBuilder:
-                                                      (BuildContext context,
-                                                          int index) {
-                                                    final Uri uri = Uri.parse(
-                                                        Books[index].photoUrl);
-                                                    final String fileName =
-                                                        uri.pathSegments.last;
-                                                    var name = fileName
-                                                        .split("/")
-                                                        .last;
-                                                    final file = File(
-                                                        "${folderPath}/${widget.branch.toLowerCase()}_books/$name");
-                                                    return InkWell(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: widget
-                                                                        .width *
-                                                                    10),
-                                                        child: Row(
-                                                          children: [
-                                                            Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            widget.size *
-                                                                                8),
-                                                                color: Colors
-                                                                    .black
-                                                                    .withOpacity(
-                                                                        0.4),
-                                                                image:
-                                                                    DecorationImage(
-                                                                  image:
-                                                                      FileImage(
-                                                                          file),
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                ),
-                                                              ),
-                                                              width:
-                                                                  widget.width *
-                                                                      95,
-                                                            ),
-                                                            Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .end,
-                                                              children: [
-                                                                Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.horizontal(
-                                                                            right:
-                                                                                Radius.circular(widget.size * 10)),
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            0.6),
-                                                                    // border: Border.all(color: Colors.white),
-                                                                  ),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: EdgeInsets.all(
-                                                                        widget.size *
-                                                                            8.0),
-                                                                    child:
-                                                                        SingleChildScrollView(
-                                                                      physics:
-                                                                          BouncingScrollPhysics(),
-                                                                      child:
-                                                                          Column(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.start,
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          Text(
-                                                                            Books[index].heading,
-                                                                            maxLines:
-                                                                                2,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                            style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: widget.size * 16,
-                                                                                color: Colors.orange),
-                                                                          ),
-                                                                          Text(
-                                                                            Books[index].Author,
-                                                                            maxLines:
-                                                                                1,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                            style: TextStyle(
-                                                                                fontWeight: FontWeight.w400,
-                                                                                fontSize: widget.size * 13,
-                                                                                color: Colors.blue),
-                                                                          ),
-                                                                          Text(
-                                                                            Books[index].edition,
-                                                                            maxLines:
-                                                                                1,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                            style: TextStyle(
-                                                                                fontWeight: FontWeight.w400,
-                                                                                fontSize: widget.size * 13,
-                                                                                color: Colors.lightBlueAccent),
-                                                                          ),
-                                                                          SizedBox(
-                                                                            height:
-                                                                                widget.height * 5,
-                                                                          ),
-                                                                          booksDownloadButton(
-                                                                            branch:
-                                                                                widget.branch,
-                                                                            width:
-                                                                                widget.width,
-                                                                            height:
-                                                                                widget.height,
-                                                                            size:
-                                                                                widget.size,
-                                                                            path:
-                                                                                folderPath,
-                                                                            pdfLink:
-                                                                                Books[index].link,
-                                                                          )
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                              width:
-                                                                  widget.width *
-                                                                      20,
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      onTap: () async {},
-                                                    );
-                                                  },
-                                                  shrinkWrap: true,
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                      }
-                                  }
-                                }),
-                            SizedBox(
-                              height: widget.height * 100,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        physics: BouncingScrollPhysics(),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                InkWell(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(30),
-                                        border:
-                                            Border.all(color: Colors.white30)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 3, horizontal: 15),
-                                      child: Text(
-                                        " Theory ",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        transitionDuration:
-                                            const Duration(milliseconds: 300),
-                                        pageBuilder: (context, animation,
-                                                secondaryAnimation) =>
-                                            Subjects(
-                                          branch: widget.branch,
-                                          reg: widget.reg,
-                                          width: widget.width,
-                                          height: widget.height,
-                                          size: widget.size,
-                                        ),
-                                        transitionsBuilder: (context, animation,
-                                            secondaryAnimation, child) {
-                                          final fadeTransition = FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          );
-
-                                          return Container(
-                                            color: Colors.black
-                                                .withOpacity(animation.value),
-                                            child: AnimatedOpacity(
-                                                duration:
-                                                    Duration(milliseconds: 300),
-                                                opacity: animation.value
-                                                    .clamp(0.3, 1.0),
-                                                child: fadeTransition),
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                ),
-                                InkWell(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(30),
-                                        border:
-                                            Border.all(color: Colors.white30)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 3, horizontal: 15),
-                                      child: Text(
-                                        "Experiment",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        transitionDuration:
-                                            const Duration(milliseconds: 300),
-                                        pageBuilder: (context, animation,
-                                                secondaryAnimation) =>
-                                            LabSubjects(
-                                          branch: widget.branch,
-                                          reg: widget.reg,
-                                          width: widget.width,
-                                          height: widget.height,
-                                          size: widget.size,
-                                        ),
-                                        transitionsBuilder: (context, animation,
-                                            secondaryAnimation, child) {
-                                          final fadeTransition = FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          );
-
-                                          return Container(
-                                            color: Colors.black
-                                                .withOpacity(animation.value),
-                                            child: AnimatedOpacity(
-                                                duration:
-                                                    Duration(milliseconds: 300),
-                                                opacity: animation.value
-                                                    .clamp(0.3, 1.0),
-                                                child: fadeTransition),
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            if (widget.reg.isNotEmpty)
                               StreamBuilder<List<FlashConvertor>>(
                                   stream: readFlashNews(widget.branch),
                                   builder: (context, snapshot) {
@@ -1964,7 +1217,7 @@ class _HomePageState extends State<HomePage> {
                                             return Padding(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal:
-                                                      widget.width * 10),
+                                                      widget.width * 5),
                                               child: Container(
                                                 child: Padding(
                                                   padding:
@@ -1974,6 +1227,7 @@ class _HomePageState extends State<HomePage> {
                                                       Padding(
                                                         padding: const EdgeInsets.all(8.0),
                                                         child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             Text(
                                                               "Theory",
@@ -1982,9 +1236,97 @@ class _HomePageState extends State<HomePage> {
                                                                   fontSize: 40,
                                                                   fontWeight: FontWeight.w500),
                                                             ),
+                                                            InkWell(
+                                                              child: Container(
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors.black.withOpacity(0.5),
+                                                                    borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                        30),
+                                                                    border: Border.all(
+                                                                        color: Colors
+                                                                            .white30)),
+                                                                child: Padding(
+                                                                  padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      vertical: 3,
+                                                                      horizontal:
+                                                                      15),
+                                                                  child: Text(
+                                                                    "See More",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize: 25,
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w500),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                  context,
+                                                                  PageRouteBuilder(
+                                                                    transitionDuration:
+                                                                    const Duration(
+                                                                        milliseconds:
+                                                                        300),
+                                                                    pageBuilder: (context,
+                                                                        animation,
+                                                                        secondaryAnimation) =>
+                                                                        Subjects(
+                                                                          branch: widget
+                                                                              .branch,
+                                                                          reg: widget.reg,
+                                                                          width: widget
+                                                                              .width,
+                                                                          height: widget
+                                                                              .height,
+                                                                          size:
+                                                                          widget.size,
+                                                                        ),
+                                                                    transitionsBuilder:
+                                                                        (context,
+                                                                        animation,
+                                                                        secondaryAnimation,
+                                                                        child) {
+                                                                      final fadeTransition =
+                                                                      FadeTransition(
+                                                                        opacity:
+                                                                        animation,
+                                                                        child: child,
+                                                                      );
+
+                                                                      return Container(
+                                                                        color: Colors
+                                                                            .black
+                                                                            .withOpacity(
+                                                                            animation
+                                                                                .value),
+                                                                        child: AnimatedOpacity(
+                                                                            duration: Duration(
+                                                                                milliseconds:
+                                                                                300),
+                                                                            opacity: animation
+                                                                                .value
+                                                                                .clamp(
+                                                                                0.3,
+                                                                                1.0),
+                                                                            child:
+                                                                            fadeTransition),
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                );
+                                                              },
+                                                            )
                                                           ],
                                                         ),
                                                       ),
+                                                      SizedBox(height: 10,),
                                                       GridView.builder(
                                                         physics:
                                                             const BouncingScrollPhysics(),
@@ -1992,7 +1334,8 @@ class _HomePageState extends State<HomePage> {
                                                         gridDelegate:
                                                             SliverGridDelegateWithFixedCrossAxisCount(
                                                           crossAxisSpacing:
-                                                              widget.size * 10,
+                                                              widget.size * 8,
+
                                                           crossAxisCount: 2,
                                                         ),
                                                         itemCount: filteredItems
@@ -2019,15 +1362,13 @@ class _HomePageState extends State<HomePage> {
                                                             child: Column(
                                                               children: [
                                                                AspectRatio(
-                                                                        aspectRatio:
-                                                                            16 /
-                                                                                8,
+                                                                        aspectRatio: 15 / 7,
                                                                         child:
                                                                             Container(
                                                                           decoration:
                                                                               BoxDecoration(
                                                                             borderRadius:
-                                                                                BorderRadius.all(Radius.circular(widget.size * 8.0)),
+                                                                                BorderRadius.all(Radius.circular(widget.size * 25.0)),
                                                                             color:
                                                                                 Colors.black,
                                                                             image:
@@ -2042,12 +1383,12 @@ class _HomePageState extends State<HomePage> {
                                                                                 Alignment.bottomCenter,
                                                                             child:
                                                                                 Container(
-                                                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(widget.size * 8), color: Colors.black.withOpacity(0.8)),
+                                                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(widget.size * 15), color: Colors.black.withOpacity(0.8)),
                                                                               child: Padding(
-                                                                                padding: EdgeInsets.all(widget.size * 5),
+                                                                                padding: EdgeInsets.symmetric(vertical: 3,horizontal: 10),
                                                                                 child: Text(
                                                                                   SubjectsData.heading,
-                                                                                  style: TextStyle(color: Colors.white, fontSize: widget.size * 25, fontWeight: FontWeight.w500),
+                                                                                  style: TextStyle(color: Colors.white, fontSize: widget.size * 30, fontWeight: FontWeight.w600),
                                                                                 ),
                                                                               ),
                                                                             ),
@@ -2070,40 +1411,42 @@ class _HomePageState extends State<HomePage> {
                                                                     borderRadius:
                                                                         BorderRadius.all(Radius.circular(widget.size *
                                                                             8.0)),
-                                                                    color: Colors
-                                                                        .black38,
+
                                                                   ),
-                                                                  child: Marquee(
-                                                                    text: SubjectsData
-                                                                            .description.isNotEmpty
-                                                                        ? SubjectsData.description
-                                                                        : "No Full Name",
-                                                                    style: TextStyle(
-                                                                        color: Colors.white,
-                                                                        fontSize: widget.size * 18),
-                                                                    scrollAxis: Axis.horizontal,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment.start,
-                                                                    blankSpace: 20.0,
-                                                                    // Set the spacing between the end and the beginning of the text
-                                                                    velocity: 50.0,
-                                                                    // Set the scrolling speed
-                                                                    pauseAfterRound:
-                                                                        Duration(seconds: 1),
-                                                                    // Set the pause duration after each round
-                                                                    startPadding: 0.0,
-                                                                    // Set the initial padding at the start of the text
-                                                                    accelerationDuration:
-                                                                        Duration(seconds: 1),
-                                                                    // Set the duration for text acceleration
-                                                                    accelerationCurve:
-                                                                        Curves.linear,
-                                                                    // Set the curve for text acceleration
-                                                                    decelerationDuration:
-                                                                        Duration(milliseconds: 500),
-                                                                    // Set the duration for text deceleration
-                                                                    decelerationCurve: Curves
-                                                                        .easeOut, // Set the curve for text deceleration
+                                                                  child: Padding(
+                                                                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                                                                    child: Marquee(
+                                                                      text: SubjectsData
+                                                                              .description.isNotEmpty
+                                                                          ? SubjectsData.description
+                                                                          : "No Full Name",
+                                                                      style: TextStyle(
+                                                                          color: Colors.white,
+                                                                          fontSize: widget.size * 18),
+                                                                      scrollAxis: Axis.horizontal,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment.start,
+                                                                      blankSpace: 20.0,
+                                                                      // Set the spacing between the end and the beginning of the text
+                                                                      velocity: 50.0,
+                                                                      // Set the scrolling speed
+                                                                      pauseAfterRound:
+                                                                          Duration(seconds: 1),
+                                                                      // Set the pause duration after each round
+                                                                      startPadding: 0.0,
+                                                                      // Set the initial padding at the start of the text
+                                                                      accelerationDuration:
+                                                                          Duration(seconds: 1),
+                                                                      // Set the duration for text acceleration
+                                                                      accelerationCurve:
+                                                                          Curves.linear,
+                                                                      // Set the curve for text acceleration
+                                                                      decelerationDuration:
+                                                                          Duration(milliseconds: 500),
+                                                                      // Set the duration for text deceleration
+                                                                      decelerationCurve: Curves
+                                                                          .easeOut, // Set the curve for text deceleration
+                                                                    ),
                                                                   ),
                                                                 ),
                                                                 Row(
@@ -2159,14 +1502,14 @@ class _HomePageState extends State<HomePage> {
                                                                                                 Icons
                                                                                                     .library_add_check,
                                                                                                 size: widget.size *
-                                                                                                    23,
+                                                                                                    20,
                                                                                                 color:
                                                                                                 Colors.cyanAccent),
                                                                                             Text(
                                                                                               " Saved",
                                                                                               style: TextStyle(
                                                                                                   color: Colors.white,
-                                                                                                  fontSize: widget.size * 20),
+                                                                                                  fontSize: widget.size * 18),
                                                                                             )
                                                                                           ],
                                                                                         );
@@ -2177,7 +1520,7 @@ class _HomePageState extends State<HomePage> {
                                                                                               Icons
                                                                                                   .library_add_outlined,
                                                                                               size: widget.size *
-                                                                                                  23,
+                                                                                                  20,
                                                                                               color:
                                                                                               Colors.cyanAccent,
                                                                                             ),
@@ -2185,7 +1528,7 @@ class _HomePageState extends State<HomePage> {
                                                                                               " Save",
                                                                                               style: TextStyle(
                                                                                                   color: Colors.white,
-                                                                                                  fontSize: widget.size * 20),
+                                                                                                  fontSize: widget.size * 18),
                                                                                             )
                                                                                           ],
                                                                                         );
@@ -2246,8 +1589,18 @@ class _HomePageState extends State<HomePage> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(width: 10,),
-                                                                    downloadAllPdfs(branch: widget.branch,SubjectID: SubjectsData.id,pdfs:[])
+                                                                    SizedBox(width: 5,),
+                                                                    downloadAllPdfs(branch: widget.branch,SubjectID: SubjectsData.id,pdfs:[]),
+                                                                    InkWell(
+                                                                      child: Icon(Icons.more_vert,color: Colors.white,size: 28,),
+                                                                    onTap: (){
+                                                                       showModalBottomSheet<void>(
+                                                                         backgroundColor: Colors.transparent,
+                                                                          context: context,
+                                                                          builder: (BuildContext context) {
+                                                                        return buildBottomSheetContent(data:SubjectsData);
+                                                                      });
+                                                                    },),
                                                                   ],
                                                                 ),
                                                               ],
@@ -2325,93 +1678,7 @@ class _HomePageState extends State<HomePage> {
                                                           );
                                                         },
                                                       ),
-                                                      InkWell(
-                                                        child: Container(
-                                                          decoration: BoxDecoration(
-                                                            color: Colors.black.withOpacity(0.5),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          30),
-                                                              border: Border.all(
-                                                                  color: Colors
-                                                                      .white30)),
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
-                                                                    vertical: 3,
-                                                                    horizontal:
-                                                                        15),
-                                                            child: Text(
-                                                              "See More",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 30,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            PageRouteBuilder(
-                                                              transitionDuration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          300),
-                                                              pageBuilder: (context,
-                                                                      animation,
-                                                                      secondaryAnimation) =>
-                                                                  Subjects(
-                                                                branch: widget
-                                                                    .branch,
-                                                                reg: widget.reg,
-                                                                width: widget
-                                                                    .width,
-                                                                height: widget
-                                                                    .height,
-                                                                size:
-                                                                    widget.size,
-                                                              ),
-                                                              transitionsBuilder:
-                                                                  (context,
-                                                                      animation,
-                                                                      secondaryAnimation,
-                                                                      child) {
-                                                                final fadeTransition =
-                                                                    FadeTransition(
-                                                                  opacity:
-                                                                      animation,
-                                                                  child: child,
-                                                                );
 
-                                                                return Container(
-                                                                  color: Colors
-                                                                      .black
-                                                                      .withOpacity(
-                                                                          animation
-                                                                              .value),
-                                                                  child: AnimatedOpacity(
-                                                                      duration: Duration(
-                                                                          milliseconds:
-                                                                              300),
-                                                                      opacity: animation
-                                                                          .value
-                                                                          .clamp(
-                                                                              0.3,
-                                                                              1.0),
-                                                                      child:
-                                                                          fadeTransition),
-                                                                );
-                                                              },
-                                                            ),
-                                                          );
-                                                        },
-                                                      )
                                                     ],
                                                   ),
                                                 ),
@@ -2485,7 +1752,7 @@ class _HomePageState extends State<HomePage> {
                                                       child: Row(
                                                         children: [
                                                           Text(
-                                                            "Theory",
+                                                            "Experiments",
                                                             style: TextStyle(
                                                                 color: Colors.white,
                                                                 fontSize: 40,
@@ -2755,7 +2022,7 @@ class _HomePageState extends State<HomePage> {
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                  SizedBox(width: 10,),
+                                                                  SizedBox(width: 5,),
                                                                   Stack(
                                                                     alignment: Alignment.center,
                                                                     children: <Widget>[
@@ -2986,6 +2253,121 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       );
+
+
+}
+class buildBottomSheetContent extends StatefulWidget {
+  FlashConvertor data;
+  buildBottomSheetContent({required this.data});
+
+  @override
+  State<buildBottomSheetContent> createState() => buildBottomSheetContentState();
+}
+
+class buildBottomSheetContentState extends State<buildBottomSheetContent> with TickerProviderStateMixin {
+  late TabController _tabController;
+
+
+
+  @override
+  void initState() {
+    _tabController = new TabController(
+      vsync: this,
+      length: 2,
+    );
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.3, // Initial size of the sheet
+      minChildSize: 0.1,    // Minimum size of the sheet
+      maxChildSize: 0.9,    // Maximum size of the sheet
+      builder: (BuildContext context, ScrollController scrollController) {
+        return Column(
+          children: [
+
+            Container(
+              height: 5,
+              width: 80,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                color: Colors.white.withOpacity(0.5),
+              ),
+            ),
+            SizedBox(height: 10,),
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      height: 60,
+                      width: 100,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.white.withOpacity(0.5),
+                          image: DecorationImage(image: NetworkImage(widget.data.PhotoUrl),fit: BoxFit.cover)
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Text(widget.data.heading,style: TextStyle(color: Colors.white,fontSize: 20),
+                        ),
+                        Text(widget.data.description,style: TextStyle(color: Colors.white,fontSize: 20),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                Container(
+                  height: 45,
+                  child: TabBar(
+                    indicator: BoxDecoration(
+                        border: Border.all(color: Colors.white12),
+                        borderRadius: BorderRadius.circular( 15),
+                        color: Color.fromRGBO(4, 11, 23, 1)),
+                    controller: _tabController,
+                    isScrollable: true,
+                    labelPadding:
+                    EdgeInsets.symmetric(horizontal: 25),
+                    tabs: [
+                      Tab(
+                        child: Text(
+                          "Description",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize:  25,
+                          ),
+                        ),
+                      ),
+
+                      Tab(
+                        child: Text(
+                          "Questions",
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 25),
+                        ),
+                      ),
+
+                    ],
+                  ),
+
+                ),
+              ],
+            ),
+            Expanded(
+                child: TabBarView(
+                    controller: _tabController,
+                    children: [
+
+                    ]))
+          ],
+        );
+      },
+    );
+  }
 }
 
 class booksDownloadButton extends StatefulWidget {
@@ -3439,6 +2821,67 @@ Future createHomeUpdate({
   await docflash.set(json);
 }
 
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int index=0;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('SharedPreferences Example'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _addUpdateConvertor,
+              child: Text('Add UpdateConvertor'),
+            ),
+            ElevatedButton(
+              onPressed: _getUpdateConvertors,
+              child: Text('Get UpdateConvertors'),
+            ),
+            ElevatedButton(
+              onPressed: _removeUpdateConvertor,
+              child: Text('Remove UpdateConvertor'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _addUpdateConvertor() async {
+
+    UpdateConvertor newUpdate = UpdateConvertor(
+      heading: 'New Update ${index++}',
+
+      date: '2023-08-09', photoUrl: '', link: '', branch: '', description: '',
+    );
+    await UpdateConvertorUtil.addUpdateConvertor(newUpdate);
+  }
+
+  Future<void> _getUpdateConvertors() async {
+    List<UpdateConvertor> updateList =
+    await UpdateConvertorUtil.getUpdateConvertorList();
+
+    for (UpdateConvertor update in updateList) {
+      print(update.heading);
+      showToastText(update.heading);
+    }
+  }
+
+  Future<void> _removeUpdateConvertor() async {
+    int indexToRemove = 0; // Index of the item you want to remove
+    await UpdateConvertorUtil.removeUpdateConvertor(indexToRemove);
+  }
+}
+
 class UpdateConvertor {
   String id;
   final String heading, photoUrl, date, link, description, branch;
@@ -3456,27 +2899,27 @@ class UpdateConvertor {
   }) : likedBy = likedBy ?? [];
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "heading": heading,
-        "date": date,
-        "photoUrl": photoUrl,
-        "link": link,
-        "likedBy": likedBy,
-        "description": description,
-        "branch": branch,
-      };
+    "id": id,
+    "heading": heading,
+    "date": date,
+    "photoUrl": photoUrl,
+    "link": link,
+    "likedBy": likedBy,
+    "description": description,
+    "branch": branch,
+  };
 
   static UpdateConvertor fromJson(Map<String, dynamic> json) => UpdateConvertor(
-        id: json['id'],
-        heading: json["heading"],
-        date: json["date"],
-        photoUrl: json["photoUrl"],
-        link: json["link"],
-        description: json["description"],
-        branch: json["branch"],
-        likedBy:
-            json["likedBy"] != null ? List<String>.from(json["likedBy"]) : [],
-      );
+    id: json['id'],
+    heading: json["heading"],
+    date: json["date"],
+    photoUrl: json["photoUrl"],
+    link: json["link"],
+    description: json["description"],
+    branch: json["branch"],
+    likedBy:
+    json["likedBy"] != null ? List<String>.from(json["likedBy"]) : [],
+  );
 }
 
 Stream<List<RegulationConvertor>> readRegulation(String branch) =>
@@ -3623,24 +3066,24 @@ class BranchNewConvertor {
           link: json['link']);
 }
 
-Stream<List<FlashConvertor>> readFlashNews(String branch) =>
+Stream<List<FlashNewsConvertor>> readSRKRFlashNews() =>
     FirebaseFirestore.instance
-        .collection(branch)
-        .doc("Subjects")
-        .collection("Subjects")
+        .collection("srkrPage")
+        .doc("flashNews")
+        .collection("flashNews")
         .orderBy("Heading", descending: false)
         .snapshots()
         .map((snapshot) => snapshot.docs
-            .map((doc) => FlashConvertor.fromJson(doc.data()))
-            .toList());
+        .map((doc) => FlashNewsConvertor.fromJson(doc.data()))
+        .toList());
 
 Future createSubjects(
     {required String heading,
-    required String branch,
-    required String description,
-    required String date,
-    required String PhotoUrl,
-    required String regulation}) async {
+      required String branch,
+      required String description,
+      required String date,
+      required String PhotoUrl,
+      required String regulation}) async {
   final docflash = FirebaseFirestore.instance
       .collection(branch)
       .doc("Subjects")
@@ -3656,6 +3099,44 @@ Future createSubjects(
   final json = flash.toJson();
   await docflash.set(json);
 }
+
+class FlashNewsConvertor {
+  String id;
+  final String heading, Url;
+
+  FlashNewsConvertor(
+      {this.id = "",
+
+        required this.heading,
+        required this.Url,
+        });
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "Heading": heading,
+    "Url": Url,
+
+  };
+
+  static FlashNewsConvertor fromJson(Map<String, dynamic> json) => FlashNewsConvertor(
+      id: json['id'],
+
+      heading: json["Heading"],
+      Url: json["Url"],
+      );
+}
+
+Stream<List<FlashConvertor>> readFlashNews(String branch) =>
+    FirebaseFirestore.instance
+        .collection(branch)
+        .doc("Subjects")
+        .collection("Subjects")
+        .orderBy("Heading", descending: false)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => FlashConvertor.fromJson(doc.data()))
+            .toList());
+
 
 class FlashConvertor {
   String id;
