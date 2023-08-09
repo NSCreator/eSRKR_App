@@ -822,6 +822,7 @@ class _HomePageState extends State<HomePage> {
                                       ExternalLaunchUrl(BranchNew.Url);
                                     }else{
                                       showToastText("No Url Found");
+
                                     }
                                   },
                                   );
