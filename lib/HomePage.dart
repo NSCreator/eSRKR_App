@@ -350,7 +350,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                   body: TabBarView(
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: BouncingScrollPhysics(),
                     children: [
                       SingleChildScrollView(
                         child: Column(

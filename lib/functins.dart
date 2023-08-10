@@ -136,7 +136,6 @@ void like(bool isAdd, String updateId) {
         : FieldValue.arrayRemove([user0Id()]),
   });
 }
-
 download(String photoUrl, String path) async {
   final Uri uri = Uri.parse(photoUrl);
   final String fileName = uri.pathSegments.last;
@@ -154,6 +153,7 @@ download(String photoUrl, String path) async {
   }
   return true;
 }
+
 class downloadAllPdfs extends StatefulWidget {
   String branch,SubjectID;
   List pdfs;

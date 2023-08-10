@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +9,6 @@ import 'HomePage.dart';
 import 'auth_page.dart';
 import 'functins.dart';
 import 'notification.dart';
-import 'package:flutter/cupertino.dart';
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> backgroundHandler(RemoteMessage message) async {
@@ -86,7 +84,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     FirebaseAuth.instance
         .authStateChanges()
@@ -101,7 +98,7 @@ class _MyAppState extends State<MyApp> {
       ),
       child: MaterialApp(
         navigatorKey: navigatorKey,
-        title: 'e-SRKR',
+        title: 'eSRKR',
         builder: (context, child) {
           return MediaQuery(
               data: MediaQuery.of(context).copyWith(
@@ -152,7 +149,7 @@ class _MyAppState extends State<MyApp> {
                               isTheir = false;
                             }
                             if (isTheir) {
-                              downloadAllImages(
+                              downloadAllImages(context,
                                   mainsnapshot.data!["branch"].toString(),mainsnapshot.data!['reg'].toString(), double.parse(mainsnapshot
                                   .data!['height']
                                   .toString()) /

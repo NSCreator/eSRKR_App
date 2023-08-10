@@ -124,9 +124,11 @@ class _notificationsState extends State<notifications>
                 ],
               ),
               Container(
+                color: Colors.transparent,
                 height: widget.height * 40,
                 child: Center(
                   child: TabBar(
+
                     indicator: BoxDecoration(
                       border: Border.all(color: Colors.white12),
                         borderRadius: BorderRadius.circular(widget.size * 15),
@@ -539,21 +541,15 @@ class _notificationsState extends State<notifications>
                                           ),
                                         ),
                                         onLongPress: () {
-                                          if (Notification.Name == fullUserId() ||
-                                              isUser()) {
-                                            final deleteFlashNews =
-                                            FirebaseFirestore.instance
-                                                .collection("user")
-                                                .doc(fullUserId())
-                                                .collection("Notification")
-                                                .doc(Notification.id);
-                                            deleteFlashNews.delete();
-                                            showToastText(
-                                                "Your Message has been Deleted");
-                                          } else {
-                                            showToastText(
-                                                "You are not message user to delete");
-                                          }
+                                          final deleteFlashNews =
+                                          FirebaseFirestore.instance
+                                              .collection("user")
+                                              .doc(fullUserId())
+                                              .collection("Notification")
+                                              .doc(Notification.id);
+                                          deleteFlashNews.delete();
+                                          showToastText(
+                                              "Your Message has been Deleted");
                                         },
                                         onDoubleTap: () {
                                           onChage(Notification.Name);
@@ -785,8 +781,9 @@ class _searchBarState extends State<searchBar> {
                 flex: 7,
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                   child: Container(
+                    constraints: BoxConstraints(maxHeight: 450),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       border: Border.all(color: Colors.white.withOpacity(0.5)),
@@ -800,6 +797,7 @@ class _searchBarState extends State<searchBar> {
                         cursorHeight: 20,
                         controller: bodyController,
                         maxLines: null,
+                        scrollPhysics:BouncingScrollPhysics(),
                         textInputAction: TextInputAction.newline,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -1289,8 +1287,9 @@ class NotificationsConvertor {
 //   return true;
 // }
 
-Future<void> downloadAllImages(
+Future<void> downloadAllImages(BuildContext context,
     String branch, String reg, double height, double width, double size) async {
+  List list= [];
   int count = 0;
   final directory = await getApplicationDocumentsDirectory();
 
@@ -1313,8 +1312,7 @@ Future<void> downloadAllImages(
           var name = fileName.split("/").last;
           final file = await File("${folderPath}/updates/$name");
           if (!file.existsSync()) {
-            await download(data["photoUrl"], "updates");
-            count++;
+            list.add(data["photoUrl"]+";"+"updates");
           }
         }
       }
@@ -1344,8 +1342,7 @@ Future<void> downloadAllImages(
           final file =
               await File("${folderPath}/${branch.toLowerCase()}_news/$name");
           if (!file.existsSync()) {
-            await download(data["Photo Url"], "${branch.toLowerCase()}_news");
-            count++;
+            list.add(data["Photo Url"]+";"+"${branch.toLowerCase()}_news");
           }
         }
       }
@@ -1374,9 +1371,7 @@ Future<void> downloadAllImages(
           final file = await File(
               "${folderPath}/${branch.toLowerCase()}_subjects/$name");
           if (!file.existsSync()) {
-            await download(
-                data["Photo Url"], "${branch.toLowerCase()}_subjects");
-            count++;
+            list.add(data["Photo Url"]+";"+"${branch.toLowerCase()}_subjects");
           }
         }
       }
@@ -1405,9 +1400,7 @@ Future<void> downloadAllImages(
           final file = await File(
               "${folderPath}/${branch.toLowerCase()}_labsubjects/$name");
           if (!file.existsSync()) {
-            await download(
-                data["Photo Url"], "${branch.toLowerCase()}_labsubjects");
-            count++;
+            list.add(data["Photo Url"]+";"+"${branch.toLowerCase()}_labsubjects");
           }
         }
       }
@@ -1436,8 +1429,8 @@ Future<void> downloadAllImages(
           final file =
               await File("${folderPath}/${branch.toLowerCase()}_books/$name");
           if (!file.existsSync()) {
-            await download(data["Photo Url"], "${branch.toLowerCase()}_books");
-            count++;
+            list.add(data["Photo Url"]+";"+"${branch.toLowerCase()}_books");
+
           }
         }
       }
@@ -1447,25 +1440,117 @@ Future<void> downloadAllImages(
   } catch (e) {
     print('Error: $e');
   }
+  await showDialog(
+    context: context,
+    builder: (context) => ImageDownloadScreen(
 
-  if (count > 0) {
-    showNotification(count);
-    navigatorKey.currentState?.pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => HomePage(
-          branch: branch,
-          reg: reg,
-          height: height,
-          width: width,
-          size: size, index: 0,
+      images: list,
+
+    ),
+  );
+  navigatorKey.currentState?.pushAndRemoveUntil(
+    MaterialPageRoute(
+      builder: (context) => HomePage(
+        branch: branch,
+        reg: reg,
+        height: height,
+        width: width,
+        size: size, index: 0,
+      ),
+    ),
+        (route) => false,
+  );
+}
+
+class ImageDownloadScreen extends StatefulWidget {
+  List images;
+
+  ImageDownloadScreen(
+      {Key? key,required this.images})
+      : super(key: key);
+  @override
+  _ImageDownloadScreenState createState() => _ImageDownloadScreenState();
+}
+
+class _ImageDownloadScreenState extends State<ImageDownloadScreen> {
+
+
+  int totalImages = 0;
+  int downloadedImages = 0;
+  double overallProgress = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _downloadImages();
+  }
+
+  _downloadImages() async {
+    totalImages = widget.images.length;
+    downloadedImages = 0;
+    overallProgress = 0.0;
+
+    for (String url in widget.images) {
+      final Uri uri = Uri.parse(url.split(";").first);
+      final String fileName = uri.pathSegments.last;
+      var name = fileName.split("/").last;
+      if (url.startsWith('https://drive.google.com')) {
+        name = url.split(";").first.split('/d/')[1].split('/')[0];
+
+        url = "https://drive.google.com/uc?export=download&id=$name";
+      }
+      final response = await http.get(Uri.parse(url.split(";").first));
+      final documentDirectory = await getApplicationDocumentsDirectory();
+      final newDirectory = Directory('${documentDirectory.path}/${url.split(";").last}');
+      if (!await newDirectory.exists()) {
+        await newDirectory.create(recursive: true);
+      }
+      final file = File('${newDirectory.path}/${name.split(";").first}');
+      await file.writeAsBytes(response.bodyBytes);
+
+      setState(() {
+        downloadedImages++;
+        overallProgress = downloadedImages / totalImages;
+      });
+
+      await Future.delayed(Duration(milliseconds: 100));
+    }
+    showNotification(downloadedImages);
+    Navigator.of(context).pop();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: Colors.transparent,
+      content: Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.white30),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text('Just A Movement',style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w600),),
+            SizedBox(height: 8,),
+            Text('...downloading image $downloadedImages of $totalImages',style: TextStyle(color: Colors.white,fontSize: 18),),
+            LinearProgressIndicator(
+              value: overallProgress,
+            ),
+          ],
         ),
       ),
-      (route) => false,
     );
   }
 }
 
+
 void showNotification(int count) {
+
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
