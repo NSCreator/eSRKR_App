@@ -549,7 +549,7 @@ class _notificationsState extends State<notifications>
                                               .doc(Notification.id);
                                           deleteFlashNews.delete();
                                           showToastText(
-                                              "Your Message has been Deleted");
+                                              "Your Message Has Been Deleted");
                                         },
                                         onDoubleTap: () {
                                           onChage(Notification.Name);
