@@ -1290,7 +1290,7 @@ class NotificationsConvertor {
 Future<void> downloadAllImages(BuildContext context,
     String branch, String reg, double height, double width, double size) async {
   List list= [];
-  int count = 0;
+
   final directory = await getApplicationDocumentsDirectory();
 
   String folderPath = directory.path;
@@ -1440,26 +1440,18 @@ Future<void> downloadAllImages(BuildContext context,
   } catch (e) {
     print('Error: $e');
   }
-  await showDialog(
-    context: context,
-    builder: (context) => ImageDownloadScreen(
+  if(list.isNotEmpty){
+    await showDialog(
+      context: context,
+      builder: (context) => ImageDownloadScreen(
 
-      images: list,
+        images: list,
 
-    ),
-  );
-  navigatorKey.currentState?.pushAndRemoveUntil(
-    MaterialPageRoute(
-      builder: (context) => HomePage(
-        branch: branch,
-        reg: reg,
-        height: height,
-        width: width,
-        size: size, index: 0,
       ),
-    ),
-        (route) => false,
-  );
+    );
+  }
+
+
 }
 
 class ImageDownloadScreen extends StatefulWidget {
@@ -1516,6 +1508,7 @@ class _ImageDownloadScreenState extends State<ImageDownloadScreen> {
       await Future.delayed(Duration(milliseconds: 100));
     }
     showNotification(downloadedImages);
+
     Navigator.of(context).pop();
   }
 

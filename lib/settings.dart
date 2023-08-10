@@ -12,6 +12,7 @@ import 'dart:convert';
 import 'TextField.dart';
 import 'functins.dart';
 import 'main.dart';
+import 'net.dart';
 
 int currentIndex = 0;
 File file = File("");
@@ -420,6 +421,7 @@ class _settingsState extends State<settings> {
                   bottomBar(
                     index: widget.index,
                   ),
+                  ImageScreen(),
                   Expanded(
                     child: SingleChildScrollView(
                       physics: BouncingScrollPhysics(),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:async';
 import 'HomePage.dart';
 import 'auth_page.dart';
@@ -23,6 +24,8 @@ Future main() async {
   );
    await NotificationService().initNotification();
     FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  MobileAds.instance.initialize();
+
   // MobileAds.instance.initialize();
   // final emulatorHost =
   // (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)

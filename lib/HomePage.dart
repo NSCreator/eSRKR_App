@@ -8,12 +8,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:srkr_study_app/SubPages.dart';
 import 'package:srkr_study_app/notification.dart';
 import 'package:srkr_study_app/search%20bar.dart';
 import 'package:srkr_study_app/settings.dart';
-import 'package:srkr_study_app/srkr_page.dart';
 import 'add subjects.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'favorites.dart';
@@ -353,6 +351,7 @@ class _HomePageState extends State<HomePage> {
 
                     physics: BouncingScrollPhysics(),
                     children: [
+
                       SingleChildScrollView(
                         child: Column(
                           children: [
@@ -906,121 +905,7 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(
                               height: 10,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                InkWell(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(30),
-                                        border:
-                                            Border.all(color: Colors.white30)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 3, horizontal: 15),
-                                      child: Text(
-                                        " Theory ",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        transitionDuration:
-                                            const Duration(milliseconds: 300),
-                                        pageBuilder: (context, animation,
-                                                secondaryAnimation) =>
-                                            Subjects(
-                                          branch: widget.branch,
-                                          reg: widget.reg,
-                                          width: widget.width,
-                                          height: widget.height,
-                                          size: widget.size,
-                                        ),
-                                        transitionsBuilder: (context, animation,
-                                            secondaryAnimation, child) {
-                                          final fadeTransition = FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          );
 
-                                          return Container(
-                                            color: Colors.black
-                                                .withOpacity(animation.value),
-                                            child: AnimatedOpacity(
-                                                duration:
-                                                    Duration(milliseconds: 300),
-                                                opacity: animation.value
-                                                    .clamp(0.3, 1.0),
-                                                child: fadeTransition),
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                ),
-                                InkWell(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(30),
-                                        border:
-                                            Border.all(color: Colors.white30)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 3, horizontal: 15),
-                                      child: Text(
-                                        "Experiment",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        transitionDuration:
-                                            const Duration(milliseconds: 300),
-                                        pageBuilder: (context, animation,
-                                                secondaryAnimation) =>
-                                            LabSubjects(
-                                          branch: widget.branch,
-                                          reg: widget.reg,
-                                          width: widget.width,
-                                          height: widget.height,
-                                          size: widget.size,
-                                        ),
-                                        transitionsBuilder: (context, animation,
-                                            secondaryAnimation, child) {
-                                          final fadeTransition = FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          );
-
-                                          return Container(
-                                            color: Colors.black
-                                                .withOpacity(animation.value),
-                                            child: AnimatedOpacity(
-                                                duration:
-                                                    Duration(milliseconds: 300),
-                                                opacity: animation.value
-                                                    .clamp(0.3, 1.0),
-                                                child: fadeTransition),
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                )
-                              ],
-                            ),
                             SizedBox(
                               height: 10,
                             ),
@@ -1220,268 +1105,321 @@ class _HomePageState extends State<HomePage> {
                                               padding: EdgeInsets.symmetric(
                                                   horizontal:
                                                       widget.width * 5),
-                                              child: Container(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                                                  child: Column(
-                                                    children: [
-                                                      Padding(
-                                                        padding: const EdgeInsets.all(8.0),
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            Text(
-                                                              "Theory",
-                                                              style: TextStyle(
-                                                                  color: Colors.white,
-                                                                  fontSize: 40,
-                                                                  fontWeight: FontWeight.w500),
-                                                            ),
-                                                            InkWell(
-                                                              child: Container(
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors.black.withOpacity(0.5),
-                                                                    borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        30),
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .white30)),
-                                                                child: Padding(
-                                                                  padding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical: 3,
-                                                                      horizontal:
-                                                                      15),
-                                                                  child: Text(
-                                                                    "See More",
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        fontSize: 25,
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w500),
-                                                                  ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                                                child: Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            "Theory",
+                                                            style: TextStyle(
+                                                                color: Colors.white,
+                                                                fontSize: 40,
+                                                                fontWeight: FontWeight.w500),
+                                                          ),
+                                                          InkWell(
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors.black.withOpacity(0.5),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      30),
+                                                                  border: Border.all(
+                                                                      color: Colors
+                                                                          .white30)),
+                                                              child: Padding(
+                                                                padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical: 3,
+                                                                    horizontal:
+                                                                    15),
+                                                                child: Text(
+                                                                  "See More",
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize: 25,
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w500),
                                                                 ),
                                                               ),
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  PageRouteBuilder(
-                                                                    transitionDuration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                        300),
-                                                                    pageBuilder: (context,
-                                                                        animation,
-                                                                        secondaryAnimation) =>
-                                                                        Subjects(
-                                                                          branch: widget
-                                                                              .branch,
-                                                                          reg: widget.reg,
-                                                                          width: widget
-                                                                              .width,
-                                                                          height: widget
-                                                                              .height,
-                                                                          size:
-                                                                          widget.size,
-                                                                        ),
-                                                                    transitionsBuilder:
-                                                                        (context,
-                                                                        animation,
-                                                                        secondaryAnimation,
-                                                                        child) {
-                                                                      final fadeTransition =
-                                                                      FadeTransition(
-                                                                        opacity:
-                                                                        animation,
-                                                                        child: child,
-                                                                      );
+                                                            ),
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                PageRouteBuilder(
+                                                                  transitionDuration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                      300),
+                                                                  pageBuilder: (context,
+                                                                      animation,
+                                                                      secondaryAnimation) =>
+                                                                      Subjects(
+                                                                        branch: widget
+                                                                            .branch,
+                                                                        reg: widget.reg,
+                                                                        width: widget
+                                                                            .width,
+                                                                        height: widget
+                                                                            .height,
+                                                                        size:
+                                                                        widget.size,
+                                                                      ),
+                                                                  transitionsBuilder:
+                                                                      (context,
+                                                                      animation,
+                                                                      secondaryAnimation,
+                                                                      child) {
+                                                                    final fadeTransition =
+                                                                    FadeTransition(
+                                                                      opacity:
+                                                                      animation,
+                                                                      child: child,
+                                                                    );
 
-                                                                      return Container(
-                                                                        color: Colors
-                                                                            .black
-                                                                            .withOpacity(
-                                                                            animation
-                                                                                .value),
-                                                                        child: AnimatedOpacity(
-                                                                            duration: Duration(
-                                                                                milliseconds:
-                                                                                300),
-                                                                            opacity: animation
-                                                                                .value
-                                                                                .clamp(
-                                                                                0.3,
-                                                                                1.0),
-                                                                            child:
-                                                                            fadeTransition),
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                );
-                                                              },
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 10,),
-                                                      GridView.builder(
-                                                        physics:
-                                                            const BouncingScrollPhysics(),
-                                                        shrinkWrap: true,
-                                                        gridDelegate:
-                                                            SliverGridDelegateWithFixedCrossAxisCount(
-                                                          crossAxisSpacing:
-                                                              widget.size * 8,
-
-                                                          crossAxisCount: 2,
-                                                        ),
-                                                        itemCount: filteredItems
-                                                            .length,
-                                                        itemBuilder: (context,
-                                                            int index) {
-                                                          final SubjectsData =
-                                                              filteredItems[
-                                                                  index];
-                                                          final Uri uri =
-                                                              Uri.parse(
-                                                                  SubjectsData
-                                                                      .PhotoUrl);
-                                                          final String
-                                                              fileName = uri
-                                                                  .pathSegments
-                                                                  .last;
-                                                          var name = fileName
-                                                              .split("/")
-                                                              .last;
-                                                          final file = File(
-                                                              "${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
-                                                          return InkWell(
-                                                            child: Column(
-                                                              children: [
-                                                               AspectRatio(
-                                                                        aspectRatio: 15 / 7,
-                                                                        child:
-                                                                            Container(
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            borderRadius:
-                                                                                BorderRadius.all(Radius.circular(widget.size * 25.0)),
-                                                                            color:
-                                                                                Colors.black,
-                                                                            image:
-                                                                                DecorationImage(
-                                                                              image: FileImage(file),
-                                                                              fit: BoxFit.cover,
-                                                                            ),
-                                                                          ),
+                                                                    return Container(
+                                                                      color: Colors
+                                                                          .black
+                                                                          .withOpacity(
+                                                                          animation
+                                                                              .value),
+                                                                      child: AnimatedOpacity(
+                                                                          duration: Duration(
+                                                                              milliseconds:
+                                                                              300),
+                                                                          opacity: animation
+                                                                              .value
+                                                                              .clamp(
+                                                                              0.3,
+                                                                              1.0),
                                                                           child:
-                                                                              Align(
-                                                                            alignment:
-                                                                                Alignment.bottomCenter,
-                                                                            child:
-                                                                                Container(
-                                                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(widget.size * 15), color: Colors.black.withOpacity(0.8)),
-                                                                              child: Padding(
-                                                                                padding: EdgeInsets.symmetric(vertical: 3,horizontal: 10),
-                                                                                child: Text(
-                                                                                  SubjectsData.heading,
-                                                                                  style: TextStyle(color: Colors.white, fontSize: widget.size * 30, fontWeight: FontWeight.w600),
-                                                                                ),
+                                                                          fadeTransition),
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              );
+                                                            },
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 15,),
+                                                    GridView.builder(
+                                                      physics:
+                                                          const BouncingScrollPhysics(),
+                                                      shrinkWrap: true,
+                                                      gridDelegate:
+                                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                                        crossAxisSpacing:
+                                                            widget.size * 8,
+
+                                                        crossAxisCount: 2,
+                                                      ),
+                                                      itemCount: filteredItems
+                                                          .length,
+                                                      itemBuilder: (context,
+                                                          int index) {
+                                                        final SubjectsData =
+                                                            filteredItems[
+                                                                index];
+                                                        final Uri uri =
+                                                            Uri.parse(
+                                                                SubjectsData
+                                                                    .PhotoUrl);
+                                                        final String
+                                                            fileName = uri
+                                                                .pathSegments
+                                                                .last;
+                                                        var name = fileName
+                                                            .split("/")
+                                                            .last;
+                                                        final file = File(
+                                                            "${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
+                                                        return InkWell(
+                                                          child: Column(
+                                                            children: [
+                                                             AspectRatio(
+                                                                      aspectRatio: 15 / 7,
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius:
+                                                                              BorderRadius.all(Radius.circular(widget.size * 25.0)),
+                                                                          color:
+                                                                              Colors.black,
+                                                                          image:
+                                                                              DecorationImage(
+                                                                            image: FileImage(file),
+                                                                            fit: BoxFit.cover,
+                                                                          ),
+                                                                        ),
+                                                                        child:
+                                                                            Align(
+                                                                          alignment:
+                                                                              Alignment.bottomCenter,
+                                                                          child:
+                                                                              Container(
+                                                                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(widget.size * 20), color: Colors.black),
+                                                                            child: Padding(
+                                                                              padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                                                                              child: Text(
+                                                                                SubjectsData.heading,
+                                                                                style: TextStyle(color: Colors.white, fontSize: widget.size * 30, fontWeight: FontWeight.w600),
                                                                               ),
                                                                             ),
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                SizedBox(
-                                                                  height: widget
-                                                                          .height *
-                                                                      3,
-                                                                ),
-                                                                Container(
-                                                                  width: double
-                                                                      .infinity,
-                                                                  height: widget
-                                                                          .height *
-                                                                      20,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.all(Radius.circular(widget.size *
-                                                                            8.0)),
-
-                                                                  ),
-                                                                  child: Padding(
-                                                                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                                                                    child: Marquee(
-                                                                      text: SubjectsData
-                                                                              .description.isNotEmpty
-                                                                          ? SubjectsData.description
-                                                                          : "No Full Name",
-                                                                      style: TextStyle(
-                                                                          color: Colors.white,
-                                                                          fontSize: widget.size * 18),
-                                                                      scrollAxis: Axis.horizontal,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment.start,
-                                                                      blankSpace: 20.0,
-                                                                      // Set the spacing between the end and the beginning of the text
-                                                                      velocity: 50.0,
-                                                                      // Set the scrolling speed
-                                                                      pauseAfterRound:
-                                                                          Duration(seconds: 1),
-                                                                      // Set the pause duration after each round
-                                                                      startPadding: 0.0,
-                                                                      // Set the initial padding at the start of the text
-                                                                      accelerationDuration:
-                                                                          Duration(seconds: 1),
-                                                                      // Set the duration for text acceleration
-                                                                      accelerationCurve:
-                                                                          Curves.linear,
-                                                                      // Set the curve for text acceleration
-                                                                      decelerationDuration:
-                                                                          Duration(milliseconds: 500),
-                                                                      // Set the duration for text deceleration
-                                                                      decelerationCurve: Curves
-                                                                          .easeOut, // Set the curve for text deceleration
                                                                     ),
+                                                              SizedBox(
+                                                                height: widget
+                                                                        .height *
+                                                                    3,
+                                                              ),
+                                                              Container(
+                                                                width: double
+                                                                    .infinity,
+                                                                height: widget
+                                                                        .height *
+                                                                    20,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius.all(Radius.circular(widget.size *
+                                                                          8.0)),
+
+                                                                ),
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                                                                  child: Marquee(
+                                                                    text: SubjectsData
+                                                                            .description.isNotEmpty
+                                                                        ? SubjectsData.description
+                                                                        : "No Full Name",
+                                                                    style: TextStyle(
+                                                                        color: Colors.white,
+                                                                        fontSize: widget.size * 18),
+                                                                    scrollAxis: Axis.horizontal,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment.start,
+                                                                    blankSpace: 20.0,
+                                                                    velocity: 50.0,
+                                                                    pauseAfterRound:
+                                                                        Duration(seconds: 1),
+                                                                    startPadding: 0.0,
+                                                                    accelerationDuration:
+                                                                        Duration(seconds: 1),
+                                                                    accelerationCurve:
+                                                                        Curves.linear,
+                                                                    decelerationDuration:
+                                                                        Duration(milliseconds: 500),
+                                                                    decelerationCurve: Curves
+                                                                        .easeOut,
                                                                   ),
                                                                 ),
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment.center,
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment.center,
-                                                                  children: [
-                                                                    Container(
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors.black
-                                                                              .withOpacity(0.3),
-                                                                          border: Border.all(
-                                                                              color:
-                                                                              Colors.white38),
-                                                                          borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              widget.size * 15)),
-                                                                      child: Padding(
-                                                                        padding: EdgeInsets.symmetric(vertical: 3,horizontal: 8),
-                                                                        child: Row(
-                                                                          mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
-                                                                          crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .center,
-                                                                          children: [
+                                                              ),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment.center,
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment.center,
+                                                                children: [
+                                                                  Container(
+                                                                    decoration: BoxDecoration(
+                                                                        color: Colors.black
+                                                                            .withOpacity(0.3),
+                                                                        border: Border.all(
+                                                                            color:
+                                                                            Colors.white10),
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            widget.size * 15)),
+                                                                    child: Padding(
+                                                                      padding: EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                                                      child: Row(
+                                                                        mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                        crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                        children: [
 
-                                                                              InkWell(
-                                                                                child: StreamBuilder<
-                                                                                    DocumentSnapshot>(
-                                                                                  stream: FirebaseFirestore
+                                                                            InkWell(
+                                                                              child: StreamBuilder<
+                                                                                  DocumentSnapshot>(
+                                                                                stream: FirebaseFirestore
+                                                                                    .instance
+                                                                                    .collection(
+                                                                                    'user')
+                                                                                    .doc(
+                                                                                    fullUserId())
+                                                                                    .collection(
+                                                                                    "FavouriteSubject")
+                                                                                    .doc(SubjectsData.id)
+                                                                                    .snapshots(),
+                                                                                builder: (context,
+                                                                                    snapshot) {
+                                                                                  if (snapshot
+                                                                                      .hasData) {
+                                                                                    if (snapshot
+                                                                                        .data!
+                                                                                        .exists) {
+                                                                                      return Row(
+                                                                                        children: [
+                                                                                          Icon(
+                                                                                              Icons
+                                                                                                  .library_add_check,
+                                                                                              size: widget.size *
+                                                                                                  20,
+                                                                                              color:
+                                                                                              Colors.cyanAccent.withOpacity(0.5)),
+                                                                                          Text(
+                                                                                            " Saved",
+                                                                                            style: TextStyle(
+                                                                                                color: Colors.white.withOpacity(0.5),
+                                                                                                fontSize: widget.size * 18),
+                                                                                          )
+                                                                                        ],
+                                                                                      );
+                                                                                    } else {
+                                                                                      return Row(
+                                                                                        children: [
+                                                                                          Icon(
+                                                                                            Icons
+                                                                                                .library_add_outlined,
+                                                                                            size: widget.size *
+                                                                                                20,
+                                                                                            color:
+                                                                                            Colors.cyanAccent.withOpacity(0.5),
+                                                                                          ),
+                                                                                          Text(
+                                                                                            " Save",
+                                                                                            style: TextStyle(
+                                                                                                color: Colors.white.withOpacity(0.5),
+                                                                                                fontSize: widget.size * 18),
+                                                                                          )
+                                                                                        ],
+                                                                                      );
+                                                                                    }
+                                                                                  } else {
+                                                                                    return Container();
+                                                                                  }
+                                                                                },
+                                                                              ),
+                                                                              onTap: () async {
+                                                                                try {
+                                                                                  await FirebaseFirestore
                                                                                       .instance
                                                                                       .collection(
                                                                                       'user')
@@ -1490,206 +1428,128 @@ class _HomePageState extends State<HomePage> {
                                                                                       .collection(
                                                                                       "FavouriteSubject")
                                                                                       .doc(SubjectsData.id)
-                                                                                      .snapshots(),
-                                                                                  builder: (context,
-                                                                                      snapshot) {
-                                                                                    if (snapshot
-                                                                                        .hasData) {
-                                                                                      if (snapshot
-                                                                                          .data!
-                                                                                          .exists) {
-                                                                                        return Row(
-                                                                                          children: [
-                                                                                            Icon(
-                                                                                                Icons
-                                                                                                    .library_add_check,
-                                                                                                size: widget.size *
-                                                                                                    20,
-                                                                                                color:
-                                                                                                Colors.cyanAccent),
-                                                                                            Text(
-                                                                                              " Saved",
-                                                                                              style: TextStyle(
-                                                                                                  color: Colors.white,
-                                                                                                  fontSize: widget.size * 18),
-                                                                                            )
-                                                                                          ],
-                                                                                        );
-                                                                                      } else {
-                                                                                        return Row(
-                                                                                          children: [
-                                                                                            Icon(
-                                                                                              Icons
-                                                                                                  .library_add_outlined,
-                                                                                              size: widget.size *
-                                                                                                  20,
-                                                                                              color:
-                                                                                              Colors.cyanAccent,
-                                                                                            ),
-                                                                                            Text(
-                                                                                              " Save",
-                                                                                              style: TextStyle(
-                                                                                                  color: Colors.white,
-                                                                                                  fontSize: widget.size * 18),
-                                                                                            )
-                                                                                          ],
-                                                                                        );
-                                                                                      }
-                                                                                    } else {
-                                                                                      return Container();
-                                                                                    }
-                                                                                  },
-                                                                                ),
-                                                                                onTap: () async {
-                                                                                  try {
-                                                                                    await FirebaseFirestore
-                                                                                        .instance
-                                                                                        .collection(
-                                                                                        'user')
-                                                                                        .doc(
-                                                                                        fullUserId())
-                                                                                        .collection(
-                                                                                        "FavouriteSubject")
-                                                                                        .doc(SubjectsData.id)
-                                                                                        .get()
-                                                                                        .then(
-                                                                                            (docSnapshot) {
-                                                                                          if (docSnapshot
-                                                                                              .exists) {
-                                                                                            FirebaseFirestore
-                                                                                                .instance
-                                                                                                .collection(
-                                                                                                'user')
-                                                                                                .doc(
-                                                                                                fullUserId())
-                                                                                                .collection(
-                                                                                                "FavouriteSubject")
-                                                                                                .doc(SubjectsData.id)
-                                                                                                .delete();
-                                                                                            showToastText(
-                                                                                                "Removed from saved list");
-                                                                                          } else {
-                                                                                            FavouriteSubjects(
-                                                                                                branch: widget
-                                                                                                    .branch,
-                                                                                                SubjectId:
-                                                                                                SubjectsData.id,
-                                                                                                name: SubjectsData.heading,
-                                                                                                description:SubjectsData.description,
-                                                                                                photoUrl:SubjectsData.PhotoUrl);
-                                                                                            showToastText(
-                                                                                                "${SubjectsData.heading} in favorites");
-                                                                                          }
-                                                                                        });
-                                                                                  } catch (e) {
-                                                                                    print(e);
-                                                                                  }
-                                                                                },
-                                                                              )
+                                                                                      .get()
+                                                                                      .then(
+                                                                                          (docSnapshot) {
+                                                                                        if (docSnapshot
+                                                                                            .exists) {
+                                                                                          FirebaseFirestore
+                                                                                              .instance
+                                                                                              .collection(
+                                                                                              'user')
+                                                                                              .doc(
+                                                                                              fullUserId())
+                                                                                              .collection(
+                                                                                              "FavouriteSubject")
+                                                                                              .doc(SubjectsData.id)
+                                                                                              .delete();
+                                                                                          showToastText(
+                                                                                              "Removed from saved list");
+                                                                                        } else {
+                                                                                          FavouriteSubjects(
+                                                                                              branch: widget
+                                                                                                  .branch,
+                                                                                              SubjectId:
+                                                                                              SubjectsData.id,
+                                                                                              name: SubjectsData.heading,
+                                                                                              description:SubjectsData.description,
+                                                                                              photoUrl:SubjectsData.PhotoUrl);
+                                                                                          showToastText(
+                                                                                              "${SubjectsData.heading} in favorites");
+                                                                                        }
+                                                                                      });
+                                                                                } catch (e) {
+                                                                                  print(e);
+                                                                                }
+                                                                              },
+                                                                            )
 
-                                                                          ],
-                                                                        ),
+                                                                        ],
                                                                       ),
                                                                     ),
-                                                                    SizedBox(width: 5,),
-                                                                    downloadAllPdfs(branch: widget.branch,SubjectID: SubjectsData.id,pdfs:[]),
-                                                                    InkWell(
-                                                                      child: Icon(Icons.more_vert,color: Colors.white,size: 28,),
-                                                                    onTap: (){
-                                                                       showModalBottomSheet<void>(
-                                                                         backgroundColor: Colors.transparent,
-                                                                          context: context,
-                                                                          builder: (BuildContext context) {
-                                                                        return buildBottomSheetContent(data:SubjectsData);
-                                                                      });
-                                                                    },),
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                PageRouteBuilder(
-                                                                  transitionDuration:
-                                                                      const Duration(
-                                                                          milliseconds:
-                                                                              300),
-                                                                  pageBuilder: (context,
-                                                                          animation,
-                                                                          secondaryAnimation) =>
-                                                                      subjectUnitsData(
-                                                                    date: SubjectsData.Date.split(
-                                                                            "-")
-                                                                        .last,
-                                                                    req: SubjectsData
-                                                                        .regulation,
-                                                                    pdfs: 0,
-                                                                    width: widget
-                                                                        .width,
-                                                                    height: widget
-                                                                        .height,
-                                                                    size: widget
-                                                                        .size,
-                                                                    branch: widget
-                                                                        .branch,
-                                                                    ID: SubjectsData
-                                                                        .id,
-                                                                    mode:
-                                                                        "Subjects",
-                                                                    name: SubjectsData
-                                                                        .heading,
-                                                                    fullName:
-                                                                        SubjectsData
-                                                                            .description,
-                                                                    photoUrl:
-                                                                        SubjectsData
-                                                                            .PhotoUrl,
                                                                   ),
-                                                                  transitionsBuilder: (context,
-                                                                      animation,
-                                                                      secondaryAnimation,
-                                                                      child) {
-                                                                    final fadeTransition =
-                                                                        FadeTransition(
-                                                                      opacity:
-                                                                          animation,
-                                                                      child:
-                                                                          child,
-                                                                    );
-
-                                                                    return Container(
-                                                                      color: Colors
-                                                                          .black
-                                                                          .withOpacity(
-                                                                              animation.value),
-                                                                      child: AnimatedOpacity(
-                                                                          duration: Duration(
-                                                                              milliseconds:
-                                                                                  300),
-                                                                          opacity: animation.value.clamp(
-                                                                              0.3,
-                                                                              1.0),
-                                                                          child:
-                                                                              fadeTransition),
-                                                                    );
-                                                                  },
+                                                                  SizedBox(width: 5,),
+                                                                  downloadAllPdfs(branch: widget.branch,SubjectID: SubjectsData.id,pdfs:[]),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                              context,
+                                                              PageRouteBuilder(
+                                                                transitionDuration:
+                                                                    const Duration(
+                                                                        milliseconds:
+                                                                            300),
+                                                                pageBuilder: (context,
+                                                                        animation,
+                                                                        secondaryAnimation) =>
+                                                                    subjectUnitsData(
+                                                                  date: SubjectsData.Date.split(
+                                                                          "-")
+                                                                      .last,
+                                                                  req: SubjectsData
+                                                                      .regulation,
+                                                                  pdfs: 0,
+                                                                  width: widget
+                                                                      .width,
+                                                                  height: widget
+                                                                      .height,
+                                                                  size: widget
+                                                                      .size,
+                                                                  branch: widget
+                                                                      .branch,
+                                                                  ID: SubjectsData
+                                                                      .id,
+                                                                  mode:
+                                                                      "Subjects",
+                                                                  name: SubjectsData
+                                                                      .heading,
+                                                                  fullName:
+                                                                      SubjectsData
+                                                                          .description,
+                                                                  photoUrl:
+                                                                      SubjectsData
+                                                                          .PhotoUrl,
                                                                 ),
-                                                              );
-                                                            },
-                                                          );
-                                                        },
-                                                      ),
+                                                                transitionsBuilder: (context,
+                                                                    animation,
+                                                                    secondaryAnimation,
+                                                                    child) {
+                                                                  final fadeTransition =
+                                                                      FadeTransition(
+                                                                    opacity:
+                                                                        animation,
+                                                                    child:
+                                                                        child,
+                                                                  );
 
-                                                    ],
-                                                  ),
+                                                                  return Container(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            animation.value),
+                                                                    child: AnimatedOpacity(
+                                                                        duration: Duration(
+                                                                            milliseconds:
+                                                                                300),
+                                                                        opacity: animation.value.clamp(
+                                                                            0.3,
+                                                                            1.0),
+                                                                        child:
+                                                                            fadeTransition),
+                                                                  );
+                                                                },
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                    ),
+
+                                                  ],
                                                 ),
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                    border: Border.all(
-                                                        color: Colors.white30)),
                                               ),
                                             );
                                           } else
@@ -1740,407 +1600,387 @@ class _HomePageState extends State<HomePage> {
                                                 .toList();
                                         if (Subjects.length > 0)
                                           return Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal:
-                                                widget.width * 10),
-                                            child: Container(
-                                              child: Padding(
-                                                padding:
-                                                const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.all(8.0),
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            "Experiments",
-                                                            style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: 40,
-                                                                fontWeight: FontWeight.w500),
+                                            padding:
+                                            const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        "Experiments",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 30,
+                                                            fontWeight: FontWeight.w500),
+                                                      ),
+                                                      InkWell(
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                              color: Colors.black.withOpacity(0.5),
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  30),
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .white30)),
+                                                          child: Padding(
+                                                            padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 3,
+                                                                horizontal:
+                                                                15),
+                                                            child: Text(
+                                                              "See More",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize: 30,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
+                                                            ),
                                                           ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    GridView.builder(
-                                                      physics:
-                                                      const BouncingScrollPhysics(),
-                                                      shrinkWrap: true,
-                                                      gridDelegate:
-                                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                                        crossAxisSpacing:
-                                                        widget.size * 10,
-                                                        crossAxisCount: 2,
-                                                      ),
-                                                      itemCount: filteredItems
-                                                          .length,
-                                                      itemBuilder: (context,
-                                                          int index) {
-                                                        final SubjectsData =
-                                                        filteredItems[
-                                                        index];
-                                                        final Uri uri =
-                                                        Uri.parse(
-                                                            SubjectsData
-                                                                .PhotoUrl);
-                                                        final String
-                                                        fileName = uri
-                                                            .pathSegments
-                                                            .last;
-                                                        var name = fileName
-                                                            .split("/")
-                                                            .last;
-                                                        final file = File(
-                                                            "${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
-                                                        return InkWell(
-                                                          child: Column(
-                                                            children: [
-                                                              AspectRatio(
-                                                                aspectRatio:
-                                                                16 /
-                                                                    8,
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            PageRouteBuilder(
+                                                              transitionDuration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                  300),
+                                                              pageBuilder: (context,
+                                                                  animation,
+                                                                  secondaryAnimation) =>
+                                                                  LabSubjects(
+                                                                    branch: widget
+                                                                        .branch,
+                                                                    reg: widget.reg,
+                                                                    width: widget
+                                                                        .width,
+                                                                    height: widget
+                                                                        .height,
+                                                                    size:
+                                                                    widget.size,
+                                                                  ),
+                                                              transitionsBuilder:
+                                                                  (context,
+                                                                  animation,
+                                                                  secondaryAnimation,
+                                                                  child) {
+                                                                final fadeTransition =
+                                                                FadeTransition(
+                                                                  opacity:
+                                                                  animation,
+                                                                  child: child,
+                                                                );
+
+                                                                return Container(
+                                                                  color: Colors
+                                                                      .black
+                                                                      .withOpacity(
+                                                                      animation
+                                                                          .value),
+                                                                  child: AnimatedOpacity(
+                                                                      duration: Duration(
+                                                                          milliseconds:
+                                                                          300),
+                                                                      opacity: animation
+                                                                          .value
+                                                                          .clamp(
+                                                                          0.3,
+                                                                          1.0),
+                                                                      child:
+                                                                      fadeTransition),
+                                                                );
+                                                              },
+                                                            ),
+                                                          );
+                                                        },
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                GridView.builder(
+                                                  physics:
+                                                  const BouncingScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  gridDelegate:
+                                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisSpacing:
+                                                    widget.size * 10,
+                                                    crossAxisCount: 2,
+                                                  ),
+                                                  itemCount: filteredItems
+                                                      .length,
+                                                  itemBuilder: (context,
+                                                      int index) {
+                                                    final SubjectsData =
+                                                    filteredItems[
+                                                    index];
+                                                    final Uri uri =
+                                                    Uri.parse(
+                                                        SubjectsData
+                                                            .PhotoUrl);
+                                                    final String
+                                                    fileName = uri
+                                                        .pathSegments
+                                                        .last;
+                                                    var name = fileName
+                                                        .split("/")
+                                                        .last;
+                                                    final file = File(
+                                                        "${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
+                                                    return InkWell(
+                                                      child: Column(
+                                                        children: [
+                                                          AspectRatio(
+                                                            aspectRatio:
+                                                            16 /
+                                                                8,
+                                                            child:
+                                                            Container(
+                                                              decoration:
+                                                              BoxDecoration(
+                                                                borderRadius:
+                                                                BorderRadius.all(Radius.circular(widget.size * 8.0)),
+                                                                color:
+                                                                Colors.black,
+                                                                image:
+                                                                DecorationImage(
+                                                                  image: FileImage(file),
+                                                                  fit: BoxFit.cover,
+                                                                ),
+                                                              ),
+                                                              child:
+                                                              Align(
+                                                                alignment:
+                                                                Alignment.bottomCenter,
                                                                 child:
                                                                 Container(
-                                                                  decoration:
-                                                                  BoxDecoration(
-                                                                    borderRadius:
-                                                                    BorderRadius.all(Radius.circular(widget.size * 8.0)),
-                                                                    color:
-                                                                    Colors.black,
-                                                                    image:
-                                                                    DecorationImage(
-                                                                      image: FileImage(file),
-                                                                      fit: BoxFit.cover,
-                                                                    ),
-                                                                  ),
-                                                                  child:
-                                                                  Align(
-                                                                    alignment:
-                                                                    Alignment.bottomCenter,
-                                                                    child:
-                                                                    Container(
-                                                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(widget.size * 8), color: Colors.black.withOpacity(0.8)),
-                                                                      child: Padding(
-                                                                        padding: EdgeInsets.all(widget.size * 5),
-                                                                        child: Text(
-                                                                          SubjectsData.heading,
-                                                                          style: TextStyle(color: Colors.white, fontSize: widget.size * 25, fontWeight: FontWeight.w500),
-                                                                        ),
-                                                                      ),
+                                                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(widget.size * 8), color: Colors.black.withOpacity(0.8)),
+                                                                  child: Padding(
+                                                                    padding: EdgeInsets.all(widget.size * 5),
+                                                                    child: Text(
+                                                                      SubjectsData.heading,
+                                                                      style: TextStyle(color: Colors.white, fontSize: widget.size * 25, fontWeight: FontWeight.w500),
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ),
-                                                              SizedBox(
-                                                                height: widget
-                                                                    .height *
-                                                                    3,
-                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: widget
+                                                                .height *
+                                                                3,
+                                                          ),
+                                                          Container(
+                                                            width: double
+                                                                .infinity,
+                                                            height: widget
+                                                                .height *
+                                                                20,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius.all(Radius.circular(widget.size *
+                                                                  8.0)),
+                                                              color: Colors
+                                                                  .black38,
+                                                            ),
+                                                            child: Marquee(
+                                                              text: SubjectsData
+                                                                  .description.isNotEmpty
+                                                                  ? SubjectsData.description
+                                                                  : "No Full Name",
+                                                              style: TextStyle(
+                                                                  color: Colors.white,
+                                                                  fontSize: widget.size * 18),
+                                                              scrollAxis: Axis.horizontal,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.start,
+                                                              blankSpace: 20.0,
+                                                              // Set the spacing between the end and the beginning of the text
+                                                              velocity: 50.0,
+                                                              // Set the scrolling speed
+                                                              pauseAfterRound:
+                                                              Duration(seconds: 1),
+                                                              // Set the pause duration after each round
+                                                              startPadding: 0.0,
+                                                              // Set the initial padding at the start of the text
+                                                              accelerationDuration:
+                                                              Duration(seconds: 1),
+                                                              // Set the duration for text acceleration
+                                                              accelerationCurve:
+                                                              Curves.linear,
+                                                              // Set the curve for text acceleration
+                                                              decelerationDuration:
+                                                              Duration(milliseconds: 500),
+                                                              // Set the duration for text deceleration
+                                                              decelerationCurve: Curves
+                                                                  .easeOut, // Set the curve for text deceleration
+                                                            ),
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment.center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment.center,
+                                                            children: [
                                                               Container(
-                                                                width: double
-                                                                    .infinity,
-                                                                height: widget
-                                                                    .height *
-                                                                    20,
-                                                                decoration:
-                                                                BoxDecoration(
-                                                                  borderRadius:
-                                                                  BorderRadius.all(Radius.circular(widget.size *
-                                                                      8.0)),
-                                                                  color: Colors
-                                                                      .black38,
-                                                                ),
-                                                                child: Marquee(
-                                                                  text: SubjectsData
-                                                                      .description.isNotEmpty
-                                                                      ? SubjectsData.description
-                                                                      : "No Full Name",
-                                                                  style: TextStyle(
-                                                                      color: Colors.white,
-                                                                      fontSize: widget.size * 18),
-                                                                  scrollAxis: Axis.horizontal,
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment.start,
-                                                                  blankSpace: 20.0,
-                                                                  // Set the spacing between the end and the beginning of the text
-                                                                  velocity: 50.0,
-                                                                  // Set the scrolling speed
-                                                                  pauseAfterRound:
-                                                                  Duration(seconds: 1),
-                                                                  // Set the pause duration after each round
-                                                                  startPadding: 0.0,
-                                                                  // Set the initial padding at the start of the text
-                                                                  accelerationDuration:
-                                                                  Duration(seconds: 1),
-                                                                  // Set the duration for text acceleration
-                                                                  accelerationCurve:
-                                                                  Curves.linear,
-                                                                  // Set the curve for text acceleration
-                                                                  decelerationDuration:
-                                                                  Duration(milliseconds: 500),
-                                                                  // Set the duration for text deceleration
-                                                                  decelerationCurve: Curves
-                                                                      .easeOut, // Set the curve for text deceleration
-                                                                ),
-                                                              ),
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment.center,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment.center,
-                                                                children: [
-                                                                  Container(
-                                                                    decoration: BoxDecoration(
-                                                                        color: Colors.black
-                                                                            .withOpacity(0.3),
-                                                                        border: Border.all(
-                                                                            color:
-                                                                            Colors.white38),
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            widget.size * 15)),
-                                                                    child: Padding(
-                                                                      padding: EdgeInsets.symmetric(vertical: 3,horizontal: 8),
-                                                                      child: Row(
-                                                                        mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                        crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                        children: [
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors.black
+                                                                        .withOpacity(0.3),
+                                                                    border: Border.all(
+                                                                        color:
+                                                                        Colors.white38),
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        widget.size * 15)),
+                                                                child: Padding(
+                                                                  padding: EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                    children: [
 
-                                                                          InkWell(
-                                                                            child: StreamBuilder<
-                                                                                DocumentSnapshot>(
-                                                                              stream: FirebaseFirestore
-                                                                                  .instance
-                                                                                  .collection(
-                                                                                  'user')
-                                                                                  .doc(
-                                                                                  fullUserId())
-                                                                                  .collection(
-                                                                                  "FavouriteSubject")
-                                                                                  .doc(SubjectsData.id)
-                                                                                  .snapshots(),
-                                                                              builder: (context,
-                                                                                  snapshot) {
-                                                                                if (snapshot
-                                                                                    .hasData) {
-                                                                                  if (snapshot
-                                                                                      .data!
-                                                                                      .exists) {
-                                                                                    return Row(
-                                                                                      children: [
-                                                                                        Icon(
-                                                                                            Icons
-                                                                                                .library_add_check,
-                                                                                            size: widget.size *
-                                                                                                23,
-                                                                                            color:
-                                                                                            Colors.cyanAccent),
-                                                                                        Text(
-                                                                                          " Saved",
-                                                                                          style: TextStyle(
-                                                                                              color: Colors.white,
-                                                                                              fontSize: widget.size * 20),
-                                                                                        )
-                                                                                      ],
-                                                                                    );
-                                                                                  } else {
-                                                                                    return Row(
-                                                                                      children: [
-                                                                                        Icon(
-                                                                                          Icons
-                                                                                              .library_add_outlined,
-                                                                                          size: widget.size *
-                                                                                              23,
-                                                                                          color:
-                                                                                          Colors.cyanAccent,
-                                                                                        ),
-                                                                                        Text(
-                                                                                          " Save",
-                                                                                          style: TextStyle(
-                                                                                              color: Colors.white,
-                                                                                              fontSize: widget.size * 20),
-                                                                                        )
-                                                                                      ],
-                                                                                    );
-                                                                                  }
-                                                                                } else {
-                                                                                  return Container();
-                                                                                }
-                                                                              },
-                                                                            ),
-                                                                            onTap: () async {
-                                                                              try {
-                                                                                await FirebaseFirestore
-                                                                                    .instance
-                                                                                    .collection(
-                                                                                    'user')
-                                                                                    .doc(
-                                                                                    fullUserId())
-                                                                                    .collection(
-                                                                                    "FavouriteSubject")
-                                                                                    .doc(SubjectsData.id)
-                                                                                    .get()
-                                                                                    .then(
-                                                                                        (docSnapshot) {
-                                                                                      if (docSnapshot
-                                                                                          .exists) {
-                                                                                        FirebaseFirestore
-                                                                                            .instance
-                                                                                            .collection(
-                                                                                            'user')
-                                                                                            .doc(
-                                                                                            fullUserId())
-                                                                                            .collection(
-                                                                                            "FavouriteSubject")
-                                                                                            .doc(SubjectsData.id)
-                                                                                            .delete();
-                                                                                        showToastText(
-                                                                                            "Removed from saved list");
-                                                                                      } else {
-                                                                                        FavouriteSubjects(
-                                                                                            branch: widget
-                                                                                                .branch,
-                                                                                            SubjectId:
-                                                                                            SubjectsData.id,
-                                                                                            name: SubjectsData.heading,
-                                                                                            description:SubjectsData.description,
-                                                                                            photoUrl:SubjectsData.PhotoUrl);
-                                                                                        showToastText(
-                                                                                            "${SubjectsData.heading} in favorites");
-                                                                                      }
-                                                                                    });
-                                                                              } catch (e) {
-                                                                                print(e);
+                                                                      InkWell(
+                                                                        child: StreamBuilder<
+                                                                            DocumentSnapshot>(
+                                                                          stream: FirebaseFirestore
+                                                                              .instance
+                                                                              .collection(
+                                                                              'user')
+                                                                              .doc(
+                                                                              fullUserId())
+                                                                              .collection(
+                                                                              "FavouriteSubject")
+                                                                              .doc(SubjectsData.id)
+                                                                              .snapshots(),
+                                                                          builder: (context,
+                                                                              snapshot) {
+                                                                            if (snapshot
+                                                                                .hasData) {
+                                                                              if (snapshot
+                                                                                  .data!
+                                                                                  .exists) {
+                                                                                return Row(
+                                                                                  children: [
+                                                                                    Icon(
+                                                                                        Icons
+                                                                                            .library_add_check,
+                                                                                        size: widget.size *
+                                                                                            23,
+                                                                                        color:
+                                                                                        Colors.cyanAccent),
+                                                                                    Text(
+                                                                                      " Saved",
+                                                                                      style: TextStyle(
+                                                                                          color: Colors.white,
+                                                                                          fontSize: widget.size * 20),
+                                                                                    )
+                                                                                  ],
+                                                                                );
+                                                                              } else {
+                                                                                return Row(
+                                                                                  children: [
+                                                                                    Icon(
+                                                                                      Icons
+                                                                                          .library_add_outlined,
+                                                                                      size: widget.size *
+                                                                                          23,
+                                                                                      color:
+                                                                                      Colors.cyanAccent,
+                                                                                    ),
+                                                                                    Text(
+                                                                                      " Save",
+                                                                                      style: TextStyle(
+                                                                                          color: Colors.white,
+                                                                                          fontSize: widget.size * 20),
+                                                                                    )
+                                                                                  ],
+                                                                                );
                                                                               }
-                                                                            },
-                                                                          )
+                                                                            } else {
+                                                                              return Container();
+                                                                            }
+                                                                          },
+                                                                        ),
+                                                                        onTap: () async {
+                                                                          try {
+                                                                            await FirebaseFirestore
+                                                                                .instance
+                                                                                .collection(
+                                                                                'user')
+                                                                                .doc(
+                                                                                fullUserId())
+                                                                                .collection(
+                                                                                "FavouriteSubject")
+                                                                                .doc(SubjectsData.id)
+                                                                                .get()
+                                                                                .then(
+                                                                                    (docSnapshot) {
+                                                                                  if (docSnapshot
+                                                                                      .exists) {
+                                                                                    FirebaseFirestore
+                                                                                        .instance
+                                                                                        .collection(
+                                                                                        'user')
+                                                                                        .doc(
+                                                                                        fullUserId())
+                                                                                        .collection(
+                                                                                        "FavouriteSubject")
+                                                                                        .doc(SubjectsData.id)
+                                                                                        .delete();
+                                                                                    showToastText(
+                                                                                        "Removed from saved list");
+                                                                                  } else {
+                                                                                    FavouriteSubjects(
+                                                                                        branch: widget
+                                                                                            .branch,
+                                                                                        SubjectId:
+                                                                                        SubjectsData.id,
+                                                                                        name: SubjectsData.heading,
+                                                                                        description:SubjectsData.description,
+                                                                                        photoUrl:SubjectsData.PhotoUrl);
+                                                                                    showToastText(
+                                                                                        "${SubjectsData.heading} in favorites");
+                                                                                  }
+                                                                                });
+                                                                          } catch (e) {
+                                                                            print(e);
+                                                                          }
+                                                                        },
+                                                                      )
 
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(width: 5,),
-                                                                  Stack(
-                                                                    alignment: Alignment.center,
-                                                                    children: <Widget>[
-                                                                      CircularProgressIndicator(
-                                                                        strokeWidth: 2,
-                                                                        value: 0.1,
-                                                                      ),
-                                                                      Icon(Icons.download_for_offline_outlined, size: 40.0),
                                                                     ],
                                                                   ),
+                                                                ),
+                                                              ),
+                                                              SizedBox(width: 5,),
+                                                              Stack(
+                                                                alignment: Alignment.center,
+                                                                children: <Widget>[
+                                                                  CircularProgressIndicator(
+                                                                    strokeWidth: 2,
+                                                                    value: 0.1,
+                                                                  ),
+                                                                  Icon(Icons.download_for_offline_outlined, size: 40.0),
                                                                 ],
                                                               ),
                                                             ],
                                                           ),
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                              context,
-                                                              PageRouteBuilder(
-                                                                transitionDuration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                    300),
-                                                                pageBuilder: (context,
-                                                                    animation,
-                                                                    secondaryAnimation) =>
-                                                                    subjectUnitsData(
-                                                                      date: SubjectsData.Date.split(
-                                                                          "-")
-                                                                          .last,
-                                                                      req: SubjectsData
-                                                                          .regulation,
-                                                                      pdfs: 0,
-                                                                      width: widget
-                                                                          .width,
-                                                                      height: widget
-                                                                          .height,
-                                                                      size: widget
-                                                                          .size,
-                                                                      branch: widget
-                                                                          .branch,
-                                                                      ID: SubjectsData
-                                                                          .id,
-                                                                      mode:
-                                                                      "Subjects",
-                                                                      name: SubjectsData
-                                                                          .heading,
-                                                                      fullName:
-                                                                      SubjectsData
-                                                                          .description,
-                                                                      photoUrl:
-                                                                      SubjectsData
-                                                                          .PhotoUrl,
-                                                                    ),
-                                                                transitionsBuilder: (context,
-                                                                    animation,
-                                                                    secondaryAnimation,
-                                                                    child) {
-                                                                  final fadeTransition =
-                                                                  FadeTransition(
-                                                                    opacity:
-                                                                    animation,
-                                                                    child:
-                                                                    child,
-                                                                  );
-
-                                                                  return Container(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                        animation.value),
-                                                                    child: AnimatedOpacity(
-                                                                        duration: Duration(
-                                                                            milliseconds:
-                                                                            300),
-                                                                        opacity: animation.value.clamp(
-                                                                            0.3,
-                                                                            1.0),
-                                                                        child:
-                                                                        fadeTransition),
-                                                                  );
-                                                                },
-                                                              ),
-                                                            );
-                                                          },
-                                                        );
-                                                      },
-                                                    ),
-                                                    InkWell(
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.black.withOpacity(0.5),
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                30),
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .white30)),
-                                                        child: Padding(
-                                                          padding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                              vertical: 3,
-                                                              horizontal:
-                                                              15),
-                                                          child: Text(
-                                                            "See More",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 30,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .w500),
-                                                          ),
-                                                        ),
+                                                        ],
                                                       ),
                                                       onTap: () {
                                                         Navigator.push(
@@ -2153,19 +1993,35 @@ class _HomePageState extends State<HomePage> {
                                                             pageBuilder: (context,
                                                                 animation,
                                                                 secondaryAnimation) =>
-                                                                LabSubjects(
-                                                                  branch: widget
-                                                                      .branch,
-                                                                  reg: widget.reg,
+                                                                subjectUnitsData(
+                                                                  date: SubjectsData.Date.split(
+                                                                      "-")
+                                                                      .last,
+                                                                  req: SubjectsData
+                                                                      .regulation,
+                                                                  pdfs: 0,
                                                                   width: widget
                                                                       .width,
                                                                   height: widget
                                                                       .height,
-                                                                  size:
-                                                                  widget.size,
+                                                                  size: widget
+                                                                      .size,
+                                                                  branch: widget
+                                                                      .branch,
+                                                                  ID: SubjectsData
+                                                                      .id,
+                                                                  mode:
+                                                                  "Subjects",
+                                                                  name: SubjectsData
+                                                                      .heading,
+                                                                  fullName:
+                                                                  SubjectsData
+                                                                      .description,
+                                                                  photoUrl:
+                                                                  SubjectsData
+                                                                      .PhotoUrl,
                                                                 ),
-                                                            transitionsBuilder:
-                                                                (context,
+                                                            transitionsBuilder: (context,
                                                                 animation,
                                                                 secondaryAnimation,
                                                                 child) {
@@ -2173,22 +2029,20 @@ class _HomePageState extends State<HomePage> {
                                                               FadeTransition(
                                                                 opacity:
                                                                 animation,
-                                                                child: child,
+                                                                child:
+                                                                child,
                                                               );
 
                                                               return Container(
                                                                 color: Colors
                                                                     .black
                                                                     .withOpacity(
-                                                                    animation
-                                                                        .value),
+                                                                    animation.value),
                                                                 child: AnimatedOpacity(
                                                                     duration: Duration(
                                                                         milliseconds:
                                                                         300),
-                                                                    opacity: animation
-                                                                        .value
-                                                                        .clamp(
+                                                                    opacity: animation.value.clamp(
                                                                         0.3,
                                                                         1.0),
                                                                     child:
@@ -2198,16 +2052,11 @@ class _HomePageState extends State<HomePage> {
                                                           ),
                                                         );
                                                       },
-                                                    )
-                                                  ],
+                                                    );
+                                                  },
                                                 ),
-                                              ),
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                  BorderRadius.circular(
-                                                      50),
-                                                  border: Border.all(
-                                                      color: Colors.white30)),
+
+                                              ],
                                             ),
                                           );
                                         else
@@ -2257,119 +2106,6 @@ class _HomePageState extends State<HomePage> {
       );
 
 
-}
-class buildBottomSheetContent extends StatefulWidget {
-  FlashConvertor data;
-  buildBottomSheetContent({required this.data});
-
-  @override
-  State<buildBottomSheetContent> createState() => buildBottomSheetContentState();
-}
-
-class buildBottomSheetContentState extends State<buildBottomSheetContent> with TickerProviderStateMixin {
-  late TabController _tabController;
-
-
-
-  @override
-  void initState() {
-    _tabController = new TabController(
-      vsync: this,
-      length: 2,
-    );
-    super.initState();
-  }
-  @override
-  Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.3, // Initial size of the sheet
-      minChildSize: 0.1,    // Minimum size of the sheet
-      maxChildSize: 0.9,    // Maximum size of the sheet
-      builder: (BuildContext context, ScrollController scrollController) {
-        return Column(
-          children: [
-
-            Container(
-              height: 5,
-              width: 80,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                color: Colors.white.withOpacity(0.5),
-              ),
-            ),
-            SizedBox(height: 10,),
-            Column(
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      height: 60,
-                      width: 100,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white.withOpacity(0.5),
-                          image: DecorationImage(image: NetworkImage(widget.data.PhotoUrl),fit: BoxFit.cover)
-                      ),
-                    ),
-                    Column(
-                      children: [
-                        Text(widget.data.heading,style: TextStyle(color: Colors.white,fontSize: 20),
-                        ),
-                        Text(widget.data.description,style: TextStyle(color: Colors.white,fontSize: 20),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                Container(
-                  height: 45,
-                  child: TabBar(
-                    indicator: BoxDecoration(
-                        border: Border.all(color: Colors.white12),
-                        borderRadius: BorderRadius.circular( 15),
-                        color: Color.fromRGBO(4, 11, 23, 1)),
-                    controller: _tabController,
-                    isScrollable: true,
-                    labelPadding:
-                    EdgeInsets.symmetric(horizontal: 25),
-                    tabs: [
-                      Tab(
-                        child: Text(
-                          "Description",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize:  25,
-                          ),
-                        ),
-                      ),
-
-                      Tab(
-                        child: Text(
-                          "Questions",
-                          style: TextStyle(
-                              color: Colors.white, fontSize: 25),
-                        ),
-                      ),
-
-                    ],
-                  ),
-
-                ),
-              ],
-            ),
-            Expanded(
-                child: TabBarView(
-                    controller: _tabController,
-                    children: [
-
-                    ]))
-          ],
-        );
-      },
-    );
-  }
 }
 
 class booksDownloadButton extends StatefulWidget {

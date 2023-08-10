@@ -136,9 +136,9 @@ class _PdfViewerPageState extends State<PdfViewerPage>
                         controller.complete(pdfViewController);
                       },
                     ),
-              // Align(
-              //     alignment: Alignment.bottomCenter,
-              //     child: CustomAdsBannerForPdfs()),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: CustomAdsBannerForPdfs()),
               if (isExpand)
                 Positioned(
                   left: 0,
