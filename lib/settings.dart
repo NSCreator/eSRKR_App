@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, camel_case_types, non_constant_identifier_names, must_be_immutable
 
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,6 +21,15 @@ const TextStyle secondTabBarTextStyle = TextStyle(
   color: Colors.white,
   fontSize: 18,
 );
+const TextStyle AppBarHeadingTextStyle = TextStyle(
+  color: Colors.white,
+  fontSize: 30,
+  fontWeight: FontWeight.w700
+);
+const TextStyle creatorHeadingTextStyle = TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.w600,
+    color: Colors.white);
 
 TextStyle secondHeadingTextStyle({Color color = Colors.white}) {
   return TextStyle(color: color, fontSize: 30, fontWeight: FontWeight.w500);
@@ -142,11 +150,13 @@ class _settingsState extends State<settings> {
                               CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  user0Id(),
+                                  fullUserId(),
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
                                       fontSize: widget.size * 30),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
                                     "${widget.branch} - ${widget.reg}",

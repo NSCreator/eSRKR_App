@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
@@ -88,10 +90,7 @@ Future<void> ExternalLaunchUrl(String url) async {
   }
 }
 
-user0Id() {
-  var user = FirebaseAuth.instance.currentUser!.email!.split("@");
-  return user[0];
-}
+
 
 picText() {
   var user = FirebaseAuth.instance.currentUser!.email!.split("@");
@@ -154,26 +153,9 @@ Future<void> updateToken() async {
 void like(bool isAdd, String updateId) {
   FirebaseFirestore.instance.collection("update").doc(updateId).update({
     "likedBy": isAdd
-        ? FieldValue.arrayUnion([user0Id()])
-        : FieldValue.arrayRemove([user0Id()]),
+        ? FieldValue.arrayUnion([fullUserId()])
+        : FieldValue.arrayRemove([fullUserId()]),
   });
-}
-download(String photoUrl, String path) async {
-  final Uri uri = Uri.parse(photoUrl);
-  final String fileName = uri.pathSegments.last;
-  var name = fileName.split("/").last;
-  final response = await http.get(Uri.parse(photoUrl));
-  final documentDirectory = await getApplicationDocumentsDirectory();
-  final newDirectory = Directory('${documentDirectory.path}/$path');
-  if (!await newDirectory.exists()) {
-    await newDirectory.create(recursive: true);
-    final file = File('${newDirectory.path}/${name}');
-    await file.writeAsBytes(response.bodyBytes);
-  } else {
-    final file = File('${newDirectory.path}/${name}');
-    await file.writeAsBytes(response.bodyBytes);
-  }
-  return true;
 }
 
 class downloadAllPdfs extends StatefulWidget {

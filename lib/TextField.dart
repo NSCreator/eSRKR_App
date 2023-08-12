@@ -7,6 +7,7 @@ import 'package:srkr_study_app/HomePage.dart';
 import 'package:srkr_study_app/SubPages.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:srkr_study_app/settings.dart';
 import 'dart:io';
 
 import 'functins.dart';
@@ -47,6 +48,7 @@ class _updateCreatorState extends State<updateCreator> {
   final PhotoUrlController = TextEditingController();
   final LinkController = TextEditingController();
   bool _isImage = false;
+
   void AutoFill() async {
     MessageController.text = widget.heading;
     PhotoUrlController.text = widget.photoUrl;
@@ -530,6 +532,7 @@ class _NewsCreatorState extends State<NewsCreator> {
   final PhotoUrlController = TextEditingController();
   final LinkController = TextEditingController();
   bool _isImage = false;
+
   void AutoFill() async {
     HeadingController.text = widget.heading;
     DescriptionController.text = widget.description;
@@ -955,6 +958,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
   final PhotoUrlController = TextEditingController();
   final FirebaseStorage storage = FirebaseStorage.instance;
   bool _isImage = false;
+
   void AutoFill() async {
     HeadingController.text = widget.heading;
     DescriptionController.text = widget.description;
@@ -1378,7 +1382,6 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             .update({
                           "Heading": HeadingController.text.trim(),
                           "Description": DescriptionController.text.trim(),
-
                           "Photo Url": PhotoUrlController.text
                         });
                       } else {
@@ -1390,19 +1393,18 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             .update({
                           "Heading": HeadingController.text.trim(),
                           "Description": DescriptionController.text.trim(),
-
                           "Photo Url": PhotoUrlController.text
                         });
                       }
                     } else {
                       if (widget.mode == "LabSubjects") {
                         createLabSubjects(
-                            branch: widget.branch,
-                            regulation: "3-2",
-                            heading: HeadingController.text.trim(),
-                            description: DescriptionController.text.trim(),
-                            PhotoUrl: PhotoUrlController.text,
-                           );
+                          branch: widget.branch,
+                          regulation: "3-2",
+                          heading: HeadingController.text.trim(),
+                          description: DescriptionController.text.trim(),
+                          PhotoUrl: PhotoUrlController.text,
+                        );
                       } else {
                         createSubjects(
                             branch: widget.branch,
@@ -1854,6 +1856,7 @@ class _BooksCreatorState extends State<BooksCreator> {
 
 class UnitsCreator extends StatefulWidget {
   String id;
+  String type;
   String Heading;
   String Description;
   String Date;
@@ -1868,6 +1871,7 @@ class UnitsCreator extends StatefulWidget {
       {required this.id,
       required this.mode,
       required this.branch,
+      required this.type,
       this.Date = "",
       this.Description = "",
       this.Heading = "",
@@ -1881,19 +1885,25 @@ class UnitsCreator extends StatefulWidget {
 }
 
 class _UnitsCreatorState extends State<UnitsCreator> {
+  String unit = "Unknown";
   final HeadingController = TextEditingController();
-  final DescriptionController = TextEditingController();
-  final questionsController = TextEditingController();
+
   final PDFUrlController = TextEditingController();
-  final PDFSizeController = TextEditingController();
+
 
   void AutoFill() {
     HeadingController.text = widget.Heading;
-    DescriptionController.text = widget.Description;
-    questionsController.text = widget.questions;
+    if(widget.Description.isNotEmpty)DescriptionList = widget.Description.split(";");
+    if(widget.questions.isNotEmpty)QuestionsList = widget.questions.split(";");
     PDFUrlController.text = widget.PDFUrl;
-    PDFSizeController.text = widget.PDFSize;
   }
+  List DescriptionList = [];
+  final TextEditingController _DescriptionController = TextEditingController();
+  int selectedDescriptionIndex = -1;
+
+  List QuestionsList = [];
+  final TextEditingController _QuestionsController = TextEditingController();
+  int QuestionsIndex = -1;
 
   @override
   void initState() {
@@ -1904,308 +1914,413 @@ class _UnitsCreatorState extends State<UnitsCreator> {
   @override
   void dispose() {
     HeadingController.dispose();
-    DescriptionController.dispose();
-    questionsController.dispose();
+
     PDFUrlController.dispose();
-    PDFSizeController.dispose();
     super.dispose();
   }
+  void addDescription() {
+    String points = _DescriptionController.text;
+    if (points.isNotEmpty) {
+      setState(() {
+        DescriptionList.add(points);
+        _DescriptionController.clear();
+      });
+
+    }
+  }
+
+  void editDescription(int index) {
+    setState(() {
+      selectedDescriptionIndex = index;
+      _DescriptionController.text = DescriptionList[index];
+    });
+  }
+
+  void saveDescription() {
+    String editedImage = _DescriptionController.text;
+    if (editedImage.isNotEmpty && selectedDescriptionIndex != -1) {
+      setState(() {
+        DescriptionList[selectedDescriptionIndex] = editedImage;
+        _DescriptionController.clear();
+        selectedDescriptionIndex = -1;
+      });
+    }
+  }
+
+  void deleteDescription(int index) {
+    setState(() {
+      DescriptionList.removeAt(index);
+      if (selectedDescriptionIndex == index) {
+        selectedDescriptionIndex = -1;
+        _DescriptionController.clear();
+      }
+    });
+  }
+
+  void moveDescriptionUp(int index) {
+    if (index > 0) {
+      setState(() {
+        String point = DescriptionList.removeAt(index);
+        DescriptionList.insert(index - 1, point);
+        if (selectedDescriptionIndex == index) {
+          selectedDescriptionIndex--;
+        }
+      });
+    }
+  }
+
+  void moveDescriptionDown(int index) {
+    if (index < DescriptionList.length - 1) {
+      setState(() {
+        String Image = DescriptionList.removeAt(index);
+        DescriptionList.insert(index + 1, Image);
+        if (selectedDescriptionIndex == index) {
+          selectedDescriptionIndex++;
+        }
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(40),
-        child: AppBar(
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
-            ),
-          ),
-          centerTitle: true,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30)),
-              color: Color.fromRGBO(7, 7, 23, 1.0),
-            ),
-          ),
-          title: Text(
-            "Unit Data Creator",
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.w500),
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-      ),
-      backgroundColor: Colors.blueGrey.shade800,
-      body: SingleChildScrollView(
+    return backGroundImage(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 15, top: 8),
-              child: Text(
-                "Unit Heading",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  border: Border.all(color: Colors.white),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: TextFormField(
-                    controller: HeadingController,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Heading',
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15, top: 8),
-              child: Text(
-                "Unit Description",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  border: Border.all(color: Colors.white),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: TextFormField(
-                    //obscureText: true,
-                    controller: DescriptionController,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Description or Full name',
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15, top: 8),
-              child: Text(
-                "Questions",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  border: Border.all(color: Colors.white),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: TextFormField(
-                    controller: questionsController,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'PDF Name',
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15, top: 8),
-              child: Text(
-                "PDF Url",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  border: Border.all(color: Colors.white),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: TextFormField(
-                    // obscureText: true,
-                    controller: PDFUrlController,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'PDF Url',
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15, top: 8),
-              child: Text(
-                "PDF Size",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  border: Border.all(color: Colors.white),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: TextFormField(
-                    // obscureText: true,
-                    controller: PDFSizeController,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'PDF Url',
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            backButton(),
+            Text("Create Unit", style: AppBarHeadingTextStyle),
             SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Spacer(),
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.white.withOpacity(0.5),
-                      border: Border.all(color: Colors.white),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10, right: 10, top: 5, bottom: 5),
-                      child: Text("Back"),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                InkWell(
-                  onTap: () {
-                    if (widget.UnitId.length < 3) {
-                      createUnits(
-                        branch: widget.branch,
-                        description: DescriptionController.text.trim(),
-                        questions: questionsController.text.trim(),
-                        heading: HeadingController.text.trim(),
-                        PDFSize: PDFSizeController.text.trim(),
-                        PDFLink: PDFUrlController.text.trim(),
-                        subjectsID: widget.id,
-                        mode: widget.mode,
-                      );
-                    } else {
-                      FirebaseFirestore.instance
-                          .collection(widget.branch)
-                          .doc(widget.mode)
-                          .collection(widget.mode)
-                          .doc(widget.UnitId)
-                          .collection("Units")
-                          .doc(widget.id)
-                          .update({
-                        "Heading": HeadingController.text.trim(),
-                        "PDFSize": PDFSizeController.text.trim(),
-                        "PDFLink": PDFUrlController.text.trim(),
-                        "Description": DescriptionController.text.trim(),
-
-                        "questions": questionsController.text.trim()
-                      });
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: widget.UnitId.length < 3
-                      ? Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white.withOpacity(0.5),
-                            border: Border.all(color: Colors.white),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                            child: Text("Create"),
-                          ),
-                        )
-                      : Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white.withOpacity(0.5),
-                            border: Border.all(color: Colors.white),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                            child: Text("Update"),
-                          ),
-                        ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-              ],
+              width: 45,
             )
           ],
         ),
-      ),
-    );
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if(widget.type=="unit")Padding(
+                padding: const EdgeInsets.only(left: 15, top: 8,bottom: 10),
+                child: Text(
+                  "Type Selected : $unit",
+                  style: creatorHeadingTextStyle,
+                ),
+              ),
+              if(widget.type=="unit")SizedBox(
+                height: 30,
+                child: ListView.separated(
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 6, // Display only top 5 items
+                    itemBuilder: (context, int index) {
+                      if(index==0) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 25),
+                          child: InkWell(
+                            child: Container(
+                            decoration: BoxDecoration(
+
+                                color: unit=="Unknown"?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10)
+                            ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                child: Text("Unknown",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
+                              )),
+                            onTap: (){
+                              setState(() {
+                                unit = "Unknown";
+                              });
+                            },
+                          ),
+                        );
+                      } else{
+                        return InkWell(
+                          child: Container(
+                              decoration: BoxDecoration(
+
+                                  color: unit=="Unit $index"?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(10)
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                child: Text("Unit $index",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
+                              )),
+                          onTap: (){
+                            setState(() {
+                              unit = "Unit $index";
+                            });
+                          },
+                        );
+                      }
+                    },
+                separatorBuilder: (context,index)=>SizedBox(width: 3,),),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15, top: 8),
+                child: Text(
+                  "Heading",
+                  style: creatorHeadingTextStyle,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 10, right: 10, top: 5, bottom: 5),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    border: Border.all(color: Colors.white54),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: TextFormField(
+                      controller: HeadingController,
+                      textInputAction: TextInputAction.next,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20),
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Colors.white54),
+                        border: InputBorder.none,
+                        hintText: 'Heading',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15, top: 8),
+                child: Text(
+                  "PDF Url",
+                  style: creatorHeadingTextStyle,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 10, right: 10, top: 5, bottom: 5),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    border: Border.all(color: Colors.white54),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: TextFormField(
+                      controller: PDFUrlController,
+                      textInputAction: TextInputAction.next,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20),
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Colors.white54),
+                        border: InputBorder.none,
+                        hintText: 'PDF Url',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              ListView.builder(
+                itemCount: DescriptionList.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return Dismissible(
+                    key: Key(DescriptionList[index]),
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.black,
+                      ),
+                    ),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (direction) {
+                      deleteDescription(index);
+                    },
+                    child: ListTile(
+                      title: Text(DescriptionList[index],style: TextStyle(color: Colors.white,fontSize: 20),),
+                      trailing: SingleChildScrollView(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            IconButton(
+                              icon: Icon(Icons.delete,color: Colors.redAccent,),
+                              onPressed: () {
+                                deleteDescription(index);
+                              },
+
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.edit,color: Colors.greenAccent,),
+                              onPressed: () {
+                                editDescription(index);
+                              },
+                            ),
+                            InkWell(
+                              child: Icon(Icons.move_up,size: 30,color: Colors.amber,),
+                              onTap: (){
+                                moveDescriptionUp(index);
+                              },
+                              onDoubleTap: (){
+                                moveDescriptionDown(index);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        editDescription(index);
+                      },
+                    ),
+                  );
+                },
+              ),
+              Row(
+                children: [
+                  Flexible(
+                    child: Padding(
+                      padding:
+                      const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.3),
+                          border: Border.all(color: Colors.white.withOpacity(0.6)),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: TextFormField(
+                            controller: _DescriptionController,
+                            style: TextStyle(color: Colors.black),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Enter Images Here',
+                                hintStyle: TextStyle(color: Colors.black),
+                                hoverColor: Colors.black,
+                                labelStyle: TextStyle(color: Colors.black)
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white12,
+                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(Icons.add,size: 45,color: Colors.white,),
+                    ),
+                    onTap: (){
+                      addDescription();
+                    },
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Spacer(),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.white.withOpacity(0.5),
+                        border: Border.all(color: Colors.white),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 5, bottom: 5),
+                        child: Text("Back"),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      if (widget.UnitId.length < 3) {
+                        createUnits(
+                          branch: widget.branch,
+                          description: DescriptionList.join(";"),
+                          questions: QuestionsList.join(";"),
+                          heading: unit+";"+HeadingController.text.trim(),
+                          PDFSize: "0",
+                          PDFLink: PDFUrlController.text.trim(),
+                          subjectsID: widget.id,
+                          mode: widget.mode,
+                        );
+                      } else {
+                        FirebaseFirestore.instance
+                            .collection(widget.branch)
+                            .doc(widget.mode)
+                            .collection(widget.mode)
+                            .doc(widget.UnitId)
+                            .collection("Units")
+                            .doc(widget.id)
+                            .update({
+                          "Heading": unit+";"+HeadingController.text.trim(),
+                          "PDFLink": PDFUrlController.text.trim(),
+                          "Description": DescriptionList.join(";"),
+                          "questions": QuestionsList.join(";")
+                        });
+                      }
+                      Navigator.pop(context);
+                    },
+                    child: widget.UnitId.length < 3
+                        ? Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Colors.white.withOpacity(0.5),
+                              border: Border.all(color: Colors.white),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 10, top: 5, bottom: 5),
+                              child: Text("Create"),
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Colors.white.withOpacity(0.5),
+                              border: Border.all(color: Colors.white),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 10, top: 5, bottom: 5),
+                              child: Text("Update"),
+                            ),
+                          ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ],
+    ));
   }
 }

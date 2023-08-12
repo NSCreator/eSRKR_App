@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srkr_study_app/ads.dart';
 import 'package:srkr_study_app/functins.dart';
@@ -54,7 +53,9 @@ setState(() {
 
   //method to set show content call back
   void _setFullScreenContentCallback(){
-    if(rewardedAd == null) return;
+    if(rewardedAd == null) {
+      return;
+    }
     rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
       //when ad  shows fullscreen
       onAdShowedFullScreenContent: (RewardedAd ad) => print("$ad onAdShowedFullScreenContent"),
@@ -464,7 +465,7 @@ class _supportListState extends State<supportList> {
           ],
         ),
       ),
-    );;
+    );
   }
 }
 

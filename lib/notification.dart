@@ -1,6 +1,7 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:core';
 import 'dart:io';
-import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -9,16 +10,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:srkr_study_app/HomePage.dart';
 import 'package:srkr_study_app/settings.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'functins.dart';
 
-_ExternalLaunchUrl(String url) async {
-  final Uri urlIn = Uri.parse(url);
-  if (!await launchUrl(urlIn, mode: LaunchMode.externalApplication)) {
-    throw 'Could not launch $urlIn';
-  }
-}
+
 
 class notifications extends StatefulWidget {
   final String branch;
@@ -79,7 +74,7 @@ class _notificationsState extends State<notifications>
                 style: TextStyle(color: Colors.blueAccent),
               ),
               onTap: () {
-                _ExternalLaunchUrl(number);
+                ExternalLaunchUrl(number);
               },
             )
           else
@@ -1197,117 +1192,6 @@ class NotificationsConvertor {
           Time: json["Time"]);
 }
 
-// downloadAllImages(
-//     String branch, String reg, double height, double width, double size) async {
-//   int count = 0;
-//   final directory = await getApplicationDocumentsDirectory();
-//   String folderPath = directory.path;
-//
-//   final CollectionReference subjects = FirebaseFirestore.instance
-//       .collection(branch)
-//       .doc("Subjects")
-//       .collection("Subjects");
-//   try {
-//     final QuerySnapshot querySnapshot = await subjects.get();
-//     if (querySnapshot.docs.isNotEmpty) {
-//       final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-//
-//       for (final document in documents) {
-//         final data = document.data() as Map<String, dynamic>;
-//         if (data["Photo Url"].toString().isNotEmpty) {
-//           final Uri uri = Uri.parse(data["Photo Url"]);
-//           final String fileName = uri.pathSegments.last;
-//           var name = fileName.split("/").last;
-//           final file = await File(
-//               "${folderPath}/${branch.toLowerCase()}_subjects/$name");
-//           if (!file.existsSync()) {
-//             await download(
-//                 data["Photo Url"], "${branch.toLowerCase()}_subjects");
-//             count++;
-//           }
-//         }
-//       }
-//     } else {
-//       print('No documents found');
-//     }
-//   } catch (e) {
-//     print('Error: $e');
-//   }
-//
-//   final CollectionReference labSubjects = FirebaseFirestore.instance
-//       .collection(branch)
-//       .doc("LabSubjects")
-//       .collection("LabSubjects");
-//
-//   try {
-//     final QuerySnapshot querySnapshot = await labSubjects.get();
-//     if (querySnapshot.docs.isNotEmpty) {
-//       final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-//       for (final document in documents) {
-//         final data = document.data() as Map<String, dynamic>;
-//         if (data["Photo Url"].toString().isNotEmpty) {
-//           final Uri uri = Uri.parse(data["Photo Url"]);
-//           final String fileName = uri.pathSegments.last;
-//           var name = fileName.split("/").last;
-//           final file = await File(
-//               "${folderPath}/${branch.toLowerCase()}_labsubjects/$name");
-//           if (!file.existsSync()) {
-//             await download(
-//                 data["Photo Url"], "${branch.toLowerCase()}_labsubjects");
-//             count++;
-//           }
-//         }
-//       }
-//     } else {
-//       print('No documents found');
-//     }
-//   } catch (e) {
-//     print('Error: $e');
-//   }
-//   final CollectionReference books = FirebaseFirestore.instance
-//       .collection(branch)
-//       .doc("Books")
-//       .collection("CoreBooks");
-//   try {
-//     final QuerySnapshot querySnapshot = await books.get();
-//     if (querySnapshot.docs.isNotEmpty) {
-//       final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-//       for (final document in documents) {
-//         final data = document.data() as Map<String, dynamic>;
-//         if (data["Photo Url"].toString().isNotEmpty) {
-//           final Uri uri = Uri.parse(data["Photo Url"]);
-//           final String fileName = uri.pathSegments.last;
-//           var name = fileName.split("/").last;
-//           final file =
-//               await File("${folderPath}/${branch.toLowerCase()}_books/$name");
-//           if (!file.existsSync()) {
-//             await download(data["Photo Url"], "${branch.toLowerCase()}_books");
-//             count++;
-//           }
-//         }
-//       }
-//     } else {
-//       print('No documents found');
-//     }
-//   } catch (e) {
-//     print('Error: $e');
-//   }
-//   if (count > 0) {
-//     NotificationService().showNotification(
-//         id: 1, title: "$count images are downloaded", body: null);
-//     navigatorKey.currentState?.pushAndRemoveUntil(
-//       MaterialPageRoute(
-//           builder: (context) => HomePage(
-//               branch: branch,
-//               reg: reg,
-//               height: height,
-//               width: width,
-//               size: size, index: 0,)), // Replace MyApp with your root widget
-//       (route) => false,
-//     );
-//   }
-//   return true;
-// }
 
 Future<void> downloadAllImages(BuildContext context, String branch, String reg) async {
   List list= [];

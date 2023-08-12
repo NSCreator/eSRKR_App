@@ -1,6 +1,5 @@
-// ignore_for_file: camel_case_types, non_constant_identifier_names
+// ignore_for_file: camel_case_types, non_constant_identifier_names, must_be_immutable
 import 'dart:io';
-import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
@@ -317,7 +316,6 @@ class _NewsPageState extends State<NewsPage> {
   }
 }
 
-// ignore: must_be_immutable
 class Subjects extends StatefulWidget {
   final String branch;
   final String reg;
@@ -1320,15 +1318,8 @@ class _allBooksState extends State<allBooks> {
                       shrinkWrap: true,
                       itemCount: Books!.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final Uri uri = Uri.parse(Books[index].photoUrl);
-                        final String fileName = uri.pathSegments.last;
-                        var name = fileName.split("/").last;
-                        final file = File(
-                            "${folderPath}/${widget.branch.toLowerCase()}_books/$name");
-                        return InkWell(
-                          child: textBookSub(height: widget.height,width: widget.width, size: widget.size, data: Books[index], branch: widget.branch,),
-                          onTap: () async {},
-                        );
+
+                        return textBookSub(height: widget.height,width: widget.width, size: widget.size, data: Books[index], branch: widget.branch,);
                       },
                     );
                   }
@@ -1974,7 +1965,6 @@ class _textBookSubState extends State<textBookSub> {
   }
 }
 
-// ignore: must_be_immutable
 class subjectUnitsData extends StatefulWidget {
   String ID, mode;
   String name;
@@ -2453,6 +2443,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                             MaterialPageRoute(
                                 builder: (context) =>
                                     UnitsCreator(
+                                      type: "unit",
                                       branch: widget.branch,
                                       id: widget.ID,
                                       mode: widget.mode,
@@ -2464,7 +2455,6 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                     child: TabBarView(
                         controller: _unitsTabController,
                         physics: NeverScrollableScrollPhysics(),
-
                         children: [
                           StreamBuilder<List<UnitsConvertor>>(
                             stream:
@@ -3007,9 +2997,9 @@ Future createUnits(
       .collection(mode)
       .doc(subjectsID)
       .collection("Units")
-      .doc();
+      .doc(getID());
   final flash = UnitsConvertor(
-      id: docflash.id,
+      id: getID(),
       heading: heading,
       questions: questions,
       description: description,
@@ -3022,17 +3012,15 @@ Future createUnits(
 class UnitsConvertor {
   String id;
   final String heading, questions, description, PDFSize, PDFLink;
-  List<String> likedBy;
 
   UnitsConvertor({
     this.id = "",
     required this.heading,
     required this.questions,
     required this.description,
-    required this.PDFSize,
+     this.PDFSize ="",
     required this.PDFLink,
-    List<String>? likedBy,
-  }) : likedBy = likedBy ?? [];
+  }) ;
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -3041,7 +3029,6 @@ class UnitsConvertor {
         "Description": description,
         "PDFSize": PDFSize,
         "PDFLink": PDFLink,
-        "likedBy": likedBy,
       };
 
   static UnitsConvertor fromJson(Map<String, dynamic> json) => UnitsConvertor(
@@ -3051,8 +3038,7 @@ class UnitsConvertor {
         questions: json["questions"],
         description: json["Description"],
         PDFSize: json["PDFSize"],
-        likedBy:
-            json["likedBy"] != null ? List<String>.from(json["likedBy"]) : [],
+
       );
 }
 
@@ -3436,24 +3422,22 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Flexible(
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: Colors.white30)),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 3, horizontal: 8),
-                                  child: Text(
-                                    widget.unit.heading.split(";").first,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 18),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                )),
-                          ),
+                          Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.white30)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 3, horizontal: 8),
+                                child: Text(
+                                  widget.unit.heading.split(";").first,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 18),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              )),
                           Container(
                             decoration: BoxDecoration(
                                 color: Colors.black,
@@ -3474,10 +3458,12 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                     " ~ ${widget.unit.PDFSize} ",
                                     style: TextStyle(
                                         color: Colors.lightBlueAccent),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
                                     " ${widget.unit.id.split("-").first}",
                                     style: TextStyle(color: Colors.white60),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
@@ -3610,7 +3596,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                         ),
                       ),
                       Text(
-                        widget.unit.heading,
+                        widget.unit.heading.split(";").last,
                         style: TextStyle(
                           fontSize: widget.size * 25.0,
                           color: Colors.orangeAccent,
@@ -3647,6 +3633,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                         context,
                         MaterialPageRoute(
                             builder: (context) => UnitsCreator(
+                              type:"unit",
                                   branch: widget.branch,
                                   mode: widget.mode,
                                   UnitId: widget.ID,
@@ -3750,7 +3737,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                     size: widget.size * 8,
                                     color: Colors.lightBlueAccent,
                                   ),
-                                  Expanded(
+                                  Flexible(
                                     child: Text(
                                       isUser()
                                           ? newList[index]
@@ -3814,7 +3801,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: widget.size * 18)),
-                                  Expanded(
+                                  Flexible(
                                     child: Text(
                                       isUser()
                                           ? newQuestionsList[index]
@@ -4347,6 +4334,7 @@ class _subTextbooksState extends State<subTextbooks>
                         context,
                         MaterialPageRoute(
                             builder: (context) => UnitsCreator(
+                              type: "unit",
                               branch: widget.branch,
                               mode: widget.mode,
                               UnitId: widget.ID,
@@ -4873,6 +4861,7 @@ class _subMoreState extends State<subMore>
                           context,
                           MaterialPageRoute(
                               builder: (context) => UnitsCreator(
+                                type: "unit",
                                     branch: widget.branch,
                                     mode: widget.mode,
                                     UnitId: widget.ID,
@@ -5022,7 +5011,7 @@ class _updatesPageState extends State<updatesPage> {
                               var name = fileName.split("/").last;
                               final file = File("${folderPath}/updates/$name");
                               if (!file.existsSync()) {
-                                download(BranchNew.photoUrl, folderPath);
+                                // download(BranchNew.photoUrl, folderPath);
                               }
 
                               return Padding(
@@ -5101,7 +5090,7 @@ class _updatesPageState extends State<updatesPage> {
                                                   Icon(
                                                     Icons.favorite,
                                                     color: BranchNew.likedBy
-                                                            .contains(user0Id())
+                                                            .contains(fullUserId())
                                                         ? Colors.redAccent
                                                         : Colors.white,
                                                     size: widget.size * 20,
@@ -5120,7 +5109,7 @@ class _updatesPageState extends State<updatesPage> {
                                               onTap: () {
                                                 like(
                                                     !BranchNew.likedBy
-                                                        .contains(user0Id()),
+                                                        .contains(fullUserId()),
                                                     BranchNew.id);
                                               },
                                             ),

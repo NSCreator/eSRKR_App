@@ -73,9 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: Container(
-                        width: screenWidth(context) < 600
-                            ? 300 * screenWidth(context) / 400
-                            : 300 * screenWidth(context) / 800,
+                        width: screenWidth(context)*300,
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.4),
                           border:
@@ -111,9 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: Container(
-                        width: screenWidth(context) < 600
-                            ? 300 * screenWidth(context) / 400
-                            : 300 * screenWidth(context) / 800,
+                        width: screenWidth(context)*300,
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.4),
                           border:
@@ -396,8 +392,7 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(
                       height: 20,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Wrap(
                       children: [
                         Text(
                           "Not a Member?",
@@ -662,7 +657,7 @@ class _LoginPageState extends State<LoginPage> {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
     var email = emailController.text.trim().split('@');
-    if (email[0].length == 10 || email[1] == 'srkrec.ac.in') {
+    if (email[0].length == 10 && email[1] == 'srkrec.ac.in') {
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -704,10 +699,11 @@ class _LoginPageState extends State<LoginPage> {
       NotificationService()
           .showNotification(title: "Welcome back to eSRKR!", body: null);
       updateToken();
-      Navigator.pop(context);
+
     } on FirebaseException catch (e) {
       Utils.showSnackBar(e.message);
     }
+    Navigator.pop(context);
   }
 
   Future resetPassword() async {

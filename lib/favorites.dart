@@ -933,25 +933,7 @@ class _favoritesState extends State<favorites> {
                                                                       .height *
                                                                   5,
                                                             ),
-                                                            Row(
-                                                              children: [
-                                                                booksDownloadButton(
-                                                                  branch: widget
-                                                                      .branch,
-                                                                  width: widget
-                                                                      .width,
-                                                                  height: widget
-                                                                      .height,
-                                                                  size: widget
-                                                                      .size,
-                                                                  path:
-                                                                      folderPath,
-                                                                  pdfLink: Favourites[
-                                                                          index]
-                                                                      .link,
-                                                                ),
-                                                              ],
-                                                            )
+
                                                           ],
                                                         ),
                                                       ),

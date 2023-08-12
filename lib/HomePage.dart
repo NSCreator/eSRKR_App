@@ -2108,140 +2108,6 @@ class _HomePageState extends State<HomePage> {
 
 }
 
-class booksDownloadButton extends StatefulWidget {
-  final String branch;
-  final double size;
-  final String pdfLink;
-  final String path;
-
-  final double height;
-  final double width;
-
-  const booksDownloadButton(
-      {Key? key,
-      required this.branch,
-      required this.width,
-      required this.size,
-      required this.height,
-      required this.pdfLink,
-      required this.path})
-      : super(key: key);
-
-  @override
-  State<booksDownloadButton> createState() => _booksDownloadButtonState();
-}
-
-class _booksDownloadButtonState extends State<booksDownloadButton> {
-  bool isDownloaded = false;
-  late File file1;
-  String name1 = "";
-
-  void getFile() {
-    final Uri uri1 = Uri.parse(widget.pdfLink);
-    String fileName1 = uri1.pathSegments.last;
-    name1 = fileName1.split("/").last;
-    file1 = File("${widget.path}/pdfs/$name1");
-
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getFile();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(widget.size * 8),
-        color: Colors.white.withOpacity(0.07),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
-      ),
-      child: Row(
-        children: [
-          InkWell(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(widget.size * 8),
-                  color: Colors.black.withOpacity(0.5),
-                  border: Border.all(
-                      color: file1.existsSync() ? Colors.green : Colors.white),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: widget.width * 3),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: widget.height * 3,
-                            horizontal: widget.width * 5),
-                        child: Text(
-                          file1.existsSync() ? "Open" : "Download",
-                          style: TextStyle(
-                              color: Colors.white, fontSize: widget.size * 20),
-                        ),
-                      ),
-                      !isDownloaded
-                          ? Icon(
-                              file1.existsSync()
-                                  ? Icons.open_in_new
-                                  : Icons.download_for_offline_outlined,
-                              color: Colors.greenAccent,
-                            )
-                          : SizedBox(
-                              height: widget.height * 20,
-                              width: widget.width * 20,
-                              child: CircularProgressIndicator()),
-                    ],
-                  ),
-                ),
-              ),
-              onTap: () async {
-                if (file1.existsSync()) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => PdfViewerPage(
-                              pdfUrl: "${widget.path}/pdfs/${name1}")));
-                } else {
-                  setState(() {
-                    isDownloaded = true;
-                  });
-                  showToastText("Downloading...");
-                  await download(widget.pdfLink, "pdfs");
-                  setState(() {
-                    isDownloaded = false;
-                    showToastText("Downloaded");
-                  });
-                }
-              }),
-          if (file1.existsSync())
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: widget.width * 5, vertical: widget.height * 1),
-              child: InkWell(
-                child: Icon(
-                  Icons.delete,
-                  color: Colors.redAccent,
-                  size: widget.size * 25,
-                ),
-                onTap: () async {
-                  if (file1.existsSync()) {
-                    await file1.delete();
-                  }
-                  setState(() {});
-                  showToastText("File has been deleted");
-                },
-              ),
-            )
-        ],
-      ),
-    );
-  }
-}
 
 class homePageUpdate extends StatefulWidget {
   final String branch;
@@ -2451,7 +2317,7 @@ class _homePageUpdateState extends State<homePageUpdate> {
                                                       Icons.favorite,
                                                       color: BranchNew.likedBy
                                                               .contains(
-                                                                  user0Id())
+                                                                  fullUserId())
                                                           ? Colors.redAccent
                                                           : Colors.white,
                                                       size: widget.size * 20,
@@ -2471,7 +2337,7 @@ class _homePageUpdateState extends State<homePageUpdate> {
                                                 onTap: () {
                                                   like(
                                                       !BranchNew.likedBy
-                                                          .contains(user0Id()),
+                                                          .contains(fullUserId()),
                                                       BranchNew.id);
                                                 },
                                               ),
