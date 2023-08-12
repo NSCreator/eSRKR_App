@@ -67,7 +67,7 @@ class AdVideo {
     if (Platform.isAndroid) {
       return 'ca-app-pub-7097300908994281/7894809729';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-7097300908994281/4786642104';
+      return 'ca-app-pub-7097300908994281/8849115979';
     } else {
       throw new UnsupportedError('Unsupported platform');
     }

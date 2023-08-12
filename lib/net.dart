@@ -1,49 +1,46 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srkr_study_app/ads.dart';
 import 'package:srkr_study_app/functins.dart';
 
 import 'HomePage.dart';
 
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-
-
 class ImageScreen extends StatefulWidget {
   final String branch;
+
   ImageScreen({required this.branch});
+
   @override
   _ImageScreenState createState() => _ImageScreenState();
 }
 
 class _ImageScreenState extends State<ImageScreen> {
   late final RewardedAd rewardedAd;
-  final String rewardedAdUnitId = "ca-app-pub-7097300908994281/7894809729"; //sample ad unit id
+
 
   bool isAdLoaded = false;
 
-  //method to load an ad
   void _loadRewardedAd() {
     RewardedAd.load(
       adUnitId: AdVideo.bannerAdUnitId,
-      request:const AdRequest(),
+      request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
-        //when failed to load
-        onAdFailedToLoad: (LoadAdError error){
+        onAdFailedToLoad: (LoadAdError error) {
           print("Failed to load rewarded ad, Error: $error");
         },
-        //when loaded
-        onAdLoaded: (RewardedAd ad){
+        onAdLoaded: (RewardedAd ad) {
           print("$ad loaded");
           showToastText("Add loaded");
           rewardedAd = ad;
-setState(() {
-  isAdLoaded = true;
-});
+          setState(() {
+            isAdLoaded = true;
+          });
           //set on full screen content call back
           _setFullScreenContentCallback();
         },
@@ -52,47 +49,59 @@ setState(() {
   }
 
   //method to set show content call back
-  void _setFullScreenContentCallback(){
-    if(rewardedAd == null) {
+  void _setFullScreenContentCallback() {
+    if (rewardedAd == null) {
       return;
     }
     rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
       //when ad  shows fullscreen
-      onAdShowedFullScreenContent: (RewardedAd ad) => print("$ad onAdShowedFullScreenContent"),
+      onAdShowedFullScreenContent: (RewardedAd ad) =>
+          print("$ad onAdShowedFullScreenContent"),
       //when ad dismissed by user
-      onAdDismissedFullScreenContent: (RewardedAd ad){
+      onAdDismissedFullScreenContent: (RewardedAd ad) {
         print("$ad onAdDismissedFullScreenContent");
 
         //dispose the dismissed ad
         ad.dispose();
       },
       //when ad fails to show
-      onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error){
+      onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
         print("$ad  onAdFailedToShowFullScreenContent: $error ");
         //dispose the failed ad
         ad.dispose();
       },
 
       //when impression is detected
-      onAdImpression: (RewardedAd ad) =>print("$ad Impression occured"),
+      onAdImpression: (RewardedAd ad) => print("$ad Impression occured"),
     );
-
   }
 
-  void _showRewardedAd(){
+  Future<void> _showRewardedAd() async {
     rewardedAd.show(
-        onUserEarnedReward: (AdWithoutView ad, RewardItem rewardItem){
-          num amount = rewardItem.amount;
-          showToastText("You earned: $amount");
-        }
-    );
+        onUserEarnedReward: (AdWithoutView ad, RewardItem rewardItem) {
+      num amount = rewardItem.amount;
+      showToastText("You earned: $amount");
+
+    });
+    final imageRef = _firestore.collection("user").doc(fullUserId());
+
+    final documentSnapshot = await imageRef.get();
+    if (documentSnapshot.exists) {
+      final data = documentSnapshot.data() as Map<String, dynamic>;
+      if (data['adSeenCount']==null) {
+        _firestore.collection("user").doc(fullUserId()).update({"adSeenCount":0});
+      } else {
+        _firestore.collection("user").doc(fullUserId()).update({"adSeenCount":data['adSeenCount']+1});
+
+      }
+    }
   }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   bool _canOpenImage = true;
-  double remainingTime =0;
+  double remainingTime = 0;
 
   @override
   void initState() {
@@ -109,12 +118,11 @@ setState(() {
       final documentSnapshot = await imageRef.get();
       if (documentSnapshot.exists) {
         final data = documentSnapshot.data() as Map<String, dynamic>;
-        if(data['lastOpenAdTime'].toString().isEmpty){
+        if (data['lastOpenAdTime'].toString().isEmpty) {
           setState(() {
             _canOpenImage = true; // 3600 seconds = 1 hour
           });
-        }
-       else{
+        } else {
           final lastOpenTime = data['lastOpenAdTime'] as Timestamp;
 
           final currentTime = Timestamp.now();
@@ -122,7 +130,7 @@ setState(() {
 
           setState(() {
             _canOpenImage = difference >= 3600; // 3600 seconds = 1 hour
-            remainingTime = (3600-difference)/60 ;
+            remainingTime = (3600 - difference) / 60;
           });
         }
       }
@@ -136,12 +144,11 @@ setState(() {
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: Colors.white30)
-          ),
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: Colors.white30)),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,55 +157,85 @@ setState(() {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Support society => ",style: TextStyle(color: Colors.white,fontSize: 20),),
-                    Text("  for a small change",style: TextStyle(color: Colors.white54,fontSize: 15),),
+                    Text(
+                      "Support society => ",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    Text(
+                      "  for a small change",
+                      style: TextStyle(color: Colors.white54, fontSize: 15),
+                    ),
                   ],
                 ),
                 _canOpenImage
-                    ? isAdLoaded?ElevatedButton(
-                  onPressed: () async {
-                    if (_canOpenImage) {
-                      _showRewardedAd();
+                    ? isAdLoaded
+                        ? ElevatedButton(
+                            onPressed: () async {
+                              if (_canOpenImage) {
+                                _showRewardedAd();
 
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>supportList(branch: widget.branch,)));
-                      final user = _auth.currentUser;
-                      if (user != null) {
-                        final imageRef =
-                        _firestore.collection('user').doc(fullUserId());
-                        await imageRef.update({
-                          'lastOpenAdTime': FieldValue.serverTimestamp(),
-                        });
-                      }
-                      setState(() {
-                        _canOpenImage = false;
-                      });
-                    }
-                  },
-                  child: Text('Register...'),
-                ):Text(
-                  'Wait for few secs',
-                  style: TextStyle(fontSize: 18,color: Colors.amber),
-                )
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => supportList(
+                                              branch: widget.branch,
+                                            )));
+                                final user = _auth.currentUser;
+                                if (user != null) {
+                                  final imageRef = _firestore
+                                      .collection('user')
+                                      .doc(fullUserId());
+                                  await imageRef.update({
+                                    'lastOpenAdTime':
+                                        FieldValue.serverTimestamp(),
+                                  });
+                                }
+                                setState(() {
+                                  _canOpenImage = false;
+                                });
+                              }
+                            },
+                            child: Text('Register...'),
+                          )
+                        : Text(
+                            'Wait for few secs',
+                            style: TextStyle(fontSize: 18, color: Colors.amber),
+                          )
                     : Text(
-                  'Wait for ${remainingTime.round()} mins',
-                  style: TextStyle(fontSize: 18,color: Colors.amber),
-                ),
-               if(!_canOpenImage)InkWell(child: Icon(Icons.refresh,color: Colors.white,size: 35,),onTap: (){
-                 _checkImageOpenStatus();
-               },)
+                        'Wait for ${remainingTime.round()} mins',
+                        style: TextStyle(fontSize: 18, color: Colors.amber),
+                      ),
+                if (!_canOpenImage)
+                  InkWell(
+                    child: Icon(
+                      Icons.refresh,
+                      color: Colors.white,
+                      size: 35,
+                    ),
+                    onTap: () {
+                      _checkImageOpenStatus();
+                    },
+                  )
               ],
             ),
           ),
         ),
       ),
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>supportList(branch: widget.branch,)));
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => supportList(
+                      branch: widget.branch,
+                    )));
       },
     );
   }
 }
+
 class supportList extends StatefulWidget {
   final String branch;
+
   const supportList({required this.branch});
 
   @override
@@ -209,29 +246,32 @@ class _supportListState extends State<supportList> {
   final TextEditingController _comment = TextEditingController();
   List comments = [];
   List commentsIds = [];
-  String money="0";
+  String money = "0";
 
   @override
   void initState() {
     super.initState();
     getComments();
   }
-  addComment( bool isAdd, String data) {
+
+  addComment(bool isAdd, String data) {
     if (isAdd) {
-      if(data.isEmpty){
-        data ="owner : Thanks for helping";
+      if (data.isEmpty) {
+        data = "owner : Thanks for helping";
       }
-      data = "${picText()+ ":" + fullUserId()};$data";
+      data = "${picText() + ":" + fullUserId()};$data";
     }
-    FirebaseFirestore.instance.collection(widget.branch).doc("supportedList").update({
+    FirebaseFirestore.instance
+        .collection(widget.branch)
+        .doc("supportedList")
+        .update({
       "supportedList": isAdd
           ? FieldValue.arrayUnion([data])
           : FieldValue.arrayRemove([data]),
     });
-
   }
 
-   getComments() async{
+  getComments() async {
     await FirebaseFirestore.instance
         .collection(widget.branch)
         .doc("supportedList")
@@ -242,7 +282,7 @@ class _supportListState extends State<supportList> {
         if (data != null && data is Map<String, dynamic>) {
           comments = data['supportedList'];
           money = data['money'];
-          for (String x in comments){
+          for (String x in comments) {
             commentsIds.add(x.split(";").first.split(":").last);
           }
           setState(() {
@@ -276,134 +316,120 @@ class _supportListState extends State<supportList> {
                     "Supported List",
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize: 30,fontWeight: FontWeight.w600),
+                        fontSize: 30,
+                        fontWeight: FontWeight.w600),
                   ),
                 ),
-                SizedBox(width: 45,)
-              ],
-            ),
-            !commentsIds.contains(fullUserId())?Row(
-              children: [
-                Flexible(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white30,
-                      borderRadius: BorderRadius.circular(20)
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: TextFormField(
-                        controller: _comment,
-                        textInputAction:
-                        TextInputAction
-                            .next,
-                        keyboardType:
-                        TextInputType
-                            .multiline,
-                        style: TextStyle(
-                            color:
-                            Colors.white,fontSize: 25),
-                        maxLines: null,
-                        // Allows the field to expand as needed
-                        decoration:
-                        const InputDecoration(
-                          hintStyle: TextStyle(
-                              color: Colors
-                                  .white60,),
-                          border: InputBorder
-                              .none,
-                          hintText:
-                          'write your message' ,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  child: Padding(
-                    padding:
-                    const EdgeInsets
-                        .all(5.0),
-                    child: Icon(
-                      Icons.send,
-                      color: Colors
-                          .lightBlueAccent,
-                    ),
-                  ),
-                  onTap: () async {
-                    await addComment(
-                        true,
-                        _comment.text);
-                    getComments();
-                    _comment.clear();
-                  },
+                SizedBox(
+                  width: 45,
                 )
               ],
-            ):
-            Text("Your already Submitted",style: TextStyle(color: Colors.greenAccent,fontSize: 30,fontWeight: FontWeight.w700),),
+            ),
+            !commentsIds.contains(fullUserId())
+                ? Row(
+                    children: [
+                      Flexible(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white30,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: TextFormField(
+                              controller: _comment,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.multiline,
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 25),
+                              maxLines: null,
+                              // Allows the field to expand as needed
+                              decoration: const InputDecoration(
+                                hintStyle: TextStyle(
+                                  color: Colors.white60,
+                                ),
+                                border: InputBorder.none,
+                                hintText: 'write your message',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Icon(
+                            Icons.send,
+                            color: Colors.lightBlueAccent,
+                          ),
+                        ),
+                        onTap: () async {
+                          await addComment(true, _comment.text);
+                          getComments();
+                          _comment.clear();
+                        },
+                      )
+                    ],
+                  )
+                : Text(
+                    "Your already Submitted",
+                    style: TextStyle(
+                        color: Colors.greenAccent,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w700),
+                  ),
             Padding(
               padding: const EdgeInsets.all(5.0),
-              child: Text("Note : You can send message only for one time",style: TextStyle(color: Colors.amber,fontSize: 15),),
-            ),Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
-              child: Text("Thanks for being a member :)",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w600),),
+              child: Text(
+                "Note : You can send message only for one time",
+                style: TextStyle(color: Colors.amber, fontSize: 15),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+              child: Text(
+                "Thanks for being a member :)",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 25,
+                    fontWeight: FontWeight.w600),
+              ),
             ),
             Container(
               height: 3,
-            width: 150,
-            decoration: BoxDecoration(
-              color: Colors.white54,
-              borderRadius: BorderRadius.circular(5),
-            ),),
-
+              width: 150,
+              decoration: BoxDecoration(
+                color: Colors.white54,
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                 child: ListView.builder(
                   shrinkWrap: true,
                   reverse: false,
-                  physics:
-                  BouncingScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 10),
+                  physics: BouncingScrollPhysics(),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   itemCount: comments.length,
-                  itemBuilder:
-                      (BuildContext context,
-                      int index) {
-                    String data =
-                    comments[index];
-                    String user =
-                        data.split(";").first;
-                    String comment =
-                        data.split(";").last;
+                  itemBuilder: (BuildContext context, int index) {
+                    String data = comments[index];
+                    String user = data.split(";").first;
+                    String comment = data.split(";").last;
                     return Padding(
-                      padding: const EdgeInsets
-                          .symmetric(
-                          vertical: 5),
+                      padding: const EdgeInsets.symmetric(vertical: 5),
                       child: Row(
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                                borderRadius:
-                                BorderRadius
-                                    .circular(
-                                    30),
-                                border: Border.all(
-                                    color: Colors
-                                        .white54)),
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(color: Colors.white54)),
                             child: Padding(
-                              padding:
-                              const EdgeInsets
-                                  .all(3.0),
+                              padding: const EdgeInsets.all(3.0),
                               child: Text(
-                                user
-                                    .split(":")
-                                    .first,
+                                user.split(":").first,
                                 style: TextStyle(
-                                    color: Colors
-                                        .white,
-                                    fontSize:
-                                    20),
+                                    color: Colors.white, fontSize: 20),
                               ),
                             ),
                           ),
@@ -411,46 +437,34 @@ class _supportListState extends State<supportList> {
                             width: 10,
                           ),
                           Column(
-                            mainAxisAlignment:
-                            MainAxisAlignment
-                                .start,
-                            crossAxisAlignment:
-                            CrossAxisAlignment
-                                .start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 "@${user.split(":").last}",
                                 style: TextStyle(
-                                    color: Colors
-                                        .white54,
-                                    fontSize:
-                                    13),
+                                    color: Colors.white54, fontSize: 13),
                               ),
                               Text(
                                 comment,
                                 style: TextStyle(
-                                    color: Colors
-                                        .white,
-                                    fontSize:
-                                    20),
+                                    color: Colors.white, fontSize: 20),
                               ),
                             ],
                           ),
                           Spacer(),
-                          if(isUser())InkWell(
-                            child: Icon(
-                              Icons.delete,
-                              color: Colors
-                                  .redAccent,
-                              size: 30,
-                            ),
-                            onTap: () {
-                              addComment(
-                                  false,
-                                  data);
-                              getComments();
-                            },
-                          )
+                          if (isUser())
+                            InkWell(
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.redAccent,
+                                size: 30,
+                              ),
+                              onTap: () {
+                                addComment(false, data);
+                                getComments();
+                              },
+                            )
                         ],
                       ),
                     );
@@ -460,7 +474,13 @@ class _supportListState extends State<supportList> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Text("Earned money \$ $money",style: TextStyle(color: Colors.white60,fontWeight: FontWeight.w500,fontSize: 13),),
+              child: Text(
+                "Earned money \$ $money",
+                style: TextStyle(
+                    color: Colors.white60,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13),
+              ),
             ),
           ],
         ),
@@ -468,8 +488,6 @@ class _supportListState extends State<supportList> {
     );
   }
 }
-
-
 
 class UpdateConvertorUtil {
   // Add a new UpdateConvertor instance to the list in SharedPreferences

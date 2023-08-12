@@ -2123,7 +2123,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                     color: Colors.white,
                                   ),
                                   Text(
-                                    widget.date,
+                                    widget.date.length<11?widget.date:"No Date",
                                     style: TextStyle(
                                         color: Colors.white),
                                   )
@@ -2813,12 +2813,38 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
             ),
             Column(
               children: [
-                ElevatedButton(
-                    onPressed: () => createUnitsTextbooks(
-                        mode: widget.mode,
-                        branch: widget.branch,
-                        subjectsID: widget.ID),
-                    child: Text("sdsds")),
+                if (isUser())
+                  Padding(
+                    padding:
+                    EdgeInsets.only(right: widget.width * 10),
+                    child: InkWell(
+                      child: Chip(
+                        elevation: 20,
+                        backgroundColor: Colors.white38,
+                        avatar: CircleAvatar(
+                            backgroundColor: Colors.black,
+                            child: Icon(
+                              Icons.add,
+                            )),
+                        label: Text(
+                          "Edit",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    UnitsCreator(
+                                      type: "textbook",
+                                      branch: widget.branch,
+                                      id: widget.ID,
+                                      mode: widget.mode,
+                                    )));
+                      },
+                    ),
+                  ),
                 Expanded(
                   child: StreamBuilder<List<UnitsTextbooksConvertor>>(
                     stream: readTextBooks(widget.ID, widget.branch),
@@ -2857,7 +2883,6 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                 branch: widget.branch,
                                 unit: unit,
                                 mode: widget.mode,
-                                photoUrl: widget.photoUrl,
                               );
                             },
                             separatorBuilder: (context, index) =>
@@ -2874,12 +2899,38 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
             ),
             Column(
               children: [
-                ElevatedButton(
-                    onPressed: () => createUnitsMore(
-                        mode: widget.mode,
-                        branch: widget.branch,
-                        subjectsID: widget.ID),
-                    child: Text("sdsds")),
+                if (isUser())
+                  Padding(
+                    padding:
+                    EdgeInsets.only(right: widget.width * 10),
+                    child: InkWell(
+                      child: Chip(
+                        elevation: 20,
+                        backgroundColor: Colors.white38,
+                        avatar: CircleAvatar(
+                            backgroundColor: Colors.black,
+                            child: Icon(
+                              Icons.add,
+                            )),
+                        label: Text(
+                          "Edit",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    UnitsCreator(
+                                      type: "more",
+                                      branch: widget.branch,
+                                      id: widget.ID,
+                                      mode: widget.mode,
+                                    )));
+                      },
+                    ),
+                  ),
                 Expanded(
                   child: StreamBuilder<List<UnitsMoreConvertor>>(
                     stream: readMore(widget.ID, widget.branch),
@@ -3045,7 +3096,14 @@ class UnitsConvertor {
 Future createUnitsTextbooks(
     {required String mode,
     required String branch,
-    required String subjectsID}) async {
+    required String subjectsID,
+    required String heading,
+    required String photoUrl,
+    required String PDFLink,
+    required String author,
+    required String edition,
+    required String description,
+    }) async {
   final docflash = FirebaseFirestore.instance
       .collection(branch)
       .doc(mode)
@@ -3055,14 +3113,12 @@ Future createUnitsTextbooks(
       .doc(getID());
   final flash = UnitsTextbooksConvertor(
     id: getID(),
-    heading: "heading",
-    PDFSize: "3kb",
-    PDFLink:
-        "https://firebasestorage.googleapis.com/v0/b/subjects-1.appspot.com/o/VLSI%2Funit%202%20notes.pdf?alt=media&token=4d714af4-388f-41bd-bf43-86e105cb34db",
-    photoUrl:
-        'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aHVtYW58ZW58MHx8MHx8fDA%3D&w=1000&q=80',
-    author: 'sujith',
-    edition: '2024',
+    heading: heading,
+    description:description,
+    PDFLink: PDFLink,
+    photoUrl:photoUrl ,
+    author: author,
+    edition: edition,
   );
   final json = flash.toJson();
   await docflash.set(json);
@@ -3070,15 +3126,16 @@ Future createUnitsTextbooks(
 
 class UnitsTextbooksConvertor {
   String id;
-  final String heading, author, edition, PDFSize, PDFLink, photoUrl;
+  final String heading, author, edition, PDFSize, PDFLink, photoUrl,description;
 
   UnitsTextbooksConvertor({
     this.id = "",
     required this.heading,
     required this.photoUrl,
+    required this.description,
     required this.author,
     required this.edition,
-    required this.PDFSize,
+     this.PDFSize="Unknown",
     required this.PDFLink,
   });
 
@@ -3087,6 +3144,7 @@ class UnitsTextbooksConvertor {
         "heading": heading,
         "author": author,
         "photoUrl": photoUrl,
+        "description": description,
         "edition": edition,
         "PDFSize": PDFSize,
         "PDFLink": PDFLink,
@@ -3097,17 +3155,22 @@ class UnitsTextbooksConvertor {
         PDFLink: json["PDFLink"],
         id: json['id'],
         heading: json["heading"],
+        description: json["description"],
         author: json["author"],
         edition: json["edition"],
         photoUrl: json["photoUrl"],
-        PDFSize: json["PDFSize"],
+        PDFSize: json["PDFSize"]==null?"Unknown":json["PDFSize"],
       );
 }
 
 Future createUnitsMore(
     {required String mode,
       required String branch,
-      required String subjectsID}) async {
+      required String subjectsID,
+      required String heading,
+      required String description,
+      required String link,
+    }) async {
   final docflash = FirebaseFirestore.instance
       .collection(branch)
       .doc(mode)
@@ -3117,11 +3180,11 @@ Future createUnitsMore(
       .doc(getID());
   final flash = UnitsMoreConvertor(
     id: getID(),
-    heading: "heading",
+    heading: heading,
 
-    description: 'sujith',
-    link: 'image;https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aHVtYW58ZW58MHx8MHx8fDA%3D&w=1000&q=80',
-  );
+    description: description,
+    link:
+    link  );
   final json = flash.toJson();
   await docflash.set(json);
 }
@@ -3430,7 +3493,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 3, horizontal: 8),
                                 child: Text(
-                                  widget.unit.heading.split(";").first,
+                                  widget.unit.heading.split(";").first.length<7?widget.unit.heading.split(";").first:"Unknown",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w800,
@@ -3461,7 +3524,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
-                                    " ${widget.unit.id.split("-").first}",
+                                    " ${widget.unit.id.split("-").first.length<11?widget.unit.id.split("-").first.length:"No Date"}",
                                     style: TextStyle(color: Colors.white60),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -3641,7 +3704,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                   Heading: widget.unit.heading,
                                   Description: widget.unit.description,
                                   questions: widget.unit.questions,
-                                  PDFSize: widget.unit.PDFSize,
+                                  author: widget.unit.PDFSize,
                                   PDFUrl: widget.unit.PDFLink,
                                 )));
                   },
@@ -3874,7 +3937,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
 class subTextbooks extends StatefulWidget {
   final UnitsTextbooksConvertor unit;
   final String mode;
-  final String photoUrl;
+
   final String branch;
   final String ID;
   final double size;
@@ -3885,7 +3948,7 @@ class subTextbooks extends StatefulWidget {
       {Key? key,
         required this.unit,
         required this.mode,
-        required this.photoUrl,
+
         required this.branch,
         required this.ID,
         required this.width,
@@ -3907,18 +3970,10 @@ class _subTextbooksState extends State<subTextbooks>
 
   Future<void> getPath() async {
     final directory = await getApplicationDocumentsDirectory();
-    final Uri uri = Uri.parse(widget.photoUrl);
-    final String fileName = uri.pathSegments.last;
-    var name = fileName.split("/").last;
+
     setState(() {
       folderPath = '${directory.path}';
-      if (widget.mode == "Subjects") {
-        file =
-            File("${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
-      } else {
-        file = File(
-            "${folderPath}/${widget.branch.toLowerCase()}_labsubjects/$name");
-      }
+
     });
   }
 
@@ -4123,7 +4178,7 @@ class _subTextbooksState extends State<subTextbooks>
                   height: widget.height * 160,
                   width: 120,
                   child: Image.network(
-                    widget.photoUrl,
+                    widget.unit.photoUrl,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -4334,13 +4389,16 @@ class _subTextbooksState extends State<subTextbooks>
                         context,
                         MaterialPageRoute(
                             builder: (context) => UnitsCreator(
-                              type: "unit",
+                              type: "textbook",
                               branch: widget.branch,
                               mode: widget.mode,
                               UnitId: widget.ID,
+                              Description: widget.unit.description,
                               id: widget.unit.id,
+                              photoUrl: widget.unit.photoUrl,
+                              edition: widget.unit.edition,
                               Heading: widget.unit.heading,
-                              PDFSize: widget.unit.PDFSize,
+                              author: widget.unit.author,
                               PDFUrl: widget.unit.PDFLink,
                             )));
                   },
@@ -4513,7 +4571,7 @@ class _subMoreState extends State<subMore>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if(widget.unit.link.split(";").first=="pdf"||widget.unit.link.split(";").first=="image")file.existsSync()
+                if(widget.unit.link.split(";").first=="PDF"||widget.unit.link.split(";").first=="Image")file.existsSync()
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(widget.size * 25),
                         child: SizedBox(
@@ -4662,13 +4720,13 @@ class _subMoreState extends State<subMore>
                             )));
                   },
                     ),
-                if(widget.unit.link.split(";").first=="youtube"||widget.unit.link.split(";").first=="website")Padding(
+                if(widget.unit.link.split(";").first=="YouTube"||widget.unit.link.split(";").first=="WebSite")Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.white30),
                       borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(image: AssetImage(widget.unit.link.split(";").first=="youtube"?"assets/YouTubeIcon.png":"assets/googleIcon.png"),fit: BoxFit.cover)
+                      image: DecorationImage(image: AssetImage(widget.unit.link.split(";").first=="YouTube"?"assets/YouTubeIcon.png":"assets/googleIcon.png"),fit: BoxFit.cover)
                     ),
                       height:35,width:50),
                 ),
@@ -4725,7 +4783,7 @@ class _subMoreState extends State<subMore>
                           ]
                         ),
 
-                        if(widget.unit.link.split(";").first=="pdf")Padding(
+                        if(widget.unit.link.split(";").first=="PDF")Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -4861,7 +4919,7 @@ class _subMoreState extends State<subMore>
                           context,
                           MaterialPageRoute(
                               builder: (context) => UnitsCreator(
-                                type: "unit",
+                                type: "more",
                                     branch: widget.branch,
                                     mode: widget.mode,
                                     UnitId: widget.ID,
@@ -4911,7 +4969,7 @@ class _subMoreState extends State<subMore>
         ),
       ),
       onTap: (){
-       if(widget.unit.link.split(";").first=="youtube"||widget.unit.link.split(";").first=="website") ExternalLaunchUrl(widget.unit.link.split(";").last);
+       if(widget.unit.link.split(";").first=="YouTube"||widget.unit.link.split(";").first=="WebSite") ExternalLaunchUrl(widget.unit.link.split(";").last);
       },
     );
   }

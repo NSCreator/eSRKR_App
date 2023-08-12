@@ -97,114 +97,112 @@ class _PdfViewerPageState extends State<PdfViewerPage>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-        body: SafeArea(
-          child: Stack(
-            children: [
-              isLoading && isReady
-                  ? Center(child: CircularProgressIndicator())
-                  : PDFView(
-                      filePath: widget.pdfUrl,
-                      enableSwipe: isEnableSwipe,
-                      pageSnap: isPageSnap,
-                      defaultPage: currentPage as int,
-                      swipeHorizontal: isSwipeHorizontal,
-                      autoSpacing: isAutoSpacing,
-                      pageFling: false,
-                      nightMode: isNightMode,
-                      onRender: (_pages) {
-                        setState(() {
-                          pages = _pages;
-                          isReady = true;
-                        });
-                      },
-                      onPageChanged: (page, total) {
-                        setState(() {
-                          currentPage = page;
-                          isScrolling = true;
-                        });
-                        isScrollingThePage();
-                      },
-                      onError: (error) {
-                        print(error.toString());
-                      },
-                      onPageError: (page, error) {
-                        print('$page: ${error.toString()}');
-                      },
-                      onViewCreated: (PDFViewController pdfViewController) {
-                        Completer<PDFViewController> controller =
-                            Completer<PDFViewController>();
-                        controller.complete(pdfViewController);
-                      },
-                    ),
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: CustomAdsBannerForPdfs()),
-              if (isExpand)
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 80, vertical: 10),
-                      child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: isNightMode
-                                ? Colors.white.withOpacity(0.6)
-                                : Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            InkWell(
-                              child: Icon(
-                                isEnableSwipe
-                                    ? Icons.lock_outline
-                                    : Icons.lock_open,
-                                color:
-                                    isNightMode ? Colors.black : Colors.white,
-                              ),
-                              onTap: () {
-                                isEnableSwipe = !isEnableSwipe;
-                                _reloadPage();
-                              },
+        body: Stack(
+          children: [
+            isLoading && isReady
+                ? Center(child: CircularProgressIndicator())
+                : PDFView(
+                    filePath: widget.pdfUrl,
+                    enableSwipe: isEnableSwipe,
+                    pageSnap: isPageSnap,
+                    defaultPage: currentPage as int,
+                    swipeHorizontal: isSwipeHorizontal,
+                    autoSpacing: isAutoSpacing,
+                    pageFling: false,
+                    nightMode: isNightMode,
+                    onRender: (_pages) {
+                      setState(() {
+                        pages = _pages;
+                        isReady = true;
+                      });
+                    },
+                    onPageChanged: (page, total) {
+                      setState(() {
+                        currentPage = page;
+                        isScrolling = true;
+                      });
+                      isScrollingThePage();
+                    },
+                    onError: (error) {
+                      print(error.toString());
+                    },
+                    onPageError: (page, error) {
+                      print('$page: ${error.toString()}');
+                    },
+                    onViewCreated: (PDFViewController pdfViewController) {
+                      Completer<PDFViewController> controller =
+                          Completer<PDFViewController>();
+                      controller.complete(pdfViewController);
+                    },
+                  ),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: CustomAdsBannerForPdfs()),
+            if (isExpand)
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 0,
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 80, vertical: 10),
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: isNightMode
+                              ? Colors.white.withOpacity(0.6)
+                              : Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          InkWell(
+                            child: Icon(
+                              isEnableSwipe
+                                  ? Icons.lock_outline
+                                  : Icons.lock_open,
+                              color:
+                                  isNightMode ? Colors.black : Colors.white,
                             ),
-                            InkWell(
-                              child: Icon(
-                                isPageSnap
-                                    ? Icons.view_carousel
-                                    : Icons.view_carousel_outlined,
-                                color:
-                                    isNightMode ? Colors.black : Colors.white,
-                              ),
-                              onTap: () {
-                                isPageSnap = !isPageSnap;
-                                _reloadPage();
-                              },
+                            onTap: () {
+                              isEnableSwipe = !isEnableSwipe;
+                              _reloadPage();
+                            },
+                          ),
+                          InkWell(
+                            child: Icon(
+                              isPageSnap
+                                  ? Icons.view_carousel
+                                  : Icons.view_carousel_outlined,
+                              color:
+                                  isNightMode ? Colors.black : Colors.white,
                             ),
-                            InkWell(
-                              child: Icon(
-                                isSwipeHorizontal
-                                    ? Icons.swap_vert
-                                    : Icons.swap_horiz,
-                                color:
-                                    isNightMode ? Colors.black : Colors.white,
-                              ),
-                              onTap: () {
-                                isSwipeHorizontal = !isSwipeHorizontal;
-                                _reloadPage();
-                              },
+                            onTap: () {
+                              isPageSnap = !isPageSnap;
+                              _reloadPage();
+                            },
+                          ),
+                          InkWell(
+                            child: Icon(
+                              isSwipeHorizontal
+                                  ? Icons.swap_vert
+                                  : Icons.swap_horiz,
+                              color:
+                                  isNightMode ? Colors.black : Colors.white,
                             ),
-                          ],
-                        ),
+                            onTap: () {
+                              isSwipeHorizontal = !isSwipeHorizontal;
+                              _reloadPage();
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                )
-            ],
-          ),
+                ),
+              )
+          ],
         ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 35),
