@@ -19,34 +19,11 @@ Future<void> backgroundHandler(RemoteMessage message) async {
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    // options: DefaultFicdrebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp();
    await NotificationService().initNotification();
     FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   MobileAds.instance.initialize();
 
-  // MobileAds.instance.initialize();
-  // final emulatorHost =
-  // (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
-  //     ? '10.0.2.2'
-  //     : 'localhost';
-  //
-  // await FirebaseStorage.instance.useStorageEmulator(emulatorHost, 9199);
-  // if (true) {
-  //   await Firebase.initializeApp();
-  //   await MobileAds.instance.initialize();
-  //   await NotificationService().initNotification();
-  //   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
-  // } else {
-  //   await Firebase.initializeApp(
-  //       options: FirebaseOptions(
-  //     apiKey: "AIzaSyDP9ZNvcadcgO_cNmwOYEOxxW_Z_JPwoZ4",
-  //     projectId: "e-srkr",
-  //     messagingSenderId: "1048591941251",
-  //     appId: "1:1048591941251:web:40640c157719e08ca665b6",
-  //   ));
-  // }
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(MyApp());
@@ -139,13 +116,7 @@ class _MyAppState extends State<MyApp> {
                                       .isNotEmpty &&
                                   mainsnapshot.data!['index']
                                       .toString()
-                                      .isNotEmpty &&
-                                  mainsnapshot.data!['width']
-                                      .toString()
-                                      .isNotEmpty &&
-                                  mainsnapshot.data!['height']
-                                      .toString()
-                                      .isNotEmpty) {
+                                      .isNotEmpty ) {
                                 isTheir = true;
                               }
                             } catch (Exception) {
@@ -153,38 +124,12 @@ class _MyAppState extends State<MyApp> {
                             }
                             if (isTheir) {
                               downloadAllImages(context,
-                                  mainsnapshot.data!["branch"].toString(),mainsnapshot.data!['reg'].toString(), double.parse(mainsnapshot
-                                  .data!['height']
-                                  .toString()) /
-                                  850, double.parse(mainsnapshot.data!['width']
-                                  .toString()) /
-                                  400, (double.parse(mainsnapshot.data!['width']
-                                  .toString()) /
-                                  400 +
-                                  double.parse(mainsnapshot
-                                      .data!['height']
-                                      .toString()) /
-                                      850) /
-                                  2);
+                                  mainsnapshot.data!["branch"].toString(),mainsnapshot.data!['reg'].toString());
                               return HomePage(
-                                height: double.parse(mainsnapshot
-                                        .data!['height']
-                                        .toString()) /
-                                    850,
-                                width: double.parse(mainsnapshot.data!['width']
-                                        .toString()) /
-                                    400,
                                 branch: mainsnapshot.data!["branch"].toString(),
                                 reg: mainsnapshot.data!['reg'].toString(),
-                                index: mainsnapshot.data!['index'],
-                                size: (double.parse(mainsnapshot.data!['width']
-                                                .toString()) /
-                                            400 +
-                                        double.parse(mainsnapshot
-                                                .data!['height']
-                                                .toString()) /
-                                            850) /
-                                    2,
+                                index: mainsnapshot.data!['index'], width: screenWidth(context),height: screenHeight(context),
+                                size: screenSize(context),
                               );
                             } else {
                               return Scaffold(

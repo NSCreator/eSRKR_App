@@ -33,16 +33,38 @@ class Utils {
 
 double screenWidth(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
-  double screenWidth = mediaQuery.size.width;
+  double screenWidth = mediaQuery.size.width/400;
 
   return screenWidth;
 }
 
 double screenHeight(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
+  double screenHeight = mediaQuery.size.height/800;
+  return screenHeight;
+}
+
+double Width(BuildContext context) {
+  MediaQueryData mediaQuery = MediaQuery.of(context);
+  double screenWidth = mediaQuery.size.width;
+
+  return screenWidth;
+}
+
+double Height(BuildContext context) {
+  MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenHeight = mediaQuery.size.height;
   return screenHeight;
 }
+double screenSize(BuildContext context) {
+  MediaQueryData mediaQuery = MediaQuery.of(context);
+  double screenHeight = ((mediaQuery.size.height/800)+(mediaQuery.size.width/400))/2;
+  return screenHeight;
+}
+
+
+
+
 
 String getDate() {
 

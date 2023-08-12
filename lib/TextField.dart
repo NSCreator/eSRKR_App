@@ -447,7 +447,6 @@ class _updateCreatorState extends State<updateCreator> {
                           .update({
                         "heading": MessageController.text.trim(),
                         "link": LinkController.text.trim(),
-                        "date": getDate(),
                         "photoUrl": PhotoUrlController.text
                       });
                     } else {
@@ -874,7 +873,6 @@ class _NewsCreatorState extends State<NewsCreator> {
                           .update({
                         "Heading": HeadingController.text.trim(),
                         "Description": DescriptionController.text.trim(),
-                        "Date": getDate(),
                         "Photo Url": PhotoUrlController.text.trim()
                       });
                     } else {
@@ -882,7 +880,6 @@ class _NewsCreatorState extends State<NewsCreator> {
                           branch: widget.branch,
                           heading: HeadingController.text.trim(),
                           description: DescriptionController.text.trim(),
-                          Date: getDate(),
                           photoUrl: PhotoUrlController.text.isNotEmpty
                               ? PhotoUrlController.text
                               : " ");
@@ -1381,7 +1378,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             .update({
                           "Heading": HeadingController.text.trim(),
                           "Description": DescriptionController.text.trim(),
-                          "Date": getDate(),
+
                           "Photo Url": PhotoUrlController.text
                         });
                       } else {
@@ -1393,7 +1390,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             .update({
                           "Heading": HeadingController.text.trim(),
                           "Description": DescriptionController.text.trim(),
-                          "Date": getDate(),
+
                           "Photo Url": PhotoUrlController.text
                         });
                       }
@@ -1405,13 +1402,12 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             heading: HeadingController.text.trim(),
                             description: DescriptionController.text.trim(),
                             PhotoUrl: PhotoUrlController.text,
-                            Date: getDate());
+                           );
                       } else {
                         createSubjects(
                             branch: widget.branch,
                             heading: HeadingController.text.trim(),
                             description: DescriptionController.text.trim(),
-                            date: getDate(),
                             PhotoUrl: PhotoUrlController.text,
                             regulation: "3-2");
                       }
@@ -1804,7 +1800,6 @@ class _BooksCreatorState extends State<BooksCreator> {
                         "Author": AuthorController.text.trim(),
                         "Link": LinkController.text.trim(),
                         "Description": DescriptionController.text.trim(),
-                        "Date": getDate(),
                         "Photo Url": PhotoUrlController.text.trim()
                       });
                     } else {
@@ -1815,8 +1810,7 @@ class _BooksCreatorState extends State<BooksCreator> {
                           photoUrl: PhotoUrlController.text.trim(),
                           edition: EditionController.text.trim(),
                           Author: AuthorController.text.trim(),
-                          link: LinkController.text.trim(),
-                          date: getDate());
+                          link: LinkController.text.trim());
                     }
                     Navigator.pop(context);
                   },
@@ -2172,7 +2166,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                         "PDFSize": PDFSizeController.text.trim(),
                         "PDFLink": PDFUrlController.text.trim(),
                         "Description": DescriptionController.text.trim(),
-                        "Date": getDate(),
+
                         "questions": questionsController.text.trim()
                       });
                     }

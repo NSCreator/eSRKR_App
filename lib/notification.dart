@@ -12,7 +12,6 @@ import 'package:srkr_study_app/settings.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'functins.dart';
-import 'main.dart';
 
 _ExternalLaunchUrl(String url) async {
   final Uri urlIn = Uri.parse(url);
@@ -93,494 +92,475 @@ class _notificationsState extends State<notifications>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: double.infinity,
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: NetworkImage(
-                  "https://i.pinimg.com/736x/01/c7/f7/01c7f72511cc6ce7858e65b45d4f8c9c.jpg"),
-              fit: BoxFit.fill)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child:
-        Scaffold(
-          backgroundColor: Colors.black.withOpacity(0.6),
-          body: SafeArea(
-            child: Column(children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  backButton(),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: widget.width * 10),
-                    child: Text(
-                      "Notifications",
-                      style: TextStyle(
-                          color: Colors.white, fontSize: widget.size * 30,fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                 SizedBox(width: 45,)
-                ],
-              ),
-              Container(
-                color: Colors.transparent,
-                height: widget.height * 40,
-                child: Center(
-                  child: TabBar(
-
-                    indicator: BoxDecoration(
-                      border: Border.all(color: Colors.white12),
-                        borderRadius: BorderRadius.circular(widget.size * 15),
-                        color: Color.fromRGBO(4, 11, 23, 1)),
-                    controller: _tabController,
-                    isScrollable: true,
-                    labelPadding:
-                    EdgeInsets.symmetric(horizontal: widget.width * 35),
-                    tabs: [
-                      Tab(
-                        child: Text(
-                          "All",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: widget.size * 25,
-                          ),
-                        ),
-                      ),
-
-                      Tab(
-                        child: Text(
-                          "Personal",
-                          style: TextStyle(
-                              color: Colors.white, fontSize: widget.size * 25),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: widget.height * 10,
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    StreamBuilder<List<NotificationsConvertor>>(
-                        stream: readNotifications(
-                            c0: widget.branch,
-                            d0: "Notification",
-                            c1: "AllNotification"),
-                        builder: (context, snapshot) {
-                          final Notifications = snapshot.data;
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting:
-                              return const Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 0.3,
-                                    color: Colors.cyan,
-                                  ));
-                            default:
-                              if (snapshot.hasError) {
-                                return const Center(
-                                    child: Text(
-                                        'Error with TextBooks Data or\n Check Internet Connection'));
-                              } else {
-                                return ListView.separated(
-                                    physics: const BouncingScrollPhysics(),
-                                    shrinkWrap: true,
-                                    reverse: true,
-                                    itemCount: Notifications!.length,
-                                    itemBuilder: (context, int index) {
-                                      final Notification = Notifications[index];
-
-                                      return InkWell(
-                                        child: Padding(
-                                          padding:
-                                          Notification.Name == fullUserId()
-                                              ? EdgeInsets.only(
-                                              left: widget.width * 45,
-                                              right: widget.width * 5,
-                                              top: widget.height * 5)
-                                              : EdgeInsets.only(
-                                              right: widget.width * 45,
-                                              left: widget.width * 5,
-                                              top: widget.height * 5),
-                                          child: Container(
-                                            width: double.infinity,
-                                            alignment: Alignment.center,
-                                            decoration: Notification.Name ==
-                                                fullUserId()
-                                                ? BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomLeft: Radius.circular(
-                                                    widget.size * 25),
-                                                topRight: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomRight:
-                                                Radius.circular(
-                                                    widget.size * 5),
-                                              ),
-                                              color: Colors.black
-                                                  .withOpacity(0.8),
-                                              border: Border.all(
-                                                  color: Colors
-                                                      .blueAccent.shade100),
-                                            )
-                                                : BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomLeft: Radius.circular(
-                                                    widget.size * 5),
-                                                topRight: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomRight:
-                                                Radius.circular(
-                                                    widget.size * 25),
-                                              ),
-                                              color: Colors.black
-                                                  .withOpacity(0.5),
-                                              border: Border.all(
-                                                  color: Colors.white
-                                                      .withOpacity(0.5)),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(
-                                                  width: widget.width * 2,
-                                                ),
-                                                Expanded(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            Text(
-                                                              "       @${Notification.Name}",
-                                                              style: TextStyle(
-                                                                fontSize:
-                                                                widget.size *
-                                                                    12.0,
-                                                                color: Colors.white54,
-                                                                fontWeight:
-                                                                FontWeight.w600,
-                                                              ),
-                                                            ),
-                                                            Spacer(),
-                                                            Padding(
-                                                              padding:
-                                                              EdgeInsets.fromLTRB(
-                                                                  widget.size * 8,
-                                                                  widget.size * 1,
-                                                                  widget.size *
-                                                                      25,
-                                                                  widget.size *
-                                                                      1),
-                                                              child: Column(
-                                                                children: [
-                                                                  Text(
-                                                                    '${Notification.Time}',
-                                                                    style: TextStyle(
-                                                                      fontSize: widget
-                                                                          .size *
-                                                                          9.0,
-                                                                      color: Colors
-                                                                          .white70,
-                                                                      //   fontWeight: FontWeight.bold,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left: widget.size * 8,
-                                                              bottom: widget.size * 6,
-                                                              right: widget.size * 3,
-                                                              top: widget.size * 3),
-                                                          child: NotificationText(
-                                                              Notification
-                                                                  .description),
-                                                        ),
-                                                        if (Notification.Url.length >
-                                                            3)
-                                                          Padding(
-                                                            padding: EdgeInsets.all(
-                                                                widget.size * 3.0),
-                                                            child: Image.network(
-                                                                Notification.Url),
-                                                          )
-                                                      ],
-                                                    ))
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        onLongPress: () {
-                                          if (Notification.Name == fullUserId() ||
-                                              isUser()) {
-                                            final deleteFlashNews =
-                                            FirebaseFirestore.instance
-                                                .collection(widget.branch)
-                                                .doc("Notification")
-                                                .collection("AllNotification")
-                                                .doc(Notification.id);
-                                            deleteFlashNews.delete();
-                                            showToastText(
-                                                "Your Message has been Deleted");
-                                          } else {
-                                            showToastText(
-                                                "You are not message user to delete");
-                                          }
-                                        },
-                                      );
-                                    },
-                                    separatorBuilder: (context, index) =>
-                                        SizedBox(
-                                          height: widget.height * 1,
-                                        ));
-                              }
-                          }
-                        }),
-                    StreamBuilder<List<NotificationsConvertor>>(
-                        stream: readNotifications(
-                            c0: "user", d0: fullUserId(), c1: "Notification"),
-                        builder: (context, snapshot) {
-                          final Notifications = snapshot.data;
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting:
-                              return const Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 0.3,
-                                    color: Colors.cyan,
-                                  ));
-                            default:
-                              if (snapshot.hasError) {
-                                return const Center(
-                                    child: Text(
-                                        'Error with TextBooks Data or\n Check Internet Connection'));
-                              } else {
-                                return ListView.separated(
-                                    physics: const BouncingScrollPhysics(),
-                                    shrinkWrap: true,
-                                    reverse: true,
-                                    itemCount: Notifications!.length,
-                                    itemBuilder: (context, int index) {
-                                      final Notification = Notifications[index];
-
-                                      return InkWell(
-                                        child: Padding(
-                                          padding:
-                                          Notification.Name == fullUserId()
-                                              ? EdgeInsets.only(
-                                              left: widget.size * 45,
-                                              right: widget.size * 5)
-                                              : EdgeInsets.only(
-                                              right: widget.size * 45,
-                                              left: widget.size * 5),
-                                          child: Container(
-                                            width: double.infinity,
-                                            alignment: Alignment.center,
-                                            decoration: Notification.Name ==
-                                                fullUserId()
-                                                ? BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomLeft: Radius.circular(
-                                                    widget.size * 25),
-                                                topRight: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomRight:
-                                                Radius.circular(
-                                                    widget.size * 5),
-                                              ),
-                                              color: Colors.black
-                                                  .withOpacity(0.8),
-                                              border: Border.all(
-                                                  color: Colors
-                                                      .blueAccent.shade100),
-                                            )
-                                                : BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomLeft: Radius.circular(
-                                                    widget.size * 5),
-                                                topRight: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomRight:
-                                                Radius.circular(
-                                                    widget.size * 25),
-                                              ),
-                                              color: Colors.black
-                                                  .withOpacity(0.5),
-                                              border: Border.all(
-                                                  color: Colors.white
-                                                      .withOpacity(0.5)),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(
-                                                  width: widget.width * 2,
-                                                ),
-                                                Expanded(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            Text(
-                                                              "       @${Notification.Name}",
-                                                              style: TextStyle(
-                                                                fontSize:
-                                                                widget.size *
-                                                                    12.0,
-                                                                color: Colors.white54,
-                                                                fontWeight:
-                                                                FontWeight.w600,
-                                                              ),
-                                                            ),
-                                                            Spacer(),
-                                                            Padding(
-                                                              padding:
-                                                              EdgeInsets.fromLTRB(
-                                                                  widget.size * 8,
-                                                                  widget.size * 1,
-                                                                  widget.size *
-                                                                      25,
-                                                                  widget.size *
-                                                                      1),
-                                                              child: Column(
-                                                                children: [
-                                                                  Text(
-                                                                    '${Notification.Time}',
-                                                                    style: TextStyle(
-                                                                      fontSize: widget
-                                                                          .size *
-                                                                          9.0,
-                                                                      color: Colors
-                                                                          .white70,
-                                                                      //   fontWeight: FontWeight.bold,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        if (Notification.description
-                                                            .split("@")
-                                                            .first ==
-                                                            "Forgot Password ")
-                                                          Padding(
-                                                            padding: EdgeInsets.only(
-                                                                left: widget.size * 8,
-                                                                bottom:
-                                                                widget.size * 6,
-                                                                right:
-                                                                widget.size * 3,
-                                                                top: widget.size * 3),
-                                                            child: Text(
-                                                              Notification.description
-                                                                  .split("@")
-                                                                  .first,
-                                                              style: TextStyle(
-                                                                color: Colors.white,
-                                                              ),
-                                                            ),
-                                                          )
-                                                        else
-                                                          Padding(
-                                                            padding: EdgeInsets.only(
-                                                                left: widget.size * 8,
-                                                                bottom:
-                                                                widget.size * 6,
-                                                                right:
-                                                                widget.size * 3,
-                                                                top: widget.size * 3),
-                                                            child: NotificationText(
-                                                                Notification
-                                                                    .description),
-                                                          ),
-                                                        if (Notification.Url.length >
-                                                            10)
-                                                          Padding(
-                                                            padding: EdgeInsets.all(
-                                                                widget.size * 3.0),
-                                                            child: Image.network(
-                                                                Notification.Url),
-                                                          )
-                                                      ],
-                                                    ))
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        onLongPress: () {
-                                          final deleteFlashNews =
-                                          FirebaseFirestore.instance
-                                              .collection("user")
-                                              .doc(fullUserId())
-                                              .collection("Notification")
-                                              .doc(Notification.id);
-                                          deleteFlashNews.delete();
-                                          showToastText(
-                                              "Your Message Has Been Deleted");
-                                        },
-                                        onDoubleTap: () {
-                                          onChage(Notification.Name);
-                                        },
-                                      );
-                                    },
-                                    separatorBuilder: (context, index) =>
-                                        SizedBox(
-                                          height: widget.height * 1,
-                                        ));
-                              }
-                          }
-                        }),
-                  ],
-                ),
-              ),
-              searchBar(
-                width: widget.width,
-                height: widget.height,
-                size: widget.size,
-                branch: widget.branch,
-                tabController: _tabController,
-                user: emailController,
-              )
-            ]),
+  Widget build(BuildContext context) =>backGroundImage(child: Column(children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          backButton(),
+          Padding(
+            padding: EdgeInsets.only(bottom: widget.width * 10),
+            child: Text(
+              "Notifications",
+              style: TextStyle(
+                  color: Colors.white, fontSize: widget.size * 30,fontWeight: FontWeight.w500),
+            ),
           ),
-        )
-        ,
+          SizedBox(width: 45,)
+        ],
       ),
-    );
-  }
+      Container(
+        color: Colors.transparent,
+        height: widget.height * 40,
+        child: Center(
+          child: TabBar(
+
+            indicator: BoxDecoration(
+                border: Border.all(color: Colors.white12),
+                borderRadius: BorderRadius.circular(widget.size * 15),
+                color: Color.fromRGBO(4, 11, 23, 1)),
+            controller: _tabController,
+            isScrollable: true,
+            labelPadding:
+            EdgeInsets.symmetric(horizontal: widget.width * 35),
+            tabs: [
+              Tab(
+                child: Text(
+                  "All",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: widget.size * 25,
+                  ),
+                ),
+              ),
+
+              Tab(
+                child: Text(
+                  "Personal",
+                  style: TextStyle(
+                      color: Colors.white, fontSize: widget.size * 25),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+      SizedBox(
+        height: widget.height * 10,
+      ),
+      Expanded(
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            StreamBuilder<List<NotificationsConvertor>>(
+                stream: readNotifications(
+                    c0: widget.branch,
+                    d0: "Notification",
+                    c1: "AllNotification"),
+                builder: (context, snapshot) {
+                  final Notifications = snapshot.data;
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 0.3,
+                            color: Colors.cyan,
+                          ));
+                    default:
+                      if (snapshot.hasError) {
+                        return const Center(
+                            child: Text(
+                                'Error with TextBooks Data or\n Check Internet Connection'));
+                      } else {
+                        return ListView.separated(
+                            physics: const BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            reverse: true,
+                            itemCount: Notifications!.length,
+                            itemBuilder: (context, int index) {
+                              final Notification = Notifications[index];
+
+                              return InkWell(
+                                child: Padding(
+                                  padding:
+                                  Notification.Name == fullUserId()
+                                      ? EdgeInsets.only(
+                                      left: widget.width * 45,
+                                      right: widget.width * 5,
+                                      top: widget.height * 5)
+                                      : EdgeInsets.only(
+                                      right: widget.width * 45,
+                                      left: widget.width * 5,
+                                      top: widget.height * 5),
+                                  child: Container(
+                                    width: double.infinity,
+                                    alignment: Alignment.center,
+                                    decoration: Notification.Name ==
+                                        fullUserId()
+                                        ? BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.only(
+                                        topLeft: Radius.circular(
+                                            widget.size * 25),
+                                        bottomLeft: Radius.circular(
+                                            widget.size * 25),
+                                        topRight: Radius.circular(
+                                            widget.size * 25),
+                                        bottomRight:
+                                        Radius.circular(
+                                            widget.size * 5),
+                                      ),
+                                      color: Colors.black
+                                          .withOpacity(0.8),
+                                      border: Border.all(
+                                          color: Colors
+                                              .blueAccent.shade100),
+                                    )
+                                        : BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.only(
+                                        topLeft: Radius.circular(
+                                            widget.size * 25),
+                                        bottomLeft: Radius.circular(
+                                            widget.size * 5),
+                                        topRight: Radius.circular(
+                                            widget.size * 25),
+                                        bottomRight:
+                                        Radius.circular(
+                                            widget.size * 25),
+                                      ),
+                                      color: Colors.black
+                                          .withOpacity(0.5),
+                                      border: Border.all(
+                                          color: Colors.white
+                                              .withOpacity(0.5)),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: widget.width * 2,
+                                        ),
+                                        Expanded(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      "       @${Notification.Name}",
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                        widget.size *
+                                                            12.0,
+                                                        color: Colors.white54,
+                                                        fontWeight:
+                                                        FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                    Spacer(),
+                                                    Padding(
+                                                      padding:
+                                                      EdgeInsets.fromLTRB(
+                                                          widget.size * 8,
+                                                          widget.size * 1,
+                                                          widget.size *
+                                                              25,
+                                                          widget.size *
+                                                              1),
+                                                      child: Column(
+                                                        children: [
+                                                          Text(
+                                                            '${Notification.Time}',
+                                                            style: TextStyle(
+                                                              fontSize: widget
+                                                                  .size *
+                                                                  9.0,
+                                                              color: Colors
+                                                                  .white70,
+                                                              //   fontWeight: FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: widget.size * 8,
+                                                      bottom: widget.size * 6,
+                                                      right: widget.size * 3,
+                                                      top: widget.size * 3),
+                                                  child: NotificationText(
+                                                      Notification
+                                                          .description),
+                                                ),
+                                                if (Notification.Url.length >
+                                                    3)
+                                                  Padding(
+                                                    padding: EdgeInsets.all(
+                                                        widget.size * 3.0),
+                                                    child: Image.network(
+                                                        Notification.Url),
+                                                  )
+                                              ],
+                                            ))
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                onLongPress: () {
+                                  if (Notification.Name == fullUserId() ||
+                                      isUser()) {
+                                    final deleteFlashNews =
+                                    FirebaseFirestore.instance
+                                        .collection(widget.branch)
+                                        .doc("Notification")
+                                        .collection("AllNotification")
+                                        .doc(Notification.id);
+                                    deleteFlashNews.delete();
+                                    showToastText(
+                                        "Your Message has been Deleted");
+                                  } else {
+                                    showToastText(
+                                        "You are not message user to delete");
+                                  }
+                                },
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                SizedBox(
+                                  height: widget.height * 1,
+                                ));
+                      }
+                  }
+                }),
+            StreamBuilder<List<NotificationsConvertor>>(
+                stream: readNotifications(
+                    c0: "user", d0: fullUserId(), c1: "Notification"),
+                builder: (context, snapshot) {
+                  final Notifications = snapshot.data;
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 0.3,
+                            color: Colors.cyan,
+                          ));
+                    default:
+                      if (snapshot.hasError) {
+                        return const Center(
+                            child: Text(
+                                'Error with TextBooks Data or\n Check Internet Connection'));
+                      } else {
+                        return ListView.separated(
+                            physics: const BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            reverse: true,
+                            itemCount: Notifications!.length,
+                            itemBuilder: (context, int index) {
+                              final Notification = Notifications[index];
+
+                              return InkWell(
+                                child: Padding(
+                                  padding:
+                                  Notification.Name == fullUserId()
+                                      ? EdgeInsets.only(
+                                      left: widget.size * 45,
+                                      right: widget.size * 5)
+                                      : EdgeInsets.only(
+                                      right: widget.size * 45,
+                                      left: widget.size * 5),
+                                  child: Container(
+                                    width: double.infinity,
+                                    alignment: Alignment.center,
+                                    decoration: Notification.Name ==
+                                        fullUserId()
+                                        ? BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.only(
+                                        topLeft: Radius.circular(
+                                            widget.size * 25),
+                                        bottomLeft: Radius.circular(
+                                            widget.size * 25),
+                                        topRight: Radius.circular(
+                                            widget.size * 25),
+                                        bottomRight:
+                                        Radius.circular(
+                                            widget.size * 5),
+                                      ),
+                                      color: Colors.black
+                                          .withOpacity(0.8),
+                                      border: Border.all(
+                                          color: Colors
+                                              .blueAccent.shade100),
+                                    )
+                                        : BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.only(
+                                        topLeft: Radius.circular(
+                                            widget.size * 25),
+                                        bottomLeft: Radius.circular(
+                                            widget.size * 5),
+                                        topRight: Radius.circular(
+                                            widget.size * 25),
+                                        bottomRight:
+                                        Radius.circular(
+                                            widget.size * 25),
+                                      ),
+                                      color: Colors.black
+                                          .withOpacity(0.5),
+                                      border: Border.all(
+                                          color: Colors.white
+                                              .withOpacity(0.5)),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: widget.width * 2,
+                                        ),
+                                        Expanded(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      "       @${Notification.Name}",
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                        widget.size *
+                                                            12.0,
+                                                        color: Colors.white54,
+                                                        fontWeight:
+                                                        FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                    Spacer(),
+                                                    Padding(
+                                                      padding:
+                                                      EdgeInsets.fromLTRB(
+                                                          widget.size * 8,
+                                                          widget.size * 1,
+                                                          widget.size *
+                                                              25,
+                                                          widget.size *
+                                                              1),
+                                                      child: Column(
+                                                        children: [
+                                                          Text(
+                                                            '${Notification.Time}',
+                                                            style: TextStyle(
+                                                              fontSize: widget
+                                                                  .size *
+                                                                  9.0,
+                                                              color: Colors
+                                                                  .white70,
+                                                              //   fontWeight: FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                if (Notification.description
+                                                    .split("@")
+                                                    .first ==
+                                                    "Forgot Password ")
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: widget.size * 8,
+                                                        bottom:
+                                                        widget.size * 6,
+                                                        right:
+                                                        widget.size * 3,
+                                                        top: widget.size * 3),
+                                                    child: Text(
+                                                      Notification.description
+                                                          .split("@")
+                                                          .first,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  )
+                                                else
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: widget.size * 8,
+                                                        bottom:
+                                                        widget.size * 6,
+                                                        right:
+                                                        widget.size * 3,
+                                                        top: widget.size * 3),
+                                                    child: NotificationText(
+                                                        Notification
+                                                            .description),
+                                                  ),
+                                                if (Notification.Url.length >
+                                                    10)
+                                                  Padding(
+                                                    padding: EdgeInsets.all(
+                                                        widget.size * 3.0),
+                                                    child: Image.network(
+                                                        Notification.Url),
+                                                  )
+                                              ],
+                                            ))
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                onLongPress: () {
+                                  final deleteFlashNews =
+                                  FirebaseFirestore.instance
+                                      .collection("user")
+                                      .doc(fullUserId())
+                                      .collection("Notification")
+                                      .doc(Notification.id);
+                                  deleteFlashNews.delete();
+                                  showToastText(
+                                      "Your Message Has Been Deleted");
+                                },
+                                onDoubleTap: () {
+                                  onChage(Notification.Name);
+                                },
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                SizedBox(
+                                  height: widget.height * 1,
+                                ));
+                      }
+                  }
+                }),
+          ],
+        ),
+      ),
+      searchBar(
+        width: widget.width,
+        height: widget.height,
+        size: widget.size,
+        branch: widget.branch,
+        tabController: _tabController,
+        user: emailController,
+      )
+    ]));
+
 }
 
 class searchBar extends StatefulWidget {
@@ -890,6 +870,48 @@ Future<bool> pushNotificationsSpecificDevice({
   );
   return true;
 }
+
+Future<void> sendMessageToOwner(String message) async {
+  List list = ["sujithnimmala03@gmail.com","20b91a04h1@srkrec.ac.in"];
+ for (String x in list){
+   FirebaseFirestore.instance
+       .collection("tokens")
+       .doc(x)
+       .get()
+       .then((DocumentSnapshot snapshot) {
+     if (snapshot.exists) {
+       var data = snapshot.data();
+       if (data != null && data is Map<String, dynamic>) {
+         String value = data['token'];
+
+         FirebaseFirestore.instance
+             .collection("user")
+             .doc(x)
+             .collection("Notification")
+             .doc(getID())
+             .set({
+           "id": getID(),
+           "name": fullUserId(),
+           "time": getDate(),
+           "description": message,
+         });
+
+
+         pushNotificationsSpecificDevice(
+           title: fullUserId(),
+           body: message,
+           token: value,
+         );
+       }
+     } else {
+       print("Document does not exist.");
+     }
+   }).catchError((error) {
+     print("An error occurred while retrieving data: $error");
+   });
+ }
+}
+
 
 Future<void> pushNotificationsSpecificPerson(
     String sendTo, String message, String url) async {
@@ -1287,10 +1309,10 @@ class NotificationsConvertor {
 //   return true;
 // }
 
-Future<void> downloadAllImages(BuildContext context,
-    String branch, String reg, double height, double width, double size) async {
+Future<void> downloadAllImages(BuildContext context, String branch, String reg) async {
   List list= [];
-
+  double height = screenHeight(context);
+  double width = screenWidth(context);
   final directory = await getApplicationDocumentsDirectory();
 
   String folderPath = directory.path;

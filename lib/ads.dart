@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-// "ca-app-pub-7097300908994281/1371419626",
 
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 class CustomAdsBannerForPdfs extends StatefulWidget {
   @override
@@ -18,8 +16,7 @@ class _CustomAdsBannerForPdfsState extends State<CustomAdsBannerForPdfs> {
   void initState() {
     super.initState();
     _bannerAd = BannerAd(
-      adUnitId:
-          "ca-app-pub-7097300908994281/1371419626", // Replace with your ad unit id
+      adUnitId:AdHelper.bannerAdUnitId, // Replace with your ad unit id
       size: AdSize.banner,
       request: AdRequest(),
       listener: BannerAdListener(
@@ -53,7 +50,29 @@ class _CustomAdsBannerForPdfsState extends State<CustomAdsBannerForPdfs> {
   }
 }
 
+class AdHelper {
+  static String get bannerAdUnitId {
+    if (Platform.isAndroid) {
+      return 'ca-app-pub-7097300908994281/1371419626';
+    } else if (Platform.isIOS) {
+      return 'ca-app-pub-7097300908994281/4786642104';
+    } else {
+      throw new UnsupportedError('Unsupported platform');
+    }
+  }
+}
 
+class AdVideo {
+  static String get bannerAdUnitId {
+    if (Platform.isAndroid) {
+      return 'ca-app-pub-7097300908994281/7894809729';
+    } else if (Platform.isIOS) {
+      return 'ca-app-pub-7097300908994281/4786642104';
+    } else {
+      throw new UnsupportedError('Unsupported platform');
+    }
+  }
+}
 
 class DownloadScreen extends StatefulWidget {
   @override
@@ -71,7 +90,6 @@ class _DownloadScreenState extends State<DownloadScreen> {
     if (response.statusCode == 200) {
       final file = File('/path_to_your_file/your_file.zip'); // Replace with your desired file path
 
-      // Calculate total bytes to download
       final totalBytes = response.contentLength ?? 0;
 
       // Download and write data in chunks
@@ -123,6 +141,3 @@ class _DownloadScreenState extends State<DownloadScreen> {
   }
 }
 
-void main() {
-  runApp(MaterialApp(home: DownloadScreen()));
-}
