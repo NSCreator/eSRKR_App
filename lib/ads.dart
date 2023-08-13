@@ -49,7 +49,6 @@ class _CustomAdsBannerForPdfsState extends State<CustomAdsBannerForPdfs> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: _isBannerAdLoaded ? _bannerAd!.size.width.toDouble() : double.infinity,
       height: _isBannerAdLoaded ? _bannerAd.size.height.toDouble() : 50,
       child: AdWidget(ad: _bannerAd),
     );
