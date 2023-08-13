@@ -72,76 +72,104 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      title: 'eSRKR',
-      builder: (context, child) {
-
-        return MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaleFactor: 0.85,
-            ),
-            child: child!);
+    return WillPopScope(
+      onWillPop: () async {
+        final shouldPop = await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Do you want to go back?'),
+              actionsAlignment: MainAxisAlignment.spaceBetween,
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: const Text('Yes'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: const Text('No'),
+                ),
+              ],
+            );
+          },
+        );
+        return shouldPop!;
       },
-      home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return StreamBuilder<DocumentSnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection("user")
-                      .doc(fullUserId())
-                      .snapshots(),
-                  builder: (context, mainsnapshot) {
-                    switch (mainsnapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        return const Center(
-                            child: CircularProgressIndicator(
-                          strokeWidth: 0.3,
-                          color: Colors.cyan,
-                        ));
-                      default:
-                        {
-                          bool isTheir = false;
-                          try {
-                            if (mainsnapshot.data!.exists &&
-                                mainsnapshot.data!['reg']
-                                    .toString()
-                                    .isNotEmpty &&
-                                mainsnapshot.data!['branch']
-                                    .toString()
-                                    .isNotEmpty &&
-                                mainsnapshot.data!['index']
-                                    .toString()
-                                    .isNotEmpty ) {
-                              isTheir = true;
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        title: 'eSRKR',
+        builder: (context, child) {
+
+          return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaleFactor: 0.85,
+              ),
+              child: child!);
+        },
+        home: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection("user")
+                        .doc(fullUserId())
+                        .snapshots(),
+                    builder: (context, mainsnapshot) {
+                      switch (mainsnapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return const Center(
+                              child: CircularProgressIndicator(
+                            strokeWidth: 0.3,
+                            color: Colors.cyan,
+                          ));
+                        default:
+                          {
+                            bool isTheir = false;
+                            try {
+                              if (mainsnapshot.data!.exists &&
+                                  mainsnapshot.data!['reg']
+                                      .toString()
+                                      .isNotEmpty &&
+                                  mainsnapshot.data!['branch']
+                                      .toString()
+                                      .isNotEmpty &&
+                                  mainsnapshot.data!['index']
+                                      .toString()
+                                      .isNotEmpty ) {
+                                isTheir = true;
+                              }
+                            } catch (Exception) {
+                              isTheir = false;
                             }
-                          } catch (Exception) {
-                            isTheir = false;
+                            if (isTheir) {
+                              downloadAllImages(context,
+                                  mainsnapshot.data!["branch"].toString(),mainsnapshot.data!['reg'].toString());
+                              return HomePage(
+                                branch: mainsnapshot.data!["branch"].toString(),
+                                reg: mainsnapshot.data!['reg'].toString(),
+                                index: mainsnapshot.data!['index'],
+                                size: size(context),
+                              );
+                            } else {
+                              return Scaffold(
+                                backgroundColor: Color.fromRGBO(4, 48, 46, 1),
+                                body: SafeArea(child: branchYear()),
+                              );
+                            }
                           }
-                          if (isTheir) {
-                            downloadAllImages(context,
-                                mainsnapshot.data!["branch"].toString(),mainsnapshot.data!['reg'].toString());
-                            return HomePage(
-                              branch: mainsnapshot.data!["branch"].toString(),
-                              reg: mainsnapshot.data!['reg'].toString(),
-                              index: mainsnapshot.data!['index'],
-                              size: size(context),
-                            );
-                          } else {
-                            return Scaffold(
-                              backgroundColor: Color.fromRGBO(4, 48, 46, 1),
-                              body: SafeArea(child: branchYear()),
-                            );
-                          }
-                        }
-                    }
-                  });
-            } else {
-              return Scaffold(body: LoginPage());
-            }
-          }),
-      debugShowCheckedModeBanner: false,
+                      }
+                    });
+              } else {
+                return Scaffold(body: LoginPage());
+              }
+            }),
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }
