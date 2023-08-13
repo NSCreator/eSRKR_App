@@ -345,26 +345,24 @@ class _HomePageState extends State<HomePage> {
           primary: true,
         ),
         SliverAppBar(
-          expandedHeight: widget.size*30,
+          expandedHeight: widget.size*20,
+
           backgroundColor: Colors.black.withOpacity(0.8),
-          flexibleSpace: Padding(
-            padding:  EdgeInsets.all(widget.size*3.0),
-            child: TabBar(
-              labelStyle: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: widget.size *20
-              ),
-              isScrollable: true,
-              tabs: [
-                Tab(text: 'Home',),
-                Tab(text: 'Regulation'),
-                Tab(text: 'Favorites'),
-                Tab(text: 'Books'),
-                Tab(text: 'News'),
-                Tab(text: 'Updates'),
-              ],
+          flexibleSpace: TabBar(
+            labelStyle: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: widget.size *20
             ),
+            isScrollable: true,
+            tabs: [
+              Tab(text: 'Home',),
+              Tab(text: 'Regulation'),
+              Tab(text: 'Favorites'),
+              Tab(text: 'Books'),
+              Tab(text: 'News'),
+              Tab(text: 'Updates'),
+            ],
           ),
           floating: false,
           primary: false,
@@ -379,46 +377,46 @@ class _HomePageState extends State<HomePage> {
           SingleChildScrollView(
             child: Column(
               children: [
-               Row(
-                  children: [
-                    ElevatedButton(onPressed: (){
-                      UpdateConvertor newUpdate = UpdateConvertor(
-                        heading: 'Crux Event', photoUrl: 'https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/update%2F2023-07-15%2013%3A15%3A05.616088.image?alt=media&token=8385ca9b-ad0e-4966-961f-b21cf8084519',
-                        link: 'https://docs.google.com/forms/d/e/1FAIpQLSeUPtLr2bP2f_Qih7keGpLYPidVENhZiOhecpTQz1HbOPLPwQ/viewform',
-                        branch: '', description: 'Registrations',
-                        // ... other fields ...
-                      );
-                      UpdateConvertorUtil.addUpdateConvertor(newUpdate).then((_) {
-
-                        showToastText('Update added successfully');
-
-                      }).catchError((error) {
-
-                        print('Error adding update: $error');
-                      });
-
-                    }, child: Text("skjhdlksajd")),
-                    ElevatedButton(onPressed: (){
-                      BranchNewConvertor newUpdate = BranchNewConvertor(
-                          heading: 'CRUX',
-                          photoUrl: 'https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/ece%2Fnews%2F2023-07-14%2020%3A35%3A11.794644.image?alt=media&token=d5fdc618-7e82-4b48-8b5b-e7169f10bc97',
-                          description: 'From ECE Department',
-                          link: ''
-
-                      );
-                      BranchNewConvertorUtil.addUpdateConvertor(newUpdate).then((_) {
-
-                        showToastText('Update added successfully');
-
-                      }).catchError((error) {
-
-                        print('Error adding update: $error');
-                      });
-
-                    },
-                        child: Text("skjhdlksajd")),
-                  ],
-                ),
+               // Row(
+               //    children: [
+               //      ElevatedButton(onPressed: (){
+               //        UpdateConvertor newUpdate = UpdateConvertor(
+               //          heading: 'Crux Event', photoUrl: 'https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/update%2F2023-07-15%2013%3A15%3A05.616088.image?alt=media&token=8385ca9b-ad0e-4966-961f-b21cf8084519',
+               //          link: 'https://docs.google.com/forms/d/e/1FAIpQLSeUPtLr2bP2f_Qih7keGpLYPidVENhZiOhecpTQz1HbOPLPwQ/viewform',
+               //          branch: '', description: 'Registrations',
+               //          // ... other fields ...
+               //        );
+               //        UpdateConvertorUtil.addUpdateConvertor(newUpdate).then((_) {
+               //
+               //          showToastText('Update added successfully');
+               //
+               //        }).catchError((error) {
+               //
+               //          print('Error adding update: $error');
+               //        });
+               //
+               //      }, child: Text("skjhdlksajd")),
+               //      ElevatedButton(onPressed: (){
+               //        BranchNewConvertor newUpdate = BranchNewConvertor(
+               //            heading: 'CRUX',
+               //            photoUrl: 'https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/ece%2Fnews%2F2023-07-14%2020%3A35%3A11.794644.image?alt=media&token=d5fdc618-7e82-4b48-8b5b-e7169f10bc97',
+               //            description: 'From ECE Department',
+               //            link: ''
+               //
+               //        );
+               //        BranchNewConvertorUtil.addUpdateConvertor(newUpdate).then((_) {
+               //
+               //          showToastText('Update added successfully');
+               //
+               //        }).catchError((error) {
+               //
+               //          print('Error adding update: $error');
+               //        });
+               //
+               //      },
+               //          child: Text("skjhdlksajd")),
+               //    ],
+               //  ),
                 FutureBuilder<List<UpdateConvertor>>(
                   future: UpdateConvertorUtil.getUpdateConvertorList(),
                   builder: (context, snapshot) {
@@ -882,14 +880,14 @@ class _HomePageState extends State<HomePage> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(widget.size *10),
                         border:
-                        Border.all(color: Colors.white30)),
+                        Border.all(color: Colors.white10)),
                     child: Padding(
                       padding:  EdgeInsets.symmetric(
                           vertical: widget.size *3, horizontal:widget.size * 15),
                       child: Text(
                         "Your Regulation : ${widget.reg}",
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.white38,
                             fontSize: widget.size *25,
                             fontWeight: FontWeight.w500),
                       ),
@@ -1136,7 +1134,7 @@ class _HomePageState extends State<HomePage> {
                                             "Theory",
                                             style: TextStyle(
                                                 color: Colors.white,
-                                                fontSize: widget.size*40,
+                                                fontSize: widget.size*30,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           InkWell(
@@ -1162,7 +1160,7 @@ class _HomePageState extends State<HomePage> {
                                                   style: TextStyle(
                                                       color: Colors
                                                           .white,
-                                                      fontSize:  widget.size *25,
+                                                      fontSize:  widget.size *20,
                                                       fontWeight:
                                                       FontWeight
                                                           .w500),
@@ -1227,7 +1225,6 @@ class _HomePageState extends State<HomePage> {
                                         ],
                                       ),
                                       SizedBox(height: widget.size *15,),
-                                      Text("${Width(context)}",style: TextStyle(color: Colors.white),),
                                       GridView.builder(
                                         physics:
                                         const BouncingScrollPhysics(),
@@ -1235,8 +1232,9 @@ class _HomePageState extends State<HomePage> {
                                         gridDelegate:
                                         SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisSpacing:
-                                          widget.size * 8,
-
+                                          widget.size * 15,
+                                          
+                                          childAspectRatio: 7/5,
                                           crossAxisCount: Width(context)>800?3:2,
                                         ),
                                         itemCount: filteredItems
@@ -1340,151 +1338,6 @@ class _HomePageState extends State<HomePage> {
                                                           .easeOut,
                                                     ),
                                                   ),
-                                                ),
-                                                SizedBox(height: widget.size *5,),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.black
-                                                              .withOpacity(0.3),
-                                                          border: Border.all(
-                                                              color:
-                                                              Colors.white10),
-                                                          borderRadius:
-                                                          BorderRadius.circular(
-                                                              widget.size * 15)),
-                                                      child: Padding(
-                                                        padding: EdgeInsets.symmetric(vertical: widget.size *3,horizontal:widget.size * 8),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                          children: [
-
-                                                            InkWell(
-                                                              child: StreamBuilder<
-                                                                  DocumentSnapshot>(
-                                                                stream: FirebaseFirestore
-                                                                    .instance
-                                                                    .collection(
-                                                                    'user')
-                                                                    .doc(
-                                                                    fullUserId())
-                                                                    .collection(
-                                                                    "FavouriteSubject")
-                                                                    .doc(SubjectsData.id)
-                                                                    .snapshots(),
-                                                                builder: (context,
-                                                                    snapshot) {
-                                                                  if (snapshot
-                                                                      .hasData) {
-                                                                    if (snapshot
-                                                                        .data!
-                                                                        .exists) {
-                                                                      return Row(
-                                                                        children: [
-                                                                          Icon(
-                                                                              Icons
-                                                                                  .library_add_check,
-                                                                              size: widget.size *
-                                                                                  20,
-                                                                              color:
-                                                                              Colors.cyanAccent.withOpacity(0.5)),
-                                                                          Text(
-                                                                            " Saved",
-                                                                            style: TextStyle(
-                                                                                color: Colors.white.withOpacity(0.5),
-                                                                                fontSize: widget.size * 18),
-                                                                          )
-                                                                        ],
-                                                                      );
-                                                                    } else {
-                                                                      return Row(
-                                                                        children: [
-                                                                          Icon(
-                                                                            Icons
-                                                                                .library_add_outlined,
-                                                                            size: widget.size *
-                                                                                20,
-                                                                            color:
-                                                                            Colors.cyanAccent.withOpacity(0.5),
-                                                                          ),
-                                                                          Text(
-                                                                            " Save",
-                                                                            style: TextStyle(
-                                                                                color: Colors.white.withOpacity(0.5),
-                                                                                fontSize: widget.size * 18),
-                                                                          )
-                                                                        ],
-                                                                      );
-                                                                    }
-                                                                  } else {
-                                                                    return Container();
-                                                                  }
-                                                                },
-                                                              ),
-                                                              onTap: () async {
-                                                                try {
-                                                                  await FirebaseFirestore
-                                                                      .instance
-                                                                      .collection(
-                                                                      'user')
-                                                                      .doc(
-                                                                      fullUserId())
-                                                                      .collection(
-                                                                      "FavouriteSubject")
-                                                                      .doc(SubjectsData.id)
-                                                                      .get()
-                                                                      .then(
-                                                                          (docSnapshot) {
-                                                                        if (docSnapshot
-                                                                            .exists) {
-                                                                          FirebaseFirestore
-                                                                              .instance
-                                                                              .collection(
-                                                                              'user')
-                                                                              .doc(
-                                                                              fullUserId())
-                                                                              .collection(
-                                                                              "FavouriteSubject")
-                                                                              .doc(SubjectsData.id)
-                                                                              .delete();
-                                                                          showToastText(
-                                                                              "Removed from saved list");
-                                                                        } else {
-                                                                          FavouriteSubjects(
-                                                                              branch: widget
-                                                                                  .branch,
-                                                                              SubjectId:
-                                                                              SubjectsData.id,
-                                                                              name: SubjectsData.heading,
-                                                                              description:SubjectsData.description,
-                                                                              photoUrl:SubjectsData.PhotoUrl);
-                                                                          showToastText(
-                                                                              "${SubjectsData.heading} in favorites");
-                                                                        }
-                                                                      });
-                                                                } catch (e) {
-                                                                  print(e);
-                                                                }
-                                                              },
-                                                            )
-
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: widget.size *5,),
-                                                    downloadAllPdfs(branch: widget.branch,SubjectID: SubjectsData.id,pdfs:[], size: widget.size,),
-                                                  ],
                                                 ),
                                               ],
                                             ),
@@ -1651,7 +1504,7 @@ class _HomePageState extends State<HomePage> {
                                                   style: TextStyle(
                                                       color: Colors
                                                           .white,
-                                                      fontSize: widget.size *30,
+                                                      fontSize: widget.size *20,
                                                       fontWeight:
                                                       FontWeight
                                                           .w500),
@@ -1745,20 +1598,18 @@ class _HomePageState extends State<HomePage> {
                                             .split("/")
                                             .last;
                                         final file = File(
-                                            "${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
+                                            "${folderPath}/${widget.branch.toLowerCase()}_labsubjects/$name");
                                         return InkWell(
                                           child: Column(
                                             children: [
                                               AspectRatio(
-                                                aspectRatio:
-                                                16 /
-                                                    8,
+                                                aspectRatio: 15 / 7,
                                                 child:
                                                 Container(
                                                   decoration:
                                                   BoxDecoration(
                                                     borderRadius:
-                                                    BorderRadius.all(Radius.circular(widget.size * 8.0)),
+                                                    BorderRadius.all(Radius.circular(widget.size * 25.0)),
                                                     color:
                                                     Colors.black,
                                                     image:
@@ -1773,12 +1624,12 @@ class _HomePageState extends State<HomePage> {
                                                     Alignment.bottomCenter,
                                                     child:
                                                     Container(
-                                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(widget.size * 8), color: Colors.black.withOpacity(0.8)),
+                                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(widget.size * 20), color: Colors.black),
                                                       child: Padding(
-                                                        padding: EdgeInsets.all(widget.size * 5),
+                                                        padding: EdgeInsets.symmetric(vertical:widget.size * 5,horizontal: widget.size *10),
                                                         child: Text(
                                                           SubjectsData.heading,
-                                                          style: TextStyle(color: Colors.white, fontSize: widget.size * 25, fontWeight: FontWeight.w500),
+                                                          style: TextStyle(color: Colors.white, fontSize: widget.size * 30, fontWeight: FontWeight.w600),
                                                         ),
                                                       ),
                                                     ),
@@ -1792,201 +1643,43 @@ class _HomePageState extends State<HomePage> {
                                               Container(
                                                 width: double
                                                     .infinity,
-                                                height:widget.size *
+                                                height: widget.size *
                                                     20,
                                                 decoration:
                                                 BoxDecoration(
                                                   borderRadius:
                                                   BorderRadius.all(Radius.circular(widget.size *
                                                       8.0)),
-                                                  color: Colors
-                                                      .black38,
-                                                ),
-                                                child: Marquee(
-                                                  text: SubjectsData
-                                                      .description.isNotEmpty
-                                                      ? SubjectsData.description
-                                                      : "No Full Name",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: widget.size * 18),
-                                                  scrollAxis: Axis.horizontal,
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  blankSpace: 20.0,
-                                                  // Set the spacing between the end and the beginning of the text
-                                                  velocity: 50.0,
-                                                  // Set the scrolling speed
-                                                  pauseAfterRound:
-                                                  Duration(seconds: 1),
-                                                  // Set the pause duration after each round
-                                                  startPadding: 0.0,
-                                                  // Set the initial padding at the start of the text
-                                                  accelerationDuration:
-                                                  Duration(seconds: 1),
-                                                  // Set the duration for text acceleration
-                                                  accelerationCurve:
-                                                  Curves.linear,
-                                                  // Set the curve for text acceleration
-                                                  decelerationDuration:
-                                                  Duration(milliseconds: 500),
-                                                  // Set the duration for text deceleration
-                                                  decelerationCurve: Curves
-                                                      .easeOut, // Set the curve for text deceleration
-                                                ),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.black
-                                                            .withOpacity(0.3),
-                                                        border: Border.all(
-                                                            color:
-                                                            Colors.white38),
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            widget.size * 15)),
-                                                    child: Padding(
-                                                      padding: EdgeInsets.symmetric(vertical:widget.size * 3,horizontal: widget.size *8),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                        children: [
 
-                                                          InkWell(
-                                                            child: StreamBuilder<
-                                                                DocumentSnapshot>(
-                                                              stream: FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                  'user')
-                                                                  .doc(
-                                                                  fullUserId())
-                                                                  .collection(
-                                                                  "FavouriteSubject")
-                                                                  .doc(SubjectsData.id)
-                                                                  .snapshots(),
-                                                              builder: (context,
-                                                                  snapshot) {
-                                                                if (snapshot
-                                                                    .hasData) {
-                                                                  if (snapshot
-                                                                      .data!
-                                                                      .exists) {
-                                                                    return Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                            Icons
-                                                                                .library_add_check,
-                                                                            size: widget.size *
-                                                                                23,
-                                                                            color:
-                                                                            Colors.cyanAccent),
-                                                                        Text(
-                                                                          " Saved",
-                                                                          style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 20),
-                                                                        )
-                                                                      ],
-                                                                    );
-                                                                  } else {
-                                                                    return Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                          Icons
-                                                                              .library_add_outlined,
-                                                                          size: widget.size *
-                                                                              23,
-                                                                          color:
-                                                                          Colors.cyanAccent,
-                                                                        ),
-                                                                        Text(
-                                                                          " Save",
-                                                                          style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 20),
-                                                                        )
-                                                                      ],
-                                                                    );
-                                                                  }
-                                                                } else {
-                                                                  return Container();
-                                                                }
-                                                              },
-                                                            ),
-                                                            onTap: () async {
-                                                              try {
-                                                                await FirebaseFirestore
-                                                                    .instance
-                                                                    .collection(
-                                                                    'user')
-                                                                    .doc(
-                                                                    fullUserId())
-                                                                    .collection(
-                                                                    "FavouriteSubject")
-                                                                    .doc(SubjectsData.id)
-                                                                    .get()
-                                                                    .then(
-                                                                        (docSnapshot) {
-                                                                      if (docSnapshot
-                                                                          .exists) {
-                                                                        FirebaseFirestore
-                                                                            .instance
-                                                                            .collection(
-                                                                            'user')
-                                                                            .doc(
-                                                                            fullUserId())
-                                                                            .collection(
-                                                                            "FavouriteSubject")
-                                                                            .doc(SubjectsData.id)
-                                                                            .delete();
-                                                                        showToastText(
-                                                                            "Removed from saved list");
-                                                                      } else {
-                                                                        FavouriteSubjects(
-                                                                            branch: widget
-                                                                                .branch,
-                                                                            SubjectId:
-                                                                            SubjectsData.id,
-                                                                            name: SubjectsData.heading,
-                                                                            description:SubjectsData.description,
-                                                                            photoUrl:SubjectsData.PhotoUrl);
-                                                                        showToastText(
-                                                                            "${SubjectsData.heading} in favorites");
-                                                                      }
-                                                                    });
-                                                              } catch (e) {
-                                                                print(e);
-                                                              }
-                                                            },
-                                                          )
-
-                                                        ],
-                                                      ),
-                                                    ),
+                                                ),
+                                                child: Padding(
+                                                  padding:  EdgeInsets.symmetric(horizontal:widget.size * 6),
+                                                  child: Marquee(
+                                                    text: SubjectsData
+                                                        .description.isNotEmpty
+                                                        ? SubjectsData.description
+                                                        : "No Full Name",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: widget.size * 18),
+                                                    scrollAxis: Axis.horizontal,
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                    blankSpace: 20.0,
+                                                    velocity: 50.0,
+                                                    pauseAfterRound:
+                                                    Duration(seconds: 1),
+                                                    startPadding: 0.0,
+                                                    accelerationDuration:
+                                                    Duration(seconds: 1),
+                                                    accelerationCurve:
+                                                    Curves.linear,
+                                                    decelerationDuration:
+                                                    Duration(milliseconds: 500),
+                                                    decelerationCurve: Curves
+                                                        .easeOut,
                                                   ),
-                                                  SizedBox(width:widget.size * 5,),
-                                                  Stack(
-                                                    alignment: Alignment.center,
-                                                    children: <Widget>[
-                                                      CircularProgressIndicator(
-                                                        strokeWidth: 2,
-                                                        value: 0.1,
-                                                      ),
-                                                      Icon(Icons.download_for_offline_outlined, size: widget.size *40.0),
-                                                    ],
-                                                  ),
-                                                ],
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -2924,7 +2617,7 @@ class _ImageZoomState extends State<ImageZoom> {
               ):PhotoView(imageProvider: NetworkImage(widget.url)),
               Align(
                 alignment: Alignment.topLeft,
-                child: backButton(size: widget.size , ),
+                child: backButton(size: widget.size ),
               )
             ],
           ),

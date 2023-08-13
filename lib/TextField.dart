@@ -2121,16 +2121,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
     return backGroundImage(
         child: Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            backButton(size: size(context)),
-            Text("Create Unit", style: AppBarHeadingTextStyle),
-            SizedBox(
-              width: 45,
-            )
-          ],
-        ),
+        backButton(size: size(context),text: "Create Unit",),
         Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

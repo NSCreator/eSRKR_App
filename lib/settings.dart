@@ -76,25 +76,7 @@ class _settingsState extends State<settings> {
   Widget build(BuildContext context) {
     return backGroundImage(child: Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            backButton(size:widget.size),
-            Padding(
-              padding: EdgeInsets.only(bottom: widget.width * 10),
-              child: Text(
-                "Settings",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: widget.size * 30,
-                    fontWeight: FontWeight.w500),
-              ),
-            ),
-            SizedBox(
-              width: widget.size *45,
-            )
-          ],
-        ),
+        backButton(size:widget.size,text: "Settings",),
         Padding(
           padding: EdgeInsets.all(widget.size * 8.0),
           child: Container(

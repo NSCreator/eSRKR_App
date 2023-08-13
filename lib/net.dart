@@ -319,25 +319,7 @@ class _supportListState extends State<supportList> {
       body: SafeArea(
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                backButton(size: size(context),),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    "Supported List",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w600),
-                  ),
-                ),
-                SizedBox(
-                  width: 45,
-                )
-              ],
-            ),
+            backButton(size: size(context),text: "Supported List",),
             !commentsIds.contains(fullUserId())
                 ? Row(
                     children: [

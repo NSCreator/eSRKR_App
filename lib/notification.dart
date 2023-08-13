@@ -88,21 +88,7 @@ class _notificationsState extends State<notifications>
 
   @override
   Widget build(BuildContext context) =>backGroundImage(child: Column(children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          backButton(size: widget.size,),
-          Padding(
-            padding: EdgeInsets.only(bottom: widget.width * 10),
-            child: Text(
-              "Notifications",
-              style: TextStyle(
-                  color: Colors.white, fontSize: widget.size * 30,fontWeight: FontWeight.w500),
-            ),
-          ),
-          SizedBox(width: 45,)
-        ],
-      ),
+      backButton(size: widget.size,text: "Notifications",),
       Container(
         color: Colors.transparent,
         height: widget.height * 40,

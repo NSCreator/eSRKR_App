@@ -770,25 +770,7 @@ class _SubjectsState extends State<Subjects> {
         top: 0,
         left: 0,
         right: 0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            backButton(size:widget.size ),
-            Padding(
-              padding: EdgeInsets.only(bottom: widget.width * 10),
-              child: Text(
-                "${widget.branch} Subjects",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: widget.size * 30,
-                    fontWeight: FontWeight.w600),
-              ),
-            ),
-            SizedBox(
-              width: 45,
-            )
-          ],
-        ),
+        child: backButton(size:widget.size ,text: "${widget.branch} Subjects",),
       )
     ]));
   }
@@ -1226,25 +1208,7 @@ class _LabSubjectsState extends State<LabSubjects> {
         top: 0,
         left: 0,
         right: 0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            backButton(size: widget.size ,),
-            Padding(
-              padding: EdgeInsets.only(bottom: widget.width * 10),
-              child: Text(
-                "${widget.branch} Lab Subjects",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: widget.size * 30,
-                    fontWeight: FontWeight.w600),
-              ),
-            ),
-            SizedBox(
-              width: 45,
-            )
-          ],
-        ),
+        child: backButton(size: widget.size ,text: "${widget.branch} Lab Subjects",),
       )
     ]));
   }
@@ -1423,6 +1387,7 @@ class _textBookSubState extends State<textBookSub> {
   @override
   Widget build(BuildContext context) {
     final file = File("${folderPath}/pdfs/${getFileName(widget.data.link)}");
+    final imageFile = File("${folderPath}/${widget.branch.toLowerCase()}_books/${getFileName(widget.data.photoUrl)}");
 
     return Padding(
       padding: EdgeInsets.only(
@@ -1561,8 +1526,8 @@ class _textBookSubState extends State<textBookSub> {
             child: SizedBox(
               height: widget.height * 160,
               width: widget.size * 120,
-              child: Image.network(
-                widget.data.photoUrl,
+              child: Image.file(
+                imageFile,
                 fit: BoxFit.cover,
               ),
             ),
@@ -2041,8 +2006,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
     headerSliverBuilder: (context, innerBoxIsScrolled) => [
       SliverAppBar(
         automaticallyImplyLeading: false,
-        expandedHeight: widget.size*170.0,
-        collapsedHeight: widget.size*170,
+        expandedHeight: widget.size*180.0,
+        collapsedHeight: widget.size*180,
         backgroundColor: Colors.transparent,
         flexibleSpace: Padding(
           padding: EdgeInsets.all(widget.size * 8.0),
@@ -2050,7 +2015,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              backButton(size: widget.size ,),
+              backButton(size: widget.size ,text: widget.name,),
               Row(
                 children: [
                   Flexible(

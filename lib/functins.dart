@@ -104,7 +104,9 @@ Future<void> showToastText(String message) async {
 class backButton extends StatefulWidget {
   Color color;
   double size;
-  backButton({ this.color=Colors.white,required this.size});
+  String text;
+
+  backButton({ this.color=Colors.white,required this.size, this.text=""});
   @override
   State<backButton> createState() => _backButtonState();
 }
@@ -112,14 +114,35 @@ class backButton extends StatefulWidget {
 class _backButtonState extends State<backButton> {
   @override
   Widget build(BuildContext context) {
-    return  InkWell(
-      child: Padding(
-        padding:  EdgeInsets.only(left:widget.size * 10,right: widget.size * 10),
-        child: Icon(Icons.arrow_back,color: widget.color,size:widget.size *  30,),
+    return  Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          InkWell(
+            child: Padding(
+              padding:  EdgeInsets.only(left:widget.size * 10,right: widget.size * 10),
+              child: Icon(Icons.arrow_back,color: widget.color,size:widget.size *  30,),
+            ),
+            onTap: (){
+              Navigator.pop(context);
+            },
+          ),
+         if(widget.text.isNotEmpty) Padding(
+            padding: EdgeInsets.only(bottom: widget.size * 10),
+            child: Text(
+              widget.text,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: widget.size * 30,
+                  fontWeight: FontWeight.w600),
+            ),
+          ),
+          if(widget.text.isNotEmpty)SizedBox(
+            width: 45,
+          )
+        ],
       ),
-      onTap: (){
-        Navigator.pop(context);
-      },
     );
   }
 }
