@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:srkr_study_app/functins.dart';
 import 'ads.dart';
 
 class PdfViewerPage extends StatefulWidget {
@@ -135,9 +136,16 @@ class _PdfViewerPageState extends State<PdfViewerPage>
                       controller.complete(pdfViewController);
                     },
                   ),
+
             Align(
                 alignment: Alignment.bottomCenter,
                 child: CustomAdsBannerForPdfs()),
+            Positioned(
+              left: 0,
+
+              top: 50,
+              child: backButton(color: Colors.black,size:size(context) ,),
+            ),
             if (isExpand)
               Positioned(
                 left: 0,

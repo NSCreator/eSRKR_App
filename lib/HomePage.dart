@@ -14,6 +14,7 @@ import 'package:srkr_study_app/search%20bar.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'add subjects.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'ads.dart';
 import 'favorites.dart';
 import 'functins.dart';
 import 'main.dart';
@@ -54,17 +55,16 @@ class HomePage extends StatefulWidget {
   final String reg;
   final int index;
   final double size;
-  final double height;
-  final double width;
+
 
   const HomePage(
       {Key? key,
       required this.branch,
       required this.reg,
       required this.index,
-      required this.width,
+
       required this.size,
-      required this.height})
+     })
       : super(key: key);
 
   @override
@@ -98,9 +98,11 @@ class _HomePageState extends State<HomePage> {
     child: NestedScrollView(
       headerSliverBuilder: (context, innerBoxIsScrolled) => [
         SliverAppBar(
+          expandedHeight: widget.size*55,
+          collapsedHeight: widget.size*55,
           backgroundColor: Colors.transparent,
           flexibleSpace: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding:  EdgeInsets.all(widget.size *8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -110,20 +112,20 @@ class _HomePageState extends State<HomePage> {
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.white10,
-                            borderRadius: BorderRadius.circular(25),
+                            borderRadius: BorderRadius.circular(widget.size *25),
                             border: Border.all(color: Colors.white54),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding:  EdgeInsets.all(widget.size *3.0),
                             child: Icon(
                               Icons.settings,
                               color: Colors.white70,
-                              size: 30,
+                              size: widget.size *30,
                             ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 5),
+                          padding:  EdgeInsets.only(left: widget.size *5),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -155,8 +157,8 @@ class _HomePageState extends State<HomePage> {
                           pageBuilder: (context, animation,
                               secondaryAnimation) =>
                               settings(
-                                width: widget.width,
-                                height: widget.height,
+                                width: widget.size ,
+                                height: widget.size,
                                 size: widget.size,
                                 index: widget.index,
                                 reg: widget.reg,
@@ -218,9 +220,9 @@ class _HomePageState extends State<HomePage> {
                   child: Text(
                     "eSRKR",
                     style: TextStyle(
-                      fontSize: 28.0,
+                      fontSize: widget.size *28.0,
                       color: Color.fromRGBO(192, 237, 252, 1),
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -230,15 +232,15 @@ class _HomePageState extends State<HomePage> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white10,
-                          borderRadius: BorderRadius.circular(25),
+                          borderRadius: BorderRadius.circular(widget.size *25),
                           border: Border.all(color: Colors.white54),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(3.0),
+                          padding:  EdgeInsets.all(widget.size *3.0),
                           child: Icon(
                             Icons.search,
                             color: Colors.white70,
-                            size: 30,
+                            size: widget.size *30,
                           ),
                         ),
                       ),
@@ -253,9 +255,9 @@ class _HomePageState extends State<HomePage> {
                                 MyAppq(
                                   branch: widget.branch,
                                   reg: widget.reg,
-                                  width: widget.width,
+                                  width: widget.size ,
                                   size: widget.size,
-                                  height: widget.height,
+                                  height: widget.size ,
                                 ),
                             transitionsBuilder: (context, animation,
                                 secondaryAnimation, child) {
@@ -280,21 +282,21 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     SizedBox(
-                      width: 10,
+                      width: widget.size *10,
                     ),
                     InkWell(
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white10,
-                          borderRadius: BorderRadius.circular(25),
+                          borderRadius: BorderRadius.circular(widget.size *25),
                           border: Border.all(color: Colors.white54),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(3.0),
+                          padding:  EdgeInsets.all(widget.size *3.0),
                           child: Icon(
                             Icons.notifications_active,
                             color: Colors.white70,
-                            size: 30,
+                            size: widget.size *30,
                           ),
                         ),
                       ),
@@ -307,9 +309,9 @@ class _HomePageState extends State<HomePage> {
                             pageBuilder: (context, animation,
                                 secondaryAnimation) =>
                                 notifications(
-                                  width: widget.width,
+                                  width: widget.size ,
                                   size: widget.size,
-                                  height: widget.height,
+                                  height: widget.size ,
                                   branch: widget.branch,
                                 ),
                             transitionsBuilder: (context, animation,
@@ -343,17 +345,26 @@ class _HomePageState extends State<HomePage> {
           primary: true,
         ),
         SliverAppBar(
-          backgroundColor: Colors.black.withOpacity(0.5),
-          flexibleSpace: TabBar(
-            isScrollable: true,
-            tabs: [
-              Tab(text: 'Home'),
-              Tab(text: 'Regulation'),
-              Tab(text: 'Favorites'),
-              Tab(text: 'Books'),
-              Tab(text: 'News'),
-              Tab(text: 'Updates'),
-            ],
+          expandedHeight: widget.size*30,
+          backgroundColor: Colors.black.withOpacity(0.8),
+          flexibleSpace: Padding(
+            padding:  EdgeInsets.all(widget.size*3.0),
+            child: TabBar(
+              labelStyle: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: widget.size *20
+              ),
+              isScrollable: true,
+              tabs: [
+                Tab(text: 'Home',),
+                Tab(text: 'Regulation'),
+                Tab(text: 'Favorites'),
+                Tab(text: 'Books'),
+                Tab(text: 'News'),
+                Tab(text: 'Updates'),
+              ],
+            ),
           ),
           floating: false,
           primary: false,
@@ -364,6 +375,7 @@ class _HomePageState extends State<HomePage> {
       body: TabBarView(
         physics: BouncingScrollPhysics(),
         children: [
+
           SingleChildScrollView(
             child: Column(
               children: [
@@ -437,21 +449,21 @@ class _HomePageState extends State<HomePage> {
 
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      vertical:  10,
-                                      horizontal: 15),
+                                      vertical: widget.size * 10,
+                                      horizontal: widget.size *15),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                           "New Updates",
 
-                                          style:secondHeadingTextStyle()) ,
+                                          style:secondHeadingTextStyle(size: widget.size)) ,
 
                                     ],
                                   ),
                                 ),
                                 Container(
-                                  height: 95,
+                                  height: widget.size *95,
                                   child: ListView.builder(
                                     physics: const BouncingScrollPhysics(),
                                     scrollDirection: Axis.horizontal,
@@ -467,15 +479,15 @@ class _HomePageState extends State<HomePage> {
 
                                       return Padding(
                                         padding:
-                                        EdgeInsets.only(left: 10),
+                                        EdgeInsets.only(left: widget.size *10),
                                         child: InkWell(
                                           child: Container(
-                                            padding: EdgeInsets.all(5),
+                                            padding: EdgeInsets.all(widget.size *5),
                                             width: Width(context) / 1.35,
                                             decoration: BoxDecoration(
                                               color: Colors.black.withOpacity(0.8),
                                               borderRadius: BorderRadius.circular(
-                                                   15),
+                                                  widget.size *15),
                                               border: Border.all(color: Colors.white10),
                                             ),
                                             child: Column(
@@ -483,12 +495,12 @@ class _HomePageState extends State<HomePage> {
                                                 Row(
                                                   children: [
                                                     Container(
-                                                      width:35,
-                                                      height:  35,
+                                                      width:widget.size *35,
+                                                      height: widget.size * 35,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                         BorderRadius.circular(
-                                                            17),
+                                                            widget.size *17),
                                                         image: DecorationImage(
                                                           image: FileImage(file),
                                                           fit: BoxFit.cover,
@@ -499,13 +511,13 @@ class _HomePageState extends State<HomePage> {
                                                       child: Padding(
                                                         padding: EdgeInsets.symmetric(
                                                             horizontal:
-                                                             5),
+                                                            widget.size *5),
                                                         child: Text(
                                                           BranchNew.heading,
                                                           style: TextStyle(
                                                               color: Colors.white,
                                                               fontSize:
-                                                             20,
+                                                              widget.size *20,
                                                               fontWeight:
                                                               FontWeight.w500),
                                                         ),
@@ -515,24 +527,24 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                                 Padding(
                                                   padding: EdgeInsets.only(
-                                                      left: 45,
-                                                      right:10,
-                                                      bottom: 5),
+                                                      left: widget.size *45,
+                                                      right:widget.size *10,
+                                                      bottom:widget.size * 5),
                                                   child: Row(
                                                     children: [
                                                       Text(
                                                         BranchNew.description,
                                                         style: TextStyle(
                                                             color: Colors.white70,
-                                                            fontSize:  15),
+                                                            fontSize:  widget.size *15),
                                                       ),
                                                     ],
                                                   ),
                                                 ),
                                                 Padding(
                                                   padding: EdgeInsets.only(
-                                                      left:40,
-                                                      right:  10),
+                                                      left:widget.size *40,
+                                                      right: widget.size * 10),
                                                   child: Row(
                                                     mainAxisAlignment:
                                                     MainAxisAlignment.spaceBetween,
@@ -540,16 +552,16 @@ class _HomePageState extends State<HomePage> {
                                                       InkWell(
                                                         child: Container(
                                                           decoration: BoxDecoration(
-                                                              borderRadius: BorderRadius.circular(8),
+                                                              borderRadius: BorderRadius.circular(widget.size *8),
                                                               border: Border.all(color: Colors.white30)
                                                           ),
                                                           child: Padding(
-                                                            padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                                            padding:  EdgeInsets.symmetric(vertical: widget.size *3,horizontal: widget.size *8),
                                                             child: Text("Remove",
                                                               style: TextStyle(
                                                                   color: Colors.red,
                                                                   fontSize:
-                                                                  18),
+                                                                  widget.size *18),
                                                             ),
                                                           ),
                                                         ),
@@ -575,13 +587,13 @@ class _HomePageState extends State<HomePage> {
                                                         ),
                                                       Padding(
                                                         padding: EdgeInsets.only(
-                                                            top:  5),
+                                                            top:  widget.size *5),
                                                         child: Text(
                                                           BranchNew.id,
                                                           style: TextStyle(
                                                               color: Colors.white38,
                                                               fontSize:
-                                                               10),
+                                                              widget.size *10),
                                                         ),
                                                       ),
                                                     ],
@@ -634,20 +646,20 @@ class _HomePageState extends State<HomePage> {
 
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      vertical: widget.height * 10,
-                                      horizontal: widget.width * 15),
+                                      vertical: widget.size * 10,
+                                      horizontal: widget.size * 15),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         "${widget.branch} News",
-                                        style: secondHeadingTextStyle(),)
+                                        style: secondHeadingTextStyle(size: widget.size),)
 
                                     ],
                                   ),
                                 ),
                                 Container(
-                                  height: widget.height * 145,
+                                  height: widget.size * 145,
                                   child: ListView.builder(
                                     physics: const BouncingScrollPhysics(),
                                     scrollDirection: Axis.horizontal,
@@ -662,7 +674,7 @@ class _HomePageState extends State<HomePage> {
 
                                       return Padding(
                                         padding:
-                                        EdgeInsets.only(left: widget.width * 10),
+                                        EdgeInsets.only(left: widget.size * 10),
                                         child: InkWell(
                                           child: Container(
                                             padding: EdgeInsets.all(widget.size * 5),
@@ -680,8 +692,8 @@ class _HomePageState extends State<HomePage> {
                                                 Row(
                                                   children: [
                                                     Container(
-                                                      width: widget.width * 150,
-                                                      height: widget.height * 100,
+                                                      width: widget.size * 150,
+                                                      height: widget.size * 100,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                         BorderRadius.circular(
@@ -698,11 +710,11 @@ class _HomePageState extends State<HomePage> {
                                                           InkWell(
                                                             child: Container(
                                                               decoration: BoxDecoration(
-                                                                  borderRadius: BorderRadius.circular(8),
+                                                                  borderRadius: BorderRadius.circular(widget.size *8),
                                                                   border: Border.all(color: Colors.white30)
                                                               ),
                                                               child: Padding(
-                                                                padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                                                padding:  EdgeInsets.symmetric(vertical:widget.size * 3,horizontal: widget.size *8),
                                                                 child: Text("Remove",
                                                                   style: TextStyle(
                                                                       color: Colors.red,
@@ -721,7 +733,7 @@ class _HomePageState extends State<HomePage> {
                                                           Padding(
                                                             padding: EdgeInsets.symmetric(
                                                                 horizontal:
-                                                                widget.width * 5,vertical: 5),
+                                                                widget.size * 5,vertical: widget.size *5),
                                                             child: Text(
                                                               BranchNew.heading,
                                                               style: TextStyle(
@@ -738,7 +750,7 @@ class _HomePageState extends State<HomePage> {
                                                                 "Open (Link)",
                                                                 style: TextStyle(
                                                                     color: Colors
-                                                                        .lightBlueAccent,fontSize: 18,fontWeight: FontWeight.w800),
+                                                                        .lightBlueAccent,fontSize: widget.size *18,fontWeight: FontWeight.w800),
                                                               ),
                                                               onTap: () {
                                                                 ExternalLaunchUrl(
@@ -747,7 +759,7 @@ class _HomePageState extends State<HomePage> {
                                                             ),
                                                           Padding(
                                                             padding: EdgeInsets.only(
-                                                                top: widget.height * 5),
+                                                                top: widget.size * 5),
                                                             child: Text(
                                                               BranchNew.id.split("-").first,
                                                               style: TextStyle(
@@ -762,7 +774,7 @@ class _HomePageState extends State<HomePage> {
                                                   ],
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                                                  padding: EdgeInsets.symmetric(vertical: widget.size *5,horizontal:widget.size * 5),
                                                   child: Row(
                                                     children: [
                                                       Text(
@@ -816,8 +828,8 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text("Flash News",style: secondHeadingTextStyle(color: Colors.red),),
+                                  padding:  EdgeInsets.all(widget.size *8.0),
+                                  child: Text("Flash News",style: secondHeadingTextStyle(color: Colors.red,size: widget.size),),
                                 ),
                                 CarouselSlider(
                                     items: List.generate(
@@ -828,8 +840,8 @@ class _HomePageState extends State<HomePage> {
 
                                           return InkWell(child:
                                           Padding(
-                                            padding: const EdgeInsets.only(left: 20),
-                                            child: Text(BranchNew.heading ,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 20),maxLines: 3,overflow: TextOverflow.ellipsis,),
+                                            padding:  EdgeInsets.only(left: widget.size *20),
+                                            child: Text(BranchNew.heading ,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: widget.size *20),maxLines: 3,overflow: TextOverflow.ellipsis,),
                                           ),
                                             onTap: (){
                                               if(BranchNew.Url.isNotEmpty){
@@ -845,7 +857,7 @@ class _HomePageState extends State<HomePage> {
                                     options: CarouselOptions(
                                       viewportFraction:1,
                                       enlargeCenterPage: true,
-                                      height:  60,
+                                      height: widget.size * 60,
                                       autoPlayAnimationDuration:
                                       Duration(
                                           milliseconds: 1800),
@@ -863,22 +875,22 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 SizedBox(
-                  height: 10,
+                  height: widget.size *10,
                 ),
                 InkWell(
                   child: Container(
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(widget.size *10),
                         border:
                         Border.all(color: Colors.white30)),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 3, horizontal: 15),
+                      padding:  EdgeInsets.symmetric(
+                          vertical: widget.size *3, horizontal:widget.size * 15),
                       child: Text(
                         "Your Regulation : ${widget.reg}",
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 25,
+                            fontSize: widget.size *25,
                             fontWeight: FontWeight.w500),
                       ),
                     ),
@@ -918,7 +930,7 @@ class _HomePageState extends State<HomePage> {
 
 
                 SizedBox(
-                  height: 10,
+                  height: widget.size *10,
                 ),
                 // if (widget.reg.isNotEmpty)
                 //   Padding(
@@ -1114,7 +1126,7 @@ class _HomePageState extends State<HomePage> {
                               if (Favourites.length > 0) {
                                 return Padding(
                                   padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                                   EdgeInsets.symmetric(horizontal:widget.size * 10),
                                   child: Column(
                                     children: [
                                       Row(
@@ -1124,7 +1136,7 @@ class _HomePageState extends State<HomePage> {
                                             "Theory",
                                             style: TextStyle(
                                                 color: Colors.white,
-                                                fontSize: 40,
+                                                fontSize: widget.size*40,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           InkWell(
@@ -1134,23 +1146,23 @@ class _HomePageState extends State<HomePage> {
                                                   borderRadius:
                                                   BorderRadius
                                                       .circular(
-                                                      30),
+                                                      widget.size *30),
                                                   border: Border.all(
                                                       color: Colors
                                                           .white30)),
                                               child: Padding(
                                                 padding:
-                                                const EdgeInsets
+                                                 EdgeInsets
                                                     .symmetric(
-                                                    vertical: 3,
+                                                    vertical: widget.size *3,
                                                     horizontal:
-                                                    15),
+                                                    widget.size *15),
                                                 child: Text(
                                                   "See More",
                                                   style: TextStyle(
                                                       color: Colors
                                                           .white,
-                                                      fontSize: 25,
+                                                      fontSize:  widget.size *25,
                                                       fontWeight:
                                                       FontWeight
                                                           .w500),
@@ -1172,10 +1184,8 @@ class _HomePageState extends State<HomePage> {
                                                         branch: widget
                                                             .branch,
                                                         reg: widget.reg,
-                                                        width: widget
-                                                            .width,
-                                                        height: widget
-                                                            .height,
+                                                        width: widget.size ,
+                                                        height: widget.size ,
                                                         size:
                                                         widget.size,
                                                       ),
@@ -1216,7 +1226,8 @@ class _HomePageState extends State<HomePage> {
                                           )
                                         ],
                                       ),
-                                      SizedBox(height: 15,),
+                                      SizedBox(height: widget.size *15,),
+                                      Text("${Width(context)}",style: TextStyle(color: Colors.white),),
                                       GridView.builder(
                                         physics:
                                         const BouncingScrollPhysics(),
@@ -1226,7 +1237,7 @@ class _HomePageState extends State<HomePage> {
                                           crossAxisSpacing:
                                           widget.size * 8,
 
-                                          crossAxisCount: 2,
+                                          crossAxisCount: Width(context)>800?3:2,
                                         ),
                                         itemCount: filteredItems
                                             .length,
@@ -1275,7 +1286,7 @@ class _HomePageState extends State<HomePage> {
                                                       Container(
                                                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(widget.size * 20), color: Colors.black),
                                                         child: Padding(
-                                                          padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                                                          padding: EdgeInsets.symmetric(vertical:widget.size * 5,horizontal: widget.size *10),
                                                           child: Text(
                                                             SubjectsData.heading,
                                                             style: TextStyle(color: Colors.white, fontSize: widget.size * 30, fontWeight: FontWeight.w600),
@@ -1286,15 +1297,13 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  height: widget
-                                                      .height *
+                                                  height: widget.size *
                                                       3,
                                                 ),
                                                 Container(
                                                   width: double
                                                       .infinity,
-                                                  height: widget
-                                                      .height *
+                                                  height: widget.size *
                                                       20,
                                                   decoration:
                                                   BoxDecoration(
@@ -1304,7 +1313,7 @@ class _HomePageState extends State<HomePage> {
 
                                                   ),
                                                   child: Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                                                    padding:  EdgeInsets.symmetric(horizontal:widget.size * 6),
                                                     child: Marquee(
                                                       text: SubjectsData
                                                           .description.isNotEmpty
@@ -1332,7 +1341,7 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(height: 5,),
+                                                SizedBox(height: widget.size *5,),
                                                 Row(
                                                   mainAxisAlignment:
                                                   MainAxisAlignment.center,
@@ -1350,7 +1359,7 @@ class _HomePageState extends State<HomePage> {
                                                           BorderRadius.circular(
                                                               widget.size * 15)),
                                                       child: Padding(
-                                                        padding: EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                                        padding: EdgeInsets.symmetric(vertical: widget.size *3,horizontal:widget.size * 8),
                                                         child: Row(
                                                           mainAxisAlignment:
                                                           MainAxisAlignment
@@ -1473,8 +1482,8 @@ class _HomePageState extends State<HomePage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(width: 5,),
-                                                    downloadAllPdfs(branch: widget.branch,SubjectID: SubjectsData.id,pdfs:[]),
+                                                    SizedBox(width: widget.size *5,),
+                                                    downloadAllPdfs(branch: widget.branch,SubjectID: SubjectsData.id,pdfs:[], size: widget.size,),
                                                   ],
                                                 ),
                                               ],
@@ -1497,10 +1506,8 @@ class _HomePageState extends State<HomePage> {
                                                         req: SubjectsData
                                                             .regulation,
                                                         pdfs: 0,
-                                                        width: widget
-                                                            .width,
-                                                        height: widget
-                                                            .height,
+                                                        width: widget.size ,
+                                                        height:widget.size ,
                                                         size: widget
                                                             .size,
                                                         branch: widget
@@ -1606,11 +1613,11 @@ class _HomePageState extends State<HomePage> {
                             if (Subjects.length > 0)
                               return Padding(
                                 padding:
-                                const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                                 EdgeInsets.symmetric(vertical:widget.size * 10,horizontal: widget.size *10),
                                 child: Column(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                      padding:  EdgeInsets.all(widget.size *8.0),
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -1618,7 +1625,7 @@ class _HomePageState extends State<HomePage> {
                                             "Experiments",
                                             style: TextStyle(
                                                 color: Colors.white,
-                                                fontSize: 30,
+                                                fontSize: widget.size *30,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           InkWell(
@@ -1628,23 +1635,23 @@ class _HomePageState extends State<HomePage> {
                                                   borderRadius:
                                                   BorderRadius
                                                       .circular(
-                                                      30),
+                                                      widget.size *30),
                                                   border: Border.all(
                                                       color: Colors
                                                           .white30)),
                                               child: Padding(
                                                 padding:
-                                                const EdgeInsets
+                                                 EdgeInsets
                                                     .symmetric(
-                                                    vertical: 3,
+                                                    vertical: widget.size *3,
                                                     horizontal:
-                                                    15),
+                                                    widget.size *15),
                                                 child: Text(
                                                   "See More",
                                                   style: TextStyle(
                                                       color: Colors
                                                           .white,
-                                                      fontSize: 30,
+                                                      fontSize: widget.size *30,
                                                       fontWeight:
                                                       FontWeight
                                                           .w500),
@@ -1666,10 +1673,8 @@ class _HomePageState extends State<HomePage> {
                                                         branch: widget
                                                             .branch,
                                                         reg: widget.reg,
-                                                        width: widget
-                                                            .width,
-                                                        height: widget
-                                                            .height,
+                                                        width: widget.size ,
+                                                        height:widget.size ,
                                                         size:
                                                         widget.size,
                                                       ),
@@ -1781,15 +1786,13 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                               ),
                                               SizedBox(
-                                                height: widget
-                                                    .height *
+                                                height: widget.size *
                                                     3,
                                               ),
                                               Container(
                                                 width: double
                                                     .infinity,
-                                                height: widget
-                                                    .height *
+                                                height:widget.size *
                                                     20,
                                                 decoration:
                                                 BoxDecoration(
@@ -1849,7 +1852,7 @@ class _HomePageState extends State<HomePage> {
                                                         BorderRadius.circular(
                                                             widget.size * 15)),
                                                     child: Padding(
-                                                      padding: EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                                      padding: EdgeInsets.symmetric(vertical:widget.size * 3,horizontal: widget.size *8),
                                                       child: Row(
                                                         mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1972,7 +1975,7 @@ class _HomePageState extends State<HomePage> {
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(width: 5,),
+                                                  SizedBox(width:widget.size * 5,),
                                                   Stack(
                                                     alignment: Alignment.center,
                                                     children: <Widget>[
@@ -1980,7 +1983,7 @@ class _HomePageState extends State<HomePage> {
                                                         strokeWidth: 2,
                                                         value: 0.1,
                                                       ),
-                                                      Icon(Icons.download_for_offline_outlined, size: 40.0),
+                                                      Icon(Icons.download_for_offline_outlined, size: widget.size *40.0),
                                                     ],
                                                   ),
                                                 ],
@@ -2005,10 +2008,8 @@ class _HomePageState extends State<HomePage> {
                                                       req: SubjectsData
                                                           .regulation,
                                                       pdfs: 0,
-                                                      width: widget
-                                                          .width,
-                                                      height: widget
-                                                          .height,
+                                                      width: widget.size ,
+                                                      height: widget.size ,
                                                       size: widget
                                                           .size,
                                                       branch: widget
@@ -2076,27 +2077,24 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           favorites(
-            width: widget.width,
-            height: widget.height,
+            width: widget.size ,
+            height: widget.size ,
             size: widget.size,
             branch: widget.branch,
           ),
           allBooks(
             reg: widget.reg,
             size: widget.size,
-            height: widget.height,
-            width: widget.width,
+
             branch: widget.branch,
           ),
           NewsPage(
-            width: widget.width,
-            height: widget.height,
+
             size: widget.size,
             branch: widget.branch,
           ),
           updatesPage(
-            width: widget.width,
-            height: widget.height,
+
             size: widget.size,
             branch: widget.branch,
           ),
@@ -2244,7 +2242,7 @@ class _homePageUpdateState extends State<homePageUpdate> {
                                 child: InkWell(
                                   child: Container(
                                     padding: EdgeInsets.all(widget.size * 5),
-                                    width: screenWidth(context) / 1.35,
+                                    width: Width(context) / 1.35,
                                     decoration: BoxDecoration(
                                       color: Colors.black.withOpacity(0.8),
                                       borderRadius: BorderRadius.circular(
@@ -2926,7 +2924,7 @@ class _ImageZoomState extends State<ImageZoom> {
               ):PhotoView(imageProvider: NetworkImage(widget.url)),
               Align(
                 alignment: Alignment.topLeft,
-                child: backButton(),
+                child: backButton(size: widget.size , ),
               )
             ],
           ),

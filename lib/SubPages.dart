@@ -18,15 +18,13 @@ import 'notification.dart';
 class NewsPage extends StatefulWidget {
   final String branch;
   final double size;
-  final double height;
-  final double width;
+
 
   const NewsPage(
       {Key? key,
       required this.branch,
-      required this.width,
       required this.size,
-      required this.height})
+      })
       : super(key: key);
 
   @override
@@ -57,7 +55,7 @@ class _NewsPageState extends State<NewsPage> {
       physics: BouncingScrollPhysics(),
       child: Stack(children: [
         Padding(
-          padding: EdgeInsets.only(top: widget.height * 5),
+          padding: EdgeInsets.only(top: widget.size * 5),
           child: StreamBuilder<List<BranchNewConvertor>>(
               stream: readBranchNew(widget.branch),
               builder: (context, snapshot) {
@@ -107,14 +105,14 @@ class _NewsPageState extends State<NewsPage> {
                                       children: [
                                         Padding(
                                           padding: EdgeInsets.only(
-                                              top: widget.height * 8,
-                                              left: widget.width * 8,
-                                              bottom: widget.height * 2),
+                                              top: widget.size * 8,
+                                              left: widget.size * 8,
+                                              bottom: widget.size * 2),
                                           child: Row(
                                             children: [
                                               Container(
-                                                height: widget.height * 25,
-                                                width: widget.width * 25,
+                                                height: widget.size * 25,
+                                                width: widget.size * 25,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -154,11 +152,11 @@ class _NewsPageState extends State<NewsPage> {
                                             Spacer(),
                                             Padding(
                                               padding: EdgeInsets.only(
-                                                  top: widget.height * 5,
-                                                  bottom: widget.height * 3,
-                                                  right: widget.width * 20),
+                                                  top: widget.size * 5,
+                                                  bottom: widget.size * 3,
+                                                  right: widget.size * 20),
                                               child: Text(
-                                                BranchNew.id.split("-").first,
+                                                BranchNew.id.split("-").first.length<11?BranchNew.id.split("-").first:"No Date",
                                                 style: TextStyle(
                                                     color: Colors.white54,
                                                     fontSize: widget.size * 10,
@@ -171,16 +169,16 @@ class _NewsPageState extends State<NewsPage> {
                                         if (BranchNew.description.isNotEmpty)
                                           Padding(
                                             padding: EdgeInsets.only(
-                                                left: widget.width * 25,
-                                                top: widget.height * 5,
-                                                bottom: widget.height * 5),
+                                                left: widget.size * 25,
+                                                top: widget.size * 5,
+                                                bottom: widget.size * 5),
                                             child: Text(BranchNew.description,
                                                 style: TextStyle(
                                                     color:
                                                         Colors.lightBlueAccent,
                                                     fontSize: widget.size * 14,
                                                     fontWeight:
-                                                        FontWeight.w300)),
+                                                        FontWeight.w500)),
                                           ),
                                         if (isUser())
                                           Row(
@@ -198,12 +196,12 @@ class _NewsPageState extends State<NewsPage> {
                                                   ),
                                                   child: Padding(
                                                     padding: EdgeInsets.only(
-                                                        left: widget.width * 10,
+                                                        left: widget.size * 10,
                                                         right:
-                                                            widget.width * 10,
-                                                        top: widget.height * 5,
+                                                            widget.size * 10,
+                                                        top: widget.size * 5,
                                                         bottom:
-                                                            widget.height * 5),
+                                                            widget.size * 5),
                                                     child: Text("Edit"),
                                                   ),
                                                 ),
@@ -226,7 +224,7 @@ class _NewsPageState extends State<NewsPage> {
                                                 },
                                               ),
                                               SizedBox(
-                                                width: widget.width * 20,
+                                                width: widget.size * 20,
                                               ),
                                               InkWell(
                                                 child: Container(
@@ -240,12 +238,12 @@ class _NewsPageState extends State<NewsPage> {
                                                   ),
                                                   child: Padding(
                                                     padding: EdgeInsets.only(
-                                                        left: widget.width * 10,
+                                                        left: widget.size * 10,
                                                         right:
-                                                            widget.width * 10,
-                                                        top: widget.height * 5,
+                                                            widget.size * 10,
+                                                        top: widget.size * 5,
                                                         bottom:
-                                                            widget.height * 5),
+                                                            widget.size * 5),
                                                     child: Text("Delete"),
                                                   ),
                                                 ),
@@ -280,7 +278,7 @@ class _NewsPageState extends State<NewsPage> {
                                                 },
                                               ),
                                               SizedBox(
-                                                width: widget.width * 20,
+                                                width: widget.size * 20,
                                               ),
                                             ],
                                           ),
@@ -295,8 +293,8 @@ class _NewsPageState extends State<NewsPage> {
                                     MaterialPageRoute(
                                         builder: (context) => ImageZoom(
                                               size: widget.size,
-                                              width: widget.width,
-                                              height: widget.height,
+                                              width: widget.size,
+                                              height: widget.size,
                                               url: "",
                                               file: file,
                                             )));
@@ -304,7 +302,7 @@ class _NewsPageState extends State<NewsPage> {
                             );
                           },
                           separatorBuilder: (context, index) => Divider(
-                                height: widget.height * 9,
+                                height: widget.size * 9,
                                 color: Colors.white,
                               ));
                     }
@@ -775,7 +773,7 @@ class _SubjectsState extends State<Subjects> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            backButton(),
+            backButton(size:widget.size ),
             Padding(
               padding: EdgeInsets.only(bottom: widget.width * 10),
               child: Text(
@@ -1231,7 +1229,7 @@ class _LabSubjectsState extends State<LabSubjects> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            backButton(),
+            backButton(size: widget.size ,),
             Padding(
               padding: EdgeInsets.only(bottom: widget.width * 10),
               child: Text(
@@ -1256,16 +1254,15 @@ class allBooks extends StatefulWidget {
   final String branch;
   final String reg;
   final double size;
-  final double height;
-  final double width;
+
 
   const allBooks(
       {Key? key,
       required this.branch,
       required this.reg,
-      required this.width,
+
       required this.size,
-      required this.height})
+      })
       : super(key: key);
 
   @override
@@ -1295,7 +1292,7 @@ class _allBooksState extends State<allBooks> {
       physics: BouncingScrollPhysics(),
       child: Padding(
         padding: EdgeInsets.only(
-            top: widget.height * 10, bottom: widget.height * 100),
+            top: widget.size * 10, bottom: widget.size * 100),
         child: StreamBuilder<List<BooksConvertor>>(
             stream: ReadBook(widget.branch),
             builder: (context, snapshot) {
@@ -1319,7 +1316,7 @@ class _allBooksState extends State<allBooks> {
                       itemCount: Books!.length,
                       itemBuilder: (BuildContext context, int index) {
 
-                        return textBookSub(height: widget.height,width: widget.width, size: widget.size, data: Books[index], branch: widget.branch,);
+                        return textBookSub(height: widget.size,width: widget.size, size: widget.size, data: Books[index], branch: widget.branch,);
                       },
                     );
                   }
@@ -1429,9 +1426,9 @@ class _textBookSubState extends State<textBookSub> {
 
     return Padding(
       padding: EdgeInsets.only(
-          left: widget.width * 15,
-          bottom: widget.height * 10,
-          right: widget.width * 10),
+          left: widget.size *  15,
+          bottom: widget.size *  10,
+          right: widget.size *  10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -1439,8 +1436,8 @@ class _textBookSubState extends State<textBookSub> {
               ? ClipRRect(
             borderRadius: BorderRadius.circular(widget.size * 25),
             child: SizedBox(
-              height: widget.height * 160,
-              width: 120,
+              height: widget.size * 160,
+              width: widget.size * 120,
               child: Stack(
                 children: [
                   isLoading
@@ -1459,7 +1456,7 @@ class _textBookSubState extends State<textBookSub> {
                     alignment: Alignment.topRight,
                     child: Padding(
                       padding:
-                      const EdgeInsets.only(right: 15, top: 8),
+                       EdgeInsets.only(right: widget.size * 15, top:widget.size *  8),
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius:
@@ -1469,11 +1466,11 @@ class _textBookSubState extends State<textBookSub> {
                               color: Colors.white.withOpacity(0.5)),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(4.0),
+                          padding:  EdgeInsets.all(widget.size * 4.0),
                           child: Text(
                             "P: $pages",
                             style: TextStyle(
-                                fontSize: 15,
+                                fontSize: widget.size * 15,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white),
                           ),
@@ -1484,7 +1481,7 @@ class _textBookSubState extends State<textBookSub> {
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding:  EdgeInsets.all(widget.size * 8.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -1501,13 +1498,13 @@ class _textBookSubState extends State<textBookSub> {
                                           .withOpacity(0.5)),
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 3, horizontal: 10),
+                                  padding:  EdgeInsets.symmetric(
+                                      vertical: widget.size * 3, horizontal: widget.size * 10),
                                   child: Text(
                                     "-",
                                     style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 25,
+                                        fontSize: widget.size * 25,
                                         fontWeight: FontWeight.w800),
                                   ),
                                 )),
@@ -1520,7 +1517,7 @@ class _textBookSubState extends State<textBookSub> {
                             },
                           ),
                           SizedBox(
-                            width: 5,
+                            width: widget.size * 5,
                           ),
                           InkWell(
                             child: Container(
@@ -1534,13 +1531,13 @@ class _textBookSubState extends State<textBookSub> {
                                           .withOpacity(0.5)),
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 3, horizontal: 8),
+                                  padding:  EdgeInsets.symmetric(
+                                      vertical: widget.size * 3, horizontal: widget.size * 8),
                                   child: Text(
                                     "+",
                                     style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 25,
+                                        fontSize: widget.size * 25,
                                         fontWeight: FontWeight.w800),
                                   ),
                                 )),
@@ -1563,7 +1560,7 @@ class _textBookSubState extends State<textBookSub> {
             borderRadius: BorderRadius.circular(widget.size * 25),
             child: SizedBox(
               height: widget.height * 160,
-              width: 120,
+              width: widget.size * 120,
               child: Image.network(
                 widget.data.photoUrl,
                 fit: BoxFit.cover,
@@ -1617,7 +1614,7 @@ class _textBookSubState extends State<textBookSub> {
                       MainAxisAlignment.spaceEvenly,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          padding:  EdgeInsets.symmetric(vertical: widget.size * 5),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -1670,6 +1667,7 @@ class _textBookSubState extends State<textBookSub> {
                                                       : Icons
                                                       .download_for_offline_outlined,
                                                   color: Colors.greenAccent,
+                                                  size: widget.size * 20,
                                                 )
                                               ],
                                             ),
@@ -2043,8 +2041,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
     headerSliverBuilder: (context, innerBoxIsScrolled) => [
       SliverAppBar(
         automaticallyImplyLeading: false,
-        expandedHeight: 170.0,
-        collapsedHeight: 170,
+        expandedHeight: widget.size*170.0,
+        collapsedHeight: widget.size*170,
         backgroundColor: Colors.transparent,
         flexibleSpace: Padding(
           padding: EdgeInsets.all(widget.size * 8.0),
@@ -2052,7 +2050,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              backButton(),
+              backButton(size: widget.size ,),
               Row(
                 children: [
                   Flexible(
@@ -2062,7 +2060,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                       child: Container(
                         decoration: BoxDecoration(
                             borderRadius:
-                            BorderRadius.circular(10),
+                            BorderRadius.circular(widget.size*10),
                             border:
                             Border.all(color: Colors.black),
                             image: DecorationImage(
@@ -2086,7 +2084,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                               Container(
                                 decoration: BoxDecoration(
                                     borderRadius:
-                                    BorderRadius.circular(5),
+                                    BorderRadius.circular(widget.size*5),
                                     border: Border.all(
                                         color: Colors.white30)),
                                 child: Padding(
@@ -2097,7 +2095,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                   child: Text(
                                     widget.req,
                                     style: TextStyle(
-                                        color: Colors.white),
+                                        color: Colors.white,fontSize: widget.size*14),
                                   ),
                                 ),
                               ),
@@ -2105,13 +2103,13 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                 children: [
                                   Icon(
                                     Icons.circle,
-                                    size: 8,
+                                    size: widget.size*8,
                                     color: Colors.white,
                                   ),
                                   Text(
                                     " ${widget.pdfs} PDFS",
                                     style: TextStyle(
-                                        color: Colors.white),
+                                        color: Colors.white,fontSize: widget.size*14),
                                   ),
                                 ],
                               ),
@@ -2119,13 +2117,13 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                 children: [
                                   Icon(
                                     Icons.circle,
-                                    size: 8,
+                                    size: widget.size*8,
                                     color: Colors.white,
                                   ),
                                   Text(
                                     widget.date.length<11?widget.date:"No Date",
                                     style: TextStyle(
-                                        color: Colors.white),
+                                        color: Colors.white,fontSize: widget.size*14),
                                   )
                                 ],
                               ),
@@ -2155,7 +2153,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                         widget.size * 15)),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                      vertical: 3, horizontal: 8),
+                                      vertical: widget.size*3, horizontal: widget.size*8),
                                   child: Row(
                                     mainAxisAlignment:
                                     MainAxisAlignment.center,
@@ -2286,12 +2284,12 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                 ),
                               ),
                               SizedBox(
-                                width: 10,
+                                width: widget.size*10,
                               ),
                               downloadAllPdfs(
                                   branch: widget.branch,
                                   SubjectID: widget.ID,
-                                  pdfs: []),
+                                  pdfs: [], size: widget.size,),
                             ],
                           ),
                         ],
@@ -2299,7 +2297,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(top: 5),
+                padding: EdgeInsets.only(top: widget.size*5),
                 child: Text(
                   widget.fullName,
                   style: TextStyle(
@@ -2325,7 +2323,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
           height: widget.height * 45,
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding:  EdgeInsets.all(widget.size*5.0),
               child: TabBar(
                 indicator: BoxDecoration(
                     border: Border.all(color: Colors.white54),
@@ -2367,7 +2365,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
             ),
           ),
         ),
-        Expanded(
+        Expanded (
           child:
           TabBarView(controller: _tabController, children: [
             Column(
@@ -2377,7 +2375,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                   width: double.infinity,
                   height: widget.height * 45,
                   child: Padding(
-                    padding: const EdgeInsets.all(5.0),
+                    padding:  EdgeInsets.all(widget.size*5.0),
                     child: TabBar(
                       physics: NeverScrollableScrollPhysics(),
                       indicator: BoxDecoration(
@@ -2388,32 +2386,33 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                           color: Colors.white12),
                       controller: _unitsTabController,
                       isScrollable: true,
+                        labelStyle:TextStyle(fontSize: widget.size*14),
                       labelPadding: EdgeInsets.symmetric(
                           horizontal: widget.width * 10),
                       tabs: [
                         Tab(
                           child: Text(" All ",
-                              style: secondTabBarTextStyle),
+                              style: secondTabBarTextStyle(size: widget.size)),
                         ),
                         Tab(
                           child: Text("Unit 1",
-                              style: secondTabBarTextStyle),
+                              style: secondTabBarTextStyle(size: widget.size)),
                         ),
                         Tab(
                           child: Text("Unit 2",
-                              style: secondTabBarTextStyle),
+                              style: secondTabBarTextStyle(size: widget.size)),
                         ),
                         Tab(
                           child: Text("Unit 3",
-                              style: secondTabBarTextStyle),
+                              style: secondTabBarTextStyle(size: widget.size)),
                         ),
                         Tab(
                           child: Text("Unit 4",
-                              style: secondTabBarTextStyle),
+                              style: secondTabBarTextStyle(size: widget.size)),
                         ),
                         Tab(
                           child: Text("Unit 5",
-                              style: secondTabBarTextStyle),
+                              style: secondTabBarTextStyle(size: widget.size)),
                         )
                       ],
                     ),
@@ -2434,7 +2433,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                             )),
                         label: Text(
                           "Edit",
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(color: Colors.black,fontSize: widget.size*14),
                         ),
                       ),
                       onTap: () {
@@ -3336,13 +3335,13 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final file = File("${folderPath}/pdfs/${getFileName(widget.unit.PDFLink)}");
+    final file = File("${folderPath}/pdfs/${getFileName(widget.unit.PDFLink.isNotEmpty?widget.unit.PDFLink:" ")}");
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(widget.size * 25),
-        color: file.existsSync() & isExp
+        color: file.existsSync() && isExp
             ? Colors.black.withOpacity(0.5)
             : Colors.black.withOpacity(0.07),
         border: Border.all(color: Colors.white.withOpacity(0.3)),
@@ -3360,7 +3359,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                   borderRadius: BorderRadius.circular(widget.size * 25),
                   child: SizedBox(
                     height: widget.height * 160,
-                    width: 120,
+                    width:  widget.size *120,
                     child: Stack(
                       children: [
                         isLoading
@@ -3378,7 +3377,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                         Align(
                           alignment: Alignment.topRight,
                           child: Padding(
-                            padding: const EdgeInsets.only(right: 15, top: 8),
+                            padding:  EdgeInsets.only(right:  widget.size *15, top:  widget.size *8),
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius:
@@ -3388,11 +3387,11 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                     color: Colors.white.withOpacity(0.5)),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.all(4.0),
+                                padding:  EdgeInsets.all( widget.size *4.0),
                                 child: Text(
                                   "P: $pages",
                                   style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize:  widget.size *15,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white),
                                 ),
@@ -3403,7 +3402,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding:  EdgeInsets.all( widget.size *8.0),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -3419,13 +3418,13 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                                 Colors.white.withOpacity(0.5)),
                                       ),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 3, horizontal: 10),
+                                        padding:  EdgeInsets.symmetric(
+                                            vertical: widget.size * 3, horizontal:  widget.size *10),
                                         child: Text(
                                           "-",
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 25,
+                                              fontSize:  widget.size *25,
                                               fontWeight: FontWeight.w800),
                                         ),
                                       )),
@@ -3438,7 +3437,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                   },
                                 ),
                                 SizedBox(
-                                  width: 5,
+                                  width: widget.size * 5,
                                 ),
                                 InkWell(
                                   child: Container(
@@ -3451,13 +3450,13 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                                 Colors.white.withOpacity(0.5)),
                                       ),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 3, horizontal: 8),
+                                        padding:  EdgeInsets.symmetric(
+                                            vertical:  widget.size *3, horizontal: widget.size * 8),
                                         child: Text(
                                           "+",
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 25,
+                                              fontSize:  widget.size *25,
                                               fontWeight: FontWeight.w800),
                                         ),
                                       )),
@@ -3479,7 +3478,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
               Expanded(
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                       EdgeInsets.symmetric(vertical: widget.size * 5, horizontal:  widget.size *8),
                   child: Column(
                     children: [
                       Row(
@@ -3487,17 +3486,17 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                         children: [
                           Container(
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular( widget.size *8),
                                   border: Border.all(color: Colors.white30)),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 3, horizontal: 8),
+                                padding:  EdgeInsets.symmetric(
+                                    vertical:  widget.size *3, horizontal:  widget.size *8),
                                 child: Text(
                                   widget.unit.heading.split(";").first.length<7?widget.unit.heading.split(";").first:"Unknown",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w800,
-                                      fontSize: 18),
+                                      fontSize:  widget.size *18),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               )),
@@ -3520,12 +3519,12 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                   Text(
                                     " ~ ${widget.unit.PDFSize} ",
                                     style: TextStyle(
-                                        color: Colors.lightBlueAccent),
+                                        color: Colors.lightBlueAccent,fontSize:  widget.size *14),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
                                     " ${widget.unit.id.split("-").first.length<11?widget.unit.id.split("-").first.length:"No Date"}",
-                                    style: TextStyle(color: Colors.white60),
+                                    style: TextStyle(color: Colors.white60,fontSize:  widget.size *14),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
@@ -3646,7 +3645,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                   child: Text(
                                     isExp ? "Read Less " : "Read More ",
                                     style: TextStyle(
-                                        color: Colors.white, fontSize: 20),
+                                        color: Colors.white, fontSize:widget.size *  20),
                                   ),
                                   onTap: () {
                                     setState(() {
@@ -3688,7 +3687,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                         )),
                     label: Text(
                       "Edit",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white,fontSize: widget.size * 14),
                     ),
                   ),
                   onTap: () {
@@ -3720,7 +3719,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                         )),
                     label: Text(
                       "Delete",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white,fontSize:widget.size * 14),
                     ),
                   ),
                   onLongPress: () {
@@ -3745,16 +3744,16 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
             ),
           if (isDownloaded)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
+              padding:  EdgeInsets.symmetric(horizontal: widget.size * 25),
               child: LinearProgressIndicator(),
             ),
           if (isExp)
             Container(
-              height: 45,
+              height: widget.size * 45,
               child: TabBar(
                 indicator: BoxDecoration(
                     border: Border.all(color: Colors.white12),
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(widget.size * 15),
                     color: Color.fromRGBO(4, 11, 23, 1)),
                 controller: _tabController,
                 isScrollable: true,
@@ -3765,14 +3764,14 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                       "Description",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 25,
+                        fontSize: widget.size * 25,
                       ),
                     ),
                   ),
                   Tab(
                     child: Text(
                       "Questions",
-                      style: TextStyle(color: Colors.white, fontSize: 25),
+                      style: TextStyle(color: Colors.white, fontSize: widget.size * 25),
                     ),
                   ),
                 ],
@@ -3780,9 +3779,9 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
             ),
           if (isExp)
             SizedBox(
-              height: 200,
+              height:widget.size *  300,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding:  EdgeInsets.all(widget.size * 8.0),
                 child: TabBarView(controller: _tabController, children: [
                   ListView.builder(
                       physics: BouncingScrollPhysics(),
@@ -4031,7 +4030,7 @@ class _subTextbooksState extends State<subTextbooks>
 
   @override
   Widget build(BuildContext context) {
-    final file = File("${folderPath}/pdfs/${getFileName(widget.unit.PDFLink)}");
+    if(widget.unit.PDFLink.isNotEmpty)final file = File("${folderPath}/pdfs/${getFileName(widget.unit.PDFLink)}");
 
     return Container(
       width: double.infinity,
@@ -4052,8 +4051,8 @@ class _subTextbooksState extends State<subTextbooks>
                   ? ClipRRect(
                 borderRadius: BorderRadius.circular(widget.size * 25),
                 child: SizedBox(
-                  height: widget.height * 160,
-                  width: 120,
+                  height:widget.size * 160,
+                  width: widget.size *120,
                   child: Stack(
                     children: [
                       isLoading
@@ -4072,7 +4071,7 @@ class _subTextbooksState extends State<subTextbooks>
                         alignment: Alignment.topRight,
                         child: Padding(
                           padding:
-                          const EdgeInsets.only(right: 15, top: 8),
+                           EdgeInsets.only(right: widget.size *15, top:widget.size * 8),
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius:
@@ -4082,11 +4081,11 @@ class _subTextbooksState extends State<subTextbooks>
                                   color: Colors.white.withOpacity(0.5)),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(4.0),
+                              padding:  EdgeInsets.all(widget.size *4.0),
                               child: Text(
                                 "P: $pages",
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: widget.size *15,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white),
                               ),
@@ -4097,7 +4096,7 @@ class _subTextbooksState extends State<subTextbooks>
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding:  EdgeInsets.all(widget.size *8.0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -4114,13 +4113,13 @@ class _subTextbooksState extends State<subTextbooks>
                                               .withOpacity(0.5)),
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 3, horizontal: 10),
+                                      padding:  EdgeInsets.symmetric(
+                                          vertical:widget.size * 3, horizontal: widget.size *10),
                                       child: Text(
                                         "-",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: 25,
+                                            fontSize: widget.size *25,
                                             fontWeight: FontWeight.w800),
                                       ),
                                     )),
@@ -4133,7 +4132,7 @@ class _subTextbooksState extends State<subTextbooks>
                                 },
                               ),
                               SizedBox(
-                                width: 5,
+                                width: widget.size *5,
                               ),
                               InkWell(
                                 child: Container(
@@ -4147,13 +4146,13 @@ class _subTextbooksState extends State<subTextbooks>
                                               .withOpacity(0.5)),
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 3, horizontal: 8),
+                                      padding:  EdgeInsets.symmetric(
+                                          vertical: widget.size *3, horizontal:widget.size * 8),
                                       child: Text(
                                         "+",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: 25,
+                                            fontSize:widget.size * 25,
                                             fontWeight: FontWeight.w800),
                                       ),
                                     )),
@@ -4175,8 +4174,8 @@ class _subTextbooksState extends State<subTextbooks>
                   : ClipRRect(
                 borderRadius: BorderRadius.circular(widget.size * 25),
                 child: SizedBox(
-                  height: widget.height * 160,
-                  width: 120,
+                  height: widget.size * 160,
+                  width: widget.size *120,
                   child: Image.network(
                     widget.unit.photoUrl,
                     fit: BoxFit.cover,
@@ -4186,7 +4185,7 @@ class _subTextbooksState extends State<subTextbooks>
               Expanded(
                 child: Padding(
                   padding:
-                  const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                   EdgeInsets.symmetric(vertical:widget.size * 5, horizontal: widget.size *10),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -4196,12 +4195,12 @@ class _subTextbooksState extends State<subTextbooks>
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
-                            fontSize: 20),
+                            fontSize: widget.size *20),
                         overflow: TextOverflow.ellipsis,
                       ),
                       Padding(
                         padding:
-                        EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                        EdgeInsets.symmetric(vertical: widget.size *5, horizontal: widget.size *10),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -4211,7 +4210,7 @@ class _subTextbooksState extends State<subTextbooks>
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 18),
+                                  fontSize: widget.size *18),
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
@@ -4219,7 +4218,7 @@ class _subTextbooksState extends State<subTextbooks>
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w400,
-                                  fontSize: 15),
+                                  fontSize:widget.size * 15),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ],
@@ -4243,18 +4242,18 @@ class _subTextbooksState extends State<subTextbooks>
                             children: [
                               Text(
                                 " ~ ${widget.unit.PDFSize} ",
-                                style: TextStyle(color: Colors.lightBlueAccent),
+                                style: TextStyle(color: Colors.lightBlueAccent,fontSize: widget.size *14),
                               ),
                               Text(
                                 " ${widget.unit.id.split("-").last}",
-                                style: TextStyle(color: Colors.white60),
+                                style: TextStyle(color: Colors.white60,fontSize: widget.size *14),
                               ),
                             ],
                           ),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        padding:  EdgeInsets.symmetric(vertical: widget.size *5),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -4307,6 +4306,7 @@ class _subTextbooksState extends State<subTextbooks>
                                                     : Icons
                                                     .download_for_offline_outlined,
                                                 color: Colors.greenAccent,
+                                                size: widget.size *22,
                                               )
                                             ],
                                           ),
@@ -4381,7 +4381,7 @@ class _subTextbooksState extends State<subTextbooks>
                         )),
                     label: Text(
                       "Edit",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white,fontSize: widget.size *14),
                     ),
                   ),
                   onTap: () {
@@ -4414,7 +4414,7 @@ class _subTextbooksState extends State<subTextbooks>
                         )),
                     label: Text(
                       "Delete",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white,fontSize: widget.size *14),
                     ),
                   ),
                   onLongPress: () {
@@ -4436,7 +4436,7 @@ class _subTextbooksState extends State<subTextbooks>
             ),
           if (isDownloaded)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
+              padding:  EdgeInsets.symmetric(horizontal: widget.size *25),
               child: LinearProgressIndicator(),
             ),
         ],
@@ -4553,7 +4553,7 @@ class _subMoreState extends State<subMore>
 
   @override
   Widget build(BuildContext context) {
-    final file = File("${folderPath}/pdfs/${getFileName(widget.unit.link.split(";").last)}");
+    if(widget.unit.link.split(";").last.isNotEmpty)final file = File("${folderPath}/pdfs/${getFileName(widget.unit.link.split(";").last)}");
 
     return InkWell(
       child: Container(
@@ -4576,7 +4576,7 @@ class _subMoreState extends State<subMore>
                         borderRadius: BorderRadius.circular(widget.size * 25),
                         child: SizedBox(
                           height: widget.height * 160,
-                          width: 120,
+                          width: widget.size *120,
                           child: Stack(
                             children: [
                               isLoading
@@ -4595,7 +4595,7 @@ class _subMoreState extends State<subMore>
                                 alignment: Alignment.topRight,
                                 child: Padding(
                                   padding:
-                                      const EdgeInsets.only(right: 15, top: 8),
+                                       EdgeInsets.only(right: widget.size *15, top: widget.size *8),
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius:
@@ -4605,11 +4605,11 @@ class _subMoreState extends State<subMore>
                                           color: Colors.white.withOpacity(0.5)),
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.all(4.0),
+                                      padding:  EdgeInsets.all(widget.size *4.0),
                                       child: Text(
                                         "P: $pages",
                                         style: TextStyle(
-                                            fontSize: 15,
+                                            fontSize:widget.size * 15,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white),
                                       ),
@@ -4620,7 +4620,7 @@ class _subMoreState extends State<subMore>
                               Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding:  EdgeInsets.all(widget.size *8.0),
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -4637,13 +4637,13 @@ class _subMoreState extends State<subMore>
                                                       .withOpacity(0.5)),
                                             ),
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: 3, horizontal: 10),
+                                              padding:  EdgeInsets.symmetric(
+                                                  vertical: widget.size *3, horizontal: widget.size *10),
                                               child: Text(
                                                 "-",
                                                 style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 25,
+                                                    fontSize: widget.size *25,
                                                     fontWeight: FontWeight.w800),
                                               ),
                                             )),
@@ -4656,7 +4656,7 @@ class _subMoreState extends State<subMore>
                                         },
                                       ),
                                       SizedBox(
-                                        width: 5,
+                                        width: widget.size *5,
                                       ),
                                       InkWell(
                                         child: Container(
@@ -4670,13 +4670,13 @@ class _subMoreState extends State<subMore>
                                                       .withOpacity(0.5)),
                                             ),
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: 3, horizontal: 8),
+                                              padding:  EdgeInsets.symmetric(
+                                                  vertical: widget.size *3, horizontal: widget.size *8),
                                               child: Text(
                                                 "+",
                                                 style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 25,
+                                                    fontSize: widget.size *25,
                                                     fontWeight: FontWeight.w800),
                                               ),
                                             )),
@@ -4700,7 +4700,7 @@ class _subMoreState extends State<subMore>
                           borderRadius: BorderRadius.circular(widget.size * 25),
                           child: SizedBox(
                             height: widget.height * 160,
-                            width: 120,
+                            width: widget.size *120,
                             child: Image.network(
                               widget.unit.link.split(";").last,
                               fit: BoxFit.cover,
@@ -4721,19 +4721,19 @@ class _subMoreState extends State<subMore>
                   },
                     ),
                 if(widget.unit.link.split(";").first=="YouTube"||widget.unit.link.split(";").first=="WebSite")Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding:  EdgeInsets.all(widget.size *8.0),
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.white30),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(widget.size *10),
                       image: DecorationImage(image: AssetImage(widget.unit.link.split(";").first=="YouTube"?"assets/YouTubeIcon.png":"assets/googleIcon.png"),fit: BoxFit.cover)
                     ),
-                      height:35,width:50),
+                      height:widget.size *35,width:widget.size *50),
                 ),
                 Expanded(
                   child: Padding(
                     padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                         EdgeInsets.symmetric(vertical:widget.size * 5, horizontal: widget.size *10),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -4743,14 +4743,14 @@ class _subMoreState extends State<subMore>
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
-                              fontSize: 22),
+                              fontSize: widget.size *22),
                           overflow: TextOverflow.ellipsis,
                         ),
                         Wrap(
                           children: [
                             Padding(
                               padding:
-                              EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                              EdgeInsets.symmetric(vertical: widget.size *5, horizontal:widget.size * 10),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -4760,7 +4760,7 @@ class _subMoreState extends State<subMore>
                                     style: TextStyle(
                                         color: Colors.white70,
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 18),
+                                        fontSize: widget.size *18),
                                     overflow: TextOverflow.ellipsis,
                                   ),
 
@@ -4777,14 +4777,14 @@ class _subMoreState extends State<subMore>
                               padding: EdgeInsets.all(widget.size * 3),
                               child: Text(
                                 " ${widget.unit.id.split("-").first}",
-                                style: TextStyle(color: Colors.white70),
+                                style: TextStyle(color: Colors.white70,fontSize: widget.size *14),
                               ),
                             ),
                           ]
                         ),
 
                         if(widget.unit.link.split(";").first=="PDF")Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          padding:  EdgeInsets.symmetric(vertical: widget.size *5),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -4911,7 +4911,7 @@ class _subMoreState extends State<subMore>
                           )),
                       label: Text(
                         "Edit",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white,fontSize: widget.size *14),
                       ),
                     ),
                     onTap: () {
@@ -4940,7 +4940,7 @@ class _subMoreState extends State<subMore>
                           )),
                       label: Text(
                         "Delete",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white,fontSize: widget.size *14),
                       ),
                     ),
                     onLongPress: () {
@@ -4962,7 +4962,7 @@ class _subMoreState extends State<subMore>
               ),
             if (isDownloaded)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
+                padding:  EdgeInsets.symmetric(horizontal:widget.size * 25),
                 child: LinearProgressIndicator(),
               ),
           ],
@@ -4978,15 +4978,13 @@ class _subMoreState extends State<subMore>
 class updatesPage extends StatefulWidget {
   final String branch;
   final double size;
-  final double height;
-  final double width;
+
 
   const updatesPage(
       {Key? key,
       required this.branch,
-      required this.width,
       required this.size,
-      required this.height})
+     })
       : super(key: key);
 
   @override
@@ -5021,7 +5019,7 @@ class _updatesPageState extends State<updatesPage> {
       child: Stack(
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(vertical: widget.height * 40),
+            padding: EdgeInsets.symmetric(vertical: widget.size * 40),
             child: StreamBuilder<List<UpdateConvertor>>(
                 stream: readUpdate(widget.branch),
                 builder: (context, snapshot) {
@@ -5074,8 +5072,8 @@ class _updatesPageState extends State<updatesPage> {
 
                               return Padding(
                                 padding: EdgeInsets.symmetric(
-                                    vertical: widget.height * 2,
-                                    horizontal: widget.width * 8),
+                                    vertical: widget.size * 2,
+                                    horizontal: widget.size * 8),
                                 child: Container(
                                   padding: EdgeInsets.all(5),
                                   width: double.infinity,
@@ -5090,8 +5088,8 @@ class _updatesPageState extends State<updatesPage> {
                                       Row(
                                         children: [
                                           Container(
-                                            width: widget.width * 35,
-                                            height: widget.height * 35,
+                                            width: widget.size * 35,
+                                            height: widget.size * 35,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(
@@ -5105,7 +5103,7 @@ class _updatesPageState extends State<updatesPage> {
                                           Expanded(
                                             child: Padding(
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: widget.width * 5),
+                                                  horizontal: widget.size * 5),
                                               child: Text(
                                                 BranchNew.heading,
                                                 style: TextStyle(
@@ -5120,9 +5118,9 @@ class _updatesPageState extends State<updatesPage> {
                                       ),
                                       Padding(
                                         padding: EdgeInsets.only(
-                                            left: widget.width * 45,
-                                            right: widget.width * 10,
-                                            bottom: widget.height * 5),
+                                            left: widget.size * 45,
+                                            right: widget.size * 10,
+                                            bottom: widget.size * 5),
                                         child: Row(
                                           children: [
                                             Text(
@@ -5136,8 +5134,8 @@ class _updatesPageState extends State<updatesPage> {
                                       ),
                                       Padding(
                                         padding: EdgeInsets.only(
-                                            left: widget.width * 40,
-                                            right: widget.width * 10),
+                                            left: widget.size * 40,
+                                            right: widget.size * 10),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -5177,7 +5175,7 @@ class _updatesPageState extends State<updatesPage> {
                                                   "Open (Link)",
                                                   style: TextStyle(
                                                       color: Colors
-                                                          .lightBlueAccent),
+                                                          .lightBlueAccent,fontSize: widget.size*15),
                                                 ),
                                                 onTap: () {
                                                   ExternalLaunchUrl(
@@ -5186,7 +5184,7 @@ class _updatesPageState extends State<updatesPage> {
                                               ),
                                             Padding(
                                               padding: EdgeInsets.only(
-                                                  top: widget.height * 5),
+                                                  top: widget.size * 5),
                                               child: Text(
                                                 BranchNew.id.split("-").first,
                                                 style: TextStyle(
@@ -5208,7 +5206,7 @@ class _updatesPageState extends State<updatesPage> {
                 }),
           ),
           Positioned(
-              top: widget.height * 8,
+              top: widget.size * 8,
               right: 0,
               left: 0,
               child: Row(
@@ -5225,10 +5223,10 @@ class _updatesPageState extends State<updatesPage> {
                       ),
                       child: Padding(
                         padding: EdgeInsets.only(
-                            left: widget.width * 10,
-                            right: widget.width * 10,
-                            top: widget.height * 3,
-                            bottom: widget.height * 3),
+                            left: widget.size * 10,
+                            right: widget.size * 10,
+                            top: widget.size * 3,
+                            bottom: widget.size * 3),
                         child: Text(
                           "Branch",
                           style: TextStyle(

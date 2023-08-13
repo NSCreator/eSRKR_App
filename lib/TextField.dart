@@ -13,10 +13,21 @@ import 'dart:io';
 import 'functins.dart';
 import 'notification.dart';
 
-const TextStyle textFieldStyle =TextStyle(
+TextStyle textFieldStyle(double size) {
+  return TextStyle(
     color: Colors.white,
     fontWeight: FontWeight.w500,
-    fontSize: 20);
+    fontSize: size * 20,
+  );
+}
+TextStyle textFieldHintStyle(double size) {
+  return TextStyle(
+    color: Colors.white54,
+    fontWeight: FontWeight.w300,
+    fontSize: size * 18,
+  );
+}
+
 class TextFieldContainer extends StatefulWidget {
   Widget child;
   String heading;
@@ -2113,7 +2124,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            backButton(),
+            backButton(size: size(context)),
             Text("Create Unit", style: AppBarHeadingTextStyle),
             SizedBox(
               width: 45,
@@ -2186,7 +2197,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                 child: TextFormField(
                   controller: HeadingController,
                   textInputAction: TextInputAction.next,
-                  style: textFieldStyle,
+                  style: textFieldStyle(size(context)),
                   decoration: InputDecoration(
                     hintStyle: TextStyle(color: Colors.white54),
                     border: InputBorder.none,
@@ -2236,7 +2247,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                 child: TextFormField(
                   controller: PDFUrlController,
                   textInputAction: TextInputAction.next,
-                  style: textFieldStyle,
+                  style: textFieldStyle(size(context)),
                   decoration: InputDecoration(
                     hintStyle: TextStyle(color: Colors.white54),
                     border: InputBorder.none,
@@ -2322,7 +2333,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                       const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
                       child:TextFieldContainer(child:TextFormField(
                         controller: _DescriptionController,
-                        style: textFieldStyle,
+                        style: textFieldStyle(size(context)),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         decoration: InputDecoration(
@@ -2428,7 +2439,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                       const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
                       child:TextFieldContainer(child:TextFormField(
                         controller: _QuestionsController,
-                        style: textFieldStyle,
+                        style: textFieldStyle(size(context)),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         decoration: InputDecoration(
@@ -2461,7 +2472,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                 child: TextFormField(
                   controller: PhotoUrlController,
                   textInputAction: TextInputAction.next,
-                  style: textFieldStyle,
+                  style: textFieldStyle(size(context)),
                   decoration: InputDecoration(
                     hintStyle: TextStyle(color: Colors.white54),
                     border: InputBorder.none,
@@ -2474,7 +2485,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                 child: TextFormField(
                   controller: AuthorController,
                   textInputAction: TextInputAction.next,
-                  style: textFieldStyle,
+                  style: textFieldStyle(size(context)),
                   decoration: InputDecoration(
                     hintStyle: TextStyle(color: Colors.white54),
                     border: InputBorder.none,
@@ -2487,7 +2498,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                 child: TextFormField(
                   controller: EditionController,
                   textInputAction: TextInputAction.next,
-                  style: textFieldStyle,
+                  style: textFieldStyle(size(context)),
                   decoration: InputDecoration(
                     hintStyle: TextStyle(color: Colors.white54),
                     border: InputBorder.none,

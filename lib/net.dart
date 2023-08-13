@@ -11,10 +11,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+
+
+
+
 class ImageScreen extends StatefulWidget {
   final String branch;
+  double size;
 
-  ImageScreen({required this.branch});
+  ImageScreen({required this.branch,required this.size});
 
   @override
   _ImageScreenState createState() => _ImageScreenState();
@@ -141,14 +146,14 @@ class _ImageScreenState extends State<ImageScreen> {
   Widget build(BuildContext context) {
     return InkWell(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding:  EdgeInsets.all(widget.size *8.0),
         child: Container(
           decoration: BoxDecoration(
               color: Colors.black,
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(widget.size *15),
               border: Border.all(color: Colors.white30)),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            padding:  EdgeInsets.symmetric(vertical:widget.size * 5, horizontal: widget.size *10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,18 +164,18 @@ class _ImageScreenState extends State<ImageScreen> {
                   children: [
                     Text(
                       "Support society => ",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: TextStyle(color: Colors.white, fontSize: widget.size *20),
                     ),
                     Text(
                       "  for a small change",
-                      style: TextStyle(color: Colors.white54, fontSize: 15),
+                      style: TextStyle(color: Colors.white54, fontSize: widget.size *15),
                     ),
                   ],
                 ),
                 _canOpenImage
                     ? isAdLoaded
-                        ? ElevatedButton(
-                            onPressed: () async {
+                        ? InkWell(
+                            onTap: () async {
                               if (_canOpenImage) {
                                 _showRewardedAd();
 
@@ -195,22 +200,30 @@ class _ImageScreenState extends State<ImageScreen> {
                                 });
                               }
                             },
-                            child: Text('Register...'),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.lightGreenAccent,
+                                borderRadius: BorderRadius.circular(widget.size *10)
+                              ),
+                                child: Padding(
+                                  padding:  EdgeInsets.symmetric(vertical: widget.size *5,horizontal: widget.size *10),
+                                  child: Text('Help',style: TextStyle(color: Colors.black,fontSize: widget.size *20,fontWeight: FontWeight.w700),),
+                                )),
                           )
                         : Text(
                             'Wait for few secs',
-                            style: TextStyle(fontSize: 18, color: Colors.amber),
+                            style: TextStyle(fontSize:widget.size * 18, color: Colors.amber),
                           )
                     : Text(
                         'Wait for ${remainingTime.round()} mins',
-                        style: TextStyle(fontSize: 18, color: Colors.amber),
+                        style: TextStyle(fontSize: widget.size *18, color: Colors.amber),
                       ),
                 if (!_canOpenImage)
                   InkWell(
                     child: Icon(
                       Icons.refresh,
                       color: Colors.white,
-                      size: 35,
+                      size:widget.size * 35,
                     ),
                     onTap: () {
                       _checkImageOpenStatus();
@@ -309,7 +322,7 @@ class _supportListState extends State<supportList> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                backButton(),
+                backButton(size: size(context),),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Text(

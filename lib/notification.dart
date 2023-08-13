@@ -91,7 +91,7 @@ class _notificationsState extends State<notifications>
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          backButton(),
+          backButton(size: widget.size,),
           Padding(
             padding: EdgeInsets.only(bottom: widget.width * 10),
             child: Text(
@@ -1195,8 +1195,7 @@ class NotificationsConvertor {
 
 Future<void> downloadAllImages(BuildContext context, String branch, String reg) async {
   List list= [];
-  double height = screenHeight(context);
-  double width = screenWidth(context);
+
   final directory = await getApplicationDocumentsDirectory();
 
   String folderPath = directory.path;

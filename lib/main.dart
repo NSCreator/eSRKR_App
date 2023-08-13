@@ -72,80 +72,76 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTextStyle(
-      style: TextStyle(
-        fontFamily: DefaultTextStyle.of(context).style.fontFamily,
-      ),
-      child: MaterialApp(
-        navigatorKey: navigatorKey,
-        title: 'eSRKR',
-        builder: (context, child) {
-          return MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                textScaleFactor: 0.85,
-              ),
-              child: child!);
-        },
-        home: StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return StreamBuilder<DocumentSnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection("user")
-                        .doc(fullUserId())
-                        .snapshots(),
-                    builder: (context, mainsnapshot) {
-                      switch (mainsnapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return const Center(
-                              child: CircularProgressIndicator(
-                            strokeWidth: 0.3,
-                            color: Colors.cyan,
-                          ));
-                        default:
-                          {
-                            bool isTheir = false;
-                            try {
-                              if (mainsnapshot.data!.exists &&
-                                  mainsnapshot.data!['reg']
-                                      .toString()
-                                      .isNotEmpty &&
-                                  mainsnapshot.data!['branch']
-                                      .toString()
-                                      .isNotEmpty &&
-                                  mainsnapshot.data!['index']
-                                      .toString()
-                                      .isNotEmpty ) {
-                                isTheir = true;
-                              }
-                            } catch (Exception) {
-                              isTheir = false;
+    return MaterialApp(
+      navigatorKey: navigatorKey,
+      title: 'eSRKR',
+      builder: (context, child) {
+
+        return MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaleFactor: 0.85,
+            ),
+            child: child!);
+      },
+      home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("user")
+                      .doc(fullUserId())
+                      .snapshots(),
+                  builder: (context, mainsnapshot) {
+                    switch (mainsnapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                            child: CircularProgressIndicator(
+                          strokeWidth: 0.3,
+                          color: Colors.cyan,
+                        ));
+                      default:
+                        {
+                          bool isTheir = false;
+                          try {
+                            if (mainsnapshot.data!.exists &&
+                                mainsnapshot.data!['reg']
+                                    .toString()
+                                    .isNotEmpty &&
+                                mainsnapshot.data!['branch']
+                                    .toString()
+                                    .isNotEmpty &&
+                                mainsnapshot.data!['index']
+                                    .toString()
+                                    .isNotEmpty ) {
+                              isTheir = true;
                             }
-                            if (isTheir) {
-                              downloadAllImages(context,
-                                  mainsnapshot.data!["branch"].toString(),mainsnapshot.data!['reg'].toString());
-                              return HomePage(
-                                branch: mainsnapshot.data!["branch"].toString(),
-                                reg: mainsnapshot.data!['reg'].toString(),
-                                index: mainsnapshot.data!['index'], width: screenWidth(context),height: screenHeight(context),
-                                size: screenSize(context),
-                              );
-                            } else {
-                              return Scaffold(
-                                backgroundColor: Color.fromRGBO(4, 48, 46, 1),
-                                body: SafeArea(child: branchYear()),
-                              );
-                            }
+                          } catch (Exception) {
+                            isTheir = false;
                           }
-                      }
-                    });
-              } else {
-                return Scaffold(body: LoginPage());
-              }
-            }),
-        debugShowCheckedModeBanner: false,
-      ),
+                          if (isTheir) {
+                            downloadAllImages(context,
+                                mainsnapshot.data!["branch"].toString(),mainsnapshot.data!['reg'].toString());
+                            return HomePage(
+                              branch: mainsnapshot.data!["branch"].toString(),
+                              reg: mainsnapshot.data!['reg'].toString(),
+                              index: mainsnapshot.data!['index'],
+                              size: size(context),
+                            );
+                          } else {
+                            return Scaffold(
+                              backgroundColor: Color.fromRGBO(4, 48, 46, 1),
+                              body: SafeArea(child: branchYear()),
+                            );
+                          }
+                        }
+                    }
+                  });
+            } else {
+              return Scaffold(body: LoginPage());
+            }
+          }),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -245,8 +241,7 @@ class _yearsState extends State<years> {
                   .set({
                 "branch": widget.id,
                 "index": 0,
-                "width": screenWidth(context),
-                "height": screenHeight(context)
+
               });
             } else {
               FirebaseFirestore.instance

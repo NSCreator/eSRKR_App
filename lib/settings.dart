@@ -17,10 +17,11 @@ import 'net.dart';
 int currentIndex = 0;
 File file = File("");
 
-const TextStyle secondTabBarTextStyle = TextStyle(
-  color: Colors.white,
-  fontSize: 18,
-);
+
+TextStyle secondTabBarTextStyle({Color color = Colors.white,required double size}) {
+  return TextStyle(color: Colors.white,
+    fontSize: size*18,);
+}
 const TextStyle AppBarHeadingTextStyle = TextStyle(
   color: Colors.white,
   fontSize: 30,
@@ -31,8 +32,8 @@ const TextStyle creatorHeadingTextStyle = TextStyle(
     fontWeight: FontWeight.w600,
     color: Colors.white);
 
-TextStyle secondHeadingTextStyle({Color color = Colors.white}) {
-  return TextStyle(color: color, fontSize: 30, fontWeight: FontWeight.w500);
+TextStyle secondHeadingTextStyle({Color color = Colors.white,required double size}) {
+  return TextStyle(color: color, fontSize: size*30, fontWeight: FontWeight.w500);
 }
 
 class settings extends StatefulWidget {
@@ -78,7 +79,7 @@ class _settingsState extends State<settings> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            backButton(),
+            backButton(size:widget.size),
             Padding(
               padding: EdgeInsets.only(bottom: widget.width * 10),
               child: Text(
@@ -90,7 +91,7 @@ class _settingsState extends State<settings> {
               ),
             ),
             SizedBox(
-              width: 45,
+              width: widget.size *45,
             )
           ],
         ),
@@ -334,7 +335,7 @@ class _settingsState extends State<settings> {
                                                     "Back",
                                                     style: TextStyle(
                                                         color: Colors
-                                                            .white),
+                                                            .white,fontSize: widget.size *14),
                                                   ),
                                                 ),
                                               ),
@@ -345,7 +346,7 @@ class _settingsState extends State<settings> {
                                             ),
                                             SizedBox(
                                               width:
-                                              widget.width * 10,
+                                              widget.size * 10,
                                             ),
                                             InkWell(
                                               child: Container(
@@ -379,7 +380,7 @@ class _settingsState extends State<settings> {
                                                     "Log Out",
                                                     style: TextStyle(
                                                         color: Colors
-                                                            .white),
+                                                            .white,fontSize: widget.size *14),
                                                   ),
                                                 ),
                                               ),
@@ -394,13 +395,13 @@ class _settingsState extends State<settings> {
                                             ),
                                             SizedBox(
                                               width:
-                                              widget.width * 20,
+                                              widget.size * 20,
                                             ),
                                           ],
                                         ),
                                       ),
                                       SizedBox(
-                                        height: widget.height * 10,
+                                        height: widget.size* 10,
                                       ),
                                     ],
                                   ),
@@ -418,9 +419,10 @@ class _settingsState extends State<settings> {
           ),
         ),
         bottomBar(
+          size: widget.size ,
           index: widget.index,
         ),
-        ImageScreen(branch: widget.branch,),
+        ImageScreen(size:widget.size ,branch: widget.branch,),
         Expanded(
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
@@ -630,10 +632,10 @@ class _settingsState extends State<settings> {
                   child: Center(
                       child: Text('Settings',
                           style: TextStyle(
-                              fontSize: widget.size * 20,
-                              color: Colors.white70))),
+                              fontSize: widget.size * 25,
+                              color: Colors.white))),
                 ),
-                SizedBox(height: widget.height * 5.0),
+                SizedBox(height: widget.size *  5.0),
                 Padding(
                   padding: EdgeInsets.all(widget.size * 8.0),
                   child: Container(
@@ -654,7 +656,7 @@ class _settingsState extends State<settings> {
                           shrinkWrap: true,
                           padding: EdgeInsets.all(widget.size * 3),
                           mainAxisSpacing: 3,
-                          crossAxisCount: 2,
+                          crossAxisCount: Width(context)<800?2:3,
                           children: List.generate(
                             SettingsData.length,
                                 (int index) {
@@ -677,7 +679,7 @@ class _settingsState extends State<settings> {
                                           SettingsData[index].title,
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: widget.size * 13,
+                                              fontSize: widget.size * 18,
                                               fontWeight:
                                               FontWeight.w500),
                                         )),
@@ -761,7 +763,7 @@ class _settingsState extends State<settings> {
                                     ),
                                   ),
                                   SizedBox(
-                                    height: widget.height * 40,
+                                    height: widget.size * 40,
                                     child: ListView.separated(
                                       physics:
                                       BouncingScrollPhysics(),
@@ -774,9 +776,9 @@ class _settingsState extends State<settings> {
                                           InkWell(
                                             child: Padding(
                                               padding: EdgeInsets.only(
-                                                  left: widget.width * 5,
+                                                  left: widget.size *  5,
                                                   bottom:
-                                                  widget.height * 10),
+                                                  widget.size * 10),
                                               child: Container(
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
@@ -819,10 +821,10 @@ class _settingsState extends State<settings> {
                                                         ),
                                                       ),
                                                       height:
-                                                      widget.height *
+                                                      widget.size *
                                                           35,
                                                       width:
-                                                      widget.width *
+                                                      widget.size *
                                                           50,
                                                     ),
                                                     Padding(
@@ -906,12 +908,12 @@ class _settingsState extends State<settings> {
                   ),
                 ),
                 SizedBox(
-                  height: widget.height * 30,
+                  height: widget.size *  30,
                 ),
                 Center(
                     child: Text(
                       ".....eSRKR.....",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white,fontSize: widget.size * 14),
                     )),
                 Center(
                   child: Text(
@@ -924,7 +926,7 @@ class _settingsState extends State<settings> {
                   ),
                 ),
                 SizedBox(
-                  height: widget.height * 30,
+                  height: widget.size *  30,
                 ),
               ],
             ),
@@ -937,8 +939,9 @@ class _settingsState extends State<settings> {
 
 class bottomBar extends StatefulWidget {
   int index;
+  double size;
 
-  bottomBar({Key? key, required this.index}) : super(key: key);
+  bottomBar({Key? key, required this.index,required this.size}) : super(key: key);
 
   @override
   State<bottomBar> createState() => _bottomBarState();
@@ -962,12 +965,12 @@ class _bottomBarState extends State<bottomBar> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Text(
-          "Set Default Index : ",
-          style: TextStyle(color: Colors.white, fontSize: 23),
+          "Default : ",
+          style: TextStyle(color: Colors.white, fontSize: widget.size *23),
         ),
         Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(11), color: Colors.white12),
+              borderRadius: BorderRadius.circular(widget.size *11), color: Colors.white12),
           child: Row(
             children: [
               GestureDetector(
@@ -983,17 +986,18 @@ class _bottomBarState extends State<bottomBar> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius:
-                        BorderRadius.horizontal(left: Radius.circular(11)),
+                        BorderRadius.horizontal(left: Radius.circular(widget.size *11)),
                     color: selectedIndex == 0
                         ? Color.fromRGBO(38, 153, 148, 1)
                         : Colors.transparent,
                   ),
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(widget.size *8),
                   child: Text(
                     'Home',
                     style: TextStyle(
                       color: selectedIndex == 0 ? Colors.white : Colors.white54,
-                      fontWeight: FontWeight.w600
+                      fontWeight: FontWeight.w600,
+                      fontSize: widget.size *14
                     ),
                   ),
                 ),
@@ -1012,12 +1016,13 @@ class _bottomBarState extends State<bottomBar> {
                   color: selectedIndex == 1
                       ? Color.fromRGBO(38, 153, 148, 1)
                       : Colors.transparent,
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(widget.size *8),
                   child: Text(
                     'Regulation',
                     style: TextStyle(
                       color: selectedIndex == 1 ? Colors.white : Colors.white54,
-                        fontWeight: FontWeight.w600
+                        fontWeight: FontWeight.w600,
+                      fontSize: widget.size *14
 
                     ),
                   ),
@@ -1039,14 +1044,15 @@ class _bottomBarState extends State<bottomBar> {
                         ? Color.fromRGBO(38, 153, 148, 1)
                         : Colors.transparent,
                     borderRadius:
-                        BorderRadius.horizontal(right: Radius.circular(11)),
+                        BorderRadius.horizontal(right: Radius.circular(widget.size *11)),
                   ),
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(widget.size *8),
                   child: Text(
                     'Favorites',
                     style: TextStyle(
                       color: selectedIndex == 2 ? Colors.white : Colors.white54,
-                        fontWeight: FontWeight.w600
+                        fontWeight: FontWeight.w600,
+                      fontSize: widget.size *14
 
                     ),
                   ),

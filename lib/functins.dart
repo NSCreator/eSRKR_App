@@ -33,19 +33,6 @@ class Utils {
   }
 }
 
-double screenWidth(BuildContext context) {
-  MediaQueryData mediaQuery = MediaQuery.of(context);
-  double screenWidth = mediaQuery.size.width/400;
-
-  return screenWidth;
-}
-
-double screenHeight(BuildContext context) {
-  MediaQueryData mediaQuery = MediaQuery.of(context);
-  double screenHeight = mediaQuery.size.height/800;
-  return screenHeight;
-}
-
 double Width(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
@@ -58,7 +45,7 @@ double Height(BuildContext context) {
   double screenHeight = mediaQuery.size.height;
   return screenHeight;
 }
-double screenSize(BuildContext context) {
+double size(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenHeight = ((mediaQuery.size.height/800)+(mediaQuery.size.width/400))/2;
   return screenHeight;
@@ -115,6 +102,9 @@ Future<void> showToastText(String message) async {
   );
 }
 class backButton extends StatefulWidget {
+  Color color;
+  double size;
+  backButton({ this.color=Colors.white,required this.size});
   @override
   State<backButton> createState() => _backButtonState();
 }
@@ -124,8 +114,8 @@ class _backButtonState extends State<backButton> {
   Widget build(BuildContext context) {
     return  InkWell(
       child: Padding(
-        padding: const EdgeInsets.only(left:10,right: 10),
-        child: Icon(Icons.arrow_back,color: Colors.white,size: 30,),
+        padding:  EdgeInsets.only(left:widget.size * 10,right: widget.size * 10),
+        child: Icon(Icons.arrow_back,color: widget.color,size:widget.size *  30,),
       ),
       onTap: (){
         Navigator.pop(context);
@@ -161,7 +151,8 @@ void like(bool isAdd, String updateId) {
 class downloadAllPdfs extends StatefulWidget {
   String branch,SubjectID;
   List pdfs;
- downloadAllPdfs({required this.branch,required this.SubjectID,required this.pdfs});
+  double size;
+ downloadAllPdfs({required this.branch,required this.SubjectID,required this.pdfs,required this.size});
 
   @override
   State<downloadAllPdfs> createState() => _downloadAllPdfsState();
@@ -246,8 +237,8 @@ class _downloadAllPdfsState extends State<downloadAllPdfs> {
         children: <Widget>[
 
           SizedBox(
-            height: 28,
-            width: 28,
+            height:widget.size* 28,
+            width: widget.size*28,
             child: CircularProgressIndicator(
                strokeWidth: 3,
               color: Colors.green,
@@ -255,15 +246,15 @@ class _downloadAllPdfsState extends State<downloadAllPdfs> {
             ),
           ),
           if(isDownloaded)SizedBox(
-            height: 34,
-            width: 34,
+            height:widget.size* 34,
+            width: widget.size*34,
             child: CircularProgressIndicator(
               strokeWidth: 2,
 
               color: Colors.red,
             ),
           ),
-          Icon(isDownloaded?Icons.download_done:Icons.download_for_offline_outlined, size: 30.0,color: isDownloaded?Colors.greenAccent:Colors.white54,),
+          Icon(isDownloaded?Icons.download_done:Icons.download_for_offline_outlined, size:widget.size* 30.0,color: isDownloaded?Colors.greenAccent:Colors.white54,),
         ],
       ),
       onTap: (){
