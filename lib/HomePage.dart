@@ -1335,7 +1335,7 @@ class _HomePageState extends State<HomePage> {
                                                 .split("/")
                                                 .last;
                                             final file = File(
-                                                "${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
+                                                "${folderPath}/subjects/$name");
                                             return InkWell(
                                               child: Column(
                                                 children: [
@@ -1676,7 +1676,7 @@ class _HomePageState extends State<HomePage> {
                                               .split("/")
                                               .last;
                                           final file = File(
-                                              "${folderPath}/${widget.branch.toLowerCase()}_labsubjects/$name");
+                                              "${folderPath}/labsubjects/$name");
                                           return InkWell(
                                             child: Column(
                                               children: [

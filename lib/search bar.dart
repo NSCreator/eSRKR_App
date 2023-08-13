@@ -109,7 +109,7 @@ class _MyAppqState extends State<MyAppq> {
                       var filename =
                           fileName.split("/").last;
                       final file = File(
-                          "${folderPath}/${widget.branch.toLowerCase()}_subjects/$filename");
+                          "${folderPath}/subjects/$filename");
                       if (name.isEmpty) {
                         return Padding(
                           padding: EdgeInsets.only(
@@ -443,7 +443,7 @@ class _MyAppqState extends State<MyAppq> {
                       var filename =
                           fileName.split("/").last;
                       final file = File(
-                          "${folderPath}/${widget.branch.toLowerCase()}_labsubjects/$filename");
+                          "${folderPath}/labsubjects/$filename");
                       if (name.isEmpty) {
                         return Padding(
                           padding: EdgeInsets.only(

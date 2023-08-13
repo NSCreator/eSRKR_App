@@ -83,7 +83,7 @@ class _NewsPageState extends State<NewsPage> {
                             final String fileName = uri.pathSegments.last;
                             var name = fileName.split("/").last;
                             final file = File(
-                                "${folderPath}/${widget.branch.toLowerCase()}_news/$name");
+                                "${folderPath}/news/$name");
                             return InkWell(
                               child: Container(
                                 width: double.infinity,
@@ -385,7 +385,7 @@ class _SubjectsState extends State<Subjects> {
                           final String fileName = uri.pathSegments.last;
                           var name = fileName.split("/").last;
                           final file = File(
-                              "${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
+                              "${folderPath}/subjects/$name");
 
                           return Padding(
                             padding: EdgeInsets.symmetric(
@@ -847,7 +847,7 @@ class _LabSubjectsState extends State<LabSubjects> {
                           final String fileName = uri.pathSegments.last;
                           var name = fileName.split("/").last;
                           final file = File(
-                              "${folderPath}/${widget.branch.toLowerCase()}_labsubjects/$name");
+                              "${folderPath}/labsubjects/$name");
 
                           return Padding(
                             padding: EdgeInsets.symmetric(
@@ -1318,7 +1318,7 @@ class _textBookSubState extends State<textBookSub> {
       folderPath = '${directory.path}';
 
         file =
-            File("${folderPath}/${widget.branch.toLowerCase()}_books/$name");
+            File("${folderPath}/books/$name");
 
     });
   }
@@ -1380,7 +1380,7 @@ class _textBookSubState extends State<textBookSub> {
   @override
   Widget build(BuildContext context) {
     final file = File("${folderPath}/pdfs/${getFileName(widget.data.link)}");
-    final imageFile = File("${folderPath}/${widget.branch.toLowerCase()}_books/${getFileName(widget.data.photoUrl)}");
+    final imageFile = File("${folderPath}/books/${getFileName(widget.data.photoUrl)}");
 
     return Padding(
       padding: EdgeInsets.only(
@@ -1818,10 +1818,10 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
       folderPath = '${directory.path}';
       if (widget.mode == "Subjects") {
         file =
-            File("${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
+            File("${folderPath}/subjects/$name");
       } else {
         file = File(
-            "${folderPath}/${widget.branch.toLowerCase()}_labsubjects/$name");
+            "${folderPath}/labsubjects/$name");
       }
     });
   }
@@ -3072,10 +3072,10 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
       folderPath = '${directory.path}';
       if (widget.mode == "Subjects") {
         file =
-            File("${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
+            File("${folderPath}/subjects/$name");
       } else {
         file = File(
-            "${folderPath}/${widget.branch.toLowerCase()}_labsubjects/$name");
+            "${folderPath}/labsubjects/$name");
       }
     });
   }
@@ -4304,10 +4304,10 @@ class _subMoreState extends State<subMore>
       folderPath = '${directory.path}';
       if (widget.mode == "Subjects") {
         file =
-            File("${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
+            File("${folderPath}/subjects/$name");
       } else {
         file = File(
-            "${folderPath}/${widget.branch.toLowerCase()}_labsubjects/$name");
+            "${folderPath}/labsubjects/$name");
       }
     });
   }

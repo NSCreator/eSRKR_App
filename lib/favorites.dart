@@ -95,7 +95,7 @@ class _favoritesState extends State<favorites> {
                                             uri.pathSegments.last;
                                         var name = fileName.split("/").last;
                                         final file = File(
-                                            "${folderPath}/${widget.branch.toLowerCase()}_subjects/$name");
+                                            "${folderPath}/subjects/$name");
                                         return InkWell(
                                           child: Container(
                                             width: double.infinity,
@@ -399,7 +399,7 @@ class _favoritesState extends State<favorites> {
                                             uri.pathSegments.last;
                                         var name = fileName.split("/").last;
                                         final file = File(
-                                            "${folderPath}/${widget.branch.toLowerCase()}_labsubjects/$name");
+                                            "${folderPath}/labsubjects/$name");
                                         return InkWell(
                                           child: Container(
                                             width: double.infinity,

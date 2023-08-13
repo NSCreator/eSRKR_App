@@ -1231,9 +1231,9 @@ Future<void> downloadAllImages(BuildContext context, String branch, String reg) 
           final String fileName = uri.pathSegments.last;
           var name = fileName.split("/").last;
           final file =
-              await File("${folderPath}/${branch.toLowerCase()}_news/$name");
+              await File("${folderPath}/news/$name");
           if (!file.existsSync()) {
-            list.add(data["Photo Url"]+";"+"${branch.toLowerCase()}_news");
+            list.add(data["Photo Url"]+";"+"news");
           }
         }
       }
@@ -1260,9 +1260,9 @@ Future<void> downloadAllImages(BuildContext context, String branch, String reg) 
           final String fileName = uri.pathSegments.last;
           var name = fileName.split("/").last;
           final file = await File(
-              "${folderPath}/${branch.toLowerCase()}_subjects/$name");
+              "${folderPath}/subjects/$name");
           if (!file.existsSync()) {
-            list.add(data["Photo Url"]+";"+"${branch.toLowerCase()}_subjects");
+            list.add(data["Photo Url"]+";"+"subjects");
           }
         }
       }
@@ -1289,9 +1289,9 @@ Future<void> downloadAllImages(BuildContext context, String branch, String reg) 
           final String fileName = uri.pathSegments.last;
           var name = fileName.split("/").last;
           final file = await File(
-              "${folderPath}/${branch.toLowerCase()}_labsubjects/$name");
+              "${folderPath}/labsubjects/$name");
           if (!file.existsSync()) {
-            list.add(data["Photo Url"]+";"+"${branch.toLowerCase()}_labsubjects");
+            list.add(data["Photo Url"]+";"+"labsubjects");
           }
         }
       }
@@ -1318,9 +1318,9 @@ Future<void> downloadAllImages(BuildContext context, String branch, String reg) 
           final String fileName = uri.pathSegments.last;
           var name = fileName.split("/").last;
           final file =
-              await File("${folderPath}/${branch.toLowerCase()}_books/$name");
+              await File("${folderPath}/books/$name");
           if (!file.existsSync()) {
-            list.add(data["Photo Url"]+";"+"${branch.toLowerCase()}_books");
+            list.add(data["Photo Url"]+";"+"books");
 
           }
         }
