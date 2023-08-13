@@ -3146,21 +3146,20 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
     final file = File("${folderPath}/pdfs/${getFileName(widget.unit.PDFLink.isNotEmpty?widget.unit.PDFLink:" ")}");
 
     return Container(
-      width: double.infinity,
+
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(widget.size * 25),
-        color: file.existsSync() && isExp
-            ? Colors.black.withOpacity(0.5)
-            : Colors.black.withOpacity(0.07),
-        border: Border.all(color: Colors.white12),
+        color:  isExp
+            ? Colors.white.withOpacity(0.1)
+            : Colors.black.withOpacity(0.1),
+        border: Border.all(color: isExp?Colors.white70:Colors.white12),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+       child: Column(
+
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (file.existsSync())
                 ClipRRect(
@@ -3560,183 +3559,214 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
               padding:  EdgeInsets.symmetric(horizontal: widget.size * 25),
               child: LinearProgressIndicator(),
             ),
-          if (isExp)
-            Container(
-              height: widget.size * 45,
-              child: TabBar(
-                indicator: BoxDecoration(
-                    border: Border.all(color: Colors.white12),
-                    borderRadius: BorderRadius.circular(widget.size * 15),
-                    color: Color.fromRGBO(4, 11, 23, 1)),
-                controller: _tabController,
-                isScrollable: true,
-                labelPadding: EdgeInsets.symmetric(horizontal: 25),
-                tabs: [
-                  Tab(
-                    child: Text(
-                      "Description",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: widget.size * 25,
-                      ),
-                    ),
-                  ),
-                  Tab(
-                    child: Text(
-                      "Questions",
-                      style: TextStyle(color: Colors.white, fontSize: widget.size * 25),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+
           if (isExp)
             SizedBox(
-              height:widget.size *  300,
-              child: Padding(
-                padding:  EdgeInsets.all(widget.size * 8.0),
-                child: TabBarView(controller: _tabController, children: [
-                  ListView.builder(
+              height: Height(context)/2.7,
+              child: Stack(
+                children: [
+
+
+                  Padding(
+                    padding:  EdgeInsets.all(widget.size * 8.0),
+                    child: TabBarView(
                       physics: BouncingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: newList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (newList.length > 1) {
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: widget.height * 8),
-                            child: InkWell(
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.circle,
-                                    size: widget.size * 8,
-                                    color: Colors.lightBlueAccent,
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      isUser()
-                                          ? newList[index]
-                                          : newList[index].split("@").first,
-                                      style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: widget.size * 18),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              onTap: () {
-                                int indexNumber = 0;
-                                try {
-                                  indexNumber = int.parse(
-                                      newList[index].split('@').last.trim());
-                                } catch (e) {
-                                  indexNumber = 0;
-                                }
-                                if (file.existsSync()) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => PdfViewerPage(
-                                                pdfUrl:
-                                                    "${folderPath}/pdfs/${getFileName(widget.unit.PDFLink)}",
-                                                defaultPage: indexNumber - 1,
-                                              )));
-                                } else {
-                                  showToastText("Download PDF");
-                                }
-                              },
-                            ),
-                          );
-                        } else {
-                          return Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(widget.size * 8.0),
+                        controller: _tabController, children: [
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: widget.size*60,),
+                            ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: newList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  if (newList.length > 1) {
+                                    return Padding(
+                                      padding: EdgeInsets.only(bottom: widget.height * 8),
+                                      child: InkWell(
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.circle,
+                                              size: widget.size * 8,
+                                              color: Colors.lightBlueAccent,
+                                            ),
+                                            Flexible(
+                                              child: Text(
+                                                isUser()
+                                                    ? newList[index]
+                                                    : newList[index].split("@").first,
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: widget.size * 18),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          int indexNumber = 0;
+                                          try {
+                                            indexNumber = int.parse(
+                                                newList[index].split('@').last.trim());
+                                          } catch (e) {
+                                            indexNumber = 0;
+                                          }
+                                          if (file.existsSync()) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => PdfViewerPage(
+                                                          pdfUrl:
+                                                              "${folderPath}/pdfs/${getFileName(widget.unit.PDFLink)}",
+                                                          defaultPage: indexNumber - 1,
+                                                        )));
+                                          } else {
+                                            showToastText("Download PDF");
+                                          }
+                                        },
+                                      ),
+                                    );
+                                  } else {
+                                    return Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(widget.size * 8.0),
+                                        child: Text(
+                                          newList[0],
+                                          style: TextStyle(
+                                              color: Colors.amberAccent,
+                                              fontSize: widget.size * 18),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }),
+                          ],
+                        ),
+                      ),
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: widget.size*60,),
+                            ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: newQuestionsList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  if (newQuestionsList.length > 1) {
+                                    return Padding(
+                                      padding: EdgeInsets.only(bottom: widget.height * 8),
+                                      child: InkWell(
+                                        child: Row(
+                                          children: [
+                                            Text("${index + 1}. ",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: widget.size * 18)),
+                                            Flexible(
+                                              child: Text(
+                                                isUser()
+                                                    ? newQuestionsList[index]
+                                                    : newQuestionsList[index]
+                                                        .split("@")
+                                                        .first,
+                                                style: TextStyle(
+                                                    color: Colors.white70,
+                                                    fontSize: widget.size * 15),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          int indexNumber = 0;
+                                          try {
+                                            indexNumber = int.parse(
+                                                newQuestionsList[index]
+                                                    .split('@')
+                                                    .last
+                                                    .trim());
+                                          } catch (e) {
+                                            indexNumber = 0;
+                                          }
+                                          if (file.existsSync()) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => PdfViewerPage(
+                                                          pdfUrl:
+                                                              "${folderPath}/pdfs/${getFileName(widget.unit.PDFLink)}",
+                                                          defaultPage: indexNumber - 1,
+                                                        )));
+                                          } else {
+                                            showToastText("Download PDF");
+                                          }
+                                        },
+                                      ),
+                                    );
+                                  } else {
+                                    return Center(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(0.5),
+                                            borderRadius: BorderRadius.circular(widget.size*8)),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(widget.size * 8.0),
+                                          child: Text(
+                                            "No Question",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: widget.size * 18,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }),
+                          ],
+                        ),
+                      ),
+                    ]),
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Container(
+                      height: widget.size * 40,
+                      child: Center(
+                        child: TabBar(
+                          indicator: BoxDecoration(
+                              border: Border.all(color: Colors.white12),
+                              borderRadius: BorderRadius.circular(widget.size * 15),
+                              color: Color.fromRGBO(4, 11, 23, 1)),
+                          controller: _tabController,
+                          isScrollable: true,
+                          labelPadding: EdgeInsets.symmetric(horizontal: 25),
+                          tabs: [
+                            Tab(
                               child: Text(
-                                newList[0],
+                                "Description",
                                 style: TextStyle(
-                                    color: Colors.amberAccent,
-                                    fontSize: widget.size * 18),
-                              ),
-                            ),
-                          );
-                        }
-                      }),
-                  ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: newQuestionsList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (newQuestionsList.length > 1) {
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: widget.height * 8),
-                            child: InkWell(
-                              child: Row(
-                                children: [
-                                  Text("${index + 1}. ",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: widget.size * 18)),
-                                  Flexible(
-                                    child: Text(
-                                      isUser()
-                                          ? newQuestionsList[index]
-                                          : newQuestionsList[index]
-                                              .split("@")
-                                              .first,
-                                      style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: widget.size * 15),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              onTap: () {
-                                int indexNumber = 0;
-                                try {
-                                  indexNumber = int.parse(
-                                      newQuestionsList[index]
-                                          .split('@')
-                                          .last
-                                          .trim());
-                                } catch (e) {
-                                  indexNumber = 0;
-                                }
-                                if (file.existsSync()) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => PdfViewerPage(
-                                                pdfUrl:
-                                                    "${folderPath}/pdfs/${getFileName(widget.unit.PDFLink)}",
-                                                defaultPage: indexNumber - 1,
-                                              )));
-                                } else {
-                                  showToastText("Download PDF");
-                                }
-                              },
-                            ),
-                          );
-                        } else {
-                          return Center(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: Padding(
-                                padding: EdgeInsets.all(widget.size * 8.0),
-                                child: Text(
-                                  "No Question",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: widget.size * 18,
-                                      fontWeight: FontWeight.w600),
+                                  color: Colors.white,
+                                  fontSize: widget.size * 25,
                                 ),
                               ),
                             ),
-                          );
-                        }
-                      }),
-                ]),
+                            Tab(
+                              child: Text(
+                                "Questions",
+                                style: TextStyle(color: Colors.white, fontSize: widget.size * 25),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ),
+                    ),)
+                ],
               ),
             ),
         ],
