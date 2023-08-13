@@ -126,6 +126,7 @@ class _PdfViewerPageState extends State<PdfViewerPage>
       },
       child: Scaffold(
           body: Stack(
+
             children: [
               isLoading && isReady
                   ? Center(child: CircularProgressIndicator())
