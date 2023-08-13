@@ -85,207 +85,203 @@ class _NewsPageState extends State<NewsPage> {
                             final file = File(
                                 "${folderPath}/${widget.branch.toLowerCase()}_news/$name");
                             return InkWell(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: double.infinity,
-                                    margin: EdgeInsets.all(widget.size * 4.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black54,
-                                      borderRadius: BorderRadius.circular(
-                                          widget.size * 15),
-                                      border: Border.all(
-                                          color: Colors.white.withOpacity(0.1)),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: widget.size * 8,
-                                              left: widget.size * 8,
-                                              bottom: widget.size * 2),
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                height: widget.size * 25,
-                                                width: widget.size * 25,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          widget.size * 15),
-                                                  image: DecorationImage(
-                                                    image: AssetImage(
-                                                        "assets/ece image 64x64.png"),
-                                                  ),
-                                                ),
-                                              ),
-                                              if (BranchNew.heading.isNotEmpty)
-                                                Text(" ${BranchNew.heading}",
-                                                    style: TextStyle(
-                                                        color:
-                                                            Colors.orangeAccent,
-                                                        fontSize:
-                                                            widget.size * 20,
-                                                        fontWeight:
-                                                            FontWeight.w400))
-                                              else
-                                                Text(" ${widget.branch} (SRKR)",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize:
-                                                            widget.size * 20,
-                                                        fontWeight:
-                                                            FontWeight.w400)),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                            padding: EdgeInsets.all(
-                                                widget.size * 5.0),
-                                            child: Image.file(file)),
-                                        Row(
-                                          children: [
-                                            Spacer(),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: widget.size * 5,
-                                                  bottom: widget.size * 3,
-                                                  right: widget.size * 20),
-                                              child: Text(
-                                                BranchNew.id.split("-").first.length<11?BranchNew.id.split("-").first:"No Date",
-                                                style: TextStyle(
-                                                    color: Colors.white54,
-                                                    fontSize: widget.size * 10,
-                                                    fontWeight:
-                                                        FontWeight.w300),
+                              child: Container(
+                                width: double.infinity,
+                                margin: EdgeInsets.all(widget.size * 4.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(
+                                      widget.size * 20),
+                                  border: Border.all(
+                                      color: Colors.white.withOpacity(0.1)),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: widget.size * 8,
+                                          left: widget.size * 8,
+                                          bottom: widget.size * 2),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            height: widget.size * 25,
+                                            width: widget.size * 25,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      widget.size * 15),
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                    "assets/ece image 64x64.png"),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                        if (BranchNew.description.isNotEmpty)
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                left: widget.size * 25,
-                                                top: widget.size * 5,
-                                                bottom: widget.size * 5),
-                                            child: Text(BranchNew.description,
+                                          ),
+                                          if (BranchNew.heading.isNotEmpty)
+                                            Text(" ${BranchNew.heading}",
                                                 style: TextStyle(
                                                     color:
-                                                        Colors.lightBlueAccent,
-                                                    fontSize: widget.size * 14,
+                                                        Colors.orangeAccent,
+                                                    fontSize:
+                                                        widget.size * 20,
                                                     fontWeight:
-                                                        FontWeight.w500)),
+                                                        FontWeight.w400))
+                                          else
+                                            Text(" ${widget.branch} (SRKR)",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize:
+                                                        widget.size * 20,
+                                                    fontWeight:
+                                                        FontWeight.w400)),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                        padding: EdgeInsets.all(
+                                            widget.size * 5.0),
+                                        child: Image.file(file)),
+                                    Row(
+                                      children: [
+                                        Spacer(),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: widget.size * 5,
+                                              bottom: widget.size * 3,
+                                              right: widget.size * 20),
+                                          child: Text(
+                                            BranchNew.id.split("-").first.length<11?BranchNew.id.split("-").first:"No Date",
+                                            style: TextStyle(
+                                                color: Colors.white54,
+                                                fontSize: widget.size * 10,
+                                                fontWeight:
+                                                    FontWeight.w300),
                                           ),
-                                        if (isUser())
-                                          Row(
-                                            children: [
-                                              Spacer(),
-                                              InkWell(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.grey[500],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            widget.size * 15),
-                                                    border: Border.all(
-                                                        color: Colors.white),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: widget.size * 10,
-                                                        right:
-                                                            widget.size * 10,
-                                                        top: widget.size * 5,
-                                                        bottom:
-                                                            widget.size * 5),
-                                                    child: Text("Edit"),
-                                                  ),
-                                                ),
-                                                onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) => NewsCreator(
-                                                              branch:
-                                                                  widget.branch,
-                                                              NewsId:
-                                                                  BranchNew.id,
-                                                              heading: BranchNew
-                                                                  .heading,
-                                                              description:
-                                                                  BranchNew
-                                                                      .description,
-                                                              photoUrl: BranchNew
-                                                                  .photoUrl)));
-                                                },
-                                              ),
-                                              SizedBox(
-                                                width: widget.size * 20,
-                                              ),
-                                              InkWell(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.grey[500],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            widget.size * 15),
-                                                    border: Border.all(
-                                                        color: Colors.white),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: widget.size * 10,
-                                                        right:
-                                                            widget.size * 10,
-                                                        top: widget.size * 5,
-                                                        bottom:
-                                                            widget.size * 5),
-                                                    child: Text("Delete"),
-                                                  ),
-                                                ),
-                                                onTap: () async {
-                                                  final Uri uri = Uri.parse(
-                                                      BranchNew.photoUrl);
-                                                  final String fileName =
-                                                      uri.pathSegments.last;
-                                                  final Reference ref = storage
-                                                      .ref()
-                                                      .child("/${fileName}");
-                                                  try {
-                                                    await ref.delete();
-                                                    showToastText(
-                                                        'Image deleted successfully');
-                                                  } catch (e) {
-                                                    showToastText(
-                                                        'Error deleting image: $e');
-                                                  }
-                                                  FirebaseFirestore.instance
-                                                      .collection(widget.branch)
-                                                      .doc(
-                                                          "${widget.branch}News")
-                                                      .collection(
-                                                          "${widget.branch}News")
-                                                      .doc(BranchNew.id)
-                                                      .delete();
-                                                  pushNotificationsSpecificPerson(
-                                                      fullUserId(),
-                                                      " ${BranchNew.heading} Deleted from News",
-                                                      "");
-                                                },
-                                              ),
-                                              SizedBox(
-                                                width: widget.size * 20,
-                                              ),
-                                            ],
-                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                    if (BranchNew.description.isNotEmpty)
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: widget.size * 25,
+                                            top: widget.size * 5,
+                                            bottom: widget.size * 5),
+                                        child: Text(BranchNew.description,
+                                            style: TextStyle(
+                                                color:
+                                                    Colors.lightBlueAccent,
+                                                fontSize: widget.size * 14,
+                                                fontWeight:
+                                                    FontWeight.w500)),
+                                      ),
+                                    if (isUser())
+                                      Row(
+                                        children: [
+                                          Spacer(),
+                                          InkWell(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey[500],
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        widget.size * 15),
+                                                border: Border.all(
+                                                    color: Colors.white),
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: widget.size * 10,
+                                                    right:
+                                                        widget.size * 10,
+                                                    top: widget.size * 5,
+                                                    bottom:
+                                                        widget.size * 5),
+                                                child: Text("Edit"),
+                                              ),
+                                            ),
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) => NewsCreator(
+                                                          branch:
+                                                              widget.branch,
+                                                          NewsId:
+                                                              BranchNew.id,
+                                                          heading: BranchNew
+                                                              .heading,
+                                                          description:
+                                                              BranchNew
+                                                                  .description,
+                                                          photoUrl: BranchNew
+                                                              .photoUrl)));
+                                            },
+                                          ),
+                                          SizedBox(
+                                            width: widget.size * 20,
+                                          ),
+                                          InkWell(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey[500],
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        widget.size * 15),
+                                                border: Border.all(
+                                                    color: Colors.white),
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: widget.size * 10,
+                                                    right:
+                                                        widget.size * 10,
+                                                    top: widget.size * 5,
+                                                    bottom:
+                                                        widget.size * 5),
+                                                child: Text("Delete"),
+                                              ),
+                                            ),
+                                            onTap: () async {
+                                              final Uri uri = Uri.parse(
+                                                  BranchNew.photoUrl);
+                                              final String fileName =
+                                                  uri.pathSegments.last;
+                                              final Reference ref = storage
+                                                  .ref()
+                                                  .child("/${fileName}");
+                                              try {
+                                                await ref.delete();
+                                                showToastText(
+                                                    'Image deleted successfully');
+                                              } catch (e) {
+                                                showToastText(
+                                                    'Error deleting image: $e');
+                                              }
+                                              FirebaseFirestore.instance
+                                                  .collection(widget.branch)
+                                                  .doc(
+                                                      "${widget.branch}News")
+                                                  .collection(
+                                                      "${widget.branch}News")
+                                                  .doc(BranchNew.id)
+                                                  .delete();
+                                              pushNotificationsSpecificPerson(
+                                                  fullUserId(),
+                                                  " ${BranchNew.heading} Deleted from News",
+                                                  "");
+                                            },
+                                          ),
+                                          SizedBox(
+                                            width: widget.size * 20,
+                                          ),
+                                        ],
+                                      ),
+                                  ],
+                                ),
                               ),
                               onTap: () async {
                                 Navigator.push(
@@ -404,7 +400,7 @@ class _SubjectsState extends State<Subjects> {
                                         color: Colors.black38,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(
-                                                widget.size * 10))),
+                                                widget.size * 20))),
                                     child: SingleChildScrollView(
                                       physics:
                                       const BouncingScrollPhysics(),
@@ -419,7 +415,7 @@ class _SubjectsState extends State<Subjects> {
                                               BorderRadius.all(
                                                   Radius.circular(
                                                       widget.size *
-                                                          8.0)),
+                                                          20)),
                                               color: Colors.black,
                                               image: DecorationImage(
                                                 image: FileImage(file),
@@ -449,7 +445,7 @@ class _SubjectsState extends State<Subjects> {
                                                           widget.size *
                                                               20.0,
                                                           color: Colors
-                                                              .orangeAccent,
+                                                              .amber,
                                                           fontWeight:
                                                           FontWeight
                                                               .w600,
@@ -574,7 +570,7 @@ class _SubjectsState extends State<Subjects> {
                                                       widget.size *
                                                           13.0,
                                                       color: Colors
-                                                          .lightBlueAccent,
+                                                          .white70,
                                                     ),
                                                   ),
                                                   if (isUser())
@@ -716,8 +712,7 @@ class _SubjectsState extends State<Subjects> {
                                                   .last,
                                               req: SubjectsData.regulation,
                                               pdfs: 0,
-                                              width: widget.width,
-                                              height: widget.height,
+
                                               size: widget.size,
                                               branch: widget.branch,
                                               ID: SubjectsData.id,
@@ -865,7 +860,7 @@ class _LabSubjectsState extends State<LabSubjects> {
                                     color: Colors.black38,
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(
-                                            widget.size * 10))),
+                                            widget.size * 20))),
                                 child: SingleChildScrollView(
                                   physics:
                                   const BouncingScrollPhysics(),
@@ -877,7 +872,7 @@ class _LabSubjectsState extends State<LabSubjects> {
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius
                                               .all(Radius.circular(
-                                              widget.size * 8.0)),
+                                              widget.size * 20)),
                                           color: Colors.redAccent,
                                           image: DecorationImage(
                                             image: FileImage(file),
@@ -904,7 +899,7 @@ class _LabSubjectsState extends State<LabSubjects> {
                                                       widget.size *
                                                           20.0,
                                                       color: Colors
-                                                          .orangeAccent,
+                                                          .amber,
                                                       fontWeight:
                                                       FontWeight.w600,
                                                     ),
@@ -1028,7 +1023,7 @@ class _LabSubjectsState extends State<LabSubjects> {
                                                   fontSize:
                                                   widget.size * 13.0,
                                                   color: Colors
-                                                      .lightBlueAccent,
+                                                      .white70,
                                                 ),
                                               ),
                                               if (isUser())
@@ -1150,8 +1145,6 @@ class _LabSubjectsState extends State<LabSubjects> {
                                               .last,
                                           req: LabSubjectsData.regulation,
                                           pdfs: 0,
-                                          width: widget.width,
-                                          height: widget.height,
                                           size: widget.size,
                                           branch: widget.branch,
                                           ID: LabSubjectsData.id,
@@ -1574,262 +1567,114 @@ class _textBookSubState extends State<textBookSub> {
                     SizedBox(
                       height: widget.height * 5,
                     ),
-                    Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Padding(
-                          padding:  EdgeInsets.symmetric(vertical: widget.size * 5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.circular(widget.size * 8),
-                                  color: Colors.white.withOpacity(0.07),
-                                  border: Border.all(
-                                      color: Colors.white.withOpacity(0.3)),
-                                ),
-                                child: Row(
-                                  children: [
-                                    InkWell(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 8),
-                                            color: Colors.black.withOpacity(0.5),
-                                            border: Border.all(
-                                                color: file.existsSync()
-                                                    ? Colors.green
-                                                    : Colors.white),
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                left: widget.width * 3,
-                                                right: widget.width * 3),
-                                            child: Row(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: widget.width * 5,
-                                                      right: widget.width * 5,
-                                                      top: widget.height * 3,
-                                                      bottom: widget.height * 3),
-                                                  child: Text(
-                                                    file.existsSync()
-                                                        ? "Open"
-                                                        : "Download",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize:
-                                                        widget.size * 20),
-                                                  ),
-                                                ),
-                                                Icon(
-                                                  file.existsSync()
-                                                      ? Icons.open_in_new
-                                                      : Icons
-                                                      .download_for_offline_outlined,
-                                                  color: Colors.greenAccent,
-                                                  size: widget.size * 20,
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          if (file.existsSync()) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PdfViewerPage(
-                                                            pdfUrl:
-                                                            "${folderPath}/pdfs/${getFileName(widget.data.link)}")));
-                                          } else {
-                                            setState(() {
-                                              isDownloaded = true;
-                                            });
-                                            await download(
-                                                widget.data.link, "pdfs");
-                                          }
-                                        }),
-                                    if (file.existsSync())
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: widget.width * 5,
-                                            right: widget.width * 5,
-                                            top: widget.height * 1,
-                                            bottom: widget.height * 1),
-                                        child: InkWell(
-                                          child: Icon(
-                                            Icons.delete,
-                                            color: Colors.redAccent,
-                                            size: widget.size * 25,
-                                          ),
-                                          onLongPress: () async {
-                                            if (file.existsSync()) {
-                                              await file.delete();
-                                            }
-                                            setState(() {});
-                                            showToastText(
-                                                "File has been deleted");
-                                          },
-                                          onTap: () {
-                                            showToastText("Long Press To Delete");
-                                          },
-                                        ),
-                                      )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          child: StreamBuilder<
-                              DocumentSnapshot>(
-                            stream: FirebaseFirestore
-                                .instance
-                                .collection('user')
-                                .doc(fullUserId())
-                                .collection(
-                                "FavouriteBooks")
-                                .doc(widget.data.id)
-                                .snapshots(),
-                            builder:
-                                (context, snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot
-                                    .data!.exists) {
-                                  return Row(
-                                    children: [
-                                      Icon(
-                                          Icons
-                                              .library_add_check,
-                                          size: widget
-                                              .size *
-                                              26,
-                                          color: Colors
-                                              .green),
-                                      Text(
-                                        "Saved",
-                                        style: TextStyle(
-                                            color: Colors
-                                                .greenAccent,
-                                            fontSize:
-                                            widget.size *
-                                                20),
-                                      )
-                                    ],
-                                  );
-                                } else {
-                                  return Row(
-                                    children: [
-                                      Icon(
-                                        Icons
-                                            .library_add_outlined,
-                                        size: widget
-                                            .size *
-                                            26,
-                                        color:
-                                        Colors.cyan,
+                    Padding(
+                      padding:  EdgeInsets.symmetric(vertical: widget.size * 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                              BorderRadius.circular(widget.size * 8),
+                              color: Colors.white.withOpacity(0.07),
+                              border: Border.all(
+                                  color: Colors.white.withOpacity(0.3)),
+                            ),
+                            child: Row(
+                              children: [
+                                InkWell(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                            widget.size * 8),
+                                        color: Colors.black.withOpacity(0.5),
+                                        border: Border.all(
+                                            color: file.existsSync()
+                                                ? Colors.green
+                                                : Colors.white),
                                       ),
-                                      Text(
-                                        "Save",
-                                        style: TextStyle(
-                                            color: Colors
-                                                .cyanAccent,
-                                            fontSize:
-                                            widget.size *
-                                                20),
-                                      )
-                                    ],
-                                  );
-                                }
-                              } else {
-                                return Row(
-                                  children: [
-                                    Icon(
-                                      Icons
-                                          .library_add_outlined,
-                                      size:
-                                      widget.size *
-                                          26,
-                                      color:
-                                      Colors.cyan,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: widget.width * 3,
+                                            right: widget.width * 3),
+                                        child: Row(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: widget.width * 5,
+                                                  right: widget.width * 5,
+                                                  top: widget.height * 3,
+                                                  bottom: widget.height * 3),
+                                              child: Text(
+                                                file.existsSync()
+                                                    ? "Open"
+                                                    : "Download",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize:
+                                                    widget.size * 20),
+                                              ),
+                                            ),
+                                            Icon(
+                                              file.existsSync()
+                                                  ? Icons.open_in_new
+                                                  : Icons
+                                                  .download_for_offline_outlined,
+                                              color: Colors.greenAccent,
+                                              size: widget.size * 20,
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                    Text(
-                                      "Save",
-                                      style: TextStyle(
-                                          color: Colors
-                                              .cyanAccent,
-                                          fontSize:
-                                          widget.size *
-                                              20),
-                                    )
-                                  ],
-                                );
-                              }
-                            },
+                                    onTap: () async {
+                                      if (file.existsSync()) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    PdfViewerPage(
+                                                        pdfUrl:
+                                                        "${folderPath}/pdfs/${getFileName(widget.data.link)}")));
+                                      } else {
+                                        setState(() {
+                                          isDownloaded = true;
+                                        });
+                                        await download(
+                                            widget.data.link, "pdfs");
+                                      }
+                                    }),
+                                if (file.existsSync())
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: widget.width * 5,
+                                        right: widget.width * 5,
+                                        top: widget.height * 1,
+                                        bottom: widget.height * 1),
+                                    child: InkWell(
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.redAccent,
+                                        size: widget.size * 25,
+                                      ),
+                                      onLongPress: () async {
+                                        if (file.existsSync()) {
+                                          await file.delete();
+                                        }
+                                        setState(() {});
+                                        showToastText(
+                                            "File has been deleted");
+                                      },
+                                      onTap: () {
+                                        showToastText("Long Press To Delete");
+                                      },
+                                    ),
+                                  )
+                              ],
+                            ),
                           ),
-                          onTap: () async {
-                            try {
-                              await FirebaseFirestore
-                                  .instance
-                                  .collection('user')
-                                  .doc(fullUserId())
-                                  .collection(
-                                  "FavouriteBooks")
-                                  .doc(widget.data.id)
-                                  .get()
-                                  .then((docSnapshot) {
-                                if (docSnapshot
-                                    .exists) {
-                                  FirebaseFirestore
-                                      .instance
-                                      .collection(
-                                      'user')
-                                      .doc(fullUserId())
-                                      .collection(
-                                      "FavouriteBooks")
-                                      .doc(widget.data
-                                      .id)
-                                      .delete();
-                                  showToastText(
-                                      "Removed from saved list");
-                                } else {
-                                  FavouriteBooksSubjects(
-                                      description: widget.data
-                                          .description,
-                                      heading:
-                                      widget.data
-                                          .heading,
-                                      link: widget.data
-                                          .link,
-                                      photoUrl:
-                                      widget.data
-                                          .photoUrl,
-                                      Author: widget.data
-                                          .Author,
-                                      edition:
-                                      widget.data
-                                          .edition,
-                                      branch:
-                                      widget.branch,
-                                      id: widget.data
-                                          .id);
-                                  showToastText(
-                                      "${widget.data.heading} in favorites");
-                                }
-                              });
-                            } catch (e) {
-                              print(e);
-                            }
-                          },
-                        )
-                      ],
+                        ],
+                      ),
                     ),
                     if(isDownloaded)LinearProgressIndicator(),
                     if (isUser())
@@ -1937,8 +1782,7 @@ class subjectUnitsData extends StatefulWidget {
   String req;
   String date;
   final double size;
-  final double height;
-  final double width;
+
   final int pdfs;
 
   subjectUnitsData(
@@ -1951,9 +1795,8 @@ class subjectUnitsData extends StatefulWidget {
       required this.pdfs,
       this.name = "Subjects",
       required this.fullName,
-      required this.width,
       required this.size,
-      required this.height});
+     });
 
   @override
   State<subjectUnitsData> createState() => _subjectUnitsDataState();
@@ -2006,8 +1849,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
     headerSliverBuilder: (context, innerBoxIsScrolled) => [
       SliverAppBar(
         automaticallyImplyLeading: false,
-        expandedHeight: widget.size*180.0,
-        collapsedHeight: widget.size*180,
+        expandedHeight: widget.size*200.0,
+        collapsedHeight: widget.size*200,
         backgroundColor: Colors.transparent,
         flexibleSpace: Padding(
           padding: EdgeInsets.all(widget.size * 8.0),
@@ -2285,7 +2128,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
         Container(
           width: double.infinity,
           color: Colors.black.withOpacity(0.7),
-          height: widget.height * 45,
+          height: widget.size * 45,
           child: Center(
             child: Padding(
               padding:  EdgeInsets.all(widget.size*5.0),
@@ -2293,12 +2136,12 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                 indicator: BoxDecoration(
                     border: Border.all(color: Colors.white54),
                     borderRadius:
-                    BorderRadius.circular(widget.size * 15),
+                    BorderRadius.circular(widget.size * 10),
                     color: Colors.white12),
                 controller: _tabController,
                 isScrollable: true,
                 labelPadding: EdgeInsets.symmetric(
-                    horizontal: widget.width * 25),
+                    horizontal: widget.size * 25,vertical: widget.size * 3),
                 tabs: [
                   Tab(
                     child: Text(
@@ -2338,7 +2181,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                 Container(
                   color: Colors.black38,
                   width: double.infinity,
-                  height: widget.height * 45,
+                  height: widget.size * 45,
                   child: Padding(
                     padding:  EdgeInsets.all(widget.size*5.0),
                     child: TabBar(
@@ -2353,7 +2196,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                       isScrollable: true,
                         labelStyle:TextStyle(fontSize: widget.size*14),
                       labelPadding: EdgeInsets.symmetric(
-                          horizontal: widget.width * 10),
+                          horizontal: widget.size * 10),
                       tabs: [
                         Tab(
                           child: Text(" All ",
@@ -2386,7 +2229,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                 if (isUser())
                   Padding(
                     padding:
-                    EdgeInsets.only(right: widget.width * 10),
+                    EdgeInsets.only(right: widget.size * 10),
                     child: InkWell(
                       child: Chip(
                         elevation: 20,
@@ -2453,8 +2296,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                       final unit = units[index];
 
                                       return subUnit(
-                                        width: widget.width,
-                                        height: widget.height,
+                                        width: widget.size,
+                                        height: widget.size,
                                         size: widget.size,
                                         ID: widget.ID,
                                         branch: widget.branch,
@@ -2465,7 +2308,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                     },
                                     separatorBuilder:
                                         (context, index) => SizedBox(
-                                      height: widget.height * 5,
+                                      height: widget.size * 5,
                                     ),
                                   ),
                                 );
@@ -2513,8 +2356,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                       filteredUnits[index];
 
                                       return subUnit(
-                                        width: widget.width,
-                                        height: widget.height,
+                                        width: widget.size,
+                                        height: widget.size,
                                         size: widget.size,
                                         ID: widget.ID,
                                         branch: widget.branch,
@@ -2525,7 +2368,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                     },
                                     separatorBuilder:
                                         (context, index) => SizedBox(
-                                      height: widget.height * 5,
+                                      height: widget.size * 5,
                                     ),
                                   ),
                                 );
@@ -2573,8 +2416,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                       filteredUnits[index];
 
                                       return subUnit(
-                                        width: widget.width,
-                                        height: widget.height,
+                                        width: widget.size,
+                                        height: widget.size,
                                         size: widget.size,
                                         ID: widget.ID,
                                         branch: widget.branch,
@@ -2585,7 +2428,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                     },
                                     separatorBuilder:
                                         (context, index) => SizedBox(
-                                      height: widget.height * 5,
+                                      height: widget.size * 5,
                                     ),
                                   ),
                                 );
@@ -2633,8 +2476,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                       filteredUnits[index];
 
                                       return subUnit(
-                                        width: widget.width,
-                                        height: widget.height,
+                                        width: widget.size,
+                                        height: widget.size,
                                         size: widget.size,
                                         ID: widget.ID,
                                         branch: widget.branch,
@@ -2645,7 +2488,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                     },
                                     separatorBuilder:
                                         (context, index) => SizedBox(
-                                      height: widget.height * 5,
+                                      height: widget.size * 5,
                                     ),
                                   ),
                                 );
@@ -2693,8 +2536,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                       filteredUnits[index];
 
                                       return subUnit(
-                                        width: widget.width,
-                                        height: widget.height,
+                                        width: widget.size,
+                                        height: widget.size,
                                         size: widget.size,
                                         ID: widget.ID,
                                         branch: widget.branch,
@@ -2705,7 +2548,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                     },
                                     separatorBuilder:
                                         (context, index) => SizedBox(
-                                      height: widget.height * 5,
+                                      height: widget.size * 5,
                                     ),
                                   ),
                                 );
@@ -2753,8 +2596,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                       filteredUnits[index];
 
                                       return subUnit(
-                                        width: widget.width,
-                                        height: widget.height,
+                                        width: widget.size,
+                                        height: widget.size,
                                         size: widget.size,
                                         ID: widget.ID,
                                         branch: widget.branch,
@@ -2765,7 +2608,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                     },
                                     separatorBuilder:
                                         (context, index) => SizedBox(
-                                      height: widget.height * 5,
+                                      height: widget.size * 5,
                                     ),
                                   ),
                                 );
@@ -2780,7 +2623,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                 if (isUser())
                   Padding(
                     padding:
-                    EdgeInsets.only(right: widget.width * 10),
+                    EdgeInsets.only(right: widget.size * 10),
                     child: InkWell(
                       child: Chip(
                         elevation: 20,
@@ -2840,8 +2683,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                               final unit = units[index];
 
                               return subTextbooks(
-                                width: widget.width,
-                                height: widget.height,
+                                width: widget.size,
+                                height: widget.size,
                                 size: widget.size,
                                 ID: widget.ID,
                                 branch: widget.branch,
@@ -2851,7 +2694,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                             },
                             separatorBuilder: (context, index) =>
                                 SizedBox(
-                                  height: widget.height * 5,
+                                  height: widget.size * 5,
                                 ),
                           ),
                         );
@@ -2866,7 +2709,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                 if (isUser())
                   Padding(
                     padding:
-                    EdgeInsets.only(right: widget.width * 10),
+                    EdgeInsets.only(right: widget.size * 10),
                     child: InkWell(
                       child: Chip(
                         elevation: 20,
@@ -2926,8 +2769,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                               final unit = units[index];
 
                               return subMore(
-                                width: widget.width,
-                                height: widget.height,
+                                width: widget.size,
+                                height: widget.size,
                                 size: widget.size,
                                 ID: widget.ID,
                                 branch: widget.branch,
@@ -2938,7 +2781,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                             },
                             separatorBuilder: (context, index) =>
                                 SizedBox(
-                                  height: widget.height * 5,
+                                  height: widget.size * 5,
                                 ),
                           ),
                         );
@@ -3309,7 +3152,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
         color: file.existsSync() && isExp
             ? Colors.black.withOpacity(0.5)
             : Colors.black.withOpacity(0.07),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
+        border: Border.all(color: Colors.white12),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -3445,193 +3288,198 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                   padding:
                        EdgeInsets.symmetric(vertical: widget.size * 5, horizontal:  widget.size *8),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        "   ${widget.unit.heading.split(";").last}",
+                        style: TextStyle(
+                          fontSize: widget.size * 25.0,
+                          color: Colors.amber,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: isExp ? 6 : 1,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+
+                          children: [
+                            Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular( widget.size *8),
+                                    border: Border.all(color: Colors.white24)),
+                                child: Padding(
+                                  padding:  EdgeInsets.symmetric(
+                                      vertical:  widget.size *3, horizontal:  widget.size *8),
+                                  child: Text(
+                                    widget.unit.heading.split(";").first.length<7?widget.unit.heading.split(";").first:"Unknown",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize:  widget.size *15),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                )),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius:
+                                      BorderRadius.circular(widget.size * 13)),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.1),
+                                    borderRadius:
+                                        BorderRadius.circular(widget.size * 10),
+                                    border: Border.all(
+                                        color: Colors.white.withOpacity(0.3))),
+                                padding: EdgeInsets.all(widget.size * 3),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      " ~ ${widget.unit.PDFSize} ",
+                                      style: TextStyle(
+                                          color: Colors.lightBlueAccent,fontSize:  widget.size *14),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(
+                                      " ${widget.unit.id.split("-").first.length<11?widget.unit.id.split("-").first.length:"No Date"}",
+                                      style: TextStyle(color: Colors.white60,fontSize:  widget.size *14),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular( widget.size *8),
-                                  border: Border.all(color: Colors.white30)),
-                              child: Padding(
-                                padding:  EdgeInsets.symmetric(
-                                    vertical:  widget.size *3, horizontal:  widget.size *8),
-                                child: Text(
-                                  widget.unit.heading.split(";").first.length<7?widget.unit.heading.split(";").first:"Unknown",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize:  widget.size *18),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              )),
-                          Container(
                             decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius:
-                                    BorderRadius.circular(widget.size * 13)),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
-                                  borderRadius:
-                                      BorderRadius.circular(widget.size * 13),
-                                  border: Border.all(
-                                      color: Colors.white.withOpacity(0.3))),
-                              padding: EdgeInsets.all(widget.size * 3),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    " ~ ${widget.unit.PDFSize} ",
-                                    style: TextStyle(
-                                        color: Colors.lightBlueAccent,fontSize:  widget.size *14),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    " ${widget.unit.id.split("-").first.length<11?widget.unit.id.split("-").first.length:"No Date"}",
-                                    style: TextStyle(color: Colors.white60,fontSize:  widget.size *14),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
+                              borderRadius:
+                                  BorderRadius.circular(widget.size * 8),
+                              color: Colors.white.withOpacity(0.07),
+                              border: Border.all(
+                                  color: Colors.white.withOpacity(0.3)),
+                            ),
+                            child: Row(
+                              children: [
+                                InkWell(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                            widget.size * 8),
+                                        color: Colors.black.withOpacity(0.5),
+                                        border: Border.all(
+                                            color: file.existsSync()
+                                                ? Colors.green
+                                                : Colors.white),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: widget.width * 3,
+                                            right: widget.width * 3),
+                                        child: Row(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: widget.width * 5,
+                                                  right: widget.width * 5,
+                                                  top: widget.height * 3,
+                                                  bottom: widget.height * 3),
+                                              child: Text(
+                                                file.existsSync()
+                                                    ? "Open"
+                                                    : "Download",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize:
+                                                        widget.size * 20),
+                                              ),
+                                            ),
+                                            Icon(
+                                              file.existsSync()
+                                                  ? Icons.open_in_new
+                                                  : Icons
+                                                      .download_for_offline_outlined,
+                                              color: Colors.greenAccent,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    onTap: () async {
+                                      if (file.existsSync()) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    PdfViewerPage(
+                                                        pdfUrl:
+                                                            "${folderPath}/pdfs/${getFileName(widget.unit.PDFLink)}")));
+                                      } else {
+                                        setState(() {
+                                          isDownloaded = true;
+                                        });
+                                        await download(
+                                            widget.unit.PDFLink, "pdfs");
+                                      }
+                                    }),
+                                if (file.existsSync())
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: widget.width * 5,
+                                        right: widget.width * 5,
+                                        top: widget.height * 1,
+                                        bottom: widget.height * 1),
+                                    child: InkWell(
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.redAccent,
+                                        size: widget.size * 25,
+                                      ),
+                                      onLongPress: () async {
+                                        if (file.existsSync()) {
+                                          await file.delete();
+                                        }
+                                        setState(() {});
+                                        showToastText(
+                                            "File has been deleted");
+                                      },
+                                      onTap: () {
+                                        showToastText("Long Press To Delete");
+                                      },
+                                    ),
+                                  )
+                              ],
                             ),
                           ),
+                          if (widget.unit.description.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: InkWell(
+                                child: Text(
+                                  isExp ? "Read Less " : "Read More ",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize:widget.size *  20),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    isExp = !isExp;
+                                  });
+                                },
+                              ),
+                            )
                         ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(widget.size * 8),
-                                color: Colors.white.withOpacity(0.07),
-                                border: Border.all(
-                                    color: Colors.white.withOpacity(0.3)),
-                              ),
-                              child: Row(
-                                children: [
-                                  InkWell(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              widget.size * 8),
-                                          color: Colors.black.withOpacity(0.5),
-                                          border: Border.all(
-                                              color: file.existsSync()
-                                                  ? Colors.green
-                                                  : Colors.white),
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: widget.width * 3,
-                                              right: widget.width * 3),
-                                          child: Row(
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: widget.width * 5,
-                                                    right: widget.width * 5,
-                                                    top: widget.height * 3,
-                                                    bottom: widget.height * 3),
-                                                child: Text(
-                                                  file.existsSync()
-                                                      ? "Open"
-                                                      : "Download",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize:
-                                                          widget.size * 20),
-                                                ),
-                                              ),
-                                              Icon(
-                                                file.existsSync()
-                                                    ? Icons.open_in_new
-                                                    : Icons
-                                                        .download_for_offline_outlined,
-                                                color: Colors.greenAccent,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      onTap: () async {
-                                        if (file.existsSync()) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PdfViewerPage(
-                                                          pdfUrl:
-                                                              "${folderPath}/pdfs/${getFileName(widget.unit.PDFLink)}")));
-                                        } else {
-                                          setState(() {
-                                            isDownloaded = true;
-                                          });
-                                          await download(
-                                              widget.unit.PDFLink, "pdfs");
-                                        }
-                                      }),
-                                  if (file.existsSync())
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: widget.width * 5,
-                                          right: widget.width * 5,
-                                          top: widget.height * 1,
-                                          bottom: widget.height * 1),
-                                      child: InkWell(
-                                        child: Icon(
-                                          Icons.delete,
-                                          color: Colors.redAccent,
-                                          size: widget.size * 25,
-                                        ),
-                                        onLongPress: () async {
-                                          if (file.existsSync()) {
-                                            await file.delete();
-                                          }
-                                          setState(() {});
-                                          showToastText(
-                                              "File has been deleted");
-                                        },
-                                        onTap: () {
-                                          showToastText("Long Press To Delete");
-                                        },
-                                      ),
-                                    )
-                                ],
-                              ),
-                            ),
-                            if (widget.unit.description.isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: InkWell(
-                                  child: Text(
-                                    isExp ? "Read Less " : "Read More ",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize:widget.size *  20),
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      isExp = !isExp;
-                                    });
-                                  },
-                                ),
-                              )
-                          ],
-                        ),
-                      ),
-                      Text(
-                        widget.unit.heading.split(";").last,
-                        style: TextStyle(
-                          fontSize: widget.size * 25.0,
-                          color: Colors.orangeAccent,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: isExp ? 5 : 1,
-                      ),
+
                     ],
                   ),
                 ),

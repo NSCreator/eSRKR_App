@@ -4,22 +4,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:srkr_study_app/HomePage.dart';
+import 'package:srkr_study_app/TextField.dart';
 import 'SubPages.dart';
 
 class MyAppq extends StatefulWidget {
   final String branch;
   final String reg;
   final double size;
-  final double height;
-  final double width;
+
 
   const MyAppq(
       {Key? key,
       required this.branch,
       required this.reg,
-      required this.width,
-      required this.size,
-      required this.height})
+      required this.size})
       : super(key: key);
 
   @override
@@ -54,13 +52,13 @@ class _MyAppqState extends State<MyAppq> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: widget.height * 70,
+              height: widget.size * 70,
             ),
             Padding(
               padding: EdgeInsets.only(
-                  left: widget.width * 10,
-                  bottom: widget.height * 3,
-                  top: widget.height * 5),
+                  left: widget.size * 10,
+                  bottom: widget.size * 3,
+                  top: widget.size * 5),
               child: InkWell(
                 child: Text(
                   "Subjects",
@@ -75,8 +73,8 @@ class _MyAppqState extends State<MyAppq> {
                           builder: (context) => Subjects(
                             branch: widget.branch,
                             reg: widget.reg,
-                            width: widget.width,
-                            height: widget.height,
+                            width: widget.size,
+                            height: widget.size,
                             size: widget.size,
                           )));
                 },
@@ -115,9 +113,9 @@ class _MyAppqState extends State<MyAppq> {
                       if (name.isEmpty) {
                         return Padding(
                           padding: EdgeInsets.only(
-                              left: widget.width * 15.0,
-                              right: widget.width * 10,
-                              top: widget.height * 5),
+                              left: widget.size * 15.0,
+                              right: widget.size * 10,
+                              top: widget.size * 5),
                           child: InkWell(
                             child: Container(
                               width: double.infinity,
@@ -127,7 +125,7 @@ class _MyAppqState extends State<MyAppq> {
                                   BorderRadius.all(
                                       Radius.circular(
                                           widget.size *
-                                              10))),
+                                              20))),
                               child:
                               SingleChildScrollView(
                                 physics:
@@ -136,17 +134,17 @@ class _MyAppqState extends State<MyAppq> {
                                   children: [
                                     Container(
                                       width:
-                                      widget.width *
+                                      widget.size *
                                           80.0,
                                       height:
-                                      widget.height *
+                                      widget.size *
                                           50.0,
                                       decoration:
                                       BoxDecoration(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(
                                                 widget.size *
-                                                    8.0)),
+                                                    20)),
                                         color: Colors
                                             .black
                                             .withOpacity(
@@ -163,7 +161,7 @@ class _MyAppqState extends State<MyAppq> {
                                     ),
                                     SizedBox(
                                       width:
-                                      widget.width *
+                                      widget.size *
                                           10,
                                     ),
                                     Expanded(
@@ -191,7 +189,7 @@ class _MyAppqState extends State<MyAppq> {
                                             ),
                                             SizedBox(
                                               height: widget
-                                                  .height *
+                                                  .size *
                                                   2,
                                             ),
                                             Text(
@@ -225,10 +223,7 @@ class _MyAppqState extends State<MyAppq> {
                                             date: "2012",
                                             req: "",
                                             pdfs: 0,
-                                            width: widget
-                                                .width,
-                                            height: widget
-                                                .height,
+
                                             size: widget
                                                 .size,
                                             branch: widget
@@ -259,9 +254,9 @@ class _MyAppqState extends State<MyAppq> {
                           name.toLowerCase()) ) {
                         return Padding(
                           padding: EdgeInsets.only(
-                              left: widget.width * 15.0,
-                              right: widget.width * 10,
-                              top: widget.height * 3),
+                              left: widget.size * 15.0,
+                              right: widget.size * 10,
+                              top: widget.size * 3),
                           child: InkWell(
                             child: Container(
                               width: double.infinity,
@@ -271,7 +266,7 @@ class _MyAppqState extends State<MyAppq> {
                                   BorderRadius.all(
                                       Radius.circular(
                                           widget.size *
-                                              10))),
+                                              20))),
                               child:
                               SingleChildScrollView(
                                 physics:
@@ -280,17 +275,17 @@ class _MyAppqState extends State<MyAppq> {
                                   children: [
                                     Container(
                                       width:
-                                      widget.width *
+                                      widget.size *
                                           80.0,
                                       height:
-                                      widget.height *
+                                      widget.size *
                                           50.0,
                                       decoration:
                                       BoxDecoration(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(
                                                 widget.size *
-                                                    8.0)),
+                                                   20)),
                                         color: Colors
                                             .black
                                             .withOpacity(
@@ -307,7 +302,7 @@ class _MyAppqState extends State<MyAppq> {
                                     ),
                                     SizedBox(
                                       width:
-                                      widget.width *
+                                      widget.size *
                                           10,
                                     ),
                                     Expanded(
@@ -335,7 +330,7 @@ class _MyAppqState extends State<MyAppq> {
                                             ),
                                             SizedBox(
                                               height: widget
-                                                  .height *
+                                                  .size *
                                                   2,
                                             ),
                                             Text(
@@ -369,10 +364,7 @@ class _MyAppqState extends State<MyAppq> {
                                             date: "2012",
                                             req: "kh",
                                             pdfs: 0,
-                                            width: widget
-                                                .width,
-                                            height: widget
-                                                .height,
+
                                             size: widget
                                                 .size,
                                             branch: widget
@@ -398,9 +390,9 @@ class _MyAppqState extends State<MyAppq> {
             ),
             Padding(
               padding: EdgeInsets.only(
-                  left: widget.width * 10,
-                  bottom: widget.height * 3,
-                  top: widget.height * 20),
+                  left: widget.size * 10,
+                  bottom: widget.size * 3,
+                  top: widget.size * 20),
               child: InkWell(
                 child: Text(
                   "Lab Subjects",
@@ -415,8 +407,8 @@ class _MyAppqState extends State<MyAppq> {
                           builder: (context) => LabSubjects(
                             branch: widget.branch,
                             reg: widget.reg,
-                            width: widget.width,
-                            height: widget.height,
+                            width: widget.size,
+                            height: widget.size,
                             size: widget.size,
                           )));
                 },
@@ -455,9 +447,9 @@ class _MyAppqState extends State<MyAppq> {
                       if (name.isEmpty) {
                         return Padding(
                           padding: EdgeInsets.only(
-                              left: widget.width * 15.0,
-                              right: widget.width * 10,
-                              top: widget.height * 4),
+                              left: widget.size * 15.0,
+                              right: widget.size * 10,
+                              top: widget.size * 4),
                           child: InkWell(
                             child: Container(
                               width: double.infinity,
@@ -467,7 +459,7 @@ class _MyAppqState extends State<MyAppq> {
                                   BorderRadius.all(
                                       Radius.circular(
                                           widget.size *
-                                              10))),
+                                              20))),
                               child:
                               SingleChildScrollView(
                                 physics:
@@ -476,17 +468,17 @@ class _MyAppqState extends State<MyAppq> {
                                   children: [
                                     Container(
                                       width:
-                                      widget.width *
+                                      widget.size *
                                           80.0,
                                       height:
-                                      widget.height *
+                                      widget.size *
                                           50.0,
                                       decoration:
                                       BoxDecoration(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(
                                                 widget.size *
-                                                    8.0)),
+                                                    20)),
                                         color: Colors
                                             .black
                                             .withOpacity(
@@ -503,7 +495,7 @@ class _MyAppqState extends State<MyAppq> {
                                     ),
                                     SizedBox(
                                       width:
-                                      widget.width *
+                                      widget.size *
                                           10,
                                     ),
                                     Expanded(
@@ -531,7 +523,7 @@ class _MyAppqState extends State<MyAppq> {
                                             ),
                                             SizedBox(
                                               height: widget
-                                                  .height *
+                                                  .size *
                                                   2,
                                             ),
                                             Text(
@@ -552,7 +544,7 @@ class _MyAppqState extends State<MyAppq> {
                                             ),
                                             SizedBox(
                                               height: widget
-                                                  .height *
+                                                  .size *
                                                   1,
                                             ),
                                           ],
@@ -570,10 +562,7 @@ class _MyAppqState extends State<MyAppq> {
                                             date: "2012",
                                             req: "fghg",
                                             pdfs: 0,
-                                            width: widget
-                                                .width,
-                                            height: widget
-                                                .height,
+
                                             size: widget
                                                 .size,
                                             branch: widget
@@ -604,9 +593,9 @@ class _MyAppqState extends State<MyAppq> {
                           name.toLowerCase())) {
                         return Padding(
                           padding: EdgeInsets.only(
-                              left: widget.width * 15.0,
-                              right: widget.width * 10,
-                              top: widget.height * 3),
+                              left: widget.size * 15.0,
+                              right: widget.size * 10,
+                              top: widget.size * 3),
                           child: InkWell(
                             child: Container(
                               width: double.infinity,
@@ -625,10 +614,10 @@ class _MyAppqState extends State<MyAppq> {
                                   children: [
                                     Container(
                                       width:
-                                      widget.width *
+                                      widget.size *
                                           80.0,
                                       height:
-                                      widget.height *
+                                      widget.size *
                                           50.0,
                                       decoration:
                                       BoxDecoration(
@@ -652,7 +641,7 @@ class _MyAppqState extends State<MyAppq> {
                                     ),
                                     SizedBox(
                                       width:
-                                      widget.width *
+                                      widget.size *
                                           10,
                                     ),
                                     Expanded(
@@ -680,7 +669,7 @@ class _MyAppqState extends State<MyAppq> {
                                             ),
                                             SizedBox(
                                               height: widget
-                                                  .height *
+                                                  .size *
                                                   2,
                                             ),
                                             Text(
@@ -714,10 +703,7 @@ class _MyAppqState extends State<MyAppq> {
                                             date: "2012",
                                             req: "hgd",
                                             pdfs: 0,
-                                            width: widget
-                                                .width,
-                                            height: widget
-                                                .height,
+
                                             size: widget
                                                 .size,
                                             branch: widget
@@ -953,55 +939,42 @@ class _MyAppqState extends State<MyAppq> {
         right: 0,
         child: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: widget.width * 20,
-              vertical: widget.height * 10),
+              horizontal: widget.size * 20,
+              vertical: widget.size * 10),
           child: Row(
             children: [
               InkWell(
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Icon(Icons.arrow_back,color: Colors.white,size: 30,),
+                  padding:  EdgeInsets.only(right: widget.size*10),
+                  child: Icon(Icons.arrow_back,color: Colors.white,size: widget.size*30,),
                 ),
                 onTap: (){
                   Navigator.pop(context);
                 },
               ),
               Flexible(
-                child: Container(
-                  height: widget.height * 45,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
-                    border: Border.all(color: Colors.white60),
-                    borderRadius:
-                    BorderRadius.circular(widget.size * 12),
-                  ),
-                  child: Padding(
-                    padding:
-                    EdgeInsets.only(left: widget.width * 20),
-                    child: TextField(
-                      onChanged: (val) {
-                        setState(() {
-                          name = val;
-                        });
-                      },
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: widget.size * 25),
-                      decoration: InputDecoration(
-                        icon: Icon(
-                          Icons.search,
-                          color: Colors.white,
-                          size: widget.size * 25,
-                        ),
-                        border: InputBorder.none,
-                        hintText: 'Search Bar',
-                        hintStyle: TextStyle(
-                            color: Colors.white60,
-                            fontSize: widget.size * 23),
-                      ),
+                child: TextFieldContainer(child: TextField(
+                  onChanged: (val) {
+                    setState(() {
+                      name = val;
+                    });
+                  },
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: widget.size * 25),
+                  decoration: InputDecoration(
+                    icon: Icon(
+                      Icons.search,
+                      color: Colors.white,
+                      size: widget.size * 25,
                     ),
+                    border: InputBorder.none,
+                    hintText: 'Search Bar',
+                    hintStyle: TextStyle(
+                        color: Colors.white60,
+                        fontSize: widget.size * 23),
                   ),
-                ),
+                ))
               ),
             ],
           ),

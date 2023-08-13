@@ -40,17 +40,15 @@ class settings extends StatefulWidget {
   final String reg, branch;
   final int index;
   final double size;
-  final double height;
-  final double width;
+
 
   const settings(
       {Key? key,
       required this.reg,
       required this.branch,
       required this.index,
-      required this.width,
       required this.size,
-      required this.height})
+    })
       : super(key: key);
 
   @override
@@ -80,7 +78,7 @@ class _settingsState extends State<settings> {
         Padding(
           padding: EdgeInsets.all(widget.size * 8.0),
           child: Container(
-            height: widget.height * 140,
+            height: widget.size * 140,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(widget.size * 18),
               color: Colors.black,
@@ -102,13 +100,13 @@ class _settingsState extends State<settings> {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(
-                        left: widget.width * 10,
-                        bottom: widget.height * 10),
+                        left: widget.size * 10,
+                        bottom: widget.size * 10),
                     child: Row(
                       children: [
                         Container(
-                          height: widget.height * 50,
-                          width: widget.width * 50,
+                          height: widget.size * 50,
+                          width: widget.size * 50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 widget.size * 25),
@@ -166,8 +164,8 @@ class _settingsState extends State<settings> {
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                                vertical: widget.height * 5,
-                                horizontal: widget.width * 10),
+                                vertical: widget.size * 5,
+                                horizontal: widget.size * 10),
                             child: Text(
                               "Change Branch",
                               style: TextStyle(
@@ -219,8 +217,8 @@ class _settingsState extends State<settings> {
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                                vertical: widget.height * 5,
-                                horizontal: widget.width * 10),
+                                vertical: widget.size * 5,
+                                horizontal: widget.size * 10),
                             child: Text(
                               "Log Out",
                               style: TextStyle(
@@ -255,10 +253,10 @@ class _settingsState extends State<settings> {
                                     shrinkWrap: true,
                                     children: <Widget>[
                                       SizedBox(
-                                          height: widget.height * 15),
+                                          height: widget.size * 15),
                                       Padding(
                                         padding: EdgeInsets.only(
-                                            left: widget.width * 15),
+                                            left: widget.size * 15),
                                         child: Text(
                                           "Do you want Log Out",
                                           style: TextStyle(
@@ -270,7 +268,7 @@ class _settingsState extends State<settings> {
                                         ),
                                       ),
                                       SizedBox(
-                                        height: widget.height * 5,
+                                        height: widget.size * 5,
                                       ),
                                       Center(
                                         child: Row(
@@ -300,18 +298,13 @@ class _settingsState extends State<settings> {
                                                           25),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: widget
-                                                          .width *
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: widget
+                                                          .size *
                                                           15,
-                                                      right: widget
-                                                          .width *
-                                                          15,
-                                                      top: widget
-                                                          .height *
-                                                          5,
-                                                      bottom: widget
-                                                          .height *
+
+                                                      vertical: widget
+                                                          .size *
                                                           5),
                                                   child: Text(
                                                     "Back",
@@ -345,18 +338,13 @@ class _settingsState extends State<settings> {
                                                           25),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: widget
-                                                          .width *
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: widget
+                                                          .size *
                                                           15,
-                                                      right: widget
-                                                          .width *
-                                                          15,
-                                                      top: widget
-                                                          .height *
-                                                          5,
-                                                      bottom: widget
-                                                          .height *
+
+                                                      vertical: widget
+                                                          .size *
                                                           5),
                                                   child: Text(
                                                     "Log Out",
@@ -415,8 +403,8 @@ class _settingsState extends State<settings> {
                 if (isUser())
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        vertical: widget.height * 20,
-                        horizontal: widget.width * 10),
+                        vertical: widget.size * 20,
+                        horizontal: widget.size * 10),
                     child: Container(
                       decoration: BoxDecoration(
                           color: Color.fromRGBO(31, 48, 48, 1),
@@ -439,7 +427,7 @@ class _settingsState extends State<settings> {
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: widget.width * 20),
+                                horizontal: widget.size * 20),
                             child: InkWell(
                               child: Row(
                                 children: [
@@ -453,7 +441,7 @@ class _settingsState extends State<settings> {
                                   Spacer(),
                                   Padding(
                                     padding: EdgeInsets.only(
-                                        right: widget.width * 10),
+                                        right: widget.size * 10),
                                     child:
                                     Icon(Icons.arrow_forward_ios),
                                   )
@@ -466,8 +454,8 @@ class _settingsState extends State<settings> {
                                         builder: (context) =>
                                             updateCreator(
                                               branch: widget.branch,
-                                              width: widget.width,
-                                              height: widget.height,
+                                              width: widget.size,
+                                              height: widget.size,
                                               size: widget.size,
                                             )));
                               },
@@ -475,8 +463,8 @@ class _settingsState extends State<settings> {
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: widget.width * 20,
-                                vertical: widget.height * 5),
+                                horizontal: widget.size * 20,
+                                vertical: widget.size * 5),
                             child: InkWell(
                               child: Row(
                                 children: [
@@ -490,7 +478,7 @@ class _settingsState extends State<settings> {
                                   Spacer(),
                                   Padding(
                                     padding: EdgeInsets.only(
-                                        right: widget.width * 10),
+                                        right: widget.size * 10),
                                     child:
                                     Icon(Icons.arrow_forward_ios),
                                   )
@@ -509,7 +497,7 @@ class _settingsState extends State<settings> {
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: widget.width * 20),
+                                horizontal: widget.size * 20),
                             child: InkWell(
                               child: Row(
                                 children: [
@@ -523,7 +511,7 @@ class _settingsState extends State<settings> {
                                   Spacer(),
                                   Padding(
                                     padding: EdgeInsets.only(
-                                        right: widget.width * 10),
+                                        right: widget.size * 10),
                                     child:
                                     Icon(Icons.arrow_forward_ios),
                                   )
@@ -542,8 +530,8 @@ class _settingsState extends State<settings> {
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: widget.width * 20,
-                                vertical: widget.height * 5),
+                                horizontal: widget.size * 20,
+                                vertical: widget.size * 5),
                             child: InkWell(
                               child: Row(
                                 children: [
@@ -610,7 +598,7 @@ class _settingsState extends State<settings> {
                 //   ),
                 // ),
                 Padding(
-                  padding: EdgeInsets.only(top: widget.height * 20),
+                  padding: EdgeInsets.only(top: widget.size * 20),
                   child: Center(
                       child: Text('Settings',
                           style: TextStyle(
@@ -731,9 +719,9 @@ class _settingsState extends State<settings> {
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.only(
-                                        left: widget.width * 10,
-                                        top: widget.height * 20,
-                                        bottom: widget.height * 8),
+                                        left: widget.size * 10,
+                                        top: widget.size * 20,
+                                        bottom: widget.size * 8),
                                     child: Text(
                                       "Follow Us",
                                       style: TextStyle(
@@ -849,7 +837,7 @@ class _settingsState extends State<settings> {
                                       separatorBuilder:
                                           (context, index) =>
                                           SizedBox(
-                                            width: widget.width * 9,
+                                            width: widget.size * 9,
                                           ),
                                     ),
                                   ),
@@ -885,7 +873,7 @@ class _settingsState extends State<settings> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                              const appDevelopmentTeam()));
+                               appDevelopmentTeam(size: widget.size,)));
                     },
                   ),
                 ),
@@ -1192,303 +1180,289 @@ mixin aboutDataApi {
 }
 
 class appDevelopmentTeam extends StatelessWidget {
-  const appDevelopmentTeam({Key? key}) : super(key: key);
+    double size;
+   appDevelopmentTeam({required this.size});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-              image: NetworkImage(
-                "https://i.pinimg.com/736x/01/c7/f7/home.jpg",
-              ),
-              fit: BoxFit.fill),
-        ),
-        child: Container(
-          color: Colors.black.withOpacity(0.8),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25),
-                      color: const Color.fromRGBO(38, 39, 43, 0.4),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+    return backGroundImage(child: Padding(
+      padding:  EdgeInsets.all(size*8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          backButton(size: size),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(size*25),
+              color: const Color.fromRGBO(38, 39, 43, 0.4),
+              border: Border.all(color: Colors.white.withOpacity(0.1)),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children:  [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 8, 8, 1),
+                      child: Text('APP Development Team',
+                          style: TextStyle(
+                              fontSize: size*20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white54)),
                     ),
-                    child: Column(
+                    Spacer()
+                  ],
+                ),
+                InkWell(
+                  child: Container(
+                    margin:  EdgeInsets.symmetric(
+                        vertical:size* 3, horizontal: size*10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(size*20),
+                      color: const Color.fromRGBO(0, 2, 10, 0.5),
+                    ),
+                    child: Row(
                       children: [
-                        Row(
-                          children: const [
+                         SizedBox(
+                          width: size*3,
+                        ),
+                        Container(
+                          height: size*60,
+                          width: size*60,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(size*20),
+                              image: DecorationImage(
+                                  image: NetworkImage(
+                                      "https://drive.google.com/uc?export=view&id=1g0pUY2mr2EU8M-fb9ZEsyioyLRKXtsuR"),fit: BoxFit.cover)),
+                        ),
+                         SizedBox(
+                          width: size*20,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
                             Padding(
-                              padding: EdgeInsets.fromLTRB(20, 8, 8, 1),
-                              child: Text('APP Development Team',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white54)),
+                              padding:  EdgeInsets.all(size*5.0),
+                              child: Text(
+                                "NIMMALA SUJITH",
+                                style:  TextStyle(
+                                  color: Colors.white70,
+                                  fontSize:size* 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                            Spacer()
+                            Padding(
+                              padding:  EdgeInsets.only(left:size* 13),
+                              child: Text(
+                                "R20-ECE-20B91A04H1",
+                                style:  TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: size*12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding:  EdgeInsets.only(left:size* 13),
+                              child: Text(
+                                "App Developer",
+                                style:  TextStyle(
+                                  color: Colors.blueGrey,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: size*12,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                        InkWell(
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 3, horizontal: 10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: const Color.fromRGBO(0, 2, 10, 0.5),
-                            ),
-                            child: Row(
-                              children: [
-                                const SizedBox(
-                                  width: 3,
-                                ),
-                                Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      image: DecorationImage(
-                                          image: NetworkImage(
-                                              "https://drive.google.com/uc?export=view&id=1g0pUY2mr2EU8M-fb9ZEsyioyLRKXtsuR"))),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Text(
-                                        "NIMMALA SUJITH",
-                                        style: const TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 13),
-                                      child: Text(
-                                        "R20-ECE-20B91A04H1",
-                                        style: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 13),
-                                      child: Text(
-                                        "App Developer",
-                                        style: const TextStyle(
-                                          color: Colors.blueGrey,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          onTap: () {
-                            sendingMails("sujithnimmala03@gmail.com");
-                          },
-                        ),
-                        StreamBuilder<List<studentConvertor>>(
-                            stream: Readstudent(),
-                            builder: (context, snapshot) {
-                              final students = snapshot.data;
-                              switch (snapshot.connectionState) {
-                                case ConnectionState.waiting:
-                                  return const Center(
-                                      child: CircularProgressIndicator(
-                                    strokeWidth: 0.3,
-                                    color: Colors.cyan,
-                                  ));
-                                default:
-                                  if (snapshot.hasError) {
-                                    return const Center(
-                                        child: Text(
-                                            'Error with TextBooks Data or\n Check Internet Connection'));
-                                  } else {
-                                    return ListView.separated(
-                                      physics: const BouncingScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount: students!.length,
-                                      itemBuilder: (context, int index) {
-                                        final studentData = students[index];
-                                        return InkWell(
-                                          child: Container(
-                                            margin: const EdgeInsets.symmetric(
-                                                vertical: 3, horizontal: 10),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              color: const Color.fromRGBO(
-                                                  0, 2, 10, 0.5),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                const SizedBox(
-                                                  width: 3,
-                                                ),
-                                                Container(
-                                                  height: 60,
-                                                  width: 60,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                      image: DecorationImage(
-                                                          image: NetworkImage(
-                                                              studentData
-                                                                  .PhotoUrl))),
-                                                ),
-                                                const SizedBox(
-                                                  width: 20,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              5.0),
-                                                      child: Text(
-                                                        studentData.name,
-                                                        style: const TextStyle(
-                                                          color: Colors.white70,
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 13),
-                                                      child: Text(
-                                                        studentData.description,
-                                                        style: const TextStyle(
-                                                          color: Colors.grey,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 13),
-                                                      child: Text(
-                                                        studentData.Role,
-                                                        style: const TextStyle(
-                                                          color:
-                                                              Colors.blueGrey,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            sendingMails(studentData.email);
-                                          },
-                                        );
-                                      },
-                                      separatorBuilder: (context, index) =>
-                                          const SizedBox(
-                                        height: 1,
-                                      ),
-                                    );
-                                  }
-                              }
-                            }),
                       ],
                     ),
                   ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
+                  onTap: () {
+                    sendingMails("sujithnimmala03@gmail.com");
+                  },
+                ),
+                StreamBuilder<List<studentConvertor>>(
+                    stream: Readstudent(),
+                    builder: (context, snapshot) {
+                      final students = snapshot.data;
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return const Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 0.3,
+                                color: Colors.cyan,
+                              ));
+                        default:
+                          if (snapshot.hasError) {
+                            return const Center(
+                                child: Text(
+                                    'Error with TextBooks Data or\n Check Internet Connection'));
+                          } else {
+                            return ListView.separated(
+                              physics: const BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: students!.length,
+                              itemBuilder: (context, int index) {
+                                final studentData = students[index];
+                                return InkWell(
+                                  child: Container(
+                                    margin:  EdgeInsets.symmetric(
+                                        vertical: size*3, horizontal: size*10),
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.circular(size*30),
+                                      color: const Color.fromRGBO(
+                                          0, 2, 10, 0.5),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                         SizedBox(
+                                          width:size* 3,
+                                        ),
+                                        Container(
+                                          height: size*60,
+                                          width: size*60,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  size*30),
+                                              image: DecorationImage(
+                                                  image: NetworkImage(
+                                                      studentData
+                                                          .PhotoUrl),fit: BoxFit.cover)),
+                                        ),
+                                         SizedBox(
+                                          width: size*20,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .spaceBetween,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                               EdgeInsets.all(
+                                                  size*5.0),
+                                              child: Text(
+                                                studentData.name,
+                                                style:  TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: size*16,
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                               EdgeInsets.only(
+                                                  left: size*13),
+                                              child: Text(
+                                                studentData.description,
+                                                style:  TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize:size* 12,
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                               EdgeInsets.only(
+                                                  left: size*13),
+                                              child: Text(
+                                                studentData.Role,
+                                                style:  TextStyle(
+                                                  color:
+                                                  Colors.blueGrey,
+                                                  fontWeight:
+                                                  FontWeight.w500,
+                                                  fontSize: size*12,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    sendingMails(studentData.email);
+                                  },
+                                );
+                              },
+                              separatorBuilder: (context, index) =>
+                               SizedBox(
+                                height: size*1,
+                              ),
+                            );
+                          }
+                      }
+                    }),
+              ],
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  Padding(
+                    padding:  EdgeInsets.only(top: size*10),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(size*25),
+                        border: Border.all(
+                            color: Colors.white.withOpacity(0.1)),
+                        color: const Color.fromRGBO(38, 39, 43, 0.4),
+                      ),
                       child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(25),
-                                border: Border.all(
-                                    color: Colors.white.withOpacity(0.1)),
-                                color: const Color.fromRGBO(38, 39, 43, 0.4),
+                          Row(
+                            children:  [
+                              Padding(
+                                padding:
+                                EdgeInsets.fromLTRB(20, 8, 8, 1),
+                                child: Text('Faculty Team',
+                                    style: TextStyle(
+                                        fontSize: size*20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white54)),
                               ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: const [
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(20, 8, 8, 1),
-                                        child: Text('Faculty Team',
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white54)),
-                                      ),
-                                      Spacer()
-                                    ],
-                                  ),
-                                  StreamBuilder<List<FacultyConvertor>>(
-                                      stream: ReadFaculty(),
-                                      builder: (context, snapshot) {
-                                        final students = snapshot.data;
-                                        switch (snapshot.connectionState) {
-                                          case ConnectionState.waiting:
-                                            return const Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                              strokeWidth: 0.3,
-                                              color: Colors.cyan,
-                                            ));
-                                          default:
-                                            if (snapshot.hasError) {
-                                              return const Center(
-                                                  child: Text(
-                                                      'Error with TextBooks Data or\n Check Internet Connection'));
-                                            } else {
-                                              return buildFaculty(students!);
-                                            }
-                                        }
-                                      }),
-                                ],
-                              ),
-                            ),
+                              Spacer()
+                            ],
                           ),
+                          StreamBuilder<List<FacultyConvertor>>(
+                              stream: ReadFaculty(),
+                              builder: (context, snapshot) {
+                                final students = snapshot.data;
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                    return const Center(
+                                        child:
+                                        CircularProgressIndicator(
+                                          strokeWidth: 0.3,
+                                          color: Colors.cyan,
+                                        ));
+                                  default:
+                                    if (snapshot.hasError) {
+                                      return const Center(
+                                          child: Text(
+                                              'Error with TextBooks Data or\n Check Internet Connection'));
+                                    } else {
+                                      return buildFaculty(students!);
+                                    }
+                                }
+                              }),
                         ],
                       ),
                     ),
@@ -1497,9 +1471,9 @@ class appDevelopmentTeam extends StatelessWidget {
               ),
             ),
           ),
-        ),
+        ],
       ),
-    );
+    ));
   }
 
   Widget buildFaculty(List<FacultyConvertor> facultyDatas) =>
@@ -1511,61 +1485,61 @@ class appDevelopmentTeam extends StatelessWidget {
             final facultyData = facultyDatas[index];
             return InkWell(
               child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                margin:  EdgeInsets.symmetric(vertical: size*3, horizontal: size*10),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(size*20),
                   color: const Color.fromRGBO(0, 2, 10, 0.5),
                 ),
                 child: Row(
                   children: [
-                    const SizedBox(
-                      width: 3,
+                     SizedBox(
+                      width: size*3,
                     ),
                     Container(
-                      height: 60,
-                      width: 60,
+                      height: size*60,
+                      width: size*60,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(size*20),
                           image: DecorationImage(
                               image: NetworkImage(facultyData.PhotoUrl))),
                     ),
-                    const SizedBox(
-                      width: 20,
+                     SizedBox(
+                      width: size*20,
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(5.0),
+                          padding:  EdgeInsets.all(size*5.0),
                           child: Text(
                             facultyData.name,
-                            style: const TextStyle(
+                            style:  TextStyle(
                               color: Colors.white70,
-                              fontSize: 16,
+                              fontSize: size*16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 13),
+                          padding:  EdgeInsets.only(left:size* 13),
                           child: Text(
                             facultyData.description,
-                            style: const TextStyle(
+                            style:  TextStyle(
                               color: Colors.grey,
-                              fontSize: 12,
+                              fontSize: size*12,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 13),
+                          padding:  EdgeInsets.only(left: size*13),
                           child: Text(
                             facultyData.Role,
-                            style: const TextStyle(
+                            style:  TextStyle(
                               color: Colors.blueGrey,
                               fontWeight: FontWeight.w500,
-                              fontSize: 12,
+                              fontSize: size*12,
                             ),
                           ),
                         ),
@@ -1579,8 +1553,8 @@ class appDevelopmentTeam extends StatelessWidget {
               },
             );
           },
-          separatorBuilder: (context, index) => const SizedBox(
-                height: 1,
+          separatorBuilder: (context, index) =>  SizedBox(
+                height:size* 1,
               ));
 }
 
