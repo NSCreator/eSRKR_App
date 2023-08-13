@@ -428,6 +428,7 @@ class _HomePageState extends State<HomePage> {
 
             backgroundColor: Colors.black.withOpacity(0.8),
             flexibleSpace: TabBar(
+              physics: BouncingScrollPhysics(),
               labelStyle: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
@@ -454,6 +455,7 @@ class _HomePageState extends State<HomePage> {
           children: [
 
             SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               child: Column(
                 children: [
                  // Row(

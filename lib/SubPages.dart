@@ -2133,6 +2133,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
             child: Padding(
               padding:  EdgeInsets.all(widget.size*5.0),
               child: TabBar(
+                physics: BouncingScrollPhysics(),
                 indicator: BoxDecoration(
                     border: Border.all(color: Colors.white54),
                     borderRadius:
@@ -2175,7 +2176,9 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
         ),
         Expanded (
           child:
-          TabBarView(controller: _tabController, children: [
+          TabBarView(
+            physics: BouncingScrollPhysics(),
+              controller: _tabController, children: [
             Column(
               children: [
                 Container(
