@@ -131,7 +131,7 @@ class _MyAppState extends State<MyApp> {
                           } else {
                             return Scaffold(
                               backgroundColor: Color.fromRGBO(4, 48, 46, 1),
-                              body: SafeArea(child: branchYear()),
+                              body: SafeArea(child: years(branch: mainsnapshot.data!["branch"].toString(),)),
                             );
                           }
                         }
@@ -146,81 +146,11 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class branchYear extends StatefulWidget {
-  final bool isUpdate;
-  const branchYear({Key? key, this.isUpdate = false}) : super(key: key);
-
-  @override
-  State<branchYear> createState() => _branchYearState();
-}
-
-class _branchYearState extends State<branchYear> {
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<List<branchesConvertor>>(
-        stream: readbranches(),
-        builder: (context, snapshot) {
-          final Favourites = snapshot.data;
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              return const Center(
-                  child: CircularProgressIndicator(
-                strokeWidth: 0.3,
-                color: Colors.cyan,
-              ));
-            default:
-              if (snapshot.hasError) {
-                return Center(child: Text("Error"));
-              } else {
-                if (Favourites!.length > 0)
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                             bottom: 10),
-                          child: Text(
-                            "Select Branch",
-                            style: TextStyle(
-                                color: Colors.lightBlueAccent,
-                                fontSize: 25,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: Favourites.length,
-                          itemBuilder: (context, int index) {
-                            final Favourite = Favourites[index];
-
-                            return Padding(
-                              padding: const EdgeInsets.all(3.0),
-                              child: years(
-                                id: Favourite.id,
-                                isUpdate: widget.isUpdate,
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                else
-                  return Text("No Branches Available");
-              }
-          }
-        });
-  }
-}
 
 class years extends StatefulWidget {
-  final String id;
-  final bool isUpdate;
-  const years({Key? key, required this.id, required this.isUpdate})
+  final String branch;
+ 
+  const years({Key? key, required this.branch})
       : super(key: key);
 
   @override
@@ -228,120 +158,81 @@ class years extends StatefulWidget {
 }
 
 class _yearsState extends State<years> {
-  bool isReg = false;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        InkWell(
-          child: Text(
-            widget.id,
-            style: TextStyle(
-                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          onTap: () async {
-            if (!widget.isUpdate) {
-              FirebaseFirestore.instance
-                  .collection("user")
-                  .doc(fullUserId())
-                  .set({
-                "branch": widget.id,
-                "index": 0,
-
-              });
-            } else {
-              FirebaseFirestore.instance
-                  .collection("user")
-                  .doc(fullUserId())
-                  .update({"branch": widget.id});
-            }
-            await FirebaseFirestore.instance
-                .collection("tokens")
-                .doc(fullUserId())
-                .update({"branch": widget.id});
-            setState(() {
-              isReg = !isReg;
-            });
-          },
-        ),
-        if (isReg)
-          StreamBuilder<List<RegulationConvertor>>(
-              stream: readRegulation(widget.id),
-              builder: (context, snapshot) {
-                final user = snapshot.data;
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      strokeWidth: 0.3,
-                      color: Colors.cyan,
-                    ));
-                  default:
-                    if (snapshot.hasError) {
-                      return const Center(
-                          child: Text(
-                              'Error with TextBooks Data or\n Check Internet Connection'));
-                    } else {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Container(
+    return StreamBuilder<List<RegulationConvertor>>(
+        stream: readRegulation(widget.branch),
+        builder: (context, snapshot) {
+          final user = snapshot.data;
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return const Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 0.3,
+                    color: Colors.cyan,
+                  ));
+            default:
+              if (snapshot.hasError) {
+                return const Center(
+                    child: Text(
+                        'Error with TextBooks Data or\n Check Internet Connection'));
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 2,
+                          width: 30,
                           decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(8)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                height: 2,
-                                width: 30,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8)),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ListView.builder(
-                                  physics: const BouncingScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: user!.length,
-                                  itemBuilder: (context, int index) {
-                                    final SubjectsData = user[index];
-                                    return Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(3.0),
-                                        child: InkWell(
-                                          child: Text(
-                                            SubjectsData.id,
-                                            style: TextStyle(
-                                                color: Colors.lightGreenAccent,
-                                                fontSize: 30),
-                                          ),
-                                          onTap: () {
-                                            FirebaseFirestore.instance
-                                                .collection("user")
-                                                .doc(fullUserId())
-                                                .update(
-                                                    {"reg": SubjectsData.id});
-                                            if (widget.isUpdate) {
-                                              Navigator.pop(context);
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                    );
-                                  },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: user!.length,
+                            itemBuilder: (context, int index) {
+                              final SubjectsData = user[index];
+                              return Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: InkWell(
+                                    child: Text(
+                                      SubjectsData.id,
+                                      style: TextStyle(
+                                          color: Colors.lightGreenAccent,
+                                          fontSize: 30),
+                                    ),
+                                    onTap: () {
+                                      FirebaseFirestore.instance
+                                          .collection("user")
+                                          .doc(fullUserId())
+                                          .update(
+                                          {"reg": SubjectsData.id});
+
+                                    },
+                                  ),
                                 ),
-                              ),
-                            ],
+                              );
+                            },
                           ),
                         ),
-                      );
-                    }
-                }
-              }),
-      ],
-    );
+                      ],
+                    ),
+                  ),
+                );
+              }
+          }
+        });
   }
 }
 

@@ -31,6 +31,7 @@ dependencies:
   webview_flutter: ^4.2.2
   marquee: ^2.2.3
   shared_preferences: ^2.2.0
+  mailer: ^6.0.1
 
 
 

@@ -5,6 +5,8 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 import 'package:marquee/marquee.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
@@ -188,6 +190,7 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+
                   InkWell(
                       child: Row(
                         children: [
@@ -288,9 +291,7 @@ class _HomePageState extends State<HomePage> {
                               child: ListView(
                                 shrinkWrap: true,
                                 children: <Widget>[
-                                  branchYear(
-                                    isUpdate: true,
-                                  )
+                                  years(branch: widget.branch,)
                                 ],
                               ),
                             ),
@@ -995,9 +996,7 @@ class _HomePageState extends State<HomePage> {
                               child: ListView(
                                 shrinkWrap: true,
                                 children: <Widget>[
-                                  branchYear(
-                                    isUpdate: true,
-                                  )
+                                  years(branch: widget.branch,)
                                 ],
                               ),
                             ),

@@ -2057,507 +2057,511 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                   controller: _tabController,
                   children: [
                     widget.name == "Subjects"
-                        ? Column(
-                            children: [
-                              Container(
-                                color: Colors.black.withOpacity(0.2),
-                                width: double.infinity,
-                                height: widget.size * 45,
-                                child: TabBar(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  controller: _unitsTabController,
-                                  isScrollable: true,
-                                  indicatorSize: TabBarIndicatorSize.tab,
-                                  indicator: UnderlineTabIndicator(
-                                      borderSide: BorderSide(
-                                          width: 3.0, color: Colors.white),
-                                      insets: EdgeInsets.symmetric(
-                                          horizontal: 22.0, vertical: 5),
-                                      borderRadius: BorderRadius.circular(8)),
-                                  labelStyle: TextStyle(
-                                      fontSize: widget.size * 18,
-                                      fontWeight: FontWeight.w500),
-                                  labelPadding: EdgeInsets.symmetric(
-                                      horizontal: widget.size * 10),
-                                  tabs: [
-                                    Tab(
-                                      child: Text(" All "),
-                                    ),
-                                    Tab(
-                                      child: Text(
-                                        "Unit 1",
+                        ? SingleChildScrollView(
+                          child: Column(
+                              children: [
+                                Container(
+                                  color: Colors.black.withOpacity(0.2),
+                                  width: double.infinity,
+                                  height: widget.size * 45,
+                                  child: TabBar(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    controller: _unitsTabController,
+                                    isScrollable: true,
+                                    indicatorSize: TabBarIndicatorSize.tab,
+                                    indicator: UnderlineTabIndicator(
+                                        borderSide: BorderSide(
+                                            width: 3.0, color: Colors.white),
+                                        insets: EdgeInsets.symmetric(
+                                            horizontal: 22.0, vertical: 5),
+                                        borderRadius: BorderRadius.circular(8)),
+                                    labelStyle: TextStyle(
+                                        fontSize: widget.size * 18,
+                                        fontWeight: FontWeight.w500),
+                                    labelPadding: EdgeInsets.symmetric(
+                                        horizontal: widget.size * 10),
+                                    tabs: [
+                                      Tab(
+                                        child: Text(" All "),
                                       ),
-                                    ),
-                                    Tab(
-                                      child: Text(
-                                        "Unit 2",
-                                      ),
-                                    ),
-                                    Tab(
-                                      child: Text(
-                                        "Unit 3",
-                                      ),
-                                    ),
-                                    Tab(
-                                      child: Text(
-                                        "Unit 4",
-                                      ),
-                                    ),
-                                    Tab(
-                                      child: Text(
-                                        "Unit 5",
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                  child: TabBarView(
-                                      controller: _unitsTabController,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      children: [
-                                    StreamBuilder<List<UnitsConvertor>>(
-                                      stream:
-                                          readUnits(widget.ID, widget.branch),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const Center(
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 0.3,
-                                              color: Colors.cyan,
-                                            ),
-                                          );
-                                        } else if (snapshot.hasError) {
-                                          return const Center(
-                                            child: Text(
-                                                'Error with TextBooks Data or\n Check Internet Connection'),
-                                          );
-                                        } else {
-                                          final units = snapshot.data;
-
-                                          return Padding(
-                                            padding: EdgeInsets.all(
-                                                widget.size * 5.0),
-                                            child: ListView.separated(
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: units!.length,
-                                              itemBuilder:
-                                                  (context, int index) {
-                                                final unit = units[index];
-
-                                                return subUnit(
-                                                  width: widget.size,
-                                                  height: widget.size,
-                                                  size: widget.size,
-                                                  ID: widget.ID,
-                                                  branch: widget.branch,
-                                                  unit: unit,
-                                                  mode: widget.mode,
-                                                  photoUrl: widget.photoUrl,
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (context, index) => SizedBox(
-                                                height: widget.size * 5,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                    StreamBuilder<List<UnitsConvertor>>(
-                                      stream:
-                                          readUnits(widget.ID, widget.branch),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const Center(
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 0.3,
-                                              color: Colors.cyan,
-                                            ),
-                                          );
-                                        } else if (snapshot.hasError) {
-                                          return const Center(
-                                            child: Text(
-                                                'Error with TextBooks Data or\n Check Internet Connection'),
-                                          );
-                                        } else {
-                                          final units = snapshot.data;
-                                          // Filter units based on the desired condition
-                                          final filteredUnits = units!
-                                              .where((unit) => unit.heading
-                                                  .split(";")
-                                                  .first
-                                                  .contains("Unit 1"))
-                                              .toList();
-
-                                          return Padding(
-                                            padding: EdgeInsets.all(
-                                                widget.size * 5.0),
-                                            child: ListView.separated(
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: filteredUnits.length,
-                                              itemBuilder:
-                                                  (context, int index) {
-                                                final unit =
-                                                    filteredUnits[index];
-
-                                                return subUnit(
-                                                  width: widget.size,
-                                                  height: widget.size,
-                                                  size: widget.size,
-                                                  ID: widget.ID,
-                                                  branch: widget.branch,
-                                                  unit: unit,
-                                                  mode: widget.mode,
-                                                  photoUrl: widget.photoUrl,
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (context, index) => SizedBox(
-                                                height: widget.size * 5,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                    StreamBuilder<List<UnitsConvertor>>(
-                                      stream:
-                                          readUnits(widget.ID, widget.branch),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const Center(
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 0.3,
-                                              color: Colors.cyan,
-                                            ),
-                                          );
-                                        } else if (snapshot.hasError) {
-                                          return const Center(
-                                            child: Text(
-                                                'Error with TextBooks Data or\n Check Internet Connection'),
-                                          );
-                                        } else {
-                                          final units = snapshot.data;
-                                          // Filter units based on the desired condition
-                                          final filteredUnits = units!
-                                              .where((unit) => unit.heading
-                                                  .split(";")
-                                                  .first
-                                                  .contains("Unit 2"))
-                                              .toList();
-
-                                          return Padding(
-                                            padding: EdgeInsets.all(
-                                                widget.size * 5.0),
-                                            child: ListView.separated(
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: filteredUnits.length,
-                                              itemBuilder:
-                                                  (context, int index) {
-                                                final unit =
-                                                    filteredUnits[index];
-
-                                                return subUnit(
-                                                  width: widget.size,
-                                                  height: widget.size,
-                                                  size: widget.size,
-                                                  ID: widget.ID,
-                                                  branch: widget.branch,
-                                                  unit: unit,
-                                                  mode: widget.mode,
-                                                  photoUrl: widget.photoUrl,
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (context, index) => SizedBox(
-                                                height: widget.size * 5,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                    StreamBuilder<List<UnitsConvertor>>(
-                                      stream:
-                                          readUnits(widget.ID, widget.branch),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const Center(
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 0.3,
-                                              color: Colors.cyan,
-                                            ),
-                                          );
-                                        } else if (snapshot.hasError) {
-                                          return const Center(
-                                            child: Text(
-                                                'Error with TextBooks Data or\n Check Internet Connection'),
-                                          );
-                                        } else {
-                                          final units = snapshot.data;
-                                          // Filter units based on the desired condition
-                                          final filteredUnits = units!
-                                              .where((unit) => unit.heading
-                                                  .split(";")
-                                                  .first
-                                                  .contains("Unit 3"))
-                                              .toList();
-
-                                          return Padding(
-                                            padding: EdgeInsets.all(
-                                                widget.size * 5.0),
-                                            child: ListView.separated(
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: filteredUnits.length,
-                                              itemBuilder:
-                                                  (context, int index) {
-                                                final unit =
-                                                    filteredUnits[index];
-
-                                                return subUnit(
-                                                  width: widget.size,
-                                                  height: widget.size,
-                                                  size: widget.size,
-                                                  ID: widget.ID,
-                                                  branch: widget.branch,
-                                                  unit: unit,
-                                                  mode: widget.mode,
-                                                  photoUrl: widget.photoUrl,
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (context, index) => SizedBox(
-                                                height: widget.size * 5,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                    StreamBuilder<List<UnitsConvertor>>(
-                                      stream:
-                                          readUnits(widget.ID, widget.branch),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const Center(
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 0.3,
-                                              color: Colors.cyan,
-                                            ),
-                                          );
-                                        } else if (snapshot.hasError) {
-                                          return const Center(
-                                            child: Text(
-                                                'Error with TextBooks Data or\n Check Internet Connection'),
-                                          );
-                                        } else {
-                                          final units = snapshot.data;
-                                          // Filter units based on the desired condition
-                                          final filteredUnits = units!
-                                              .where((unit) => unit.heading
-                                                  .split(";")
-                                                  .first
-                                                  .contains("Unit 4"))
-                                              .toList();
-
-                                          return Padding(
-                                            padding: EdgeInsets.all(
-                                                widget.size * 5.0),
-                                            child: ListView.separated(
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: filteredUnits.length,
-                                              itemBuilder:
-                                                  (context, int index) {
-                                                final unit =
-                                                    filteredUnits[index];
-
-                                                return subUnit(
-                                                  width: widget.size,
-                                                  height: widget.size,
-                                                  size: widget.size,
-                                                  ID: widget.ID,
-                                                  branch: widget.branch,
-                                                  unit: unit,
-                                                  mode: widget.mode,
-                                                  photoUrl: widget.photoUrl,
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (context, index) => SizedBox(
-                                                height: widget.size * 5,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                    StreamBuilder<List<UnitsConvertor>>(
-                                      stream:
-                                          readUnits(widget.ID, widget.branch),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const Center(
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 0.3,
-                                              color: Colors.cyan,
-                                            ),
-                                          );
-                                        } else if (snapshot.hasError) {
-                                          return const Center(
-                                            child: Text(
-                                                'Error with TextBooks Data or\n Check Internet Connection'),
-                                          );
-                                        } else {
-                                          final units = snapshot.data;
-                                          // Filter units based on the desired condition
-                                          final filteredUnits = units!
-                                              .where((unit) => unit.heading
-                                                  .split(";")
-                                                  .first
-                                                  .contains("Unit 5"))
-                                              .toList();
-
-                                          return Padding(
-                                            padding: EdgeInsets.all(
-                                                widget.size * 5.0),
-                                            child: ListView.separated(
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: filteredUnits.length,
-                                              itemBuilder:
-                                                  (context, int index) {
-                                                final unit =
-                                                    filteredUnits[index];
-
-                                                return subUnit(
-                                                  width: widget.size,
-                                                  height: widget.size,
-                                                  size: widget.size,
-                                                  ID: widget.ID,
-                                                  branch: widget.branch,
-                                                  unit: unit,
-                                                  mode: widget.mode,
-                                                  photoUrl: widget.photoUrl,
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (context, index) => SizedBox(
-                                                height: widget.size * 5,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ]))
-                            ],
-                          )
-                        : Column(
-                            children: [
-                              if (isUser())
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(right: widget.size * 10),
-                                  child: InkWell(
-                                    child: Chip(
-                                      elevation: 20,
-                                      backgroundColor: Colors.white38,
-                                      avatar: CircleAvatar(
-                                          backgroundColor: Colors.black,
-                                          child: Icon(
-                                            Icons.add,
-                                          )),
-                                      label: Text(
-                                        "Edit",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: widget.size * 14),
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  UnitsCreator(
-                                                    type: "unit",
-                                                    branch: widget.branch,
-                                                    id: widget.ID,
-                                                    mode: widget.mode,
-                                                  )));
-                                    },
-                                  ),
-                                ),
-                              StreamBuilder<List<UnitsConvertor>>(
-                                stream: readUnits(widget.ID, widget.branch),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 0.3,
-                                        color: Colors.cyan,
-                                      ),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    return const Center(
-                                      child: Text(
-                                          'Error with TextBooks Data or\n Check Internet Connection'),
-                                    );
-                                  } else {
-                                    final units = snapshot.data;
-
-                                    return Padding(
-                                      padding:
-                                          EdgeInsets.all(widget.size * 5.0),
-                                      child: ListView.separated(
-                                        physics: const BouncingScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemCount: units!.length,
-                                        itemBuilder: (context, int index) {
-                                          final unit = units[index];
-
-                                          return subUnit(
-                                            width: widget.size,
-                                            height: widget.size,
-                                            size: widget.size,
-                                            ID: widget.ID,
-                                            branch: widget.branch,
-                                            unit: unit,
-                                            mode: widget.mode,
-                                            photoUrl: widget.photoUrl,
-                                          );
-                                        },
-                                        separatorBuilder: (context, index) =>
-                                            SizedBox(
-                                          height: widget.size * 5,
+                                      Tab(
+                                        child: Text(
+                                          "Unit 1",
                                         ),
                                       ),
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
+                                      Tab(
+                                        child: Text(
+                                          "Unit 2",
+                                        ),
+                                      ),
+                                      Tab(
+                                        child: Text(
+                                          "Unit 3",
+                                        ),
+                                      ),
+                                      Tab(
+                                        child: Text(
+                                          "Unit 4",
+                                        ),
+                                      ),
+                                      Tab(
+                                        child: Text(
+                                          "Unit 5",
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                    child: TabBarView(
+                                        controller: _unitsTabController,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        children: [
+                                      StreamBuilder<List<UnitsConvertor>>(
+                                        stream:
+                                            readUnits(widget.ID, widget.branch),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 0.3,
+                                                color: Colors.cyan,
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return const Center(
+                                              child: Text(
+                                                  'Error with TextBooks Data or\n Check Internet Connection'),
+                                            );
+                                          } else {
+                                            final units = snapshot.data;
+
+                                            return Padding(
+                                              padding: EdgeInsets.all(
+                                                  widget.size * 5.0),
+                                              child: ListView.separated(
+                                                physics:
+                                                    const BouncingScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: units!.length,
+                                                itemBuilder:
+                                                    (context, int index) {
+                                                  final unit = units[index];
+
+                                                  return subUnit(
+                                                    width: widget.size,
+                                                    height: widget.size,
+                                                    size: widget.size,
+                                                    ID: widget.ID,
+                                                    branch: widget.branch,
+                                                    unit: unit,
+                                                    mode: widget.mode,
+                                                    photoUrl: widget.photoUrl,
+                                                  );
+                                                },
+                                                separatorBuilder:
+                                                    (context, index) => SizedBox(
+                                                  height: widget.size * 5,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                      StreamBuilder<List<UnitsConvertor>>(
+                                        stream:
+                                            readUnits(widget.ID, widget.branch),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 0.3,
+                                                color: Colors.cyan,
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return const Center(
+                                              child: Text(
+                                                  'Error with TextBooks Data or\n Check Internet Connection'),
+                                            );
+                                          } else {
+                                            final units = snapshot.data;
+                                            // Filter units based on the desired condition
+                                            final filteredUnits = units!
+                                                .where((unit) => unit.heading
+                                                    .split(";")
+                                                    .first
+                                                    .contains("Unit 1"))
+                                                .toList();
+
+                                            return Padding(
+                                              padding: EdgeInsets.all(
+                                                  widget.size * 5.0),
+                                              child: ListView.separated(
+                                                physics:
+                                                    const BouncingScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: filteredUnits.length,
+                                                itemBuilder:
+                                                    (context, int index) {
+                                                  final unit =
+                                                      filteredUnits[index];
+
+                                                  return subUnit(
+                                                    width: widget.size,
+                                                    height: widget.size,
+                                                    size: widget.size,
+                                                    ID: widget.ID,
+                                                    branch: widget.branch,
+                                                    unit: unit,
+                                                    mode: widget.mode,
+                                                    photoUrl: widget.photoUrl,
+                                                  );
+                                                },
+                                                separatorBuilder:
+                                                    (context, index) => SizedBox(
+                                                  height: widget.size * 5,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                      StreamBuilder<List<UnitsConvertor>>(
+                                        stream:
+                                            readUnits(widget.ID, widget.branch),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 0.3,
+                                                color: Colors.cyan,
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return const Center(
+                                              child: Text(
+                                                  'Error with TextBooks Data or\n Check Internet Connection'),
+                                            );
+                                          } else {
+                                            final units = snapshot.data;
+                                            // Filter units based on the desired condition
+                                            final filteredUnits = units!
+                                                .where((unit) => unit.heading
+                                                    .split(";")
+                                                    .first
+                                                    .contains("Unit 2"))
+                                                .toList();
+
+                                            return Padding(
+                                              padding: EdgeInsets.all(
+                                                  widget.size * 5.0),
+                                              child: ListView.separated(
+                                                physics:
+                                                    const BouncingScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: filteredUnits.length,
+                                                itemBuilder:
+                                                    (context, int index) {
+                                                  final unit =
+                                                      filteredUnits[index];
+
+                                                  return subUnit(
+                                                    width: widget.size,
+                                                    height: widget.size,
+                                                    size: widget.size,
+                                                    ID: widget.ID,
+                                                    branch: widget.branch,
+                                                    unit: unit,
+                                                    mode: widget.mode,
+                                                    photoUrl: widget.photoUrl,
+                                                  );
+                                                },
+                                                separatorBuilder:
+                                                    (context, index) => SizedBox(
+                                                  height: widget.size * 5,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                      StreamBuilder<List<UnitsConvertor>>(
+                                        stream:
+                                            readUnits(widget.ID, widget.branch),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 0.3,
+                                                color: Colors.cyan,
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return const Center(
+                                              child: Text(
+                                                  'Error with TextBooks Data or\n Check Internet Connection'),
+                                            );
+                                          } else {
+                                            final units = snapshot.data;
+                                            // Filter units based on the desired condition
+                                            final filteredUnits = units!
+                                                .where((unit) => unit.heading
+                                                    .split(";")
+                                                    .first
+                                                    .contains("Unit 3"))
+                                                .toList();
+
+                                            return Padding(
+                                              padding: EdgeInsets.all(
+                                                  widget.size * 5.0),
+                                              child: ListView.separated(
+                                                physics:
+                                                    const BouncingScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: filteredUnits.length,
+                                                itemBuilder:
+                                                    (context, int index) {
+                                                  final unit =
+                                                      filteredUnits[index];
+
+                                                  return subUnit(
+                                                    width: widget.size,
+                                                    height: widget.size,
+                                                    size: widget.size,
+                                                    ID: widget.ID,
+                                                    branch: widget.branch,
+                                                    unit: unit,
+                                                    mode: widget.mode,
+                                                    photoUrl: widget.photoUrl,
+                                                  );
+                                                },
+                                                separatorBuilder:
+                                                    (context, index) => SizedBox(
+                                                  height: widget.size * 5,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                      StreamBuilder<List<UnitsConvertor>>(
+                                        stream:
+                                            readUnits(widget.ID, widget.branch),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 0.3,
+                                                color: Colors.cyan,
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return const Center(
+                                              child: Text(
+                                                  'Error with TextBooks Data or\n Check Internet Connection'),
+                                            );
+                                          } else {
+                                            final units = snapshot.data;
+                                            // Filter units based on the desired condition
+                                            final filteredUnits = units!
+                                                .where((unit) => unit.heading
+                                                    .split(";")
+                                                    .first
+                                                    .contains("Unit 4"))
+                                                .toList();
+
+                                            return Padding(
+                                              padding: EdgeInsets.all(
+                                                  widget.size * 5.0),
+                                              child: ListView.separated(
+                                                physics:
+                                                    const BouncingScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: filteredUnits.length,
+                                                itemBuilder:
+                                                    (context, int index) {
+                                                  final unit =
+                                                      filteredUnits[index];
+
+                                                  return subUnit(
+                                                    width: widget.size,
+                                                    height: widget.size,
+                                                    size: widget.size,
+                                                    ID: widget.ID,
+                                                    branch: widget.branch,
+                                                    unit: unit,
+                                                    mode: widget.mode,
+                                                    photoUrl: widget.photoUrl,
+                                                  );
+                                                },
+                                                separatorBuilder:
+                                                    (context, index) => SizedBox(
+                                                  height: widget.size * 5,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                      StreamBuilder<List<UnitsConvertor>>(
+                                        stream:
+                                            readUnits(widget.ID, widget.branch),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 0.3,
+                                                color: Colors.cyan,
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return const Center(
+                                              child: Text(
+                                                  'Error with TextBooks Data or\n Check Internet Connection'),
+                                            );
+                                          } else {
+                                            final units = snapshot.data;
+                                            // Filter units based on the desired condition
+                                            final filteredUnits = units!
+                                                .where((unit) => unit.heading
+                                                    .split(";")
+                                                    .first
+                                                    .contains("Unit 5"))
+                                                .toList();
+
+                                            return Padding(
+                                              padding: EdgeInsets.all(
+                                                  widget.size * 5.0),
+                                              child: ListView.separated(
+                                                physics:
+                                                    const BouncingScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: filteredUnits.length,
+                                                itemBuilder:
+                                                    (context, int index) {
+                                                  final unit =
+                                                      filteredUnits[index];
+
+                                                  return subUnit(
+                                                    width: widget.size,
+                                                    height: widget.size,
+                                                    size: widget.size,
+                                                    ID: widget.ID,
+                                                    branch: widget.branch,
+                                                    unit: unit,
+                                                    mode: widget.mode,
+                                                    photoUrl: widget.photoUrl,
+                                                  );
+                                                },
+                                                separatorBuilder:
+                                                    (context, index) => SizedBox(
+                                                  height: widget.size * 5,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ]))
+                              ],
+                            ),
+                        )
+                        : SingleChildScrollView(
+                          child: Column(
+                              children: [
+                                if (isUser())
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.only(right: widget.size * 10),
+                                    child: InkWell(
+                                      child: Chip(
+                                        elevation: 20,
+                                        backgroundColor: Colors.white38,
+                                        avatar: CircleAvatar(
+                                            backgroundColor: Colors.black,
+                                            child: Icon(
+                                              Icons.add,
+                                            )),
+                                        label: Text(
+                                          "Edit",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: widget.size * 14),
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UnitsCreator(
+                                                      type: "unit",
+                                                      branch: widget.branch,
+                                                      id: widget.ID,
+                                                      mode: widget.mode,
+                                                    )));
+                                      },
+                                    ),
+                                  ),
+                                StreamBuilder<List<UnitsConvertor>>(
+                                  stream: readUnits(widget.ID, widget.branch),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 0.3,
+                                          color: Colors.cyan,
+                                        ),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return const Center(
+                                        child: Text(
+                                            'Error with TextBooks Data or\n Check Internet Connection'),
+                                      );
+                                    } else {
+                                      final units = snapshot.data;
+
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.all(widget.size * 5.0),
+                                        child: ListView.separated(
+                                          physics: const BouncingScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: units!.length,
+                                          itemBuilder: (context, int index) {
+                                            final unit = units[index];
+
+                                            return subUnit(
+                                              width: widget.size,
+                                              height: widget.size,
+                                              size: widget.size,
+                                              ID: widget.ID,
+                                              branch: widget.branch,
+                                              unit: unit,
+                                              mode: widget.mode,
+                                              photoUrl: widget.photoUrl,
+                                            );
+                                          },
+                                          separatorBuilder: (context, index) =>
+                                              SizedBox(
+                                            height: widget.size * 5,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                        ),
                     Column(
                       children: [
                         if (isUser())
