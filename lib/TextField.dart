@@ -999,11 +999,13 @@ class SubjectsCreator extends StatefulWidget {
   String photoUrl;
   String mode;
   String branch;
+  String reg;
 
   SubjectsCreator(
       {this.Id = "",
       this.description = '',
       this.heading = "",
+      this.reg = "",
       this.photoUrl = "",
       this.mode = "Subjects",
       required this.branch});
@@ -1018,11 +1020,13 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
   final PhotoUrlController = TextEditingController();
   final FirebaseStorage storage = FirebaseStorage.instance;
   bool _isImage = false;
+  String reg="";
 
   void AutoFill() async {
     HeadingController.text = widget.heading;
     DescriptionController.text = widget.description;
     PhotoUrlController.text = widget.photoUrl;
+    reg = widget.reg;
     if (widget.photoUrl.length > 3) {
       setState(() {
         _isImage = true;
@@ -1046,109 +1050,39 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blueGrey.shade800,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(40),
-        child: AppBar(
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
-            ),
-          ),
-          centerTitle: true,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30)),
-              color: Color.fromRGBO(7, 7, 23, 1.0),
-            ),
-          ),
-          title: Text(
-            "Subject Editor",
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.w500),
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
+    return backGroundImage(
+      child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 15, top: 8),
-              child: Text(
-                "Heading",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
+            backButton(size: size(context),text:"Subject Editor" ,),
+
+            TextFieldContainer(child: TextFormField(
+              controller: HeadingController,
+              textInputAction: TextInputAction.next,
+              style: TextStyle(color: Colors.white,fontSize: 20),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Heading',
+                hintStyle: TextStyle(color: Colors.white54)
               ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  border: Border.all(color: Colors.white),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: TextFormField(
-                    controller: HeadingController,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Heading',
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15, top: 8),
-              child: Text(
-                "Description",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  border: Border.all(color: Colors.white),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: TextFormField(
-                    //obscureText: true,
-                    controller: DescriptionController,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Description or Full name',
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            ),heading: "Heading",),
+
+
+           TextFieldContainer(child: TextFormField(
+             //obscureText: true,
+             controller: DescriptionController,
+             textInputAction: TextInputAction.next,
+             style: TextStyle(color: Colors.white,fontSize: 20),
+
+             decoration: InputDecoration(
+               border: InputBorder.none,
+               hintText: 'Description or Full name',
+                 hintStyle: TextStyle(color: Colors.white54)
+
+             ),
+           ),heading: "Description",),
             if (_isImage == true)
               Padding(
                 padding: const EdgeInsets.only(left: 10, top: 20),
@@ -1177,10 +1111,10 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                       ),
                       onTap: () async {
                         final Uri uri =
-                            Uri.parse(PhotoUrlController.text.trim());
+                        Uri.parse(PhotoUrlController.text.trim());
                         final String fileName = uri.pathSegments.last;
                         final Reference ref =
-                            storage.ref().child("/${fileName}");
+                        storage.ref().child("/${fileName}");
                         try {
                           await ref.delete();
                           showToastText('Image deleted successfully');
@@ -1269,8 +1203,8 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                                       return progress == null
                                           ? child
                                           : Center(
-                                              child:
-                                                  CircularProgressIndicator());
+                                          child:
+                                          CircularProgressIndicator());
                                     },
                                   ),
                                   if (_isLoading)
@@ -1298,7 +1232,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                                       final String fileName =
                                           uri.pathSegments.last;
                                       final Reference ref =
-                                          storage.ref().child("/${fileName}");
+                                      storage.ref().child("/${fileName}");
                                       try {
                                         await ref.delete();
                                         showToastText(
@@ -1342,6 +1276,19 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                   );
                 },
               ),
+            TextFieldContainer(child: TextFormField(
+              //obscureText: true,
+              controller: PhotoUrlController,
+              textInputAction: TextInputAction.next,
+              style: TextStyle(color: Colors.white,fontSize: 20),
+
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Photo Url',
+                  hintStyle: TextStyle(color: Colors.white54)
+
+              ),
+            ),heading: "Photo Url",),
             SizedBox(
               height: 5,
             ),
@@ -1355,7 +1302,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.blueGrey,
+                    color: Colors.black12,
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(color: Colors.white),
                   ),
@@ -1407,6 +1354,54 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
             SizedBox(
               height: 20,
             ),
+            StreamBuilder<List<RegulationConvertor>>(
+                stream: readRegulation(widget.branch),
+                builder: (context, snapshot) {
+                  final unit = snapshot.data;
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 0.3,
+                            color: Colors.cyan,
+                          ));
+                    default:
+                      if (snapshot.hasError) {
+                        return const Center(
+                            child: Text(
+                                'Error with TextBooks Data or\n Check Internet Connection'));
+                      } else {
+                        return SizedBox(
+                          height: 30,
+                          child: ListView.separated(
+                            physics: const BouncingScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: unit!.length, // Display only top 5 items
+                            itemBuilder: (context, int index) {
+                              return InkWell(
+                                child: Container(
+                                    decoration: BoxDecoration(
+
+                                        color: reg==unit[index].id?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(10)
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                      child: Text(unit[index].id,style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
+                                    )),
+                                onTap: (){
+                                  setState(() {
+                                    reg = unit[index].id;
+                                  });
+                                },
+                              );
+                            },
+                            separatorBuilder: (context,index)=>SizedBox(width: 5,),),
+                        );
+
+                      }
+                  }
+                }),
             Row(
               children: [
                 Spacer(),
@@ -1442,7 +1437,8 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             .update({
                           "Heading": HeadingController.text.trim(),
                           "Description": DescriptionController.text.trim(),
-                          "Photo Url": PhotoUrlController.text
+                          "Photo Url": PhotoUrlController.text,
+                          "reg":reg
                         });
                       } else {
                         FirebaseFirestore.instance
@@ -1453,14 +1449,16 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             .update({
                           "Heading": HeadingController.text.trim(),
                           "Description": DescriptionController.text.trim(),
-                          "Photo Url": PhotoUrlController.text
+                          "Photo Url": PhotoUrlController.text,
+                          "reg":reg
+
                         });
                       }
                     } else {
                       if (widget.mode == "LabSubjects") {
                         createLabSubjects(
                           branch: widget.branch,
-                          regulation: "3-2",
+                          regulation: reg,
                           heading: HeadingController.text.trim(),
                           description: DescriptionController.text.trim(),
                           PhotoUrl: PhotoUrlController.text,
@@ -1471,7 +1469,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             heading: HeadingController.text.trim(),
                             description: DescriptionController.text.trim(),
                             PhotoUrl: PhotoUrlController.text,
-                            regulation: "3-2");
+                            regulation: reg);
                       }
                     }
                     HeadingController.clear();
@@ -1481,29 +1479,29 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                   },
                   child: widget.Id.length < 3
                       ? Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[500],
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.white),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                            child: Text("Create"),
-                          ),
-                        )
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Create"),
+                    ),
+                  )
                       : Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[500],
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.white),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                            child: Text("Update"),
-                          ),
-                        ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Update"),
+                    ),
+                  ),
                 ),
                 SizedBox(
                   width: 20,

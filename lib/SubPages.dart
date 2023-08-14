@@ -13,6 +13,7 @@ import 'favorites.dart';
 import 'functins.dart';
 import 'package:http/http.dart' as http;
 
+import 'main.dart';
 import 'notification.dart';
 
 class NewsPage extends StatefulWidget {
@@ -604,6 +605,7 @@ class _SubjectsState extends State<Subjects> {
                                                                     animation,
                                                                     secondaryAnimation) =>
                                                                 SubjectsCreator(
+                                                                  reg: widget.reg,
                                                               branch:
                                                                   widget.branch,
                                                               Id: SubjectsData
@@ -996,6 +998,7 @@ class _LabSubjectsState extends State<LabSubjects> {
                                                                 animation,
                                                                 secondaryAnimation) =>
                                                             SubjectsCreator(
+                                                              reg: widget.reg,
                                                           branch: widget.branch,
                                                           Id: LabSubjectsData
                                                               .id,

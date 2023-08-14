@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'main.dart';
 import 'notification.dart';
 
 class Constants {
@@ -89,10 +90,7 @@ isUser() {
   return user[1] == "gmail.com";
 }
 
-fullUserId() {
-  var user = FirebaseAuth.instance.currentUser!.email!;
-  return user;
-}
+
 
 Future<void> showToastText(String message) async {
   await Fluttertoast.cancel();
