@@ -9,6 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:srkr_study_app/HomePage.dart';
+import 'package:srkr_study_app/TextField.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'package:http/http.dart' as http;
 import 'functins.dart';
@@ -597,15 +598,7 @@ class _searchBarState extends State<searchBar> {
     _tabController.removeListener(_handleTabChange);
     super.dispose();
   }
-  // @override
-  // void dispose() {
-  //   _tabController.removeListener(_handleTabChange);
-  //   emailController.removeListener(_setUser);
-  //   _tabController.dispose();
-  //   emailController.dispose();
-  //   bodyController.dispose();
-  //   super.dispose();
-  // }
+
 
   bool isExp = false;
   late String Url = "";
@@ -623,23 +616,23 @@ class _searchBarState extends State<searchBar> {
                 flex: 7,
                 child: currentIndex == 1
                     ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
+                        padding:  EdgeInsets.symmetric(
+                            horizontal: widget.size*10, vertical:widget.size* 5),
                         child: Container(
-                          height: 35,
+                          height: widget.size*35,
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             border: Border.all(
                                 color: Colors.white.withOpacity(0.5)),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(widget.size*12),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 10),
+                            padding:   EdgeInsets.only(left: widget.size*10),
                             child: TextField(
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
+                                  TextStyle(color: Colors.white, fontSize:widget.size* 18),
                               cursorColor: Colors.white,
-                              cursorHeight: 10,
+                              cursorHeight:widget.size* 10,
                               controller: emailController,
                               textInputAction: TextInputAction.next,
                               decoration: InputDecoration(
@@ -660,7 +653,7 @@ class _searchBarState extends State<searchBar> {
                   //fit: FlexFit.tight,
                   child: isUser()
                       ? Padding(
-                          padding: const EdgeInsets.only(right: 10),
+                          padding:   EdgeInsets.only(right: widget.size*10),
                           child: InkWell(
                             child: AnimatedContainer(
                               duration: Duration(milliseconds: 300),
@@ -694,10 +687,10 @@ class _searchBarState extends State<searchBar> {
                                                     "Upload Photo",
                                                     style: TextStyle(
                                                         color: Colors.white,
-                                                        fontSize: 16),
+                                                        fontSize: widget.size*16),
                                                   ),
                                                   SizedBox(
-                                                    width: 3,
+                                                    width: widget.size*3,
                                                   ),
                                                   Icon(
                                                     Icons.upload,
@@ -740,54 +733,39 @@ class _searchBarState extends State<searchBar> {
             children: [
               Flexible(
                 flex: 7,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  child: Container(
-                    constraints: BoxConstraints(maxHeight: 450),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      border: Border.all(color: Colors.white.withOpacity(0.5)),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: TextField(
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                        cursorColor: Colors.white,
-                        cursorHeight: 20,
-                        controller: bodyController,
-                        maxLines: null,
-                        scrollPhysics:BouncingScrollPhysics(),
-                        textInputAction: TextInputAction.newline,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Send Message ( All )',
-                          hintStyle: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
-                          ),
-                        ),
-                      ),
+                child: TextFieldContainer(child: TextField(
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  cursorColor: Colors.white,
+                  cursorHeight: widget.size*20,
+                  controller: bodyController,
+                  maxLines: null,
+                  scrollPhysics:BouncingScrollPhysics(),
+                  textInputAction: TextInputAction.newline,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Enter Message ',
+                    hintStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.6),
                     ),
                   ),
-                ),
+                ),),
               ),
               Flexible(
                   flex: 2,
                   //fit: FlexFit.tight,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 10),
+                    padding:   EdgeInsets.only(right:widget.size* 10),
                     child: InkWell(
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(widget.size*15),
                           color: Colors.white.withOpacity(0.1),
                           border:
                               Border.all(color: Colors.white.withOpacity(0.1)),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 3, right: 3, top: 10, bottom: 10),
+                          padding:  EdgeInsets.symmetric(
+                              horizontal:widget.size* 3,  vertical: widget.size*10),
                           child: Row(
                             children: [
                               Text(
@@ -796,7 +774,7 @@ class _searchBarState extends State<searchBar> {
                                     color: Colors.white, fontSize: 17),
                               ),
                               SizedBox(
-                                width: 3,
+                                width: widget.size*3,
                               ),
                               Icon(
                                 Icons.send,

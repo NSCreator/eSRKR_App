@@ -173,38 +173,44 @@ class _branchYearState extends State<branchYear> {
                 return Center(child: Text("Error"));
               } else {
                 if (Favourites!.length > 0)
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 15, left: 20, bottom: 10),
-                        child: Text(
-                          "Select Branch",
-                          style: TextStyle(
-                              color: Colors.lightBlueAccent,
-                              fontSize: 25,
-                              fontWeight: FontWeight.w500),
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                             bottom: 10),
+                          child: Text(
+                            "Select Branch",
+                            style: TextStyle(
+                                color: Colors.lightBlueAccent,
+                                fontSize: 25,
+                                fontWeight: FontWeight.w500),
+                          ),
                         ),
-                      ),
-                      ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: Favourites.length,
-                        itemBuilder: (context, int index) {
-                          final Favourite = Favourites[index];
+                        ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: Favourites.length,
+                          itemBuilder: (context, int index) {
+                            final Favourite = Favourites[index];
 
-                          return years(
-                            id: Favourite.id,
-                            isUpdate: widget.isUpdate,
-                          );
-                        },
-                      ),
-                    ],
+                            return Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: years(
+                                id: Favourite.id,
+                                isUpdate: widget.isUpdate,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   );
                 else
-                  return Text("No Branches Avaliable");
+                  return Text("No Branches Available");
               }
           }
         });
@@ -301,13 +307,10 @@ class _yearsState extends State<years> {
                                   itemCount: user!.length,
                                   itemBuilder: (context, int index) {
                                     final SubjectsData = user[index];
-                                    return Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        InkWell(
+                                    return Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(3.0),
+                                        child: InkWell(
                                           child: Text(
                                             SubjectsData.id,
                                             style: TextStyle(
@@ -324,8 +327,8 @@ class _yearsState extends State<years> {
                                               Navigator.pop(context);
                                             }
                                           },
-                                        )
-                                      ],
+                                        ),
+                                      ),
                                     );
                                   },
                                 ),

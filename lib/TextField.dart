@@ -1959,14 +1959,17 @@ class _UnitsCreatorState extends State<UnitsCreator> {
 
 
   void AutoFill() {
-    if(widget.type=="more")unit =widget.type;
+    if(widget.type=="more")unit =widget.PDFUrl.split(";").first;
     HeadingController.text = widget.Heading;
     if(widget.Description.isNotEmpty)DescriptionList = widget.Description.split(";");
     if(widget.questions.isNotEmpty)QuestionsList = widget.questions.split(";");
-    PDFUrlController.text = widget.PDFUrl;
+    PDFUrlController.text = widget.PDFUrl.split(";").last;
     EditionController.text=widget.edition;
     PhotoUrlController.text=widget.photoUrl;
     AuthorController.text=widget.author;
+    setState(() {
+
+    });
   }
   List DescriptionList = [];
   final TextEditingController _DescriptionController = TextEditingController();
@@ -2123,532 +2126,534 @@ class _UnitsCreatorState extends State<UnitsCreator> {
       children: [
         backButton(size: size(context),text: "Create Unit",),
         Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if(widget.type=="unit")Padding(
-                padding: const EdgeInsets.only(left: 15, top: 8,bottom: 10),
-                child: Text(
-                  "Type Selected : $unit",
-                  style: creatorHeadingTextStyle,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if(widget.type=="unit")Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 8,bottom: 10),
+                  child: Text(
+                    "Type Selected : $unit",
+                    style: creatorHeadingTextStyle,
+                  ),
                 ),
-              ),
-              if(widget.type=="unit")SizedBox(
-                height: 30,
-                child: ListView.separated(
-                    physics: const BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 6, // Display only top 5 items
-                    itemBuilder: (context, int index) {
-                      if(index==0) {
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 25),
-                          child: InkWell(
-                            child: Container(
-                            decoration: BoxDecoration(
+                if(widget.type=="unit")SizedBox(
+                  height: 30,
+                  child: ListView.separated(
+                      physics: const BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 6, // Display only top 5 items
+                      itemBuilder: (context, int index) {
+                        if(index==0) {
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 25),
+                            child: InkWell(
+                              child: Container(
+                              decoration: BoxDecoration(
 
-                                color: unit=="Unknown"?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(10)
+                                  color: unit=="Unknown"?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10)
+                              ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                  child: Text("Unknown",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
+                                )),
+                              onTap: (){
+                                setState(() {
+                                  unit = "Unknown";
+                                });
+                              },
                             ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
-                                child: Text("Unknown",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
-                              )),
+                          );
+                        } else{
+                          return InkWell(
+                            child: Container(
+                                decoration: BoxDecoration(
+
+                                    color: unit=="Unit $index"?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(10)
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                  child: Text("Unit $index",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
+                                )),
                             onTap: (){
                               setState(() {
-                                unit = "Unknown";
+                                unit = "Unit $index";
                               });
                             },
-                          ),
-                        );
-                      } else{
+                          );
+                        }
+                      },
+                  separatorBuilder: (context,index)=>SizedBox(width: 3,),),
+                ),
+                TextFieldContainer(
+                  child: TextFormField(
+                    controller: HeadingController,
+                    textInputAction: TextInputAction.next,
+                    style: textFieldStyle(size(context)),
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(color: Colors.white54),
+                      border: InputBorder.none,
+                      hintText: 'Heading',
+                    ),
+                  ),
+                  heading:"Heading" ,
+                ),
+                if(widget.type=="more")Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 8,bottom: 10),
+                  child: Text(
+                    "Type Selected : $unit",
+                    style: creatorHeadingTextStyle,
+                  ),
+                ),
+                if(widget.type=="more")SizedBox(
+                  height: 30,
+                  child: ListView.separated(
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: list.length, // Display only top 5 items
+                    itemBuilder: (context, int index) {
+
+
                         return InkWell(
                           child: Container(
                               decoration: BoxDecoration(
 
-                                  color: unit=="Unit $index"?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
+                                  color: unit==list[index] ?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(10)
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
-                                child: Text("Unit $index",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
+                                child: Text(list[index],style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
                               )),
                           onTap: (){
                             setState(() {
-                              unit = "Unit $index";
+                              unit = list[index];
                             });
                           },
                         );
-                      }
+
                     },
-                separatorBuilder: (context,index)=>SizedBox(width: 3,),),
-              ),
-              TextFieldContainer(
-                child: TextFormField(
-                  controller: HeadingController,
-                  textInputAction: TextInputAction.next,
-                  style: textFieldStyle(size(context)),
-                  decoration: InputDecoration(
-                    hintStyle: TextStyle(color: Colors.white54),
-                    border: InputBorder.none,
-                    hintText: 'Heading',
-                  ),
+                    separatorBuilder: (context,index)=>SizedBox(width: 3,),),
                 ),
-                heading:"Heading" ,
-              ),
-              if(widget.type=="more")Padding(
-                padding: const EdgeInsets.only(left: 15, top: 8,bottom: 10),
-                child: Text(
-                  "Type Selected : $unit",
-                  style: creatorHeadingTextStyle,
-                ),
-              ),
-              if(widget.type=="more")SizedBox(
-                height: 30,
-                child: ListView.separated(
-                  physics: const BouncingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: list.length, // Display only top 5 items
-                  itemBuilder: (context, int index) {
-
-
-                      return InkWell(
-                        child: Container(
-                            decoration: BoxDecoration(
-
-                                color: unit==list[index] ?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
-                              child: Text(list[index],style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
-                            )),
-                        onTap: (){
-                          setState(() {
-                            unit = list[index];
-                          });
-                        },
-                      );
-
-                  },
-                  separatorBuilder: (context,index)=>SizedBox(width: 3,),),
-              ),
-              TextFieldContainer(
-                child: TextFormField(
-                  controller: PDFUrlController,
-                  textInputAction: TextInputAction.next,
-                  style: textFieldStyle(size(context)),
-                  decoration: InputDecoration(
-                    hintStyle: TextStyle(color: Colors.white54),
-                    border: InputBorder.none,
-                    hintText: 'PDF Url',
-                  ),
-                ),
-                heading:"PDF Url" ,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15, top: 8),
-                child: Text(
-                  "Description",
-                  style: creatorHeadingTextStyle,
-                ),
-              ),
-             ListView.builder(
-                itemCount: DescriptionList.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return Dismissible(
-                    key: Key(DescriptionList[index]),
-                    background: Container(
-                      color: Colors.red,
-                      alignment: Alignment.centerRight,
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Icon(
-                        Icons.delete,
-                        color: Colors.black,
-                      ),
+                TextFieldContainer(
+                  child: TextFormField(
+                    controller: PDFUrlController,
+                    textInputAction: TextInputAction.next,
+                    style: textFieldStyle(size(context)),
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(color: Colors.white54),
+                      border: InputBorder.none,
+                      hintText: 'PDF Url',
                     ),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      deleteDescription(index);
-                    },
-                    child: ListTile(
-                      title: Text(DescriptionList[index],style: TextStyle(color: Colors.white,fontSize: 20),),
-                      trailing: SingleChildScrollView(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            IconButton(
-                              icon: Icon(Icons.delete,color: Colors.redAccent,),
-                              onPressed: () {
-                                deleteDescription(index);
-                              },
-
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.edit,color: Colors.greenAccent,),
-                              onPressed: () {
-                                editDescription(index);
-                                setState(() {
-                                  isEdit=true;
-                                });
-                              },
-                            ),
-                            InkWell(
-                              child: Icon(Icons.move_up,size: 30,color: Colors.amber,),
-                              onTap: (){
-                                moveDescriptionUp(index);
-                              },
-                              onDoubleTap: (){
-                                moveDescriptionDown(index);
-                              },
-                            ),
-
-
-                          ],
+                  ),
+                  heading:"PDF Url" ,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 8),
+                  child: Text(
+                    "Description",
+                    style: creatorHeadingTextStyle,
+                  ),
+                ),
+               ListView.builder(
+                  itemCount: DescriptionList.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Dismissible(
+                      key: Key(DescriptionList[index]),
+                      background: Container(
+                        color: Colors.red,
+                        alignment: Alignment.centerRight,
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.black,
                         ),
                       ),
-                      onTap: () {
-                        editDescription(index);
+                      direction: DismissDirection.endToStart,
+                      onDismissed: (direction) {
+                        deleteDescription(index);
                       },
-                    ),
-                  );
-                },
-              ),
-              Row(
-                children: [
-                  Flexible(
-                    child: Padding(
-                      padding:
-                      const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                      child:TextFieldContainer(child:TextFormField(
-                        controller: _DescriptionController,
-                        style: textFieldStyle(size(context)),
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Enter Images Here',
-                          hintStyle: TextStyle(color: Colors.white54),
-                        ),
-                      ) ,),
-                    ),
-                  ),
-                  InkWell(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white12,
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(!isEdit?Icons.add:Icons.save,size: 45,color: Colors.white,),
-                    ),
-                    onTap: (){
-                      !isEdit?addDescription():saveDescription();
-                      setState(() {
-                        isEdit=false;
-                      });
-                    },
-                  )
-                ],
-              ),
-              if(widget.type=="unit")Padding(
-                padding: const EdgeInsets.only(left: 15, top: 8),
-                child: Text(
-                  "Questions",
-                  style: creatorHeadingTextStyle,
-                ),
-              ),
-              if(widget.type=="unit")ListView.builder(
-                itemCount: QuestionsList.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return Dismissible(
-                    key: Key(QuestionsList[index]),
-                    background: Container(
-                      color: Colors.red,
-                      alignment: Alignment.centerRight,
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Icon(
-                        Icons.delete,
-                        color: Colors.black,
-                      ),
-                    ),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      deleteQuestion(index);
-                    },
-                    child: ListTile(
-                      title: Text(QuestionsList[index],style: TextStyle(color: Colors.white,fontSize: 20),),
-                      trailing: SingleChildScrollView(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            IconButton(
-                              icon: Icon(Icons.delete,color: Colors.redAccent,),
-                              onPressed: () {
-                                deleteQuestion(index);
-                              },
+                      child: ListTile(
+                        title: Text(DescriptionList[index],style: TextStyle(color: Colors.white,fontSize: 20),),
+                        trailing: SingleChildScrollView(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              IconButton(
+                                icon: Icon(Icons.delete,color: Colors.redAccent,),
+                                onPressed: () {
+                                  deleteDescription(index);
+                                },
 
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.edit,color: Colors.greenAccent,),
-                              onPressed: () {
-                                editQuestion(index);
-                                setState(() {
-                                  isEdit=true;
-                                });
-                              },
-                            ),
-                            InkWell(
-                              child: Icon(Icons.move_up,size: 30,color: Colors.amber,),
-                              onTap: (){
-                                moveQuestionUp(index);
-                              },
-                              onDoubleTap: (){
-                                moveQuestionDown(index);
-                              },
-                            ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.edit,color: Colors.greenAccent,),
+                                onPressed: () {
+                                  editDescription(index);
+                                  setState(() {
+                                    isEdit=true;
+                                  });
+                                },
+                              ),
+                              InkWell(
+                                child: Icon(Icons.move_up,size: 30,color: Colors.amber,),
+                                onTap: (){
+                                  moveDescriptionUp(index);
+                                },
+                                onDoubleTap: (){
+                                  moveDescriptionDown(index);
+                                },
+                              ),
 
 
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        editQuestion(index);
-                      },
-                    ),
-                  );
-                },
-              ),
-              if(widget.type=="unit")Row(
-                children: [
-                  Flexible(
-                    child: Padding(
-                      padding:
-                      const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                      child:TextFieldContainer(child:TextFormField(
-                        controller: _QuestionsController,
-                        style: textFieldStyle(size(context)),
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Enter Images Here',
-                          hintStyle: TextStyle(color: Colors.white54),
-                        ),
-                      ) ,),
-                    ),
-                  ),
-                  InkWell(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white12,
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(!isEdit?Icons.add:Icons.save,size: 45,color: Colors.white,),
-                    ),
-                    onTap: (){
-                      !isEdit?addQuestion():saveQuestion();
-                      setState(() {
-                        isEdit=false;
-                      });
-                    },
-                  )
-                ],
-              ),
-              if(widget.type=="textbook")TextFieldContainer(
-                child: TextFormField(
-                  controller: PhotoUrlController,
-                  textInputAction: TextInputAction.next,
-                  style: textFieldStyle(size(context)),
-                  decoration: InputDecoration(
-                    hintStyle: TextStyle(color: Colors.white54),
-                    border: InputBorder.none,
-                    hintText: 'Photo Url',
-                  ),
-                ),
-                heading:"Photo Url" ,
-              ),
-              if(widget.type=="textbook")TextFieldContainer(
-                child: TextFormField(
-                  controller: AuthorController,
-                  textInputAction: TextInputAction.next,
-                  style: textFieldStyle(size(context)),
-                  decoration: InputDecoration(
-                    hintStyle: TextStyle(color: Colors.white54),
-                    border: InputBorder.none,
-                    hintText: 'Author',
-                  ),
-                ),
-                heading:"Author" ,
-              ),
-              if(widget.type=="textbook")TextFieldContainer(
-                child: TextFormField(
-                  controller: EditionController,
-                  textInputAction: TextInputAction.next,
-                  style: textFieldStyle(size(context)),
-                  decoration: InputDecoration(
-                    hintStyle: TextStyle(color: Colors.white54),
-                    border: InputBorder.none,
-                    hintText: 'Edition',
-                  ),
-                ),
-                heading:"Edition" ,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Spacer(),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.white.withOpacity(0.5),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10, top: 5, bottom: 5),
-                        child: Text("Back"),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      if(widget.type=="unit"){
-                        if (widget.UnitId.length < 3) {
-
-                          createUnits(
-                            branch: widget.branch,
-                            description: DescriptionList.join(";"),
-                            questions: QuestionsList.join(";"),
-                            heading: unit+";"+HeadingController.text.trim(),
-                            PDFSize: "0",
-                            PDFLink: PDFUrlController.text.trim(),
-                            subjectsID: widget.id,
-                            mode: widget.mode,
-                          );
-                        }
-                        else {
-                          FirebaseFirestore.instance
-                              .collection(widget.branch)
-                              .doc(widget.mode)
-                              .collection(widget.mode)
-                              .doc(widget.UnitId)
-                              .collection("Units")
-                              .doc(widget.id)
-                              .update({
-                            "Heading": unit+";"+HeadingController.text.trim(),
-                            "PDFLink": PDFUrlController.text.trim(),
-                            "Description": DescriptionList.join(";"),
-                            "questions": QuestionsList.join(";")
-                          });
-                        }
-                      }
-                      else if(widget.type=="textbook"){
-                        if (widget.UnitId.length < 3) {
-
-                          createUnitsTextbooks(
-                            branch: widget.branch,
-                            description: DescriptionList.join(";"),
-                            heading: HeadingController.text.trim(),
-                            PDFLink: PDFUrlController.text.trim(),
-                            subjectsID: widget.id,
-                            mode: widget.mode,
-                            photoUrl: PhotoUrlController.text.trim(), author: AuthorController.text.trim(),
-                            edition: EditionController.text.trim(),
-                          );
-                        }
-                        else {
-                          FirebaseFirestore.instance
-                              .collection(widget.branch)
-                              .doc(widget.mode)
-                              .collection(widget.mode)
-                              .doc(widget.UnitId)
-                              .collection("TextBooks")
-                              .doc(widget.id)
-                              .update({
-                            "description": DescriptionList.join(";"),
-                            "heading": HeadingController.text.trim(),
-                            "author": AuthorController.text.trim(),
-                            "photoUrl": PhotoUrlController.text.trim(),
-                            "edition": EditionController.text.trim(),
-                            "PDFLink": PDFUrlController.text.trim(),
-                          });
-                        }
-                      }else{
-                        if (widget.UnitId.length < 3) {
-
-                          createUnitsMore(
-                            branch: widget.branch,
-                            subjectsID: widget.id,
-                            mode: widget.mode, heading: HeadingController.text.trim(), description: DescriptionList.join(";"), link: unit+";"+PDFUrlController.text,
-
-                          );
-                        }
-                        else {
-                          FirebaseFirestore.instance
-                              .collection(widget.branch)
-                              .doc(widget.mode)
-                              .collection(widget.mode)
-                              .doc(widget.UnitId)
-                              .collection("More")
-                              .doc(widget.id)
-                              .update({
-                            "description": DescriptionList.join(";"),
-                            "heading": HeadingController.text.trim(),
-                            "author": AuthorController.text.trim(),
-                            "photoUrl": PhotoUrlController.text.trim(),
-                            "edition": EditionController.text.trim(),
-                            "PDFLink": PDFUrlController.text.trim(),
-                          });
-                        }
-                      }
-                      Navigator.pop(context);
-                    },
-                    child: widget.UnitId.length < 3
-                        ? Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: Colors.white.withOpacity(0.5),
-                              border: Border.all(color: Colors.white),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 10, right: 10, top: 5, bottom: 5),
-                              child: Text("Create"),
-                            ),
-                          )
-                        : Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: Colors.white.withOpacity(0.5),
-                              border: Border.all(color: Colors.white),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 10, right: 10, top: 5, bottom: 5),
-                              child: Text("Update"),
-                            ),
+                            ],
                           ),
+                        ),
+                        onTap: () {
+                          editDescription(index);
+                        },
+                      ),
+                    );
+                  },
+                ),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Padding(
+                        padding:
+                        const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                        child:TextFieldContainer(child:TextFormField(
+                          controller: _DescriptionController,
+                          style: textFieldStyle(size(context)),
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Enter Images Here',
+                            hintStyle: TextStyle(color: Colors.white54),
+                          ),
+                        ) ,),
+                      ),
+                    ),
+                    InkWell(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white12,
+                          border: Border.all(color: Colors.white),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(!isEdit?Icons.add:Icons.save,size: 45,color: Colors.white,),
+                      ),
+                      onTap: (){
+                        !isEdit?addDescription():saveDescription();
+                        setState(() {
+                          isEdit=false;
+                        });
+                      },
+                    )
+                  ],
+                ),
+                if(widget.type=="unit")Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 8),
+                  child: Text(
+                    "Questions",
+                    style: creatorHeadingTextStyle,
                   ),
-                  SizedBox(
-                    width: 20,
+                ),
+                if(widget.type=="unit")ListView.builder(
+                  itemCount: QuestionsList.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Dismissible(
+                      key: Key(QuestionsList[index]),
+                      background: Container(
+                        color: Colors.red,
+                        alignment: Alignment.centerRight,
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.black,
+                        ),
+                      ),
+                      direction: DismissDirection.endToStart,
+                      onDismissed: (direction) {
+                        deleteQuestion(index);
+                      },
+                      child: ListTile(
+                        title: Text(QuestionsList[index],style: TextStyle(color: Colors.white,fontSize: 20),),
+                        trailing: SingleChildScrollView(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              IconButton(
+                                icon: Icon(Icons.delete,color: Colors.redAccent,),
+                                onPressed: () {
+                                  deleteQuestion(index);
+                                },
+
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.edit,color: Colors.greenAccent,),
+                                onPressed: () {
+                                  editQuestion(index);
+                                  setState(() {
+                                    isEdit=true;
+                                  });
+                                },
+                              ),
+                              InkWell(
+                                child: Icon(Icons.move_up,size: 30,color: Colors.amber,),
+                                onTap: (){
+                                  moveQuestionUp(index);
+                                },
+                                onDoubleTap: (){
+                                  moveQuestionDown(index);
+                                },
+                              ),
+
+
+                            ],
+                          ),
+                        ),
+                        onTap: () {
+                          editQuestion(index);
+                        },
+                      ),
+                    );
+                  },
+                ),
+                if(widget.type=="unit")Row(
+                  children: [
+                    Flexible(
+                      child: Padding(
+                        padding:
+                        const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                        child:TextFieldContainer(child:TextFormField(
+                          controller: _QuestionsController,
+                          style: textFieldStyle(size(context)),
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Enter Images Here',
+                            hintStyle: TextStyle(color: Colors.white54),
+                          ),
+                        ) ,),
+                      ),
+                    ),
+                    InkWell(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white12,
+                          border: Border.all(color: Colors.white),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(!isEdit?Icons.add:Icons.save,size: 45,color: Colors.white,),
+                      ),
+                      onTap: (){
+                        !isEdit?addQuestion():saveQuestion();
+                        setState(() {
+                          isEdit=false;
+                        });
+                      },
+                    )
+                  ],
+                ),
+                if(widget.type=="textbook")TextFieldContainer(
+                  child: TextFormField(
+                    controller: PhotoUrlController,
+                    textInputAction: TextInputAction.next,
+                    style: textFieldStyle(size(context)),
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(color: Colors.white54),
+                      border: InputBorder.none,
+                      hintText: 'Photo Url',
+                    ),
                   ),
-                ],
-              )
-            ],
+                  heading:"Photo Url" ,
+                ),
+                if(widget.type=="textbook")TextFieldContainer(
+                  child: TextFormField(
+                    controller: AuthorController,
+                    textInputAction: TextInputAction.next,
+                    style: textFieldStyle(size(context)),
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(color: Colors.white54),
+                      border: InputBorder.none,
+                      hintText: 'Author',
+                    ),
+                  ),
+                  heading:"Author" ,
+                ),
+                if(widget.type=="textbook")TextFieldContainer(
+                  child: TextFormField(
+                    controller: EditionController,
+                    textInputAction: TextInputAction.next,
+                    style: textFieldStyle(size(context)),
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(color: Colors.white54),
+                      border: InputBorder.none,
+                      hintText: 'Edition',
+                    ),
+                  ),
+                  heading:"Edition" ,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Spacer(),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.white.withOpacity(0.5),
+                          border: Border.all(color: Colors.white),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 5, bottom: 5),
+                          child: Text("Back"),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        if(widget.type=="unit"){
+                          if (widget.UnitId.length < 3) {
+
+                            createUnits(
+                              branch: widget.branch,
+                              description: DescriptionList.join(";"),
+                              questions: QuestionsList.join(";"),
+                              heading: unit+";"+HeadingController.text.trim(),
+                              PDFSize: "0",
+                              PDFLink: PDFUrlController.text.trim(),
+                              subjectsID: widget.id,
+                              mode: widget.mode,
+                            );
+                          }
+                          else {
+                            FirebaseFirestore.instance
+                                .collection(widget.branch)
+                                .doc(widget.mode)
+                                .collection(widget.mode)
+                                .doc(widget.UnitId)
+                                .collection("Units")
+                                .doc(widget.id)
+                                .update({
+                              "Heading": unit+";"+HeadingController.text.trim(),
+                              "PDFLink": PDFUrlController.text.trim(),
+                              "Description": DescriptionList.join(";"),
+                              "questions": QuestionsList.join(";")
+                            });
+                          }
+                        }
+                        else if(widget.type=="textbook"){
+                          if (widget.UnitId.length < 3) {
+
+                            createUnitsTextbooks(
+                              branch: widget.branch,
+                              description: DescriptionList.join(";"),
+                              heading: HeadingController.text.trim(),
+                              PDFLink: PDFUrlController.text.trim(),
+                              subjectsID: widget.id,
+                              mode: widget.mode,
+                              photoUrl: PhotoUrlController.text.trim(), author: AuthorController.text.trim(),
+                              edition: EditionController.text.trim(),
+                            );
+                          }
+                          else {
+                            FirebaseFirestore.instance
+                                .collection(widget.branch)
+                                .doc(widget.mode)
+                                .collection(widget.mode)
+                                .doc(widget.UnitId)
+                                .collection("TextBooks")
+                                .doc(widget.id)
+                                .update({
+                              "description": DescriptionList.join(";"),
+                              "heading": HeadingController.text.trim(),
+                              "author": AuthorController.text.trim(),
+                              "photoUrl": PhotoUrlController.text.trim(),
+                              "edition": EditionController.text.trim(),
+                              "PDFLink": PDFUrlController.text.trim(),
+                            });
+                          }
+                        }else{
+                          if (widget.UnitId.length < 3) {
+
+                            createUnitsMore(
+                              branch: widget.branch,
+                              subjectsID: widget.id,
+                              mode: widget.mode, heading: HeadingController.text.trim(), description: DescriptionList.join(";"), link: unit+";"+PDFUrlController.text,
+
+                            );
+                          }
+                          else {
+                            FirebaseFirestore.instance
+                                .collection(widget.branch)
+                                .doc(widget.mode)
+                                .collection(widget.mode)
+                                .doc(widget.UnitId)
+                                .collection("More")
+                                .doc(widget.id)
+                                .update({
+                              "description": DescriptionList.join(";"),
+                              "heading": HeadingController.text.trim(),
+                              "author": AuthorController.text.trim(),
+                              "photoUrl": PhotoUrlController.text.trim(),
+                              "edition": EditionController.text.trim(),
+                              "PDFLink": PDFUrlController.text.trim(),
+                            });
+                          }
+                        }
+                        Navigator.pop(context);
+                      },
+                      child: widget.UnitId.length < 3
+                          ? Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white.withOpacity(0.5),
+                                border: Border.all(color: Colors.white),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10, right: 10, top: 5, bottom: 5),
+                                child: Text("Create"),
+                              ),
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white.withOpacity(0.5),
+                                border: Border.all(color: Colors.white),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10, right: 10, top: 5, bottom: 5),
+                                child: Text("Update"),
+                              ),
+                            ),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ],
