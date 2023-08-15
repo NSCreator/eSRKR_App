@@ -17,7 +17,14 @@ import 'net.dart';
 int currentIndex = 0;
 File file = File("");
 
-
+DecorationImage noImageFound =DecorationImage(
+    image:AssetImage(
+    "assets/app_logo.png"),
+    fit: BoxFit.cover);
+DecorationImage ImageNotFoundForTextBooks =DecorationImage(
+    image:AssetImage(
+        "assets/app_logo.png"),
+    fit: BoxFit.cover);
 TextStyle secondTabBarTextStyle({Color color = Colors.white,required double size}) {
   return TextStyle(color: Colors.white,
     fontSize: size*18,);

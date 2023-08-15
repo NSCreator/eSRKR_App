@@ -42,7 +42,7 @@ class _backGroundImageState extends State<backGroundImage> {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Scaffold(
-          backgroundColor: Colors.black.withOpacity(0.8),
+          backgroundColor: Colors.black.withOpacity(0.75),
           body: SafeArea(
             child: widget.child,
           ),
@@ -1436,7 +1436,7 @@ class _HomePageState extends State<HomePage> {
                                                           date: SubjectsData.id.split(
                                                               "-")
                                                               .last,
-                                                          req: SubjectsData
+                                                          reg: SubjectsData
                                                               .regulation,
                                                           pdfs: 0,
 
@@ -1777,7 +1777,7 @@ class _HomePageState extends State<HomePage> {
                                                         date: SubjectsData.id.split(
                                                             "-")
                                                             .last,
-                                                        req: SubjectsData
+                                                        reg: SubjectsData
                                                             .regulation,
                                                         pdfs: 0,
 
@@ -1854,7 +1854,6 @@ class _HomePageState extends State<HomePage> {
               branch: widget.branch,
             ),
             allBooks(
-              reg: widget.reg,
               size: widget.size,
 
               branch: widget.branch,
@@ -2394,9 +2393,9 @@ Future createBranchNew(
       .collection(branch)
       .doc("${branch}News")
       .collection("${branch}News")
-      .doc();
+      .doc(getID());
   final flash = BranchNewConvertor(
-      id: docflash.id,
+      id: getID(),
       heading: heading,
       photoUrl: photoUrl,
       description: description,
@@ -2438,7 +2437,7 @@ Stream<List<FlashNewsConvertor>> readSRKRFlashNews() =>
         .collection("srkrPage")
         .doc("flashNews")
         .collection("flashNews")
-        .orderBy("Heading", descending: false)
+        .orderBy("heading", descending: false)
         .snapshots()
         .map((snapshot) => snapshot.docs
         .map((doc) => FlashNewsConvertor.fromJson(doc.data()))
@@ -2454,9 +2453,9 @@ Future createSubjects(
       .collection(branch)
       .doc("Subjects")
       .collection("Subjects")
-      .doc();
+      .doc(getID());
   final flash = FlashConvertor(
-      id: docflash.id,
+      id: getID(),
       heading: heading,
       PhotoUrl: PhotoUrl,
       description: description,
@@ -2478,16 +2477,16 @@ class FlashNewsConvertor {
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "Heading": heading,
-    "Url": Url,
+    "heading": heading,
+    "link": Url,
 
   };
 
   static FlashNewsConvertor fromJson(Map<String, dynamic> json) => FlashNewsConvertor(
       id: json['id'],
 
-      heading: json["Heading"],
-      Url: json["Url"],
+      heading: json["heading"],
+      Url: json["link"],
       );
 }
 
@@ -2630,7 +2629,7 @@ Future createBook(
 
 class BooksConvertor {
   String id;
-  final String heading, link, description, photoUrl, edition, Author;
+  final String heading, link, description, photoUrl, edition, Author,size;
 
   BooksConvertor(
       {this.id = "",
@@ -2640,26 +2639,29 @@ class BooksConvertor {
       required this.photoUrl,
       required this.edition,
       required this.Author,
+        this.size=""
    });
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "Heading": heading,
-        "Link": link,
-        "Description": description,
-        "Photo Url": photoUrl,
-        "Author": Author,
-        "Edition": edition,
+        "heading": heading,
+        "link": link,
+        "description": description,
+        "image": photoUrl,
+        "author": Author,
+        "size": Author,
+        "edition": edition,
       };
 
   static BooksConvertor fromJson(Map<String, dynamic> json) => BooksConvertor(
         id: json['id'],
-        heading: json["Heading"],
-        link: json["Link"],
-        description: json["Description"],
-        photoUrl: json["Photo Url"],
-        Author: json["Author"],
-        edition: json["Edition"],
+        heading: json["heading"],
+        link: json["link"],
+        description: json["description"],
+        photoUrl: json["image"],
+        Author: json["author"],
+        edition: json["edition"],
+        size: json["size"],
       );
 }
 

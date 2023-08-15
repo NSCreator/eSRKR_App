@@ -221,7 +221,7 @@ class _MyAppqState extends State<MyAppq> {
                                       builder: (context) =>
                                           subjectUnitsData(
                                             date: "2012",
-                                            req: "",
+                                            reg: "",
                                             pdfs: 0,
 
                                             size: widget
@@ -362,7 +362,7 @@ class _MyAppqState extends State<MyAppq> {
                                       builder: (context) =>
                                           subjectUnitsData(
                                             date: "2012",
-                                            req: "kh",
+                                            reg: "kh",
                                             pdfs: 0,
 
                                             size: widget
@@ -560,7 +560,7 @@ class _MyAppqState extends State<MyAppq> {
                                       builder: (context) =>
                                           subjectUnitsData(
                                             date: "2012",
-                                            req: "fghg",
+                                            reg: "fghg",
                                             pdfs: 0,
 
                                             size: widget
@@ -701,7 +701,7 @@ class _MyAppqState extends State<MyAppq> {
                                       builder: (context) =>
                                           subjectUnitsData(
                                             date: "2012",
-                                            req: "hgd",
+                                            reg: "hgd",
                                             pdfs: 0,
 
                                             size: widget

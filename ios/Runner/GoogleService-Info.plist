@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1048591941251-hjma45crnlf2m8j5tugsrt8mg7iuim2q.apps.googleusercontent.com</string>
+	<string>913804156436-9jt8hskafd6q4jca75qbo2rmvvfai97e.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1048591941251-hjma45crnlf2m8j5tugsrt8mg7iuim2q</string>
+	<string>com.googleusercontent.apps.913804156436-9jt8hskafd6q4jca75qbo2rmvvfai97e</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBNsD9X1juo9KdaIDCm25eumFlY8sIGrmE</string>
+	<string>AIzaSyC7QorjBu2p6HruF_4PJdIikwUu6QqRsSI</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1048591941251</string>
+	<string>913804156436</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.nimmalasujith.srkrStudyApp</string>
+	<string>com.nimmalasujith.esrkr</string>
 	<key>PROJECT_ID</key>
-	<string>e-srkr</string>
+	<string>esrkr-f97aa</string>
 	<key>STORAGE_BUCKET</key>
-	<string>e-srkr.appspot.com</string>
+	<string>esrkr-f97aa.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1048591941251:ios:838c7584b5a0c76fa665b6</string>
-	<key>DATABASE_URL</key>
-	<string>https://e-srkr-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+	<string>1:913804156436:ios:7120737f948dc16371d101</string>
 </dict>
 </plist>

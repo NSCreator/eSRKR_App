@@ -44,44 +44,40 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDP9ZNvcadcgO_cNmwOYEOxxW_Z_JPwoZ4',
-    appId: '1:1048591941251:web:40640c157719e08ca665b6',
-    messagingSenderId: '1048591941251',
-    projectId: 'e-srkr',
-    authDomain: 'e-srkr.firebaseapp.com',
-    databaseURL: 'https://e-srkr-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'e-srkr.appspot.com',
-    measurementId: 'G-LQ70MS5FXD',
+    apiKey: 'AIzaSyAP803anoIN6coz2XMs04u2ZcDEy4k4psQ',
+    appId: '1:913804156436:web:854d4ecb2d98e99e71d101',
+    messagingSenderId: '913804156436',
+    projectId: 'esrkr-f97aa',
+    authDomain: 'esrkr-f97aa.firebaseapp.com',
+    storageBucket: 'esrkr-f97aa.appspot.com',
+    measurementId: 'G-MQKKND804J',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA571aMLOiKnsZzJCPRy-1aFQYTDhrSjbA',
-    appId: '1:1048591941251:android:9a334212055c4e96a665b6',
-    messagingSenderId: '1048591941251',
-    projectId: 'e-srkr',
-    databaseURL: 'https://e-srkr-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'e-srkr.appspot.com',
+    apiKey: 'AIzaSyD7n7K_ycEwkkeIbEVTCII_JoPg3W3zTxU',
+    appId: '1:913804156436:android:cf03e9ec50e021df71d101',
+    messagingSenderId: '913804156436',
+    projectId: 'esrkr-f97aa',
+    storageBucket: 'esrkr-f97aa.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBNsD9X1juo9KdaIDCm25eumFlY8sIGrmE',
-    appId: '1:1048591941251:ios:838c7584b5a0c76fa665b6',
-    messagingSenderId: '1048591941251',
-    projectId: 'e-srkr',
-    databaseURL: 'https://e-srkr-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'e-srkr.appspot.com',
-    iosClientId: '1048591941251-hjma45crnlf2m8j5tugsrt8mg7iuim2q.apps.googleusercontent.com',
-    iosBundleId: 'com.nimmalasujith.srkrStudyApp',
+    apiKey: 'AIzaSyC7QorjBu2p6HruF_4PJdIikwUu6QqRsSI',
+    appId: '1:913804156436:ios:7120737f948dc16371d101',
+    messagingSenderId: '913804156436',
+    projectId: 'esrkr-f97aa',
+    storageBucket: 'esrkr-f97aa.appspot.com',
+    iosClientId: '913804156436-9jt8hskafd6q4jca75qbo2rmvvfai97e.apps.googleusercontent.com',
+    iosBundleId: 'com.nimmalasujith.esrkr',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBNsD9X1juo9KdaIDCm25eumFlY8sIGrmE',
-    appId: '1:1048591941251:ios:49dbf50c309e41d4a665b6',
-    messagingSenderId: '1048591941251',
-    projectId: 'e-srkr',
-    databaseURL: 'https://e-srkr-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'e-srkr.appspot.com',
-    iosClientId: '1048591941251-8kek93pm5bfs4q3ci9digc50tcv4orlc.apps.googleusercontent.com',
+    apiKey: 'AIzaSyC7QorjBu2p6HruF_4PJdIikwUu6QqRsSI',
+    appId: '1:913804156436:ios:06c60baef1808b4771d101',
+    messagingSenderId: '913804156436',
+    projectId: 'esrkr-f97aa',
+    storageBucket: 'esrkr-f97aa.appspot.com',
+    iosClientId: '913804156436-gu52effn25cffluv608ln9s7np9c7q4o.apps.googleusercontent.com',
     iosBundleId: 'com.nimmalasujith.srkrStudyApp.RunnerTests',
   );
 }

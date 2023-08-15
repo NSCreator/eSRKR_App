@@ -298,7 +298,7 @@ class _favoritesState extends State<favorites> {
                                                     builder: (context) =>
                                                         subjectUnitsData(
                                                           date: "2012",
-                                                          req: Favourite.name,
+                                                          reg: Favourite.name,
                                                           pdfs: 0,
 
                                                           size: widget.size,
@@ -599,7 +599,7 @@ class _favoritesState extends State<favorites> {
                                                     builder: (context) =>
                                                         subjectUnitsData(
                                                           date: "2012",
-                                                          req:Favourite.name,
+                                                          reg:Favourite.name,
                                                           pdfs:0,
 
                                                           size: widget.size,

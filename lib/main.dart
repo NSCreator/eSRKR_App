@@ -8,6 +8,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:async';
 import 'HomePage.dart';
 import 'auth_page.dart';
+import 'firebase_options.dart';
 import 'functins.dart';
 import 'notification.dart';
 fullUserId() {
@@ -23,10 +24,12 @@ Future<void> backgroundHandler(RemoteMessage message) async {
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-   await NotificationService().initNotification();
-    FirebaseMessaging.onBackgroundMessage(backgroundHandler);
-  MobileAds.instance.initialize();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  //  await NotificationService().initNotification();
+  //   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  // MobileAds.instance.initialize();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {

@@ -407,6 +407,7 @@ Navigator.push(context, MaterialPageRoute(builder: (context)=>createNewUser(size
           .showNotification(title: "Welcome back to eSRKR!", body: null);
       updateToken();
     } on FirebaseException catch (e) {
+      showToastText(e.message as String);
       Utils.showSnackBar(e.message);
     }
     Navigator.pop(context);

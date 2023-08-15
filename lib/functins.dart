@@ -144,6 +144,124 @@ class _backButtonState extends State<backButton> {
     );
   }
 }
+class StyledTextWidget extends StatelessWidget {
+  final String text;
+  final double fontSize;
+  final Color color;
+  final FontWeight fontWeight;
+  StyledTextWidget(
+      {required this.text,
+        this.fontSize = 14,
+        this.color = Colors.white,
+        this.fontWeight = FontWeight.normal});
+
+  @override
+  Widget build(BuildContext context) {
+    final regex = RegExp(r'(http[s]?:\/\/[^\s]+)');
+    final matches = regex.allMatches(text);
+    List<InlineSpan> spans = [];
+
+    List<String> words = text.split(' ');
+
+    for (String word in words) {
+      if (matches.map((match) => match.group(0)!).toList().contains(word))
+      {
+        spans.add(TextSpan(
+          children: [
+            WidgetSpan(
+              child: InkWell(
+                child: Text(
+                  "$word ",
+                  style: TextStyle(color: Colors.blueAccent),
+                ),
+                onTap: () {
+                  ExternalLaunchUrl(word);
+                },
+              ),
+            ),
+            TextSpan(text: ' '),
+          ],
+        ));
+        InkWell(
+          child: Text(
+            "$word ",
+            style: TextStyle(color: Colors.blueAccent),
+          ),
+          onTap: () {
+            ExternalLaunchUrl(word);
+          },
+        );
+      }
+      else if (word.startsWith('**')) {
+        spans.add(TextSpan(
+          children: [
+            WidgetSpan(
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white12,
+                    borderRadius: BorderRadius.circular(5.0),
+                    border: Border.all(color: Colors.white54)),
+                padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2),
+                child: Text(
+                  word.substring(2),
+                  style: TextStyle(color: Colors.white, fontSize: fontSize - 5),
+                ),
+              ),
+            ),
+            TextSpan(text: ' '),
+          ],
+        ));
+      } else if (word.startsWith("'") && word.endsWith("'")) {
+        spans.add(TextSpan(
+          text: word.substring(1, word.length - 1) + ' ',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ));
+
+      } else if (word.startsWith('"') && word.endsWith('"')) {
+        spans.add(TextSpan(
+          text: word.substring(1, word.length - 1) + ' ',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ));
+
+      } else if (word.contains('@')) {
+        String url = word.substring(word.indexOf('@') + 1);
+        spans.add(
+          WidgetSpan(
+            child: InkWell(
+              onTap: () async {
+                if (await canLaunch(url)) {
+                  await launch(url);
+                }
+              },
+              child: Text(
+                word.split("@").first + ' ',
+                style: TextStyle(
+                    color: Colors.lightBlueAccent, fontSize: fontSize),
+              ),
+            ),
+          ),
+        );
+      } else {
+        spans.add(TextSpan(text: word + ' '));
+      }
+    }
+
+    return Wrap(
+      children: [
+        RichText(
+          text: TextSpan(
+              children: spans,
+              style: TextStyle(
+                  fontSize: fontSize, color: color, fontWeight: fontWeight)),
+        ),
+      ],
+    );
+  }
+}
 
 Future<void> LaunchUrl(String url) async {
   final Uri urlIn = Uri.parse(url);

@@ -778,7 +778,7 @@ class _NewsCreatorState extends State<NewsCreator> {
                       .pickImage(source: ImageSource.gallery);
                   File file = File(pickedFile!.path);
                   final Reference ref = storage.ref().child(
-                      '${widget.branch.toLowerCase()}/news/${DateTime.now().toString()}.image');
+                      '${widget.branch.toLowerCase()}/news/${DateTime.now().toString()}');
                   final TaskSnapshot task = await ref.putFile(file);
                   final String url = await task.ref.getDownloadURL();
                   PhotoUrlController.text = url;
@@ -943,9 +943,7 @@ class _NewsCreatorState extends State<NewsCreator> {
                           branch: widget.branch,
                           heading: HeadingController.text.trim(),
                           description: DescriptionController.text.trim(),
-                          photoUrl: PhotoUrlController.text.isNotEmpty
-                              ? PhotoUrlController.text
-                              : " ");
+                          photoUrl: PhotoUrlController.text);
                       SendMessage("${HeadingController.text} News",
                           DescriptionController.text, widget.branch);
                     }
@@ -1369,8 +1367,9 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                       if (snapshot.hasError) {
                         return const Center(
                             child: Text(
-                                'Error with TextBooks Data or\n Check Internet Connection'));
+                                'Error with TextBooks Data or\n Check Internet Connection',style: TextStyle(color: Colors.white),));
                       } else {
+                        showToastText("${widget.branch}");
                         return SizedBox(
                           height: 30,
                           child: ListView.separated(
@@ -1681,8 +1680,6 @@ class _BooksCreatorState extends State<BooksCreator> {
                       border: InputBorder.none,
                       hintText: 'Description or Full name',
                     ),
-                    //autovalidateMode: AutovalidateMode.onUserInteraction,
-                    //validator: (value) => value != null && value.length < 6 ? "Enter min. 6 characters" : null,
                   ),
                 ),
               ),
@@ -1958,7 +1955,8 @@ class _UnitsCreatorState extends State<UnitsCreator> {
 
   void AutoFill() {
     if(widget.type=="more")unit =widget.PDFUrl.split(";").first;
-    HeadingController.text = widget.Heading;
+    if(widget.type=="unit")HeadingController.text = widget.Heading.split(";").last;
+    if(widget.type=="more"||widget.type=="textbook")HeadingController.text = widget.Heading;
     if(widget.Description.isNotEmpty)DescriptionList = widget.Description.split(";");
     if(widget.questions.isNotEmpty)QuestionsList = widget.questions.split(";");
     PDFUrlController.text = widget.PDFUrl.split(";").last;
@@ -2551,9 +2549,9 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                                 .collection("Units")
                                 .doc(widget.id)
                                 .update({
-                              "Heading": unit+";"+HeadingController.text.trim(),
-                              "PDFLink": PDFUrlController.text.trim(),
-                              "Description": DescriptionList.join(";"),
+                              "heading": unit+";"+HeadingController.text.trim(),
+                              "link": PDFUrlController.text.trim(),
+                              "description": DescriptionList.join(";"),
                               "questions": QuestionsList.join(";")
                             });
                           }
@@ -2584,18 +2582,22 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                               "description": DescriptionList.join(";"),
                               "heading": HeadingController.text.trim(),
                               "author": AuthorController.text.trim(),
-                              "photoUrl": PhotoUrlController.text.trim(),
+                              "image": PhotoUrlController.text.trim(),
                               "edition": EditionController.text.trim(),
-                              "PDFLink": PDFUrlController.text.trim(),
+                              "link": PDFUrlController.text.trim(),
                             });
                           }
-                        }else{
+                        }
+                        else{
                           if (widget.UnitId.length < 3) {
 
                             createUnitsMore(
                               branch: widget.branch,
                               subjectsID: widget.id,
-                              mode: widget.mode, heading: HeadingController.text.trim(), description: DescriptionList.join(";"), link: unit+";"+PDFUrlController.text,
+                              mode: widget.mode,
+                              heading: HeadingController.text.trim(),
+                              description: DescriptionList.join(";"),
+                              link: unit+";"+PDFUrlController.text,
 
                             );
                           }
@@ -2610,10 +2612,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                                 .update({
                               "description": DescriptionList.join(";"),
                               "heading": HeadingController.text.trim(),
-                              "author": AuthorController.text.trim(),
-                              "photoUrl": PhotoUrlController.text.trim(),
-                              "edition": EditionController.text.trim(),
-                              "PDFLink": PDFUrlController.text.trim(),
+                              "link": unit+";"+PDFUrlController.text.trim(),
                             });
                           }
                         }
