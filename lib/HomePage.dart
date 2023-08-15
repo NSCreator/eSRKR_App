@@ -2463,14 +2463,30 @@ Future createSubjects(
   final json = flash.toJson();
   await docflash.set(json);
 }
-
+Future createFlashNews(
+    {
+      required String heading,
+      required String link,
+      }) async {
+  final docflash = FirebaseFirestore.instance
+      .collection("srkrPage")
+      .doc("flashNews")
+      .collection("flashNews")
+      .doc(getID());
+  final flash = FlashNewsConvertor(
+      id: getID(),
+      heading: heading, Url: link,
+      );
+  final json = flash.toJson();
+  await docflash.set(json);
+}
 class FlashNewsConvertor {
   String id;
   final String heading, Url;
 
   FlashNewsConvertor(
-      {this.id = "",
-
+      {
+        this.id = "",
         required this.heading,
         required this.Url,
         });
