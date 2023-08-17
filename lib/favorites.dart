@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'HomePage.dart';
 import 'SubPages.dart';
 import 'functins.dart';
 TextStyle favoritesHeadingTextStyle = TextStyle(
@@ -297,9 +296,8 @@ class _favoritesState extends State<favorites> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         subjectUnitsData(
-                                                          date: "2012",
+
                                                           reg: Favourite.name,
-                                                          pdfs: 0,
 
                                                           size: widget.size,
                                                           branch: Favourite
@@ -598,9 +596,7 @@ class _favoritesState extends State<favorites> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         subjectUnitsData(
-                                                          date: "2012",
                                                           reg:Favourite.name,
-                                                          pdfs:0,
 
                                                           size: widget.size,
                                                           branch: Favourite

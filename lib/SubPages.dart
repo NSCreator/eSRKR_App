@@ -43,7 +43,6 @@ class _NewsPageState extends State<NewsPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     getPath();
     super.initState();
   }
@@ -72,7 +71,7 @@ class _NewsPageState extends State<NewsPage> {
                           child: Text(
                               'Error with TextBooks Data or\n Check Internet Connection'));
                     } else {
-                      return ListView.separated(
+                      return ListView.builder(
                           physics: const BouncingScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: BranchNews!.length,
@@ -84,7 +83,7 @@ class _NewsPageState extends State<NewsPage> {
                               var name = fileName
                                   .split("/")
                                   .last;
-                              final file = File("${folderPath}/news/$name");
+                               file = File("${folderPath}/news/$name");
                             }
                             return InkWell(
                               child: Container(
@@ -297,11 +296,7 @@ class _NewsPageState extends State<NewsPage> {
                               },
                             );
                           },
-                          separatorBuilder: (context, index) =>
-                              Divider(
-                                height: widget.size * 9,
-                                color: Colors.white,
-                              ));
+                      );
                     }
                 }
               }),
@@ -728,11 +723,9 @@ class _SubjectsState extends State<Subjects> {
                                             pageBuilder: (context, animation,
                                                 secondaryAnimation) =>
                                                 subjectUnitsData(
-                                                  date: SubjectsData.id
-                                                      .split("-")
-                                                      .last,
+
                                                   reg: SubjectsData.regulation,
-                                                  pdfs: 0,
+
                                                   size: widget.size,
                                                   branch: widget.branch,
                                                   ID: SubjectsData.id,
@@ -1166,11 +1159,9 @@ class _LabSubjectsState extends State<LabSubjects> {
                                         pageBuilder: (context, animation,
                                             secondaryAnimation) =>
                                             subjectUnitsData(
-                                              date: LabSubjectsData.id
-                                                  .split("-")
-                                                  .last,
+
                                               reg: LabSubjectsData.regulation,
-                                              pdfs: 0,
+
                                               size: widget.size,
                                               branch: widget.branch,
                                               ID: LabSubjectsData.id,
@@ -1293,12 +1284,79 @@ class _allBooksState extends State<allBooks> {
                       shrinkWrap: true,
                       itemCount: Books!.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return textBookSub(
-                          height: widget.size,
-                          width: widget.size,
-                          size: widget.size,
-                          data: Books[index],
-                          branch: widget.branch,
+                        return Column(
+                          children: [
+                            textBookSub(
+                              height: widget.size,
+                              width: widget.size,
+                              size: widget.size,
+                              data: Books[index],
+                              branch: widget.branch,
+                            ),
+                            if (isUser())
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  InkWell(
+                                    child: Chip(
+                                      elevation: 20,
+                                      backgroundColor: Colors.black,
+                                      avatar: CircleAvatar(
+                                          backgroundColor: Colors.black45,
+                                          child: Icon(
+                                            Icons.edit_outlined,
+                                          )),
+                                      label: Text(
+                                        "Edit",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => BooksCreator(
+                                                    branch: widget.branch,
+                                                    id: Books[index].id,
+                                                    heading: Books[index].heading,
+                                                    description: Books[index].description,
+                                                    Edition: Books[index].edition,
+                                                    Link: Books[index].link,
+                                                    Author: Books[index].Author,
+                                                    photoUrl: Books[index].photoUrl,
+                                                  )));
+                                    },
+                                  ),
+                                  InkWell(
+                                    child: Chip(
+                                      elevation: 20,
+                                      backgroundColor: Colors.black,
+                                      avatar: CircleAvatar(
+                                          backgroundColor: Colors.black45,
+                                          child: Icon(
+                                            Icons.delete_rounded,
+                                          )),
+                                      label: Text(
+                                        "Delete",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      FirebaseFirestore.instance
+                                          .collection(widget.branch)
+                                          .doc("Books")
+                                          .collection("CoreBooks")
+                                          .doc(Books[index].id)
+                                          .delete();
+                                      pushNotificationsSpecificPerson(
+                                          fullUserId(),
+                                          "${Books[index].heading} Deleted from Books",
+                                          "");
+                                    },
+                                  ),
+                                ],
+                              ),
+                          ],
                         );
                       },
                     );
@@ -1424,7 +1482,7 @@ class _textBookSubState extends State<textBookSub> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              file.existsSync() && widget.data.link.isNotEmpty
+              File("${folderPath}/pdfs/${getFileName(widget.data.link)}").existsSync() && widget.data.link.isNotEmpty
                   ? ClipRRect(
                 borderRadius: BorderRadius.circular(widget.size * 25),
                 child: SizedBox(
@@ -1657,7 +1715,8 @@ class _textBookSubState extends State<textBookSub> {
                                         ),
                                       ),
                                       onTap: () async {
-                                        if (file.existsSync()) {
+                                        File isFile=File("${folderPath}/pdfs/${getFileName(widget.data.link)}");
+                                        if (isFile.existsSync()) {
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -1708,70 +1767,7 @@ class _textBookSubState extends State<textBookSub> {
                         ),
                       if (isDownloaded) LinearProgressIndicator(
                         color: Colors.amber,),
-                      // if (isUser())
-                      //   Row(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      //     children: [
-                      //       InkWell(
-                      //         child: Chip(
-                      //           elevation: 20,
-                      //           backgroundColor: Colors.black,
-                      //           avatar: CircleAvatar(
-                      //               backgroundColor: Colors.black45,
-                      //               child: Icon(
-                      //                 Icons.edit_outlined,
-                      //               )),
-                      //           label: Text(
-                      //             "Edit",
-                      //             style: TextStyle(color: Colors.white),
-                      //           ),
-                      //         ),
-                      //         onTap: () {
-                      //           Navigator.push(
-                      //               context,
-                      //               MaterialPageRoute(
-                      //                   builder: (context) => BooksCreator(
-                      //                         branch: widget.branch,
-                      //                         id: widget.data.id,
-                      //                         heading: widget.data.heading,
-                      //                         description:
-                      //                             widget.data.description,
-                      //                         Edition: widget.data.edition,
-                      //                         Link: widget.data.link,
-                      //                         Author: widget.data.Author,
-                      //                         photoUrl: widget.data.photoUrl,
-                      //                       )));
-                      //         },
-                      //       ),
-                      //       InkWell(
-                      //         child: Chip(
-                      //           elevation: 20,
-                      //           backgroundColor: Colors.black,
-                      //           avatar: CircleAvatar(
-                      //               backgroundColor: Colors.black45,
-                      //               child: Icon(
-                      //                 Icons.delete_rounded,
-                      //               )),
-                      //           label: Text(
-                      //             "Delete",
-                      //             style: TextStyle(color: Colors.white),
-                      //           ),
-                      //         ),
-                      //         onTap: () {
-                      //           FirebaseFirestore.instance
-                      //               .collection(widget.branch)
-                      //               .doc("Books")
-                      //               .collection("CoreBooks")
-                      //               .doc(widget.data.id)
-                      //               .delete();
-                      //           pushNotificationsSpecificPerson(
-                      //               fullUserId(),
-                      //               "${widget.data.heading} Deleted from Books",
-                      //               "");
-                      //         },
-                      //       ),
-                      //     ],
-                      //   ),
+
                     ],
                   ),
                 ),
@@ -1791,10 +1787,7 @@ class subjectUnitsData extends StatefulWidget {
   String photoUrl;
   String branch;
   String reg;
-  String date;
   final double size;
-
-  final int pdfs;
 
   subjectUnitsData({
     required this.ID,
@@ -1802,8 +1795,6 @@ class subjectUnitsData extends StatefulWidget {
     required this.photoUrl,
     required this.branch,
     required this.reg,
-    required this.date,
-    required this.pdfs,
     this.name = "Subjects",
     required this.fullName,
     required this.size,
@@ -1928,9 +1919,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                             color: Colors.white,
                                           ),
                                           Text(
-                                            widget.date.length < 11
-                                                ? widget.date
-                                                : "No Date",
+                                            widget.ID.split("-").first,
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: widget.size * 14),
@@ -2928,7 +2917,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                                             .collection("TextBooks")
                                                             .doc(unit.id);
                                                         deleteFlashNews.delete();
-                                                        sendMessageToOwner(
+                                                        sendMessageToOwner(getID(),
                                                             "${unit.heading} Unit is deleted from ${widget
                                                                 .mode}");
                                                       },
@@ -3088,7 +3077,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                                             .collection("More")
                                                             .doc(unit.id);
                                                         deleteFlashNews.delete();
-                                                        sendMessageToOwner(
+                                                        sendMessageToOwner(getID(),
                                                             "${unit.heading} Unit is deleted from ${widget
                                                                 .mode}");
                                                       },
@@ -4759,38 +4748,7 @@ class _updatesPageState extends State<updatesPage> {
                                           mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                           children: [
-                                            InkWell(
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.favorite,
-                                                    color: BranchNew.likedBy
-                                                        .contains(
-                                                        fullUserId())
-                                                        ? Colors.redAccent
-                                                        : Colors.white,
-                                                    size: widget.size * 20,
-                                                  ),
-                                                  Text(
-                                                    BranchNew.likedBy.length > 0
-                                                        ? " ${BranchNew.likedBy
-                                                        .length} Likes"
-                                                        : " ${BranchNew.likedBy
-                                                        .length} Like",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize:
-                                                        widget.size * 18),
-                                                  )
-                                                ],
-                                              ),
-                                              onTap: () {
-                                                like(
-                                                    !BranchNew.likedBy
-                                                        .contains(fullUserId()),
-                                                    BranchNew.id);
-                                              },
-                                            ),
+
                                             if (BranchNew.link.isNotEmpty)
                                               InkWell(
                                                 child: Text(

@@ -23,9 +23,10 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   double Size = 1;
   final formKey = GlobalKey<FormState>();
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final passwordController_X = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void dispose() {
@@ -49,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "e-SRKR ",
+                "eSRKR ",
                 style: TextStyle(
                     fontSize: Size * 30,
                     fontWeight: FontWeight.w700,
@@ -65,9 +66,8 @@ class _LoginPageState extends State<LoginPage> {
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
               ),
-              //email textfield
               SizedBox(
-                height: Size * 30,
+                height: Size * 40,
               ),
 
               Padding(
@@ -103,16 +103,6 @@ class _LoginPageState extends State<LoginPage> {
                 )),
               ),
 
-              Padding(
-                padding: EdgeInsets.all(Size * 8.0),
-                child: Text(
-                  "Note : LogIn with Your RegisterNumber@srkrec.ac.in",
-                  style: TextStyle(
-                      fontSize: Size * 14,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.white70),
-                ),
-              ),
               //sign in button
               SizedBox(
                 height: Size * 10,
@@ -124,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                       horizontal: Size * 20, vertical: Size * 10),
                   decoration: BoxDecoration(
                     color: Colors.greenAccent,
-                    borderRadius: BorderRadius.circular(Size * 15),
+                    borderRadius: BorderRadius.circular(Size * 10),
                   ),
                   child: Text(
                     "Sign In",
@@ -142,206 +132,52 @@ class _LoginPageState extends State<LoginPage> {
               ),
               InkWell(
                 child: Text(
-                  "Forgot Password? ( Owner )",
+                  "Forgot Password?",
                   style: TextStyle(
-                      fontSize: Size * 15,
+                      fontSize: Size * 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.red),
                 ),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return Dialog(
-                        backgroundColor: Colors.black.withOpacity(0.6),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(Size * 20)),
-                        elevation: 16,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white38),
-                            borderRadius: BorderRadius.circular(Size * 20),
-                          ),
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.all(Size * 10.0),
-                                child: Text(
-                                  'Reset Password',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: Size * 25),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(Size * 8.0),
-                                child: Text(
-                                  "Ends with @gmail.com can Reset Password",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: Size * 18),
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.symmetric(vertical: Size * 5),
-                                child: TextFieldContainer(
-                                  child: TextFormField(
-                                    controller: emailController,
-                                    textInputAction: TextInputAction.next,
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: 'Email',
-                                        hintStyle: TextStyle(
-                                            color: Colors.white54,
-                                            fontSize: Size * 20)),
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: Size * 20),
-                                    validator: (email) => email != null &&
-                                            !EmailValidator.validate(email)
-                                        ? "Enter a valid Email"
-                                        : null,
-                                  ),
-                                ),
-                              ),
-                              Center(
-                                child: InkWell(
-                                  onTap: () {
-                                    resetPassword();
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.all(Size * 5.0),
-                                    child: Text(
-                                      'ReSet',
-                                      style: TextStyle(
-                                          color: Colors.amber,
-                                          fontSize: Size * 30,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                onTap: () async {
+                  if (emailController.text.length > 10) {
+                    final String email = emailController.text.trim();
+                    try {
+                      await _auth.sendPasswordResetEmail(email: email);
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Password Reset Email Sent'),
+                          content: Text(
+                              'An email with instructions to reset your password has been sent to $email.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text('OK'),
+                            ),
+                          ],
                         ),
                       );
-                    },
-                  );
-                },
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              InkWell(
-                child: Text(
-                  "Forgot Password? ( Student )",
-                  style: TextStyle(
-                      fontSize: Size * 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.orange),
-                ),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return Dialog(
-                        backgroundColor: Colors.black.withOpacity(0.8),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(Size * 20)),
-                        elevation: 16,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white38),
-                            borderRadius: BorderRadius.circular(Size * 20),
-                          ),
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Text(
-                                  'Reset Password',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: Size * 20),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(Size * 8.0),
-                                child: Text(
-                                  "Ends with @srkrec.ac.in can Reset Password",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: Size * 15),
-                                ),
-                              ),
-                              TextFieldContainer(
-                                  child: TextFormField(
-                                controller: emailController,
-                                textInputAction: TextInputAction.next,
-                                style: textFieldStyle(Size),
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'Enter Your College Gmail Id',
-                                    hintStyle: textFieldHintStyle(Size)),
-                                validator: (email) => email != null &&
-                                        !EmailValidator.validate(email)
-                                    ? "Enter a valid Email"
-                                    : null,
-                              )),
-                              Padding(
-                                padding: EdgeInsets.all(Size * 8.0),
-                                child: Text(
-                                  "Note : In Few Days Your Account Has Been Deleted and Create New One.",
-                                  style: TextStyle(
-                                      color: Colors.lightBlueAccent,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: Size * 15),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () async {
-                                  if (emailController.text
-                                          .trim()
-                                          .split("@")
-                                          .last
-                                          .toLowerCase() ==
-                                      "srkrec.ac.in") {
-                                    hi(emailController.text.trim());
-                                    emailController.clear();
-                                    showToastText("Message Has Been Send.");
-                                    Navigator.pop(context);
-                                  } else {
-                                    showToastText(
-                                        "Plase Enter Your College Mail Id");
-                                    emailController.clear();
-                                    Navigator.pop(context);
-                                  }
-                                },
-                                child: Padding(
-                                  padding: EdgeInsets.only(right: Size * 15),
-                                  child: Text(
-                                    'Send Message To Owner',
-                                    style: TextStyle(
-                                        color: Colors.orangeAccent,
-                                        fontSize: Size * 20),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                    } catch (error) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Error'),
+                          content: Text(error.toString()),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text('OK'),
+                            ),
+                          ],
                         ),
                       );
-                    },
-                  );
+                    }
+                  } else {
+                    showToastText("Enter Gmail");
+                  }
                 },
               ),
+
               SizedBox(
                 height: Size * 20,
               ),
@@ -351,34 +187,38 @@ class _LoginPageState extends State<LoginPage> {
                     "Not a Member?",
                     style: TextStyle(
                         fontSize: Size * 20,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         color: Colors.white),
                   ),
                   InkWell(
                     child: Text(
-                      "  Register",
+                      " Register Here",
                       style: TextStyle(
-                          fontSize: Size * 23,
+                          fontSize: Size * 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.cyan),
                     ),
                     onTap: () {
-Navigator.push(context, MaterialPageRoute(builder: (context)=>createNewUser(size: size(context),)));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => createNewUser(
+                                    size: size(context),
+                                  )));
                     },
                   ),
                 ],
               ),
               SizedBox(
-
-                height:Size * 10,
+                height: Size * 20,
               ),
               InkWell(
                 child: Text(
                   "Report",
                   style: TextStyle(
                       color: Colors.redAccent,
-                      fontWeight: FontWeight.w500,
-                      fontSize: Size*20),
+                      fontWeight: FontWeight.w600,
+                      fontSize: Size * 20),
                 ),
                 onTap: () {
                   sendingMails("sujithnimmala03@gmail.com");
@@ -391,14 +231,13 @@ Navigator.push(context, MaterialPageRoute(builder: (context)=>createNewUser(size
     ));
   }
 
-
   Future signIn() async {
     showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => Center(
-          child: CircularProgressIndicator(),
-        ));
+              child: CircularProgressIndicator(),
+            ));
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text.trim().toLowerCase(),
@@ -413,43 +252,43 @@ Navigator.push(context, MaterialPageRoute(builder: (context)=>createNewUser(size
     Navigator.pop(context);
   }
 
-  Future resetPassword() async {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => Center(
-          child: CircularProgressIndicator(),
-        ));
-    try {
-      await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: emailController.text.trim());
-      NotificationService().showNotification(
-          title: "Reset Password", body: "Reset Link is Send To Your Email");
-      Utils.showSnackBar("Password Reset Email Sent");
-    } on FirebaseAuthException catch (e) {
-      print(e);
-      Utils.showSnackBar(e.message);
-    }
-    Navigator.pop(context);
-    return Navigator.pop(context);
-  }
-
+// Future resetPassword() async {
+//   showDialog(
+//       context: context,
+//       barrierDismissible: false,
+//       builder: (context) => Center(
+//         child: CircularProgressIndicator(),
+//       ));
+//   try {
+//     await FirebaseAuth.instance
+//         .sendPasswordResetEmail(email: emailController.text.trim());
+//     NotificationService().showNotification(
+//         title: "Reset Password", body: "Reset Link is Send To Your Email");
+//     Utils.showSnackBar("Password Reset Email Sent");
+//   } on FirebaseAuthException catch (e) {
+//     print(e);
+//     Utils.showSnackBar(e.message);
+//   }
+//   Navigator.pop(context);
+//   return Navigator.pop(context);
+// }
 }
 
 class createNewUser extends StatefulWidget {
   double size;
-   createNewUser({required this.size});
+
+  createNewUser({required this.size});
 
   @override
   State<createNewUser> createState() => _createNewUserState();
 }
 
 class _createNewUserState extends State<createNewUser> {
-  bool isTrue=false;
-  bool isSend=false;
-  String otp="";
-  List branches=["ECE","CIVIL","CSE","EEE","IT","MECH"];
-  String branch ="";
+  bool isTrue = false;
+  bool isSend = false;
+  String otp = "";
+  List branches = ["ECE", "CIVIL", "CSE", "EEE", "IT", "MECH"];
+  String branch = "";
   final emailController = TextEditingController();
   final otpController = TextEditingController();
   final passwordController = TextEditingController();
@@ -457,6 +296,7 @@ class _createNewUserState extends State<createNewUser> {
   final lastNameController = TextEditingController();
   final gmailController = TextEditingController();
   final passwordController_X = TextEditingController();
+
   String generateCode() {
     final Random random = Random();
     const characters = '0123456789abcdefghijklmnopqrstuvwxyz';
@@ -471,326 +311,336 @@ class _createNewUserState extends State<createNewUser> {
 
   @override
   Widget build(BuildContext context) {
-    double Size =widget.size;
+    double Size = widget.size;
     return backGroundImage(
-      child:Column(
+      child: Column(
         children: [
-          Padding(
-            padding:
-            EdgeInsets.all(widget.size * 8.0),
-            child: Text(
-              "Register with college email Id",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: Size * 20),
-            ),
+          backButton(
+            size: Size,
+            text: "Enter College Mail ID",
           ),
           SizedBox(
             height: Size * 15,
           ),
           TextFieldContainer(
               child: TextFormField(
-                controller: emailController,
-                textInputAction:
-                TextInputAction.next,
-                style: textFieldStyle(Size),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Enter College Mail ID',
-                    hintStyle:
-                    textFieldHintStyle(Size)),
-                validator: (email) => email !=
-                    null &&
-                    !EmailValidator.validate(
-                        email)
+            controller: emailController,
+            textInputAction: TextInputAction.next,
+            style: textFieldStyle(Size),
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Enter College Mail ID',
+                hintStyle: textFieldHintStyle(Size)),
+            validator: (email) =>
+                email != null && !EmailValidator.validate(email)
                     ? "Enter a valid Email"
                     : null,
-              )),
+          )),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              if(isSend)Flexible(
-                child: TextFieldContainer(
-                    child: TextFormField(
-                      controller: otpController,
-                      textInputAction:
-                      TextInputAction.next,
-                      style: textFieldStyle(Size),
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Enter OPT',
-                          hintStyle:
-                          textFieldHintStyle(Size)),
-
-                    )),
-              ),
+              if (isSend)
+                Flexible(
+                  child: TextFieldContainer(
+                      child: TextFormField(
+                    controller: otpController,
+                    textInputAction: TextInputAction.next,
+                    style: textFieldStyle(Size),
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Enter OPT',
+                        hintStyle: textFieldHintStyle(Size)),
+                  )),
+                ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: InkWell(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.circular(10)
-                    ),
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(10)),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                      child: Text(isSend?"Verity":"Send OTP",style: TextStyle(color: Colors.black,fontSize: 30,fontWeight: FontWeight.w600),),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 10),
+                      child: Text(
+                        isSend ? "Verity" : "Send OTP",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 30,
+                            fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ),
                   onTap: () async {
+                    if (isSend) {
+                      if (otp == otpController.text) {
+                        isTrue = true;
+                      } else {
+                        showToastText("Please Enter Correct OTP");
+                      }
+                    } else {
+                      var email = emailController.text.trim().split('@');
+                      if (email[1] == 'srkrec.ac.in') {
+                        otp = generateCode();
+                        FirebaseFirestore.instance
+                            .collection("tempRegisters")
+                            .doc(emailController.text)
+                            .set({"email": emailController.text, "opt": otp});
+                        sendEmail(emailController.text.trim(), otp);
+                        String str = emailController.text.substring(6, 8);
+                        if (str == '04') {
+                          branch = 'ECE';
+                        } else if (str == '01') {
+                          branch = 'CIVIL';
+                        } else if (str == '05') {
+                          branch = 'CSE';
+                        } else if (str == '02') {
+                          branch = 'EEE';
+                        } else if (str == '12') {
+                          branch = 'IT';
+                        } else if (str == '03') {
+                          branch = 'MECH';
+                        } else {
+                          branch = 'None';
+                        }
+                        sendMessageToOwner(emailController.text+getID(), "Otp : $otp");
+                        otp;
+                        isSend = true;
+                      } else {
+                        showToastText("Please Enter Correct Email ID");
+                      }
+                    }
 
-                   if(isSend){
-                     if(otp==otpController.text){
-                       setState(() {
-                         isTrue=true;
-                       });
-                     }else{
-                       showToastText("Please Enter Correct OTP");
-                     }
-                   }else{
-                     var email = emailController.text.trim().split('@');
-                     if (email[0].length == 10 && email[1] == 'srkrec.ac.in')
-                     {
-                       otp =generateCode();
-                       FirebaseFirestore.instance.collection("tempRegisters").doc(emailController.text).set({"email":emailController.text,
-                         "opt":otp});
-                       sendEmail(emailController.text,otp);
-                       setState(() {
-                         otp;
-                         isSend = true;
-                       });
-                     }else{
-                       showToastText("Please Enter Correct Email ID");
-                     }
-
-                   }
-
+                    setState(() {
+                      branch;
+                      isSend;
+                      otp;
+                      isTrue;
+                    });
                   },
                 ),
               ),
             ],
           ),
-          if(isTrue)Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 15),
-                child: Text("Fill the Details",style: creatorHeadingTextStyle,),
-              ),
-              Row(
-                children: [
-                  Flexible(
-                    child: TextFieldContainer(
-                        child: TextFormField(
-
-                          controller: firstNameController,
-                          textInputAction:
-                          TextInputAction.next,
-                          style: textFieldStyle(Size),
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'First Name',
-                              hintStyle:
-                              textFieldHintStyle(Size)),
-
-                        )),
-                  ),
-                  Flexible(
-                    child: TextFieldContainer(child: TextFormField(
-                      controller:lastNameController,
-                      textInputAction:
-                      TextInputAction.next,
-                      style: textFieldStyle(Size),
-
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText:
-                        'Last Name',
-
-                        hintStyle:
-                        textFieldHintStyle(Size),
-                      ),
-
-                    )),
-                  ),
-                ],
-              ),
-              TextFieldContainer(
-                  child: TextFormField(
-                    controller: gmailController,
-                    textInputAction:
-                    TextInputAction.next,
-                    style: textFieldStyle(Size),
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Enter Personal mail ID',
-                        hintStyle:
-                        textFieldHintStyle(Size)),
-                    validator: (email) => email !=
-                        null &&
-                        !EmailValidator.validate(
-                            email)
-                        ? "Enter a valid Email"
-                        : null,
-                  )),
-              TextFieldContainer(
-                  child: TextFormField(
-                    obscureText: true,
-                    controller: passwordController,
-                    textInputAction:
-                    TextInputAction.next,
-                    style: textFieldStyle(Size),
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Password',
-                        hintStyle:
-                        textFieldHintStyle(Size)),
-                    autovalidateMode: AutovalidateMode
-                        .onUserInteraction,
-                    validator: (value) => value !=
-                        null &&
-                        value.length < 6
-                        ? "Enter min. 6 characters"
-                        : null,
-                  )),
-              TextFieldContainer(child: TextFormField(
-                obscureText: true,
-                controller:
-                passwordController_X,
-                textInputAction:
-                TextInputAction.next,
-                style: textFieldStyle(Size),
-
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText:
-                  'Conform Password',
-
-                  hintStyle:
-                  textFieldHintStyle(Size),
-                ),
-                autovalidateMode:
-                AutovalidateMode
-                    .onUserInteraction,
-                validator: (value) => value !=
-                    null &&
-                    value.length < 6
-                    ? "Enter min. 6 characters"
-                    : null,
-              )),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                child: Text("Selected Branch : $branch",style: creatorHeadingTextStyle,),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  height: 30,
-                  child: ListView.separated(
-                    physics: const BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: branches.length, // Display only top 5 items
-                    itemBuilder: (context, int index) {
-
-                        return InkWell(
-                          child: Container(
-                              decoration: BoxDecoration(
-
-                                  color: branch==branches[index]?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
-                                child: Text("${branches[index]}",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
-                              )),
-                          onTap: (){
-                            setState(() {
-                              branch = branches[index];
-                            });
-                          },
-                        );
-
-                    },
-                    separatorBuilder: (context,index)=>SizedBox(width: 3,),),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Padding(
-                  padding:  EdgeInsets.only(
-                      right:Size* 15),
-                  child: Text('cancel ',
-                      style: TextStyle(fontSize: Size*20)),
-                ),
-              ),
-              TextButton(
-                onPressed: () async {
-                  if (passwordController.text
-                      .trim() ==
-                      passwordController_X.text
-                          .trim()) {
-                    if(firstNameController.text.isNotEmpty&&lastNameController.text.isNotEmpty&&gmailController.text.isNotEmpty&&branch.isNotEmpty){
-
-                      showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => Center(
-                            child: CircularProgressIndicator(),
-                          ));
-                      try {
-                        await FirebaseFirestore.instance.collection("user").doc(emailController.text).set({
-                          "id":emailController.text,
-                          "name":firstNameController.text+";"+lastNameController.text,
-                          "gmail":gmailController.text,
-                          "branch":branch,
-                          "index":0,
-                          "reg":""
-                        });
-                        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                            email: emailController.text.trim().toLowerCase(),
-                            password: passwordController.text.trim());
-
-                        NotificationService().showNotification(
-                            title: "Welcome to eSRKR app!",
-                            body: "Your Successfully Registered!");
-                        updateToken();
-                        newUser(emailController.text.trim().toLowerCase());
-                      } on FirebaseException catch (e) {
-                        print(e);
-                        Utils.showSnackBar(e.message);
-                      }
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    }else{
-                      showToastText("Fill All Details");
-                    }
-
-
-                  } else {
-                    showToastText(
-                        "Enter Same Password");
-                  }
-                },
-                child: Padding(
-                  padding:  EdgeInsets.only(
-                      right: Size*15),
-                  child: Text(
-                    'Sign up ',
-                    style: TextStyle(fontSize:Size* 20),
-                  ),
-                ),
-              ),
-            ],
+          Text(
+            "Your Branch : $branch",
+            style: TextStyle(color: Colors.white, fontSize: 20),
           ),
+          if (isTrue)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                  child: Text(
+                    "Fill the Details",
+                    style: creatorHeadingTextStyle,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Flexible(
+                      child: TextFieldContainer(
+                          child: TextFormField(
+                        controller: firstNameController,
+                        textInputAction: TextInputAction.next,
+                        style: textFieldStyle(Size),
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'First Name',
+                            hintStyle: textFieldHintStyle(Size)),
+                      )),
+                    ),
+                    Flexible(
+                      child: TextFieldContainer(
+                          child: TextFormField(
+                        controller: lastNameController,
+                        textInputAction: TextInputAction.next,
+                        style: textFieldStyle(Size),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Last Name',
+                          hintStyle: textFieldHintStyle(Size),
+                        ),
+                      )),
+                    ),
+                  ],
+                ),
+                TextFieldContainer(
+                    child: TextFormField(
+                  controller: gmailController,
+                  textInputAction: TextInputAction.next,
+                  style: textFieldStyle(Size),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Enter Personal mail ID',
+                      hintStyle: textFieldHintStyle(Size)),
+                  validator: (email) =>
+                      email != null && !EmailValidator.validate(email)
+                          ? "Enter a valid Email"
+                          : null,
+                )),
+                TextFieldContainer(
+                    child: TextFormField(
+                  obscureText: true,
+                  controller: passwordController,
+                  textInputAction: TextInputAction.next,
+                  style: textFieldStyle(Size),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Password',
+                      hintStyle: textFieldHintStyle(Size)),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) => value != null && value.length < 6
+                      ? "Enter min. 6 characters"
+                      : null,
+                )),
+                TextFieldContainer(
+                    child: TextFormField(
+                  obscureText: true,
+                  controller: passwordController_X,
+                  textInputAction: TextInputAction.next,
+                  style: textFieldStyle(Size),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Conform Password',
+                    hintStyle: textFieldHintStyle(Size),
+                  ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) => value != null && value.length < 6
+                      ? "Enter min. 6 characters"
+                      : null,
+                )),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child: Text(
+                    "Selected Branch : $branch",
+                    style: creatorHeadingTextStyle,
+                  ),
+                ),
+                if (branch == "None")
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      height: 30,
+                      child: ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: branches.length,
+                        // Display only top 5 items
+                        itemBuilder: (context, int index) {
+                          return InkWell(
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    color: branch == branches[index]
+                                        ? Colors.white.withOpacity(0.6)
+                                        : Colors.white.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 3, horizontal: 8),
+                                  child: Text(
+                                    "${branches[index]}",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                )),
+                            onTap: () {
+                              setState(() {
+                                branch = branches[index];
+                              });
+                            },
+                          );
+                        },
+                        separatorBuilder: (context, index) => SizedBox(
+                          width: 3,
+                        ),
+                      ),
+                    ),
+                  ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(right: Size * 15),
+                    child:
+                        Text('cancel ', style: TextStyle(fontSize: Size * 20)),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    if (passwordController.text.trim() ==
+                        passwordController_X.text.trim()) {
+                      if (firstNameController.text.isNotEmpty &&
+                          lastNameController.text.isNotEmpty &&
+                          gmailController.text.isNotEmpty &&
+                          branch.isNotEmpty) {
+                        showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => Center(
+                                  child: CircularProgressIndicator(),
+                                ));
+                        try {
+                          await FirebaseFirestore.instance
+                              .collection("user")
+                              .doc(emailController.text)
+                              .set({
+                            "id": emailController.text,
+                            "name": firstNameController.text +
+                                ";" +
+                                lastNameController.text,
+                            "gmail": gmailController.text,
+                            "branch": branch,
+                            "index": 0,
+                            "reg": ""
+                          });
+                          await FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                                  email:
+                                      emailController.text.trim().toLowerCase(),
+                                  password: passwordController.text.trim());
 
+                          NotificationService().showNotification(
+                              title: "Welcome to eSRKR app!",
+                              body: "Your Successfully Registered!");
+                          updateToken();
+                          newUser(emailController.text.trim().toLowerCase());
+                        } on FirebaseException catch (e) {
+                          print(e);
+                          Utils.showSnackBar(e.message);
+                        }
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      } else {
+                        showToastText("Fill All Details");
+                      }
+                    } else {
+                      showToastText("Enter Same Password");
+                    }
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(right: Size * 15),
+                    child: Text(
+                      'Sign up ',
+                      style: TextStyle(fontSize: Size * 20),
+                    ),
+                  ),
+                ),
+              ],
+            ),
         ],
-      ) ,
+      ),
     );
   }
-  Future<void> sendEmail(String mail,String otp) async {
+
+  Future<void> sendEmail(String mail, String otp) async {
     final smtpServer = gmail('esrkr.app@gmail.com', 'wndwwhhpifpgnanu');
 
     // Create the message
@@ -798,7 +648,7 @@ class _createNewUserState extends State<createNewUser> {
       ..from = Address('esrkr.app@gmail.com')
       ..recipients.add(mail)
       ..subject = 'OTP for eSRKR App'
-      ..text = 'Your Otp is $otp';
+      ..text = 'Your Otp : $otp';
 
     try {
       final sendReport = await send(message, smtpServer);
@@ -807,9 +657,7 @@ class _createNewUserState extends State<createNewUser> {
       print('Error sending email: $e');
     }
   }
-
 }
-
 
 Future<void> hi(String email) async {
   final token = await FirebaseMessaging.instance.getToken() ?? "";
@@ -834,7 +682,7 @@ Future<void> hi(String email) async {
             .set({
           "id": email,
           "Name": email,
-          "Time": getDate(),
+          "Time": getID(),
           "Description": "Forgot Password@$token",
           "Link": ""
         });
@@ -876,7 +724,7 @@ Future<void> newUser(String email) async {
             .set({
           "id": email,
           "Name": email,
-          "Time": getDate(),
+          "Time": getID(),
           "Description": "new user@$token",
           "Link": ""
         });

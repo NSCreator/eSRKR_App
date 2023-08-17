@@ -5,8 +5,6 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
 import 'package:marquee/marquee.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
@@ -14,9 +12,7 @@ import 'package:srkr_study_app/SubPages.dart';
 import 'package:srkr_study_app/notification.dart';
 import 'package:srkr_study_app/search%20bar.dart';
 import 'package:srkr_study_app/settings.dart';
-import 'add subjects.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'ads.dart';
 import 'favorites.dart';
 import 'functins.dart';
 import 'main.dart';
@@ -114,7 +110,7 @@ class _HomePageState extends State<HomePage> {
             Container(
               decoration:
               BoxDecoration(
-                color: Colors.white10,
+                color: Colors.white38,
                 border: Border.all(
                     color:
                     Colors.white24),
@@ -459,46 +455,7 @@ class _HomePageState extends State<HomePage> {
               physics: BouncingScrollPhysics(),
               child: Column(
                 children: [
-                 // Row(
-                 //    children: [
-                 //      ElevatedButton(onPressed: (){
-                 //        UpdateConvertor newUpdate = UpdateConvertor(
-                 //          heading: 'Crux Event', photoUrl: 'https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/update%2F2023-07-15%2013%3A15%3A05.616088.image?alt=media&token=8385ca9b-ad0e-4966-961f-b21cf8084519',
-                 //          link: 'https://docs.google.com/forms/d/e/1FAIpQLSeUPtLr2bP2f_Qih7keGpLYPidVENhZiOhecpTQz1HbOPLPwQ/viewform',
-                 //          branch: '', description: 'Registrations',
-                 //          // ... other fields ...
-                 //        );
-                 //        UpdateConvertorUtil.addUpdateConvertor(newUpdate).then((_) {
-                 //
-                 //          showToastText('Update added successfully');
-                 //
-                 //        }).catchError((error) {
-                 //
-                 //          print('Error adding update: $error');
-                 //        });
-                 //
-                 //      }, child: Text("skjhdlksajd")),
-                 //      ElevatedButton(onPressed: (){
-                 //        BranchNewConvertor newUpdate = BranchNewConvertor(
-                 //            heading: 'CRUX',
-                 //            photoUrl: 'https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/ece%2Fnews%2F2023-07-14%2020%3A35%3A11.794644.image?alt=media&token=d5fdc618-7e82-4b48-8b5b-e7169f10bc97',
-                 //            description: 'From ECE Department',
-                 //            link: ''
-                 //
-                 //        );
-                 //        BranchNewConvertorUtil.addUpdateConvertor(newUpdate).then((_) {
-                 //
-                 //          showToastText('Update added successfully');
-                 //
-                 //        }).catchError((error) {
-                 //
-                 //          print('Error adding update: $error');
-                 //        });
-                 //
-                 //      },
-                 //          child: Text("skjhdlksajd")),
-                 //    ],
-                 //  ),
+             
                   FutureBuilder<List<UpdateConvertor>>(
                     future: UpdateConvertorUtil.getUpdateConvertorList(),
                     builder: (context, snapshot) {
@@ -547,7 +504,6 @@ class _HomePageState extends State<HomePage> {
                                     child: ListView.builder(
                                       physics: const BouncingScrollPhysics(),
                                       scrollDirection: Axis.horizontal,
-
                                       itemCount: min(
                                           updates.length, 5), // Display only top 5 items
                                       itemBuilder: (context, int index) {
@@ -747,11 +703,13 @@ class _HomePageState extends State<HomePage> {
                                           updates.length, 5), // Display only top 5 items
                                       itemBuilder: (context, int index) {
                                         final BranchNew = updates[index];
-                                        final Uri uri = Uri.parse(BranchNew.photoUrl);
-                                        final String fileName = uri.pathSegments.last;
-                                        var name = fileName.split("/").last;
-                                        final file = File("${folderPath}/${widget.branch.toLowerCase()}_news/$name");
+                                       if(BranchNew.photoUrl.isNotEmpty){
+                                         final Uri uri = Uri.parse(BranchNew.photoUrl);
+                                         final String fileName = uri.pathSegments.last;
+                                         var name = fileName.split("/").last;
+                                         final file = File("${folderPath}/${widget.branch.toLowerCase()}_news/$name");
 
+                                       }
                                         return Padding(
                                           padding:
                                           EdgeInsets.only(left: widget.size * 10),
@@ -767,9 +725,11 @@ class _HomePageState extends State<HomePage> {
                                               ),
                                               child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                mainAxisAlignment: MainAxisAlignment.start,
                                                 children: [
                                                   Row(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
                                                       Container(
                                                         width: widget.size * 150,
@@ -778,10 +738,10 @@ class _HomePageState extends State<HomePage> {
                                                           borderRadius:
                                                           BorderRadius.circular(
                                                               widget.size * 17),
-                                                          image: DecorationImage(
+                                                          image:BranchNew.photoUrl.isNotEmpty? DecorationImage(
                                                             image: FileImage(file),
                                                             fit: BoxFit.cover,
-                                                          ),
+                                                          ):noImageFound,
                                                         ),
                                                       ),
                                                       Expanded(
@@ -824,19 +784,7 @@ class _HomePageState extends State<HomePage> {
                                                                     FontWeight.w700),
                                                               ),
                                                             ),
-                                                            if (BranchNew.link.isNotEmpty)
-                                                              InkWell(
-                                                                child: Text(
-                                                                  "Open (Link)",
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .lightBlueAccent,fontSize: widget.size *18,fontWeight: FontWeight.w800),
-                                                                ),
-                                                                onTap: () {
-                                                                  ExternalLaunchUrl(
-                                                                      BranchNew.link);
-                                                                },
-                                                              ),
+
                                                             Padding(
                                                               padding: EdgeInsets.only(
                                                                   top: widget.size * 5),
@@ -947,6 +895,505 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               );}
                         }}),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        borderRadius: BorderRadius.circular(40)
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10,right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+
+                            Column(
+                              children: [
+                                Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white30,
+                                      borderRadius: BorderRadius.circular(25),
+                                    image: DecorationImage(image: AssetImage("assets/timeTableIcon.png"))
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Text("Time Table",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                )
+                              ],
+                            ),
+                            InkWell(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white30,
+                                        borderRadius: BorderRadius.circular(25),
+                                      image: DecorationImage(image: AssetImage("assets/subjects.png"),fit: BoxFit.cover)
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text("Sub",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                  )
+                                ],
+                              ),
+                              onTap: (){
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                    const Duration(
+                                        milliseconds:
+                                        300),
+                                    pageBuilder: (context,
+                                        animation,
+                                        secondaryAnimation) =>
+                                        Subjects(
+                                          branch: widget
+                                              .branch,
+                                          reg: widget.reg,
+                                          width: widget.size ,
+                                          height: widget.size ,
+                                          size:
+                                          widget.size,
+                                        ),
+                                    transitionsBuilder:
+                                        (context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child) {
+                                      final fadeTransition =
+                                      FadeTransition(
+                                        opacity:
+                                        animation,
+                                        child: child,
+                                      );
+
+                                      return Container(
+                                        color: Colors
+                                            .black
+                                            .withOpacity(
+                                            animation
+                                                .value),
+                                        child: AnimatedOpacity(
+                                            duration: Duration(
+                                                milliseconds:
+                                                300),
+                                            opacity: animation
+                                                .value
+                                                .clamp(
+                                                0.3,
+                                                1.0),
+                                            child:
+                                            fadeTransition),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                            InkWell(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(25),
+                                        image: DecorationImage(image: AssetImage("assets/lab.png"))
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text("Lab",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                  )
+                                ],
+                              ),
+                              onTap: (){
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                    const Duration(
+                                        milliseconds:
+                                        300),
+                                    pageBuilder: (context,
+                                        animation,
+                                        secondaryAnimation) =>
+                                        LabSubjects(
+                                          branch: widget
+                                              .branch,
+                                          reg: widget.reg,
+                                          width: widget.size ,
+                                          height:widget.size ,
+                                          size:
+                                          widget.size,
+                                        ),
+                                    transitionsBuilder:
+                                        (context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child) {
+                                      final fadeTransition =
+                                      FadeTransition(
+                                        opacity:
+                                        animation,
+                                        child: child,
+                                      );
+
+                                      return Container(
+                                        color: Colors
+                                            .black
+                                            .withOpacity(
+                                            animation
+                                                .value),
+                                        child: AnimatedOpacity(
+                                            duration: Duration(
+                                                milliseconds:
+                                                300),
+                                            opacity: animation
+                                                .value
+                                                .clamp(
+                                                0.3,
+                                                1.0),
+                                            child:
+                                            fadeTransition),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                            InkWell(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(25),
+                                        image: DecorationImage(image: AssetImage("assets/books.png"))
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text("Books",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                  )
+                                ],
+                              ),
+                              onTap: (){
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                    const Duration(
+                                        milliseconds:
+                                        300),
+                                    pageBuilder: (context,
+                                        animation,
+                                        secondaryAnimation) =>
+                                        backGroundImage(
+                                          child: Column(
+                                            children: [
+                                              backButton(size: widget.size,text: "Books",),
+                                              allBooks(
+                                                size: widget.size,
+
+                                                branch: widget.branch,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    transitionsBuilder:
+                                        (context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child) {
+                                      final fadeTransition =
+                                      FadeTransition(
+                                        opacity:
+                                        animation,
+                                        child: child,
+                                      );
+
+                                      return Container(
+                                        color: Colors
+                                            .black
+                                            .withOpacity(
+                                            animation
+                                                .value),
+                                        child: AnimatedOpacity(
+                                            duration: Duration(
+                                                milliseconds:
+                                                300),
+                                            opacity: animation
+                                                .value
+                                                .clamp(
+                                                0.3,
+                                                1.0),
+                                            child:
+                                            fadeTransition),
+                                      );
+                                    },
+                                  ),
+                                );
+
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(40)
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10,left: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+
+                            InkWell(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white30,
+                                        borderRadius: BorderRadius.circular(25),
+                                        image: DecorationImage(image: AssetImage("assets/subjects.png"),fit: BoxFit.cover)
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text("Syllabus",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                  )
+                                ],
+                              ),
+                              onTap: (){
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                    const Duration(
+                                        milliseconds:
+                                        300),
+                                    pageBuilder: (context,
+                                        animation,
+                                        secondaryAnimation) =>
+                                        Subjects(
+                                          branch: widget
+                                              .branch,
+                                          reg: widget.reg,
+                                          width: widget.size ,
+                                          height: widget.size ,
+                                          size:
+                                          widget.size,
+                                        ),
+                                    transitionsBuilder:
+                                        (context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child) {
+                                      final fadeTransition =
+                                      FadeTransition(
+                                        opacity:
+                                        animation,
+                                        child: child,
+                                      );
+
+                                      return Container(
+                                        color: Colors
+                                            .black
+                                            .withOpacity(
+                                            animation
+                                                .value),
+                                        child: AnimatedOpacity(
+                                            duration: Duration(
+                                                milliseconds:
+                                                300),
+                                            opacity: animation
+                                                .value
+                                                .clamp(
+                                                0.3,
+                                                1.0),
+                                            child:
+                                            fadeTransition),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                            InkWell(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(25),
+                                        image: DecorationImage(image: AssetImage("assets/lab.png"))
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text("Modal Papers",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                  )
+                                ],
+                              ),
+                              onTap: (){
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                    const Duration(
+                                        milliseconds:
+                                        300),
+                                    pageBuilder: (context,
+                                        animation,
+                                        secondaryAnimation) =>
+                                        LabSubjects(
+                                          branch: widget
+                                              .branch,
+                                          reg: widget.reg,
+                                          width: widget.size ,
+                                          height:widget.size ,
+                                          size:
+                                          widget.size,
+                                        ),
+                                    transitionsBuilder:
+                                        (context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child) {
+                                      final fadeTransition =
+                                      FadeTransition(
+                                        opacity:
+                                        animation,
+                                        child: child,
+                                      );
+
+                                      return Container(
+                                        color: Colors
+                                            .black
+                                            .withOpacity(
+                                            animation
+                                                .value),
+                                        child: AnimatedOpacity(
+                                            duration: Duration(
+                                                milliseconds:
+                                                300),
+                                            opacity: animation
+                                                .value
+                                                .clamp(
+                                                0.3,
+                                                1.0),
+                                            child:
+                                            fadeTransition),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                            InkWell(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(25),
+                                        image: DecorationImage(image: AssetImage("assets/books.png"))
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text("Previous Paper",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                  )
+                                ],
+                              ),
+                              onTap: (){
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                    const Duration(
+                                        milliseconds:
+                                        300),
+                                    pageBuilder: (context,
+                                        animation,
+                                        secondaryAnimation) =>
+                                        backGroundImage(
+                                          child: Column(
+                                            children: [
+                                              backButton(size: widget.size,text: "Books",),
+                                              allBooks(
+                                                size: widget.size,
+
+                                                branch: widget.branch,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    transitionsBuilder:
+                                        (context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child) {
+                                      final fadeTransition =
+                                      FadeTransition(
+                                        opacity:
+                                        animation,
+                                        child: child,
+                                      );
+
+                                      return Container(
+                                        color: Colors
+                                            .black
+                                            .withOpacity(
+                                            animation
+                                                .value),
+                                        child: AnimatedOpacity(
+                                            duration: Duration(
+                                                milliseconds:
+                                                300),
+                                            opacity: animation
+                                                .value
+                                                .clamp(
+                                                0.3,
+                                                1.0),
+                                            child:
+                                            fadeTransition),
+                                      );
+                                    },
+                                  ),
+                                );
+
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -1324,19 +1771,22 @@ class _HomePageState extends State<HomePage> {
                                             final SubjectsData =
                                             filteredItems[
                                             index];
-                                            final Uri uri =
-                                            Uri.parse(
-                                                SubjectsData
-                                                    .PhotoUrl);
-                                            final String
-                                            fileName = uri
-                                                .pathSegments
-                                                .last;
-                                            var name = fileName
-                                                .split("/")
-                                                .last;
-                                            final file = File(
-                                                "${folderPath}/subjects/$name");
+                                           if(SubjectsData
+                                               .PhotoUrl.isNotEmpty){
+                                             final Uri uri =
+                                             Uri.parse(
+                                                 SubjectsData
+                                                     .PhotoUrl);
+                                             final String
+                                             fileName = uri
+                                                 .pathSegments
+                                                 .last;
+                                             var name = fileName
+                                                 .split("/")
+                                                 .last;
+                                             file = File(
+                                                 "${folderPath}/subjects/$name");
+                                           }
                                             return InkWell(
                                               child: Column(
                                                 children: [
@@ -1351,10 +1801,10 @@ class _HomePageState extends State<HomePage> {
                                                         color:
                                                         Colors.black,
                                                         image:
-                                                        DecorationImage(
+                                                        file.existsSync()?DecorationImage(
                                                           image: FileImage(file),
                                                           fit: BoxFit.cover,
-                                                        ),
+                                                        ):noImageFound,
                                                       ),
                                                       child:
                                                       Align(
@@ -1433,12 +1883,10 @@ class _HomePageState extends State<HomePage> {
                                                         animation,
                                                         secondaryAnimation) =>
                                                         subjectUnitsData(
-                                                          date: SubjectsData.id.split(
-                                                              "-")
-                                                              .last,
+
                                                           reg: SubjectsData
                                                               .regulation,
-                                                          pdfs: 0,
+
 
                                                           size: widget
                                                               .size,
@@ -1665,19 +2113,22 @@ class _HomePageState extends State<HomePage> {
                                           final SubjectsData =
                                           filteredItems[
                                           index];
-                                          final Uri uri =
-                                          Uri.parse(
-                                              SubjectsData
-                                                  .PhotoUrl);
-                                          final String
-                                          fileName = uri
-                                              .pathSegments
-                                              .last;
-                                          var name = fileName
-                                              .split("/")
-                                              .last;
-                                          final file = File(
-                                              "${folderPath}/labsubjects/$name");
+                                       if(SubjectsData
+                                           .PhotoUrl.isNotEmpty){
+                                         final Uri uri =
+                                         Uri.parse(
+                                             SubjectsData
+                                                 .PhotoUrl);
+                                         final String
+                                         fileName = uri
+                                             .pathSegments
+                                             .last;
+                                         var name = fileName
+                                             .split("/")
+                                             .last;
+                                         file = File(
+                                             "${folderPath}/labsubjects/$name");
+                                       }
                                           return InkWell(
                                             child: Column(
                                               children: [
@@ -1691,11 +2142,11 @@ class _HomePageState extends State<HomePage> {
                                                       BorderRadius.all(Radius.circular(widget.size * 25.0)),
                                                       color:
                                                       Colors.black,
-                                                      image:
+                                                      image:file.existsSync()?
                                                       DecorationImage(
                                                         image: FileImage(file),
                                                         fit: BoxFit.cover,
-                                                      ),
+                                                      ):noImageFound,
                                                     ),
                                                     child:
                                                     Align(
@@ -1774,12 +2225,10 @@ class _HomePageState extends State<HomePage> {
                                                       animation,
                                                       secondaryAnimation) =>
                                                       subjectUnitsData(
-                                                        date: SubjectsData.id.split(
-                                                            "-")
-                                                            .last,
+
                                                         reg: SubjectsData
                                                             .regulation,
-                                                        pdfs: 0,
+
 
                                                         size: widget
                                                             .size,
@@ -2079,37 +2528,7 @@ class _homePageUpdateState extends State<homePageUpdate> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              InkWell(
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.favorite,
-                                                      color: BranchNew.likedBy
-                                                              .contains(
-                                                                  fullUserId())
-                                                          ? Colors.redAccent
-                                                          : Colors.white,
-                                                      size: widget.size * 20,
-                                                    ),
-                                                    Text(
-                                                      BranchNew.likedBy.length >
-                                                              0
-                                                          ? " ${BranchNew.likedBy.length} Likes"
-                                                          : " ${BranchNew.likedBy.length} Like",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize:
-                                                              widget.size * 18),
-                                                    )
-                                                  ],
-                                                ),
-                                                onTap: () {
-                                                  like(
-                                                      !BranchNew.likedBy
-                                                          .contains(fullUserId()),
-                                                      BranchNew.id);
-                                                },
-                                              ),
+
                                               if (BranchNew.link.isNotEmpty)
                                                 InkWell(
                                                   child: Text(
@@ -2174,16 +2593,17 @@ Stream<List<UpdateConvertor>> readUpdate(String branch) =>
             .toList());
 
 Future createHomeUpdate({
+  required String id,
   required String heading,
   required String photoUrl,
   required link,
   required String branch,
   required String description,
 }) async {
-  final docflash = FirebaseFirestore.instance.collection("update").doc(getID());
+  final docflash = FirebaseFirestore.instance.collection("update").doc(id);
 
   final flash = UpdateConvertor(
-      id: getID(),
+      id: id,
       heading: heading,
       branch: branch,
       description: description,
@@ -2258,7 +2678,7 @@ Future createHomeUpdate({
 class UpdateConvertor {
   String id;
   final String heading, photoUrl, link, description, branch;
-  List<String> likedBy;
+
 
   UpdateConvertor({
     this.id = "",
@@ -2267,15 +2687,14 @@ class UpdateConvertor {
     required this.link,
     required this.branch,
     required this.description,
-    List<String>? likedBy,
-  }) : likedBy = likedBy ?? [];
+
+  });
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "heading": heading,
-    "photoUrl": photoUrl,
+    "image": photoUrl,
     "link": link,
-    "likedBy": likedBy,
     "description": description,
     "branch": branch,
   };
@@ -2283,12 +2702,11 @@ class UpdateConvertor {
   static UpdateConvertor fromJson(Map<String, dynamic> json) => UpdateConvertor(
     id: json['id'],
     heading: json["heading"],
-    photoUrl: json["photoUrl"],
+    photoUrl: json["image"],
     link: json["link"],
     description: json["description"],
     branch: json["branch"],
-    likedBy:
-    json["likedBy"] != null ? List<String>.from(json["likedBy"]) : [],
+
   );
 }
 
@@ -2384,7 +2802,8 @@ Stream<List<BranchNewConvertor>> readBranchNew(String branch) =>
             .toList());
 
 Future createBranchNew(
-    {required String heading,
+    {required String id,
+      required String heading,
     required String description,
     required String branch,
 
@@ -2393,43 +2812,38 @@ Future createBranchNew(
       .collection(branch)
       .doc("${branch}News")
       .collection("${branch}News")
-      .doc(getID());
+      .doc(id);
   final flash = BranchNewConvertor(
-      id: getID(),
+      id: id,
       heading: heading,
       photoUrl: photoUrl,
-      description: description,
-      link: "");
+      description: description,);
   final json = flash.toJson();
   await docflash.set(json);
 }
 
 class BranchNewConvertor {
   String id;
-  final String heading, photoUrl, description, link;
+  final String heading, photoUrl, description;
 
   BranchNewConvertor(
       {this.id = "",
       required this.heading,
       required this.photoUrl,
-      required this.description,
-      required this.link});
+      required this.description});
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "Heading": heading,
-        "Photo Url": photoUrl,
-        "Description": description,
-        "link": link
+        "heading": heading,
+        "image": photoUrl,
+        "description": description,
       };
-
   static BranchNewConvertor fromJson(Map<String, dynamic> json) =>
       BranchNewConvertor(
           id: json['id'],
-          heading: json["Heading"],
-          photoUrl: json["Photo Url"],
-          description: json["Description"],
-          link: json['link']);
+          heading: json["heading"],
+          photoUrl: json["image"],
+          description: json["description"],);
 }
 
 Stream<List<FlashNewsConvertor>> readSRKRFlashNews() =>
@@ -2511,7 +2925,7 @@ Stream<List<FlashConvertor>> readFlashNews(String branch) =>
         .collection(branch)
         .doc("Subjects")
         .collection("Subjects")
-        .orderBy("Heading", descending: false)
+        .orderBy("heading", descending: false)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => FlashConvertor.fromJson(doc.data()))
@@ -2531,18 +2945,18 @@ class FlashConvertor {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "Heading": heading,
-        "Description": description,
-        "Photo Url": PhotoUrl,
+        "heading": heading,
+        "description": description,
+        "image": PhotoUrl,
         "regulation": regulation
       };
 
   static FlashConvertor fromJson(Map<String, dynamic> json) => FlashConvertor(
       id: json['id'],
       regulation: json["regulation"],
-      heading: json["Heading"],
-      PhotoUrl: json["Photo Url"],
-      description: json["Description"]);
+      heading: json["heading"],
+      PhotoUrl: json["image"],
+      description: json["description"]);
 }
 
 Stream<List<LabSubjectsConvertor>> readLabSubjects(String branch) =>
@@ -2550,7 +2964,7 @@ Stream<List<LabSubjectsConvertor>> readLabSubjects(String branch) =>
         .collection(branch)
         .doc("LabSubjects")
         .collection("LabSubjects")
-        .orderBy("Heading", descending: false)
+        .orderBy("heading", descending: false)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => LabSubjectsConvertor.fromJson(doc.data()))
@@ -2567,9 +2981,9 @@ Future createLabSubjects(
       .collection(branch)
       .doc("LabSubjects")
       .collection("LabSubjects")
-      .doc();
+      .doc(getID());
   final flash = LabSubjectsConvertor(
-      id: docflash.id,
+      id: getID(),
       heading: heading,
       PhotoUrl: PhotoUrl,
       description: description,
@@ -2592,9 +3006,9 @@ class LabSubjectsConvertor {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "Heading": heading,
-        "Photo Url": PhotoUrl,
-        "Description": description,
+        "heading": heading,
+        "image": PhotoUrl,
+        "description": description,
         "regulation": regulation,
       };
 
@@ -2602,9 +3016,9 @@ class LabSubjectsConvertor {
       LabSubjectsConvertor(
           regulation: json["regulation"],
           id: json['id'],
-          heading: json["Heading"],
-          PhotoUrl: json["Photo Url"],
-          description: json["Description"]);
+          heading: json["heading"],
+          PhotoUrl: json["image"],
+          description: json["description"]);
 }
 
 Stream<List<BooksConvertor>> ReadBook(String branch) =>
@@ -2629,9 +3043,9 @@ Future createBook(
       .collection(branch)
       .doc("Books")
       .collection("CoreBooks")
-      .doc();
+      .doc(getID());
   final Book = BooksConvertor(
-      id: docBook.id,
+      id: getID(),
       heading: heading,
       link: link,
       description: description,

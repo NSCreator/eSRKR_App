@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -10,16 +12,90 @@ import 'HomePage.dart';
 import 'auth_page.dart';
 import 'firebase_options.dart';
 import 'functins.dart';
+import 'net.dart';
 import 'notification.dart';
+
 fullUserId() {
   var user = FirebaseAuth.instance.currentUser!.email!;
   return user;
 }
+
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> backgroundHandler(RemoteMessage message) async {
-  print(message.data.toString());
-  print(message.notification!.title);
+ await _handleMessageData(message);
+}
+
+Future<void> _handleMessageData(RemoteMessage message) async {
+
+  if (message.notification!.title.toString().split(";").first == "Update" ||
+      message.notification!.title.toString().split(";").first == "News") {
+    NotificationService().showNotification(
+        title: message.notification!.title.toString().split(";").first,
+        body: message.notification!.body);
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    if (message.notification!.title.toString().split(";").first == "Update") {
+      FirebaseFirestore.instance
+          .collection("update")
+          .doc(message.notification!.title.toString().split(";").last)
+          .get()
+          .then((DocumentSnapshot snapshot) {
+        if (snapshot.exists) {
+          var data = snapshot.data();
+          if (data != null && data is Map<String, dynamic>) {
+            UpdateConvertor newUpdate = UpdateConvertor(
+              id: data["id"],
+              heading: data["heading"],
+              photoUrl: data["image"],
+              description: data["description"],
+              link: data["link"],
+              branch: data["branch"],
+            );
+            UpdateConvertorUtil.addUpdateConvertor(newUpdate);
+          }
+        } else {
+          print("Document does not exist.");
+        }
+      }).catchError((error) {
+        print("An error occurred while retrieving data: $error");
+      });
+    }
+    else {
+      FirebaseFirestore.instance
+          .collection("user")
+          .doc(fullUserId())
+          .get()
+          .then((DocumentSnapshot snapshot) {
+        if (snapshot.exists) {
+          var user = snapshot.data();
+          if (user != null && user is Map<String, dynamic>) {
+            FirebaseFirestore.instance
+                .collection(user["branch"]).doc(user["branch"]+"News").collection(user["branch"]+"News")
+                .doc(message.notification!.title.toString().split(";").last)
+                .get()
+                .then((DocumentSnapshot snapshot) {
+              if (snapshot.exists) {
+                var data = snapshot.data();
+                if (data != null && data is Map<String, dynamic>) {
+                  BranchNewConvertor newUpdate = BranchNewConvertor(id: data["id"],heading: data["heading"], photoUrl: data["image"], description: data["description"]);
+
+                  BranchNewConvertorUtil.addUpdateConvertor(newUpdate);
+                }
+              } else {
+                print("Document does not exist.");
+              }
+            });
+          }
+
+
+        } else {
+          print("Document does not exist.");
+        }
+      });
+    }
+
+  }
 }
 
 Future main() async {
@@ -27,9 +103,9 @@ Future main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  //  await NotificationService().initNotification();
-  //   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
-  // MobileAds.instance.initialize();
+  await NotificationService().initNotification();
+  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  MobileAds.instance.initialize();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
@@ -48,24 +124,18 @@ class _MyAppState extends State<MyApp> {
 
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       if (message != null) {
-        print(message.notification!.title);
+        _handleMessageData(message);
       }
     });
 
-    ///forground work
     FirebaseMessaging.onMessage.listen((message) async {
-      if (message.notification != null) {}
-      print(message.notification!.title);
-      NotificationService().showNotification(
-        title: message.notification!.title,
-        body: message.notification!.body,
-      );
+      if (message.notification != null) {
+        _handleMessageData(message);
+      }
     });
 
-    ///When the app is in background but opened and user taps
-    ///on the notification
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print(message.notification!.title);
+      _handleMessageData(message);
     });
   }
 
@@ -83,7 +153,6 @@ class _MyAppState extends State<MyApp> {
       navigatorKey: navigatorKey,
       title: 'eSRKR',
       builder: (context, child) {
-
         return MediaQuery(
             data: MediaQuery.of(context).copyWith(
               textScaleFactor: 0.85,
@@ -120,16 +189,17 @@ class _MyAppState extends State<MyApp> {
                                     .isNotEmpty &&
                                 mainsnapshot.data!['index']
                                     .toString()
-                                    .isNotEmpty ) {
-
+                                    .isNotEmpty) {
                               isTheir = true;
                             }
                           } catch (Exception) {
                             isTheir = false;
                           }
                           if (isTheir) {
-                            downloadAllImages(context,
-                                mainsnapshot.data!["branch"].toString(),mainsnapshot.data!['reg'].toString());
+                            downloadAllImages(
+                                context,
+                                mainsnapshot.data!["branch"].toString(),
+                                mainsnapshot.data!['reg'].toString());
                             return HomePage(
                               branch: mainsnapshot.data!["branch"].toString(),
                               reg: mainsnapshot.data!['reg'].toString(),
@@ -137,11 +207,14 @@ class _MyAppState extends State<MyApp> {
                               size: size(context),
                             );
                           } else {
-                            showToastText(mainsnapshot.data!['branch']
-                                .toString());
+                            showToastText(
+                                mainsnapshot.data!['branch'].toString());
                             return Scaffold(
                               backgroundColor: Color.fromRGBO(4, 48, 46, 1),
-                              body: SafeArea(child: years(branch: mainsnapshot.data!["branch"].toString(),)),
+                              body: SafeArea(
+                                  child: years(
+                                branch: mainsnapshot.data!["branch"].toString(),
+                              )),
                             );
                           }
                         }
@@ -156,12 +229,10 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-
 class years extends StatefulWidget {
   final String branch;
- 
-  const years({Key? key, required this.branch})
-      : super(key: key);
+
+  const years({Key? key, required this.branch}) : super(key: key);
 
   @override
   State<years> createState() => _yearsState();
@@ -180,9 +251,9 @@ class _yearsState extends State<years> {
                 case ConnectionState.waiting:
                   return const Center(
                       child: CircularProgressIndicator(
-                        strokeWidth: 0.3,
-                        color: Colors.cyan,
-                      ));
+                    strokeWidth: 0.3,
+                    color: Colors.cyan,
+                  ));
                 default:
                   if (snapshot.hasError) {
                     return const Center(
@@ -228,9 +299,7 @@ class _yearsState extends State<years> {
                                           FirebaseFirestore.instance
                                               .collection("user")
                                               .doc(fullUserId())
-                                              .update(
-                                              {"reg": SubjectsData.id});
-
+                                              .update({"reg": SubjectsData.id});
                                         },
                                       ),
                                     ),

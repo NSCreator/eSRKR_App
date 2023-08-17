@@ -15,8 +15,6 @@ import 'package:http/http.dart' as http;
 import 'functins.dart';
 import 'main.dart';
 
-
-
 class notifications extends StatefulWidget {
   final String branch;
   final double size;
@@ -89,191 +87,379 @@ class _notificationsState extends State<notifications>
   }
 
   @override
-  Widget build(BuildContext context) =>backGroundImage(child: Column(children: [
-      backButton(size: widget.size,text: "Notifications",),
-      Container(
-        color: Colors.transparent,
-        height: widget.height * 40,
-        child: Center(
-          child: TabBar(
-
-            indicator: BoxDecoration(
-                border: Border.all(color: Colors.white12),
-                borderRadius: BorderRadius.circular(widget.size * 15),
-                color: Color.fromRGBO(4, 11, 23, 1)),
-            controller: _tabController,
-            isScrollable: true,
-            labelPadding:
-            EdgeInsets.symmetric(horizontal: widget.width * 35),
-            tabs: [
-              Tab(
-                child: Text(
-                  "All",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: widget.size * 25,
+  Widget build(BuildContext context) => backGroundImage(
+          child: Column(children: [
+        backButton(
+          size: widget.size,
+          text: "Notifications",
+        ),
+        Container(
+          color: Colors.transparent,
+          height: widget.height * 40,
+          child: Center(
+            child: TabBar(
+              indicator: BoxDecoration(
+                  border: Border.all(color: Colors.white12),
+                  borderRadius: BorderRadius.circular(widget.size * 15),
+                  color: Color.fromRGBO(4, 11, 23, 1)),
+              controller: _tabController,
+              isScrollable: true,
+              labelPadding: EdgeInsets.symmetric(horizontal: widget.width * 35),
+              tabs: [
+                Tab(
+                  child: Text(
+                    "All",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: widget.size * 25,
+                    ),
                   ),
                 ),
-              ),
-
-              Tab(
-                child: Text(
-                  "Personal",
-                  style: TextStyle(
-                      color: Colors.white, fontSize: widget.size * 25),
-                ),
-              )
-            ],
+                Tab(
+                  child: Text(
+                    "Personal",
+                    style: TextStyle(
+                        color: Colors.white, fontSize: widget.size * 25),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
-      ),
-      SizedBox(
-        height: widget.height * 10,
-      ),
-      Expanded(
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            StreamBuilder<List<NotificationsConvertor>>(
-                stream: readNotifications(
-                    c0: widget.branch,
-                    d0: "Notification",
-                    c1: "AllNotification"),
-                builder: (context, snapshot) {
-                  final Notifications = snapshot.data;
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 0.3,
-                            color: Colors.cyan,
-                          ));
-                    default:
-                      if (snapshot.hasError) {
+        SizedBox(
+          height: widget.height * 10,
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              StreamBuilder<List<NotificationsConvertor>>(
+                  stream: readNotifications(
+                      c0: widget.branch,
+                      d0: "Notification",
+                      c1: "AllNotification"),
+                  builder: (context, snapshot) {
+                    final Notifications = snapshot.data;
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
                         return const Center(
-                            child: Text(
-                                'Error with TextBooks Data or\n Check Internet Connection'));
-                      } else {
-                        return ListView.separated(
-                            physics: const BouncingScrollPhysics(),
-                            shrinkWrap: true,
-                            reverse: true,
-                            itemCount: Notifications!.length,
-                            itemBuilder: (context, int index) {
-                              final Notification = Notifications[index];
+                            child: CircularProgressIndicator(
+                          strokeWidth: 0.3,
+                          color: Colors.cyan,
+                        ));
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text(
+                                  'Error with TextBooks Data or\n Check Internet Connection'));
+                        } else {
+                          return ListView.separated(
+                              physics: const BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              reverse: true,
+                              itemCount: Notifications!.length,
+                              itemBuilder: (context, int index) {
+                                final Notification = Notifications[index];
 
-                              return InkWell(
-                                child: Padding(
-                                  padding:
-                                  Notification.Name == fullUserId()
-                                      ? EdgeInsets.only(
-                                      left: widget.width * 45,
-                                      right: widget.width * 5,
-                                      top: widget.height * 5)
-                                      : EdgeInsets.only(
-                                      right: widget.width * 45,
-                                      left: widget.width * 5,
-                                      top: widget.height * 5),
-                                  child: Container(
-                                    width: double.infinity,
-                                    alignment: Alignment.center,
-                                    decoration: Notification.Name ==
-                                        fullUserId()
-                                        ? BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.only(
-                                        topLeft: Radius.circular(
-                                            widget.size * 25),
-                                        bottomLeft: Radius.circular(
-                                            widget.size * 25),
-                                        topRight: Radius.circular(
-                                            widget.size * 25),
-                                        bottomRight:
-                                        Radius.circular(
-                                            widget.size * 5),
-                                      ),
-                                      color: Colors.black
-                                          .withOpacity(0.8),
-                                      border: Border.all(
-                                          color: Colors
-                                              .blueAccent.shade100),
-                                    )
-                                        : BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.only(
-                                        topLeft: Radius.circular(
-                                            widget.size * 25),
-                                        bottomLeft: Radius.circular(
-                                            widget.size * 5),
-                                        topRight: Radius.circular(
-                                            widget.size * 25),
-                                        bottomRight:
-                                        Radius.circular(
-                                            widget.size * 25),
-                                      ),
-                                      color: Colors.black
-                                          .withOpacity(0.5),
-                                      border: Border.all(
-                                          color: Colors.white
-                                              .withOpacity(0.5)),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          width: widget.width * 2,
-                                        ),
-                                        Expanded(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      "       @${Notification.Name}",
-                                                      style: TextStyle(
-                                                        fontSize:
-                                                        widget.size *
-                                                            12.0,
-                                                        color: Colors.white54,
-                                                        fontWeight:
-                                                        FontWeight.w600,
-                                                      ),
+                                return InkWell(
+                                  child: Padding(
+                                    padding: Notification.Name == fullUserId()
+                                        ? EdgeInsets.only(
+                                            left: widget.width * 45,
+                                            right: widget.width * 5,
+                                            top: widget.height * 5)
+                                        : EdgeInsets.only(
+                                            right: widget.width * 45,
+                                            left: widget.width * 5,
+                                            top: widget.height * 5),
+                                    child: Container(
+                                      width: double.infinity,
+                                      alignment: Alignment.center,
+                                      decoration: Notification.Name ==
+                                              fullUserId()
+                                          ? BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(
+                                                    widget.size * 25),
+                                                bottomLeft: Radius.circular(
+                                                    widget.size * 25),
+                                                topRight: Radius.circular(
+                                                    widget.size * 25),
+                                                bottomRight: Radius.circular(
+                                                    widget.size * 5),
+                                              ),
+                                              color:
+                                                  Colors.black.withOpacity(0.8),
+                                              border: Border.all(
+                                                  color: Colors
+                                                      .blueAccent.shade100),
+                                            )
+                                          : BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(
+                                                    widget.size * 25),
+                                                bottomLeft: Radius.circular(
+                                                    widget.size * 5),
+                                                topRight: Radius.circular(
+                                                    widget.size * 25),
+                                                bottomRight: Radius.circular(
+                                                    widget.size * 25),
+                                              ),
+                                              color:
+                                                  Colors.black.withOpacity(0.5),
+                                              border: Border.all(
+                                                  color: Colors.white
+                                                      .withOpacity(0.5)),
+                                            ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: widget.width * 2,
+                                          ),
+                                          Expanded(
+                                              child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "       @${Notification.Name}",
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          widget.size * 12.0,
+                                                      color: Colors.white54,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                     ),
-                                                    Spacer(),
-                                                    Padding(
-                                                      padding:
-                                                      EdgeInsets.fromLTRB(
-                                                          widget.size * 8,
-                                                          widget.size * 1,
-                                                          widget.size *
-                                                              25,
-                                                          widget.size *
-                                                              1),
-                                                      child: Column(
-                                                        children: [
-                                                          Text(
-                                                            '${Notification.Time}',
-                                                            style: TextStyle(
-                                                              fontSize: widget
-                                                                  .size *
-                                                                  9.0,
-                                                              color: Colors
-                                                                  .white70,
-                                                              //   fontWeight: FontWeight.bold,
-                                                            ),
+                                                  ),
+                                                  Spacer(),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            widget.size * 8,
+                                                            widget.size * 1,
+                                                            widget.size * 25,
+                                                            widget.size * 1),
+                                                    child: Column(
+                                                      children: [
+                                                        Text(
+                                                          '${Notification.Time}',
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                widget.size *
+                                                                    9.0,
+                                                            color:
+                                                                Colors.white70,
+                                                            //   fontWeight: FontWeight.bold,
                                                           ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: widget.size * 8,
+                                                    bottom: widget.size * 6,
+                                                    right: widget.size * 3,
+                                                    top: widget.size * 3),
+                                                child: NotificationText(
+                                                    Notification.description),
+                                              ),
+                                              if (Notification.Url.length > 3)
+                                                Padding(
+                                                  padding: EdgeInsets.all(
+                                                      widget.size * 3.0),
+                                                  child: Image.network(
+                                                      Notification.Url),
+                                                )
+                                            ],
+                                          ))
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  onLongPress: () {
+                                    if (Notification.Name == fullUserId() ||
+                                        isUser()) {
+                                      final deleteFlashNews = FirebaseFirestore
+                                          .instance
+                                          .collection(widget.branch)
+                                          .doc("Notification")
+                                          .collection("AllNotification")
+                                          .doc(Notification.id);
+                                      deleteFlashNews.delete();
+                                      showToastText(
+                                          "Your Message has been Deleted");
+                                    } else {
+                                      showToastText(
+                                          "You are not message user to delete");
+                                    }
+                                  },
+                                );
+                              },
+                              separatorBuilder: (context, index) => SizedBox(
+                                    height: widget.height * 1,
+                                  ));
+                        }
+                    }
+                  }),
+              StreamBuilder<List<NotificationsConvertor>>(
+                  stream: readNotifications(
+                      c0: "user", d0: fullUserId(), c1: "Notification"),
+                  builder: (context, snapshot) {
+                    final Notifications = snapshot.data;
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                            child: CircularProgressIndicator(
+                          strokeWidth: 0.3,
+                          color: Colors.cyan,
+                        ));
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text(
+                                  'Error with TextBooks Data or\n Check Internet Connection'));
+                        } else {
+                          return ListView.separated(
+                              physics: const BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              reverse: true,
+                              itemCount: Notifications!.length,
+                              itemBuilder: (context, int index) {
+                                final Notification = Notifications[index];
+
+                                return InkWell(
+                                  child: Padding(
+                                    padding: Notification.Name == fullUserId()
+                                        ? EdgeInsets.only(
+                                            left: widget.size * 45,
+                                            right: widget.size * 5)
+                                        : EdgeInsets.only(
+                                            right: widget.size * 45,
+                                            left: widget.size * 5),
+                                    child: Container(
+                                      width: double.infinity,
+                                      alignment: Alignment.center,
+                                      decoration: Notification.Name ==
+                                              fullUserId()
+                                          ? BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(
+                                                    widget.size * 25),
+                                                bottomLeft: Radius.circular(
+                                                    widget.size * 25),
+                                                topRight: Radius.circular(
+                                                    widget.size * 25),
+                                                bottomRight: Radius.circular(
+                                                    widget.size * 5),
+                                              ),
+                                              color:
+                                                  Colors.black.withOpacity(0.8),
+                                              border: Border.all(
+                                                  color: Colors
+                                                      .blueAccent.shade100),
+                                            )
+                                          : BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(
+                                                    widget.size * 25),
+                                                bottomLeft: Radius.circular(
+                                                    widget.size * 5),
+                                                topRight: Radius.circular(
+                                                    widget.size * 25),
+                                                bottomRight: Radius.circular(
+                                                    widget.size * 25),
+                                              ),
+                                              color:
+                                                  Colors.black.withOpacity(0.5),
+                                              border: Border.all(
+                                                  color: Colors.white
+                                                      .withOpacity(0.5)),
+                                            ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: widget.width * 2,
+                                          ),
+                                          Expanded(
+                                              child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "       @${Notification.Name}",
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          widget.size * 12.0,
+                                                      color: Colors.white54,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                  Spacer(),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            widget.size * 8,
+                                                            widget.size * 1,
+                                                            widget.size * 25,
+                                                            widget.size * 1),
+                                                    child: Column(
+                                                      children: [
+                                                        Text(
+                                                          '${Notification.Time}',
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                widget.size *
+                                                                    9.0,
+                                                            color:
+                                                                Colors.white70,
+                                                            //   fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              if (Notification.description
+                                                      .split("@")
+                                                      .first ==
+                                                  "Forgot Password ")
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: widget.size * 8,
+                                                      bottom: widget.size * 6,
+                                                      right: widget.size * 3,
+                                                      top: widget.size * 3),
+                                                  child: Text(
+                                                    Notification.description
+                                                        .split("@")
+                                                        .first,
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                )
+                                              else
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       left: widget.size * 8,
@@ -281,269 +467,55 @@ class _notificationsState extends State<notifications>
                                                       right: widget.size * 3,
                                                       top: widget.size * 3),
                                                   child: NotificationText(
-                                                      Notification
-                                                          .description),
+                                                      Notification.description),
                                                 ),
-                                                if (Notification.Url.length >
-                                                    3)
-                                                  Padding(
-                                                    padding: EdgeInsets.all(
-                                                        widget.size * 3.0),
-                                                    child: Image.network(
-                                                        Notification.Url),
-                                                  )
-                                              ],
-                                            ))
-                                      ],
+                                              if (Notification.Url.length > 10)
+                                                Padding(
+                                                  padding: EdgeInsets.all(
+                                                      widget.size * 3.0),
+                                                  child: Image.network(
+                                                      Notification.Url),
+                                                )
+                                            ],
+                                          ))
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                onLongPress: () {
-                                  if (Notification.Name == fullUserId() ||
-                                      isUser()) {
-                                    final deleteFlashNews =
-                                    FirebaseFirestore.instance
-                                        .collection(widget.branch)
-                                        .doc("Notification")
-                                        .collection("AllNotification")
+                                  onLongPress: () {
+                                    final deleteFlashNews = FirebaseFirestore
+                                        .instance
+                                        .collection("user")
+                                        .doc(fullUserId())
+                                        .collection("Notification")
                                         .doc(Notification.id);
                                     deleteFlashNews.delete();
                                     showToastText(
-                                        "Your Message has been Deleted");
-                                  } else {
-                                    showToastText(
-                                        "You are not message user to delete");
-                                  }
-                                },
-                              );
-                            },
-                            separatorBuilder: (context, index) =>
-                                SizedBox(
-                                  height: widget.height * 1,
-                                ));
-                      }
-                  }
-                }),
-            StreamBuilder<List<NotificationsConvertor>>(
-                stream: readNotifications(
-                    c0: "user", d0: fullUserId(), c1: "Notification"),
-                builder: (context, snapshot) {
-                  final Notifications = snapshot.data;
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 0.3,
-                            color: Colors.cyan,
-                          ));
-                    default:
-                      if (snapshot.hasError) {
-                        return const Center(
-                            child: Text(
-                                'Error with TextBooks Data or\n Check Internet Connection'));
-                      } else {
-                        return ListView.separated(
-                            physics: const BouncingScrollPhysics(),
-                            shrinkWrap: true,
-                            reverse: true,
-                            itemCount: Notifications!.length,
-                            itemBuilder: (context, int index) {
-                              final Notification = Notifications[index];
-
-                              return InkWell(
-                                child: Padding(
-                                  padding:
-                                  Notification.Name == fullUserId()
-                                      ? EdgeInsets.only(
-                                      left: widget.size * 45,
-                                      right: widget.size * 5)
-                                      : EdgeInsets.only(
-                                      right: widget.size * 45,
-                                      left: widget.size * 5),
-                                  child: Container(
-                                    width: double.infinity,
-                                    alignment: Alignment.center,
-                                    decoration: Notification.Name ==
-                                        fullUserId()
-                                        ? BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.only(
-                                        topLeft: Radius.circular(
-                                            widget.size * 25),
-                                        bottomLeft: Radius.circular(
-                                            widget.size * 25),
-                                        topRight: Radius.circular(
-                                            widget.size * 25),
-                                        bottomRight:
-                                        Radius.circular(
-                                            widget.size * 5),
-                                      ),
-                                      color: Colors.black
-                                          .withOpacity(0.8),
-                                      border: Border.all(
-                                          color: Colors
-                                              .blueAccent.shade100),
-                                    )
-                                        : BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.only(
-                                        topLeft: Radius.circular(
-                                            widget.size * 25),
-                                        bottomLeft: Radius.circular(
-                                            widget.size * 5),
-                                        topRight: Radius.circular(
-                                            widget.size * 25),
-                                        bottomRight:
-                                        Radius.circular(
-                                            widget.size * 25),
-                                      ),
-                                      color: Colors.black
-                                          .withOpacity(0.5),
-                                      border: Border.all(
-                                          color: Colors.white
-                                              .withOpacity(0.5)),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          width: widget.width * 2,
-                                        ),
-                                        Expanded(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      "       @${Notification.Name}",
-                                                      style: TextStyle(
-                                                        fontSize:
-                                                        widget.size *
-                                                            12.0,
-                                                        color: Colors.white54,
-                                                        fontWeight:
-                                                        FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                    Spacer(),
-                                                    Padding(
-                                                      padding:
-                                                      EdgeInsets.fromLTRB(
-                                                          widget.size * 8,
-                                                          widget.size * 1,
-                                                          widget.size *
-                                                              25,
-                                                          widget.size *
-                                                              1),
-                                                      child: Column(
-                                                        children: [
-                                                          Text(
-                                                            '${Notification.Time}',
-                                                            style: TextStyle(
-                                                              fontSize: widget
-                                                                  .size *
-                                                                  9.0,
-                                                              color: Colors
-                                                                  .white70,
-                                                              //   fontWeight: FontWeight.bold,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                if (Notification.description
-                                                    .split("@")
-                                                    .first ==
-                                                    "Forgot Password ")
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: widget.size * 8,
-                                                        bottom:
-                                                        widget.size * 6,
-                                                        right:
-                                                        widget.size * 3,
-                                                        top: widget.size * 3),
-                                                    child: Text(
-                                                      Notification.description
-                                                          .split("@")
-                                                          .first,
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                  )
-                                                else
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: widget.size * 8,
-                                                        bottom:
-                                                        widget.size * 6,
-                                                        right:
-                                                        widget.size * 3,
-                                                        top: widget.size * 3),
-                                                    child: NotificationText(
-                                                        Notification
-                                                            .description),
-                                                  ),
-                                                if (Notification.Url.length >
-                                                    10)
-                                                  Padding(
-                                                    padding: EdgeInsets.all(
-                                                        widget.size * 3.0),
-                                                    child: Image.network(
-                                                        Notification.Url),
-                                                  )
-                                              ],
-                                            ))
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                onLongPress: () {
-                                  final deleteFlashNews =
-                                  FirebaseFirestore.instance
-                                      .collection("user")
-                                      .doc(fullUserId())
-                                      .collection("Notification")
-                                      .doc(Notification.id);
-                                  deleteFlashNews.delete();
-                                  showToastText(
-                                      "Your Message Has Been Deleted");
-                                },
-                                onDoubleTap: () {
-                                  onChage(Notification.Name);
-                                },
-                              );
-                            },
-                            separatorBuilder: (context, index) =>
-                                SizedBox(
-                                  height: widget.height * 1,
-                                ));
-                      }
-                  }
-                }),
-          ],
+                                        "Your Message Has Been Deleted");
+                                  },
+                                  onDoubleTap: () {
+                                    onChage(Notification.Name);
+                                  },
+                                );
+                              },
+                              separatorBuilder: (context, index) => SizedBox(
+                                    height: widget.height * 1,
+                                  ));
+                        }
+                    }
+                  }),
+            ],
+          ),
         ),
-      ),
-      searchBar(
-        width: widget.width,
-        height: widget.height,
-        size: widget.size,
-        branch: widget.branch,
-        tabController: _tabController,
-        user: emailController,
-      )
-    ]));
-
+        searchBar(
+          width: widget.width,
+          height: widget.height,
+          size: widget.size,
+          branch: widget.branch,
+          tabController: _tabController,
+          user: emailController,
+        )
+      ]));
 }
 
 class searchBar extends StatefulWidget {
@@ -600,7 +572,6 @@ class _searchBarState extends State<searchBar> {
     super.dispose();
   }
 
-
   bool isExp = false;
   late String Url = "";
   final FirebaseStorage storage = FirebaseStorage.instance;
@@ -617,23 +588,26 @@ class _searchBarState extends State<searchBar> {
                 flex: 7,
                 child: currentIndex == 1
                     ? Padding(
-                        padding:  EdgeInsets.symmetric(
-                            horizontal: widget.size*10, vertical:widget.size* 5),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: widget.size * 10,
+                            vertical: widget.size * 5),
                         child: Container(
-                          height: widget.size*35,
+                          height: widget.size * 35,
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             border: Border.all(
                                 color: Colors.white.withOpacity(0.5)),
-                            borderRadius: BorderRadius.circular(widget.size*12),
+                            borderRadius:
+                                BorderRadius.circular(widget.size * 12),
                           ),
                           child: Padding(
-                            padding:   EdgeInsets.only(left: widget.size*10),
+                            padding: EdgeInsets.only(left: widget.size * 10),
                             child: TextField(
-                              style:
-                                  TextStyle(color: Colors.white, fontSize:widget.size* 18),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: widget.size * 18),
                               cursorColor: Colors.white,
-                              cursorHeight:widget.size* 10,
+                              cursorHeight: widget.size * 10,
                               controller: emailController,
                               textInputAction: TextInputAction.next,
                               decoration: InputDecoration(
@@ -654,7 +628,7 @@ class _searchBarState extends State<searchBar> {
                   //fit: FlexFit.tight,
                   child: isUser()
                       ? Padding(
-                          padding:   EdgeInsets.only(right: widget.size*10),
+                          padding: EdgeInsets.only(right: widget.size * 10),
                           child: InkWell(
                             child: AnimatedContainer(
                               duration: Duration(milliseconds: 300),
@@ -688,10 +662,11 @@ class _searchBarState extends State<searchBar> {
                                                     "Upload Photo",
                                                     style: TextStyle(
                                                         color: Colors.white,
-                                                        fontSize: widget.size*16),
+                                                        fontSize:
+                                                            widget.size * 16),
                                                   ),
                                                   SizedBox(
-                                                    width: widget.size*3,
+                                                    width: widget.size * 3,
                                                   ),
                                                   Icon(
                                                     Icons.upload,
@@ -734,39 +709,42 @@ class _searchBarState extends State<searchBar> {
             children: [
               Flexible(
                 flex: 7,
-                child: TextFieldContainer(child: TextField(
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                  cursorColor: Colors.white,
-                  cursorHeight: widget.size*20,
-                  controller: bodyController,
-                  maxLines: null,
-                  scrollPhysics:BouncingScrollPhysics(),
-                  textInputAction: TextInputAction.newline,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Enter Message ',
-                    hintStyle: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
+                child: TextFieldContainer(
+                  child: TextField(
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    cursorColor: Colors.white,
+                    cursorHeight: widget.size * 20,
+                    controller: bodyController,
+                    maxLines: null,
+                    scrollPhysics: BouncingScrollPhysics(),
+                    textInputAction: TextInputAction.newline,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Enter Message ',
+                      hintStyle: TextStyle(
+                        color: Colors.white.withOpacity(0.6),
+                      ),
                     ),
                   ),
-                ),),
+                ),
               ),
               Flexible(
                   flex: 2,
                   //fit: FlexFit.tight,
                   child: Padding(
-                    padding:   EdgeInsets.only(right:widget.size* 10),
+                    padding: EdgeInsets.only(right: widget.size * 10),
                     child: InkWell(
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(widget.size*15),
+                          borderRadius: BorderRadius.circular(widget.size * 15),
                           color: Colors.white.withOpacity(0.1),
                           border:
                               Border.all(color: Colors.white.withOpacity(0.1)),
                         ),
                         child: Padding(
-                          padding:  EdgeInsets.symmetric(
-                              horizontal:widget.size* 3,  vertical: widget.size*10),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: widget.size * 3,
+                              vertical: widget.size * 10),
                           child: Row(
                             children: [
                               Text(
@@ -775,7 +753,7 @@ class _searchBarState extends State<searchBar> {
                                     color: Colors.white, fontSize: 17),
                               ),
                               SizedBox(
-                                width: widget.size*3,
+                                width: widget.size * 3,
                               ),
                               Icon(
                                 Icons.send,
@@ -831,47 +809,44 @@ Future<bool> pushNotificationsSpecificDevice({
   return true;
 }
 
-Future<void> sendMessageToOwner(String message) async {
-  List list = ["sujithnimmala03@gmail.com","20b91a04h1@srkrec.ac.in"];
- for (String x in list){
-   FirebaseFirestore.instance
-       .collection("tokens")
-       .doc(x)
-       .get()
-       .then((DocumentSnapshot snapshot) {
-     if (snapshot.exists) {
-       var data = snapshot.data();
-       if (data != null && data is Map<String, dynamic>) {
-         String value = data['token'];
+Future<void> sendMessageToOwner(String id ,String message) async {
+  List list = ["sujithnimmala03@gmail.com"];//, "esrkr.app@gmail.com"
+  for (String x in list) {
+    FirebaseFirestore.instance
+        .collection("tokens")
+        .doc(x)
+        .get()
+        .then((DocumentSnapshot snapshot) {
+      if (snapshot.exists) {
+        var data = snapshot.data();
+        if (data != null && data is Map<String, dynamic>) {
+          String value = data['token'];
 
-         FirebaseFirestore.instance
-             .collection("user")
-             .doc(x)
-             .collection("Notification")
-             .doc(getID())
-             .set({
-           "id": getID(),
-           "name": fullUserId(),
-           "time": getDate(),
-           "description": message,
-         });
+          FirebaseFirestore.instance
+              .collection("user")
+              .doc(x)
+              .collection("Notification")
+              .doc(id)
+              .set({
+            "id": id,
+            "name": fullUserId(),
+            "description": message,
+          });
 
-
-         pushNotificationsSpecificDevice(
-           title: fullUserId(),
-           body: message,
-           token: value,
-         );
-       }
-     } else {
-       print("Document does not exist.");
-     }
-   }).catchError((error) {
-     print("An error occurred while retrieving data: $error");
-   });
- }
+          pushNotificationsSpecificDevice(
+            title: fullUserId(),
+            body: message,
+            token: value,
+          );
+        }
+      } else {
+        print("Document does not exist.");
+      }
+    }).catchError((error) {
+      print("An error occurred while retrieving data: $error");
+    });
+  }
 }
-
 
 Future<void> pushNotificationsSpecificPerson(
     String sendTo, String message, String url) async {
@@ -895,7 +870,7 @@ Future<void> pushNotificationsSpecificPerson(
             .set({
           "id": getID(),
           "Name": fullUserId(),
-          "Time": getDate(),
+          "Time": getID(),
           "Description": message,
           "Link": url
         });
@@ -907,7 +882,7 @@ Future<void> pushNotificationsSpecificPerson(
             .set({
           "id": getID(),
           "Name": fullUserId(),
-          "Time": getDate(),
+          "Time": getID(),
           "Description": message,
           "Link": url
         });
@@ -987,7 +962,7 @@ void SendMessageInBackground(String branch, String message, String url) async {
               .set({
             "id": getID(),
             "Name": "${fullUserId()}",
-            "Time": getDate(),
+            "Time": getID(),
             "Description": message,
             "Link": url
           });
@@ -1002,7 +977,7 @@ void SendMessageInBackground(String branch, String message, String url) async {
                 .set({
               "id": getID(),
               "Name": "${fullUserId()} (owner)",
-              "Time": getDate(),
+              "Time": getID(),
               "Description": message,
               "Link": url
             });
@@ -1042,7 +1017,7 @@ void SendMessageInBackground(String branch, String message, String url) async {
             .set({
           "id": getID(),
           "Name": "${fullUserId()}",
-          "Time": getDate(),
+          "Time": getID(),
           "Description": message,
           "Link": url
         });
@@ -1055,11 +1030,10 @@ void SendMessageInBackground(String branch, String message, String url) async {
           if (snapshot.exists) {
             var data = snapshot.data();
             if (data != null && data is Map<String, dynamic>) {
-              // Access the dictionary values
               String value = data['token'];
 
               pushNotificationsSpecificDevice(
-                title: "Alate Notification (All)",
+                title: "Alert Notification (All)",
                 body: message,
                 token: value,
               );
@@ -1111,7 +1085,6 @@ class NotificationService {
   Future showNotification(
       {int id = 0, String? title, String? body, String? payLoad}) async {
     final String notificationId = UniqueKey().toString();
-    showToastText("${notificationId}");
     return notificationsPlugin.show(id > 0 ? id : notificationId.hashCode,
         title, body, await notificationDetails());
   }
@@ -1157,14 +1130,13 @@ class NotificationsConvertor {
           Time: json["Time"]);
 }
 
-
-Future<void> downloadAllImages(BuildContext context, String branch, String reg) async {
-  List list= [];
+Future<void> downloadAllImages(
+    BuildContext context, String branch, String reg) async {
+  List list = [];
 
   final directory = await getApplicationDocumentsDirectory();
 
   String folderPath = directory.path;
-
 
   final CollectionReference updates =
       FirebaseFirestore.instance.collection("update");
@@ -1176,13 +1148,13 @@ Future<void> downloadAllImages(BuildContext context, String branch, String reg) 
 
       for (final document in documents) {
         final data = document.data() as Map<String, dynamic>;
-        if (data["photoUrl"].length > 3) {
-          final Uri uri = Uri.parse(data["photoUrl"]);
+        if (data["image"].length > 3) {
+          final Uri uri = Uri.parse(data["image"]);
           final String fileName = uri.pathSegments.last;
           var name = fileName.split("/").last;
           final file = await File("${folderPath}/updates/$name");
           if (!file.existsSync()) {
-            list.add(data["photoUrl"]+";"+"updates");
+            list.add(data["image"] + ";" + "updates");
           }
         }
       }
@@ -1205,14 +1177,13 @@ Future<void> downloadAllImages(BuildContext context, String branch, String reg) 
 
       for (final document in documents) {
         final data = document.data() as Map<String, dynamic>;
-        if (data["Photo Url"].length > 3) {
-          final Uri uri = Uri.parse(data["Photo Url"]);
+        if (data["image"].length > 3) {
+          final Uri uri = Uri.parse(data["image"]);
           final String fileName = uri.pathSegments.last;
           var name = fileName.split("/").last;
-          final file =
-              await File("${folderPath}/news/$name");
+          final file = await File("${folderPath}/news/$name");
           if (!file.existsSync()) {
-            list.add(data["Photo Url"]+";"+"news");
+            list.add(data["image"] + ";" + "news");
           }
         }
       }
@@ -1234,14 +1205,13 @@ Future<void> downloadAllImages(BuildContext context, String branch, String reg) 
 
       for (final document in documents) {
         final data = document.data() as Map<String, dynamic>;
-        if (data["Photo Url"].length > 3) {
-          final Uri uri = Uri.parse(data["Photo Url"]);
+        if (data["image"].length > 3) {
+          final Uri uri = Uri.parse(data["image"]);
           final String fileName = uri.pathSegments.last;
           var name = fileName.split("/").last;
-          final file = await File(
-              "${folderPath}/subjects/$name");
+          final file = await File("${folderPath}/subjects/$name");
           if (!file.existsSync()) {
-            list.add(data["Photo Url"]+";"+"subjects");
+            list.add(data["image"] + ";" + "subjects");
           }
         }
       }
@@ -1263,14 +1233,13 @@ Future<void> downloadAllImages(BuildContext context, String branch, String reg) 
       final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
       for (final document in documents) {
         final data = document.data() as Map<String, dynamic>;
-        if (data["Photo Url"].length > 3) {
-          final Uri uri = Uri.parse(data["Photo Url"]);
+        if (data["image"].length > 3) {
+          final Uri uri = Uri.parse(data["image"]);
           final String fileName = uri.pathSegments.last;
           var name = fileName.split("/").last;
-          final file = await File(
-              "${folderPath}/labsubjects/$name");
+          final file = await File("${folderPath}/labsubjects/$name");
           if (!file.existsSync()) {
-            list.add(data["Photo Url"]+";"+"labsubjects");
+            list.add(data["image"] + ";" + "labsubjects");
           }
         }
       }
@@ -1292,15 +1261,13 @@ Future<void> downloadAllImages(BuildContext context, String branch, String reg) 
       final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
       for (final document in documents) {
         final data = document.data() as Map<String, dynamic>;
-        if (data["Photo Url"].length > 3) {
-          final Uri uri = Uri.parse(data["Photo Url"]);
+        if (data["image"].length > 3) {
+          final Uri uri = Uri.parse(data["image"]);
           final String fileName = uri.pathSegments.last;
           var name = fileName.split("/").last;
-          final file =
-              await File("${folderPath}/books/$name");
+          final file = await File("${folderPath}/books/$name");
           if (!file.existsSync()) {
-            list.add(data["Photo Url"]+";"+"books");
-
+            list.add(data["image"] + ";" + "books");
           }
         }
       }
@@ -1310,33 +1277,26 @@ Future<void> downloadAllImages(BuildContext context, String branch, String reg) 
   } catch (e) {
     print('Error: $e');
   }
-  if(list.isNotEmpty){
+  if (list.isNotEmpty) {
     await showDialog(
       context: context,
       builder: (context) => ImageDownloadScreen(
-
         images: list,
-
       ),
     );
   }
-
-
 }
 
 class ImageDownloadScreen extends StatefulWidget {
   List images;
 
-  ImageDownloadScreen(
-      {Key? key,required this.images})
-      : super(key: key);
+  ImageDownloadScreen({Key? key, required this.images}) : super(key: key);
+
   @override
   _ImageDownloadScreenState createState() => _ImageDownloadScreenState();
 }
 
 class _ImageDownloadScreenState extends State<ImageDownloadScreen> {
-
-
   int totalImages = 0;
   int downloadedImages = 0;
   double overallProgress = 0.0;
@@ -1363,7 +1323,8 @@ class _ImageDownloadScreenState extends State<ImageDownloadScreen> {
       }
       final response = await http.get(Uri.parse(url.split(";").first));
       final documentDirectory = await getApplicationDocumentsDirectory();
-      final newDirectory = Directory('${documentDirectory.path}/${url.split(";").last}');
+      final newDirectory =
+          Directory('${documentDirectory.path}/${url.split(";").last}');
       if (!await newDirectory.exists()) {
         await newDirectory.create(recursive: true);
       }
@@ -1382,7 +1343,6 @@ class _ImageDownloadScreenState extends State<ImageDownloadScreen> {
     Navigator.of(context).pop();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -1398,9 +1358,20 @@ class _ImageDownloadScreenState extends State<ImageDownloadScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Just A Movement',style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w600),),
-            SizedBox(height: 8,),
-            Text('...downloading image $downloadedImages of $totalImages',style: TextStyle(color: Colors.white,fontSize: 18),),
+            Text(
+              'Just A Movement',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 25,
+                  fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Text(
+              '...downloading image $downloadedImages of $totalImages',
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
             LinearProgressIndicator(
               value: overallProgress,
             ),
@@ -1411,9 +1382,7 @@ class _ImageDownloadScreenState extends State<ImageDownloadScreen> {
   }
 }
 
-
 void showNotification(int count) {
-
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(

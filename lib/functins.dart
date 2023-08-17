@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, deprecated_member_use
 
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,9 +16,8 @@ import 'notification.dart';
 
 class Constants {
   static final String BASE_URL = 'https://fcm.googleapis.com/fcm/send';
-  static final String KEY_SERVER =
-      'AAAA9CTzPoM:APA91bHTk4DcD6fSCJh-EaGH7KreA92u9kpri6o6Sl8euReOgCduR7595Eup4SYfGH6xg1tSaXcZ659kJlQ-ae48H66Ufx-a2xNLl4rlho4EI2A1grpmmuU0JbIsT_Fu7KndWzyDFz9C';
-  static final String SENDER_ID = '1048591941251';
+  static final String KEY_SERVER = "AAAA1ML43hQ:APA91bHaPKvO5LrkitzMFrPoBUAJcus5ZwEkciqDDu_FN1XZhRCFrD29VbfS93EeTjXb7FkF608p6_5nWvPgUyIZnxz1Igf_emP3hPvVvlutv7SdDjSJQPuezvQMELom3SXzUQ5PmJ2p	";
+  static final String SENDER_ID = '913804156436	';
 }
 
 Future<void> sendingMails(String urlIn) async {
@@ -56,14 +55,6 @@ double size(BuildContext context) {
 
 
 
-String getDate() {
-
-
-  var now = new DateTime.now();
-  var formatter = new DateFormat('dd-MM-yyyy');
-  String formattedDate = formatter.format(now);
-  return formattedDate;
-}
 
 String getID() {
 
@@ -97,6 +88,7 @@ Future<void> showToastText(String message) async {
   Fluttertoast.showToast(
     msg: message,
     fontSize: 18,
+    timeInSecForIosWeb: 3
   );
 }
 class backButton extends StatefulWidget {

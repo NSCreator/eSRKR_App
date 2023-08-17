@@ -399,7 +399,7 @@ class _settingsState extends State<settings> {
             index: widget.index,
           ),
           ImageScreen(size:widget.size ,branch: widget.branch,),
-          if (isUser())
+
             Padding(
               padding: EdgeInsets.symmetric(
                   vertical: widget.size * 20,

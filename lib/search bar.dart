@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:srkr_study_app/HomePage.dart';
 import 'package:srkr_study_app/TextField.dart';
+import 'package:srkr_study_app/settings.dart';
 import 'SubPages.dart';
 
 class MyAppq extends StatefulWidget {
@@ -102,14 +104,16 @@ class _MyAppqState extends State<MyAppq> {
                       var data = snapshots
                           .data!.docs[index]
                           .data() as Map<String, dynamic>;
-                      final Uri uri =
-                      Uri.parse(data["Photo Url"]);
-                      final String fileName =
-                          uri.pathSegments.last;
-                      var filename =
-                          fileName.split("/").last;
-                      final file = File(
-                          "${folderPath}/subjects/$filename");
+                if(data["image"].toString().isNotEmpty){
+                  final Uri uri =
+                  Uri.parse(data["image"]);
+                  final String fileName =
+                      uri.pathSegments.last;
+                  var filename =
+                      fileName.split("/").last;
+                  final file = File(
+                      "${folderPath}/subjects/$filename");
+                }
                       if (name.isEmpty) {
                         return Padding(
                           padding: EdgeInsets.only(
@@ -174,7 +178,7 @@ class _MyAppqState extends State<MyAppq> {
                                               .start,
                                           children: [
                                             Text(
-                                              data['Heading'],
+                                              data['heading'],
                                               style:
                                               TextStyle(
                                                 fontSize:
@@ -194,7 +198,7 @@ class _MyAppqState extends State<MyAppq> {
                                             ),
                                             Text(
                                               data[
-                                              'Description'],
+                                              'description'],
                                               style:
                                               TextStyle(
                                                 fontSize:
@@ -220,9 +224,8 @@ class _MyAppqState extends State<MyAppq> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           subjectUnitsData(
-                                            date: "2012",
-                                            reg: "",
-                                            pdfs: 0,
+                                            reg: data[
+                                            "regulation"],
 
                                             size: widget
                                                 .size,
@@ -233,21 +236,21 @@ class _MyAppqState extends State<MyAppq> {
                                             mode:
                                             "Subjects",
                                             name: data[
-                                            "Heading"],
+                                            "heading"],
                                             fullName: data[
-                                            'Description'],
+                                            'description'],
                                             photoUrl: data[
-                                            'Photo Url'],
+                                            'image'],
                                           )));
                             },
                           ),
                         );
                       }
-                      if (data['Heading']
+                      if (data['heading']
                           .toString()
                           .toLowerCase()
                           .startsWith(
-                          name.toLowerCase())|| data['Description']
+                          name.toLowerCase())|| data['description']
                           .toString()
                           .toLowerCase()
                           .startsWith(
@@ -315,7 +318,7 @@ class _MyAppqState extends State<MyAppq> {
                                               .start,
                                           children: [
                                             Text(
-                                              data['Heading'],
+                                              data['heading'],
                                               style:
                                               TextStyle(
                                                 fontSize:
@@ -335,7 +338,7 @@ class _MyAppqState extends State<MyAppq> {
                                             ),
                                             Text(
                                               data[
-                                              'Description'],
+                                              'description'],
                                               style:
                                               TextStyle(
                                                 fontSize:
@@ -361,9 +364,8 @@ class _MyAppqState extends State<MyAppq> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           subjectUnitsData(
-                                            date: "2012",
-                                            reg: "kh",
-                                            pdfs: 0,
+                                            reg: data[
+                                            "regulation"],
 
                                             size: widget
                                                 .size,
@@ -374,11 +376,11 @@ class _MyAppqState extends State<MyAppq> {
                                             mode:
                                             "Subjects",
                                             name: data[
-                                            "Heading"],
+                                            "heading"],
                                             fullName: data[
-                                            'Description'],
+                                            'description'],
                                             photoUrl: data[
-                                            'Photo Url'],
+                                            'image'],
                                           )));
                             },
                           ),
@@ -436,14 +438,16 @@ class _MyAppqState extends State<MyAppq> {
                       var data = snapshots
                           .data!.docs[index]
                           .data() as Map<String, dynamic>;
-                      final Uri uri =
-                      Uri.parse(data["Photo Url"]);
-                      final String fileName =
-                          uri.pathSegments.last;
-                      var filename =
-                          fileName.split("/").last;
-                      final file = File(
-                          "${folderPath}/labsubjects/$filename");
+                      if(data["image"].toString().isNotEmpty){
+                        final Uri uri =
+                        Uri.parse(data["image"]);
+                        final String fileName =
+                            uri.pathSegments.last;
+                        var filename =
+                            fileName.split("/").last;
+                        final file = File(
+                            "${folderPath}/labsubjects/$filename");
+                      }
                       if (name.isEmpty) {
                         return Padding(
                           padding: EdgeInsets.only(
@@ -508,7 +512,7 @@ class _MyAppqState extends State<MyAppq> {
                                               .start,
                                           children: [
                                             Text(
-                                              data['Heading'],
+                                              data['heading'],
                                               style:
                                               TextStyle(
                                                 fontSize:
@@ -528,7 +532,7 @@ class _MyAppqState extends State<MyAppq> {
                                             ),
                                             Text(
                                               data[
-                                              'Description'],
+                                              'description'],
                                               style:
                                               TextStyle(
                                                 fontSize:
@@ -559,9 +563,8 @@ class _MyAppqState extends State<MyAppq> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           subjectUnitsData(
-                                            date: "2012",
-                                            reg: "fghg",
-                                            pdfs: 0,
+                                            reg: data[
+                                            'regulation'],
 
                                             size: widget
                                                 .size,
@@ -572,21 +575,21 @@ class _MyAppqState extends State<MyAppq> {
                                             mode:
                                             "LabSubjects",
                                             name: data[
-                                            "Heading"],
+                                            "heading"],
                                             fullName: data[
-                                            'Description'],
+                                            'description'],
                                             photoUrl: data[
-                                            'Photo Url'],
+                                            'image'],
                                           )));
                             },
                           ),
                         );
                       }
-                      if (data['Heading']
+                      if (data['heading']
                           .toString()
                           .toLowerCase()
                           .startsWith(
-                          name.toLowerCase())|| data['Description']
+                          name.toLowerCase())|| data['description']
                           .toString()
                           .toLowerCase()
                           .startsWith(
@@ -654,7 +657,7 @@ class _MyAppqState extends State<MyAppq> {
                                               .start,
                                           children: [
                                             Text(
-                                              data['Heading'],
+                                              data['heading'],
                                               style:
                                               TextStyle(
                                                 fontSize:
@@ -674,7 +677,7 @@ class _MyAppqState extends State<MyAppq> {
                                             ),
                                             Text(
                                               data[
-                                              'Description'],
+                                              'description'],
                                               style:
                                               TextStyle(
                                                 fontSize:
@@ -700,9 +703,10 @@ class _MyAppqState extends State<MyAppq> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           subjectUnitsData(
-                                            date: "2012",
-                                            reg: "hgd",
-                                            pdfs: 0,
+
+                                            reg: data[
+                                            "regulation"],
+
 
                                             size: widget
                                                 .size,
@@ -713,11 +717,11 @@ class _MyAppqState extends State<MyAppq> {
                                             mode:
                                             "LabSubjects",
                                             name: data[
-                                            "Heading"],
+                                            "heading"],
                                             fullName: data[
-                                            'Description'],
+                                            'description'],
                                             photoUrl: data[
-                                            'Photo Url'],
+                                            'image'],
                                           )));
                             },
                           ),
@@ -953,7 +957,8 @@ class _MyAppqState extends State<MyAppq> {
                 },
               ),
               Flexible(
-                child: TextFieldContainer(child: TextField(
+                child: TextFieldContainer(child:
+                TextField(
                   onChanged: (val) {
                     setState(() {
                       name = val;
@@ -983,3 +988,5 @@ class _MyAppqState extends State<MyAppq> {
     ],
   ));
 }
+
+

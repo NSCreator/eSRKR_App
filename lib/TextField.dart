@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -509,10 +511,13 @@ class _updateCreatorState extends State<updateCreator> {
                           .update({
                         "heading": MessageController.text.trim(),
                         "link": LinkController.text.trim(),
-                        "photoUrl": PhotoUrlController.text
+                        "image": PhotoUrlController.text,
+                        "description":subMessageController.text
                       });
                     } else {
+                      String id =  getID();
                       createHomeUpdate(
+                        id: id,
                           branch: Branch,
                           description: subMessageController.text,
                           heading: MessageController.text,
@@ -521,8 +526,11 @@ class _updateCreatorState extends State<updateCreator> {
                               : " ",
                           link: LinkController.text);
 
-                      SendMessage("Update", MessageController.text, "");
+                      SendMessage("Update;$id",MessageController.text.trim(),widget.branch );
+
                     }
+
+
                     MessageController.clear();
                     LinkController.clear();
                     PhotoUrlController.clear();
@@ -927,25 +935,26 @@ class _NewsCreatorState extends State<NewsCreator> {
                 InkWell(
                   onTap: () {
                     if (widget.NewsId.length > 3) {
-                      // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
                       FirebaseFirestore.instance
                           .collection(widget.branch)
                           .doc("${widget.branch}News")
                           .collection("${widget.branch}News")
                           .doc(widget.NewsId)
                           .update({
-                        "Heading": HeadingController.text.trim(),
-                        "Description": DescriptionController.text.trim(),
-                        "Photo Url": PhotoUrlController.text.trim()
+                        "heading": HeadingController.text.trim(),
+                        "description": DescriptionController.text.trim(),
+                        "image": PhotoUrlController.text.trim()
                       });
                     } else {
+                      String id= getID();
                       createBranchNew(
                           branch: widget.branch,
                           heading: HeadingController.text.trim(),
                           description: DescriptionController.text.trim(),
-                          photoUrl: PhotoUrlController.text);
-                      SendMessage("${HeadingController.text} News",
-                          DescriptionController.text, widget.branch);
+                          photoUrl: PhotoUrlController.text, id: id);
+
+                      SendMessage("News;$id",HeadingController.text.trim(),widget.branch );
+
                     }
                     HeadingController.clear();
                     DescriptionController.clear();
@@ -1434,10 +1443,10 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             .collection("Subjects")
                             .doc(widget.Id)
                             .update({
-                          "Heading": HeadingController.text.trim(),
-                          "Description": DescriptionController.text.trim(),
-                          "Photo Url": PhotoUrlController.text,
-                          "reg":reg
+                          "heading": HeadingController.text.trim(),
+                          "description": DescriptionController.text.trim(),
+                          "image": PhotoUrlController.text,
+                          "regulation":reg
                         });
                       } else {
                         FirebaseFirestore.instance
@@ -1446,10 +1455,10 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
                             .collection("LabSubjects")
                             .doc(widget.Id)
                             .update({
-                          "Heading": HeadingController.text.trim(),
-                          "Description": DescriptionController.text.trim(),
-                          "Photo Url": PhotoUrlController.text,
-                          "reg":reg
+                          "heading": HeadingController.text.trim(),
+                          "description": DescriptionController.text.trim(),
+                          "image": PhotoUrlController.text,
+                          "regulation":reg
 
                         });
                       }
@@ -1852,12 +1861,12 @@ class _BooksCreatorState extends State<BooksCreator> {
                           .collection("CoreBooks")
                           .doc(widget.id)
                           .update({
-                        "Heading": HeadingController.text.trim(),
-                        "Edition": EditionController.text.trim(),
-                        "Author": AuthorController.text.trim(),
-                        "Link": LinkController.text.trim(),
-                        "Description": DescriptionController.text.trim(),
-                        "Photo Url": PhotoUrlController.text.trim()
+                        "heading": HeadingController.text.trim(),
+                        "edition": EditionController.text.trim(),
+                        "author": AuthorController.text.trim(),
+                        "link": LinkController.text.trim(),
+                        "description": DescriptionController.text.trim(),
+                        "image": PhotoUrlController.text.trim()
                       });
                     } else {
                       createBook(
