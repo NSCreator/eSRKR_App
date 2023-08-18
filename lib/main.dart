@@ -262,53 +262,50 @@ class _yearsState extends State<years> {
                   } else {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 2,
-                              width: 30,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListView.builder(
-                                physics: const BouncingScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: user!.length,
-                                itemBuilder: (context, int index) {
-                                  final SubjectsData = user[index];
-                                  return Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(3.0),
-                                      child: InkWell(
-                                        child: Text(
-                                          SubjectsData.id,
-                                          style: TextStyle(
-                                              color: Colors.lightGreenAccent,
-                                              fontSize: 30),
-                                        ),
-                                        onTap: () {
-                                          FirebaseFirestore.instance
-                                              .collection("user")
-                                              .doc(fullUserId())
-                                              .update({"reg": SubjectsData.id});
-                                        },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 2,
+                            width: 30,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: user!.length,
+                              itemBuilder: (context, int index) {
+                                final SubjectsData = user[index];
+                                return Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(3.0),
+                                    child: InkWell(
+                                      child: Text(
+                                        SubjectsData.id,
+                                        style: TextStyle(
+                                            color: Colors.lightGreenAccent,
+                                            fontSize: 30),
                                       ),
+                                      onTap: () {
+                                        FirebaseFirestore.instance
+                                            .collection("user")
+                                            .doc(fullUserId())
+                                            .update({"reg": SubjectsData.id});
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
+                                      },
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                );
+                              },
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     );
                   }

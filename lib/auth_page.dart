@@ -242,8 +242,7 @@ class _LoginPageState extends State<LoginPage> {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text.trim().toLowerCase(),
           password: passwordController.text.trim());
-      NotificationService()
-          .showNotification(title: "Welcome back to eSRKR!", body: null);
+
       updateToken();
     } on FirebaseException catch (e) {
       showToastText(e.message as String);
@@ -251,27 +250,6 @@ class _LoginPageState extends State<LoginPage> {
     }
     Navigator.pop(context);
   }
-
-// Future resetPassword() async {
-//   showDialog(
-//       context: context,
-//       barrierDismissible: false,
-//       builder: (context) => Center(
-//         child: CircularProgressIndicator(),
-//       ));
-//   try {
-//     await FirebaseAuth.instance
-//         .sendPasswordResetEmail(email: emailController.text.trim());
-//     NotificationService().showNotification(
-//         title: "Reset Password", body: "Reset Link is Send To Your Email");
-//     Utils.showSnackBar("Password Reset Email Sent");
-//   } on FirebaseAuthException catch (e) {
-//     print(e);
-//     Utils.showSnackBar(e.message);
-//   }
-//   Navigator.pop(context);
-//   return Navigator.pop(context);
-// }
 }
 
 class createNewUser extends StatefulWidget {
@@ -372,6 +350,7 @@ class _createNewUserState extends State<createNewUser> {
                     ),
                   ),
                   onTap: () async {
+                    otp = generateCode();
                     if (isSend) {
                       if (otp == otpController.text) {
                         isTrue = true;
@@ -381,7 +360,7 @@ class _createNewUserState extends State<createNewUser> {
                     } else {
                       var email = emailController.text.trim().split('@');
                       if (email[1] == 'srkrec.ac.in') {
-                        otp = generateCode();
+
                         FirebaseFirestore.instance
                             .collection("tempRegisters")
                             .doc(emailController.text)
@@ -403,12 +382,31 @@ class _createNewUserState extends State<createNewUser> {
                         } else {
                           branch = 'None';
                         }
-                        sendMessageToOwner(emailController.text+getID(), "Otp : $otp");
+                        // pushNotificationsSpecificPerson(
+                        //     "sujithnimmala03@gmail.com",
+                        //     emailController.text + getID()+ "Otp : $otp",
+                        //     "");
+
                         otp;
-                        isSend = true;
+
                       } else {
+
+                        if (emailController.text.split('@').last == 'gmail.com') {
+                          showToastText("OTP is Not Sent to Email");
+                          FirebaseFirestore.instance
+                              .collection("tempRegisters")
+                              .doc(emailController.text)
+                              .set({"email": emailController.text, "opt": otp});
+
+                          pushNotificationsToOwner(
+
+                              emailController.text + "'s Otp : $otp",
+                          );
+
+                        }else
                         showToastText("Please Enter Correct Email ID");
                       }
+                      isSend = true;
                     }
 
                     setState(() {

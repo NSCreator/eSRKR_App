@@ -268,16 +268,9 @@ Future<void> updateToken() async {
       .doc(fullUserId())
       .set({"id": fullUserId(), "token": token, "branch": ""});
   NotificationService()
-      .showNotification(title: "Message Token is Updated", body: null);
+      .showNotification(title: "Welcome back to eSRKR!",body: "Message Token is Updated");
 }
 
-void like(bool isAdd, String updateId) {
-  FirebaseFirestore.instance.collection("update").doc(updateId).update({
-    "likedBy": isAdd
-        ? FieldValue.arrayUnion([fullUserId()])
-        : FieldValue.arrayRemove([fullUserId()]),
-  });
-}
 
 class downloadAllPdfs extends StatefulWidget {
   String branch,SubjectID;
@@ -338,8 +331,8 @@ class _downloadAllPdfsState extends State<downloadAllPdfs> {
         });
         for (final document in documents) {
           final data = document.data() as Map<String, dynamic>;
-          if (data["PDFLink"].length > 3) {
-           await download(data["PDFLink"],"pdfs" );
+          if (data["link"].length > 3) {
+           await download(data["link"],"pdfs" );
            setState(() {
              totalDownloadingCount++;
              _updateProgress(totalDownloadingCount,totalDownloadedCount);

@@ -74,6 +74,178 @@ class _TextFieldContainerState extends State<TextFieldContainer> {
   }
 }
 
+class flashNewsCreator extends StatefulWidget {
+  String NewsId;
+  String heading;
+  String link;
+  final double size;
+  flashNewsCreator(
+      {this.NewsId = "",
+        this.link = '',
+        this.heading = "",
+        required this.size,
+      });
+
+  @override
+  State<flashNewsCreator> createState() => _flashNewsCreatorState();
+}
+
+class _flashNewsCreatorState extends State<flashNewsCreator> {
+
+  final HeadingController = TextEditingController();
+
+  final LinkController = TextEditingController();
+
+  void AutoFill() async {
+    HeadingController.text = widget.heading;
+    LinkController.text = widget.link;
+  }
+
+  @override
+  void initState() {
+    AutoFill();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    HeadingController.dispose();
+    LinkController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return backGroundImage(
+
+    child: SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          backButton(size: widget.size,text: "Flash News Creator",),
+          TextFieldContainer(heading: "Heading",
+              child: Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: TextFormField(
+              controller: HeadingController,
+              textInputAction: TextInputAction.next,
+              maxLines: null,
+              style: TextStyle(color: Colors.white,fontSize: 20),
+              decoration: InputDecoration(
+                hintStyle: TextStyle(color: Colors.white54),
+                border: InputBorder.none,
+                hintText: 'Heading',
+              ),
+            ),
+          )),
+
+          TextFieldContainer(heading: "Link",
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: TextFormField(
+                  //obscureText: true,
+                  controller: LinkController,
+                  textInputAction: TextInputAction.next,
+                  maxLines: null,
+                  style: TextStyle(color: Colors.white,fontSize: 20),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Description or Full name',
+                    hintStyle: TextStyle(color: Colors.white54)
+                  ),
+                ),
+              )),
+
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[500],
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.white),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 5, bottom: 5),
+                    child: Text("Back..."),
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  if (widget.NewsId.length > 3) {
+                    // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
+                    FirebaseFirestore.instance
+                        .collection("srkrPage")
+                        .doc("flashNews").collection("flashNews").doc(widget.NewsId)
+                        .update({
+                      "heading": HeadingController.text.trim(),
+                      "link": LinkController.text.trim(),
+                    });
+                  } else {
+                    String id =  getID();
+                    FirebaseFirestore.instance
+                        .collection("srkrPage")
+                        .doc("flashNews").collection("flashNews").doc(id)
+                        .set({
+                      "id":id,
+                      "heading": HeadingController.text.trim(),
+                      "link": LinkController.text.trim(),
+                    });
+                    SendMessage("flashNews;$id",HeadingController.text.trim(),"None");
+
+                  }
+
+
+                  HeadingController.clear();
+                  LinkController.clear();
+
+                  Navigator.pop(context);
+                },
+                child: widget.NewsId.length < 3
+                    ? Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[500],
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.white),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 5, bottom: 5),
+                    child: Text("Create"),
+                  ),
+                )
+                    : Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[500],
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.white),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 5, bottom: 5),
+                    child: Text("Update"),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 15,
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),);
+  }
+}
 
 class updateCreator extends StatefulWidget {
   String NewsId;
@@ -1361,55 +1533,55 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
             SizedBox(
               height: 20,
             ),
-            StreamBuilder<List<RegulationConvertor>>(
-                stream: readRegulation(widget.branch),
-                builder: (context, snapshot) {
-                  final unit = snapshot.data;
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 0.3,
-                            color: Colors.cyan,
-                          ));
-                    default:
-                      if (snapshot.hasError) {
-                        return const Center(
-                            child: Text(
-                                'Error with TextBooks Data or\n Check Internet Connection',style: TextStyle(color: Colors.white),));
-                      } else {
-                        showToastText("${widget.branch}");
-                        return SizedBox(
-                          height: 30,
-                          child: ListView.separated(
-                            physics: const BouncingScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: unit!.length, // Display only top 5 items
-                            itemBuilder: (context, int index) {
-                              return InkWell(
-                                child: Container(
-                                    decoration: BoxDecoration(
-
-                                        color: reg==unit[index].id?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(10)
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
-                                      child: Text(unit[index].id,style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
-                                    )),
-                                onTap: (){
-                                  setState(() {
-                                    reg = unit[index].id;
-                                  });
-                                },
-                              );
-                            },
-                            separatorBuilder: (context,index)=>SizedBox(width: 5,),),
-                        );
-
-                      }
-                  }
-                }),
+            // StreamBuilder<List<RegulationConvertor>>(
+            //     stream: readRegulation(widget.branch),
+            //     builder: (context, snapshot) {
+            //       final unit = snapshot.data;
+            //       switch (snapshot.connectionState) {
+            //         case ConnectionState.waiting:
+            //           return const Center(
+            //               child: CircularProgressIndicator(
+            //                 strokeWidth: 0.3,
+            //                 color: Colors.cyan,
+            //               ));
+            //         default:
+            //           if (snapshot.hasError) {
+            //             return const Center(
+            //                 child: Text(
+            //                     'Error with TextBooks Data or\n Check Internet Connection',style: TextStyle(color: Colors.white),));
+            //           } else {
+            //             showToastText("${widget.branch}");
+            //             return SizedBox(
+            //               height: 30,
+            //               child: ListView.separated(
+            //                 physics: const BouncingScrollPhysics(),
+            //                 scrollDirection: Axis.horizontal,
+            //                 itemCount: unit!.length, // Display only top 5 items
+            //                 itemBuilder: (context, int index) {
+            //                   return InkWell(
+            //                     child: Container(
+            //                         decoration: BoxDecoration(
+            //
+            //                             color: reg==unit[index].id?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
+            //                             borderRadius: BorderRadius.circular(10)
+            //                         ),
+            //                         child: Padding(
+            //                           padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+            //                           child: Text(unit[index].id,style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
+            //                         )),
+            //                     onTap: (){
+            //                       setState(() {
+            //                         reg = unit[index].id;
+            //                       });
+            //                     },
+            //                   );
+            //                 },
+            //                 separatorBuilder: (context,index)=>SizedBox(width: 5,),),
+            //             );
+            //
+            //           }
+            //       }
+            //     }),
             Row(
               children: [
                 Spacer(),

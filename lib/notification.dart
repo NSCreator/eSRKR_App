@@ -250,7 +250,7 @@ class _notificationsState extends State<notifications>
                                                     child: Column(
                                                       children: [
                                                         Text(
-                                                          '${Notification.Time}',
+                                                          '${Notification.id}',
                                                           style: TextStyle(
                                                             fontSize:
                                                                 widget.size *
@@ -314,7 +314,7 @@ class _notificationsState extends State<notifications>
                   }),
               StreamBuilder<List<NotificationsConvertor>>(
                   stream: readNotifications(
-                      c0: "user", d0: fullUserId(), c1: "Notification"),
+                      c0: "user", d0:fullUserId(), c1: "Notification"),
                   builder: (context, snapshot) {
                     final Notifications = snapshot.data;
                     switch (snapshot.connectionState) {
@@ -328,7 +328,7 @@ class _notificationsState extends State<notifications>
                         if (snapshot.hasError) {
                           return const Center(
                               child: Text(
-                                  'Error with TextBooks Data or\n Check Internet Connection'));
+                                  'Error with Notifications or\n Check Internet Connection'));
                         } else {
                           return ListView.separated(
                               physics: const BouncingScrollPhysics(),
@@ -425,7 +425,7 @@ class _notificationsState extends State<notifications>
                                                     child: Column(
                                                       children: [
                                                         Text(
-                                                          '${Notification.Time}',
+                                                          '${Notification.id}',
                                                           style: TextStyle(
                                                             fontSize:
                                                                 widget.size *
@@ -544,6 +544,7 @@ class _searchBarState extends State<searchBar> {
   late TextEditingController emailController;
   final TextEditingController bodyController = TextEditingController();
   late TabController _tabController;
+  int currentIndex =0;
 
   @override
   void initState() {
@@ -563,7 +564,6 @@ class _searchBarState extends State<searchBar> {
       currentIndex = _tabController.index;
     });
 
-    print('Current Tab Index: $currentIndex');
   }
 
   @override
@@ -808,44 +808,44 @@ Future<bool> pushNotificationsSpecificDevice({
   );
   return true;
 }
+Future<void> pushNotificationsToOwner(
+    String message) async {
+  FirebaseFirestore.instance
+      .collection("tokens")
+      .doc(
+      "sujithnimmala03@gmail.com")
+      .get()
+      .then((DocumentSnapshot snapshot) {
+    if (snapshot.exists) {
+      var data = snapshot.data();
+      if (data != null && data is Map<String, dynamic>) {
+        // Access the dictionary values
+        String value = data['token'];
 
-Future<void> sendMessageToOwner(String id ,String message) async {
-  List list = ["sujithnimmala03@gmail.com"];//, "esrkr.app@gmail.com"
-  for (String x in list) {
-    FirebaseFirestore.instance
-        .collection("tokens")
-        .doc(x)
-        .get()
-        .then((DocumentSnapshot snapshot) {
-      if (snapshot.exists) {
-        var data = snapshot.data();
-        if (data != null && data is Map<String, dynamic>) {
-          String value = data['token'];
+        FirebaseFirestore.instance
+            .collection("user")
+            .doc("sujithnimmala03@gmail.com")
+            .collection("Notification")
+            .doc(getID())
+            .set({
+          "id": getID(),
+          "Name": "sujithnimmala03@gmail.com",
+          "Description": message,
+          "Link": ""
+        });
 
-          FirebaseFirestore.instance
-              .collection("user")
-              .doc(x)
-              .collection("Notification")
-              .doc(id)
-              .set({
-            "id": id,
-            "name": fullUserId(),
-            "description": message,
-          });
-
-          pushNotificationsSpecificDevice(
-            title: fullUserId(),
-            body: message,
-            token: value,
-          );
-        }
-      } else {
-        print("Document does not exist.");
+        pushNotificationsSpecificDevice(
+          title: "sujithnimmala03@gmail.com",
+          body: message,
+          token: value,
+        );
       }
-    }).catchError((error) {
-      print("An error occurred while retrieving data: $error");
-    });
-  }
+    } else {
+      print("Document does not exist.");
+    }
+  }).catchError((error) {
+    print("An error occurred while retrieving data: $error");
+  });
 }
 
 Future<void> pushNotificationsSpecificPerson(
@@ -853,7 +853,7 @@ Future<void> pushNotificationsSpecificPerson(
   FirebaseFirestore.instance
       .collection("tokens")
       .doc(
-          sendTo) // Replace "documentId" with the ID of the document you want to retrieve
+          sendTo)
       .get()
       .then((DocumentSnapshot snapshot) {
     if (snapshot.exists) {
@@ -870,7 +870,7 @@ Future<void> pushNotificationsSpecificPerson(
             .set({
           "id": getID(),
           "Name": fullUserId(),
-          "Time": getID(),
+
           "Description": message,
           "Link": url
         });
@@ -882,7 +882,6 @@ Future<void> pushNotificationsSpecificPerson(
             .set({
           "id": getID(),
           "Name": fullUserId(),
-          "Time": getID(),
           "Description": message,
           "Link": url
         });
@@ -962,12 +961,11 @@ void SendMessageInBackground(String branch, String message, String url) async {
               .set({
             "id": getID(),
             "Name": "${fullUserId()}",
-            "Time": getID(),
             "Description": message,
             "Link": url
           });
         } else {
-          List B = ["EEE", "ECE"];
+          List B = ["ECE", "EEE","MECH","CIVIL","CSE","IT"];
           for (final b in B) {
             FirebaseFirestore.instance
                 .collection(b)
@@ -977,7 +975,7 @@ void SendMessageInBackground(String branch, String message, String url) async {
                 .set({
               "id": getID(),
               "Name": "${fullUserId()} (owner)",
-              "Time": getID(),
+
               "Description": message,
               "Link": url
             });
@@ -1017,14 +1015,13 @@ void SendMessageInBackground(String branch, String message, String url) async {
             .set({
           "id": getID(),
           "Name": "${fullUserId()}",
-          "Time": getID(),
+
           "Description": message,
           "Link": url
         });
         FirebaseFirestore.instance
             .collection("tokens")
-            .doc(
-                "sujithnimmala03@gmail.com") // Replace "documentId" with the ID of the document you want to retrieve
+            .doc("sujithnimmala03@gmail.com") // Replace "documentId" with the ID of the document you want to retrieve
             .get()
             .then((DocumentSnapshot snapshot) {
           if (snapshot.exists) {
@@ -1096,7 +1093,7 @@ Stream<List<NotificationsConvertor>> readNotifications(
         .collection(c0)
         .doc(d0)
         .collection(c1)
-        .orderBy('Time', descending: true)
+        .orderBy('id', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => NotificationsConvertor.fromJson(doc.data()))
@@ -1104,21 +1101,20 @@ Stream<List<NotificationsConvertor>> readNotifications(
 
 class NotificationsConvertor {
   String id;
-  final String Name, Url, description, Time;
+  final String Name, Url, description;
 
   NotificationsConvertor(
       {this.id = "",
       required this.Name,
       required this.Url,
       required this.description,
-      required this.Time});
+     });
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "Name": Name,
         "Link": Url,
         "Description": description,
-        "Time": Time,
       };
 
   static NotificationsConvertor fromJson(Map<String, dynamic> json) =>
@@ -1126,8 +1122,7 @@ class NotificationsConvertor {
           id: json['id'],
           Name: json["Name"],
           Url: json["Link"],
-          description: json["Description"],
-          Time: json["Time"]);
+          description: json["Description"],);
 }
 
 Future<void> downloadAllImages(

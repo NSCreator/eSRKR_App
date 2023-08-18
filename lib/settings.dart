@@ -76,10 +76,15 @@ class _settingsState extends State<settings> {
       'Privacy Policy',
     ),
   ];
-
+@override
+  void initState() {
+  InputController.text ="r20 x year y sem";
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return backGroundImage(child: SingleChildScrollView(
+      physics: BouncingScrollPhysics(),
       child: Column(
         children: [
           backButton(size:widget.size,text: "Settings",),
@@ -175,7 +180,7 @@ class _settingsState extends State<settings> {
                                   vertical: widget.size * 5,
                                   horizontal: widget.size * 10),
                               child: Text(
-                                "Change Branch",
+                                "Change Regulation",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: widget.size * 22),
@@ -194,20 +199,11 @@ class _settingsState extends State<settings> {
                                       BorderRadius.circular(
                                           widget.size * 20)),
                                   elevation: 16,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.white38),
-                                      borderRadius:
-                                      BorderRadius.circular(
-                                          widget.size * 20),
-                                    ),
-                                    child: ListView(
-                                      shrinkWrap: true,
-                                      children: <Widget>[
-                                        years(branch: widget.branch,)
-                                      ],
-                                    ),
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    children: <Widget>[
+                                      years(branch: widget.branch,)
+                                    ],
                                   ),
                                 );
                               },
@@ -402,8 +398,8 @@ class _settingsState extends State<settings> {
 
             Padding(
               padding: EdgeInsets.symmetric(
-                  vertical: widget.size * 20,
-                  horizontal: widget.size * 10),
+                  vertical: widget.size * 10,
+                  horizontal: widget.size * 20),
               child: Container(
                 decoration: BoxDecoration(
                     color: Color.fromRGBO(31, 48, 48, 1),
@@ -422,6 +418,228 @@ class _settingsState extends State<settings> {
                             fontSize: widget.size * 25,
                             color: Colors.white,
                             fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: widget.size * 20),
+                      child: InkWell(
+                        child: Row(
+                          children: [
+                            Text(
+                              "Create Flash News",
+                              style: TextStyle(
+                                  fontSize: widget.size * 22,
+                                  color: Colors.white70,
+                                  fontWeight: FontWeight.w500
+                              ),
+                            ),
+                            Spacer(),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  right: widget.size * 10),
+                              child:
+                              Icon(Icons.arrow_forward_ios),
+                            )
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      flashNewsCreator(
+                                        size: widget.size,
+                                      )));
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: widget.size * 20),
+                      child: InkWell(
+                        child: Row(
+                          children: [
+                            Text(
+                              "Add Regulation",
+                              style: TextStyle(
+                                  fontSize: widget.size * 22,
+                                  color: Colors.white70,
+                                  fontWeight: FontWeight.w500
+                              ),
+                            ),
+                            Spacer(),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  right: widget.size * 10),
+                              child:
+                              Icon(Icons.arrow_forward_ios),
+                            )
+                          ],
+                        ),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                backgroundColor:
+                                Colors.black.withOpacity(0.3),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        widget.size * 20)),
+                                elevation: 16,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.tealAccent),
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        widget.size * 20),
+                                  ),
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    children: <Widget>[
+                                      SizedBox(
+                                          height: widget.size * 15),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: widget.size * 15),
+                                        child: Text(
+                                          "Add Regulation (r20 x year y sem)",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight:
+                                              FontWeight.w600,
+                                              fontSize:
+                                              widget.size * 18),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: widget.size * 25),
+                                        child: TextFieldContainer(
+                                          child: TextField(
+                                            controller: InputController,
+                                            textInputAction: TextInputAction.next,
+                                            style: TextStyle(color: Colors.white,fontSize: widget.size * 20),
+                                            decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                hintText: 'Enter Regulation',
+                                                hintStyle: TextStyle(
+                                                    color: Colors.white54, fontSize: widget.size * 20)),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: widget.size * 5,
+                                      ),
+                                      Center(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .center,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment
+                                              .center,
+                                          children: [
+                                            Spacer(),
+                                            InkWell(
+                                              child: Container(
+                                                decoration:
+                                                BoxDecoration(
+                                                  color:
+                                                  Colors.black26,
+                                                  border: Border.all(
+                                                      color: Colors
+                                                          .white
+                                                          .withOpacity(
+                                                          0.3)),
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(
+                                                      widget.size *
+                                                          25),
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: widget
+                                                          .size *
+                                                          15,
+
+                                                      vertical: widget
+                                                          .size *
+                                                          5),
+                                                  child: Text(
+                                                    "Back",
+                                                    style: TextStyle(
+                                                        color: Colors
+                                                            .white,fontSize: widget.size *14),
+                                                  ),
+                                                ),
+                                              ),
+                                              onTap: () {
+                                                Navigator.pop(
+                                                    context);
+                                              },
+                                            ),
+                                            SizedBox(
+                                              width:
+                                              widget.size * 10,
+                                            ),
+                                            InkWell(
+                                              child: Container(
+                                                decoration:
+                                                BoxDecoration(
+                                                  color: Colors.red,
+                                                  border: Border.all(
+                                                      color: Colors
+                                                          .black),
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(
+                                                      widget.size *
+                                                          25),
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: widget
+                                                          .size *
+                                                          15,
+
+                                                      vertical: widget
+                                                          .size *
+                                                          5),
+                                                  child: Text(
+                                                    "ADD + ",
+                                                    style: TextStyle(
+                                                        color: Colors
+                                                            .white,fontSize: widget.size *14),
+                                                  ),
+                                                ),
+                                              ),
+                                              onTap: () {
+                                           createRegulation(name: InputController.text, branch: widget.branch);
+
+                                           Navigator.pop(context);
+                                              },
+                                            ),
+                                            SizedBox(
+                                              width:
+                                              widget.size * 20,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: widget.size* 10,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
                     ),
                     Padding(
@@ -599,7 +817,7 @@ class _settingsState extends State<settings> {
 
           SizedBox(height: widget.size *  5.0),
           Padding(
-            padding: EdgeInsets.all(widget.size * 8.0),
+            padding: EdgeInsets.all(widget.size * 20.0),
             child: Container(
               margin: EdgeInsets.all(widget.size * 3),
               width: double.infinity,
@@ -920,107 +1138,110 @@ class _bottomBarState extends State<bottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Text(
-          "Default : ",
-          style: TextStyle(color: Colors.white, fontSize: widget.size *23),
-        ),
-        Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(widget.size *11), color: Colors.white12),
-          child: Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedIndex = 0;
-                    FirebaseFirestore.instance
-                        .collection("user")
-                        .doc(fullUserId())
-                        .update({"index": 0});
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.horizontal(left: Radius.circular(widget.size *11)),
-                    color: selectedIndex == 0
-                        ? Color.fromRGBO(38, 153, 148, 1)
-                        : Colors.transparent,
-                  ),
-                  padding: EdgeInsets.all(widget.size *8),
-                  child: Text(
-                    'Home',
-                    style: TextStyle(
-                      color: selectedIndex == 0 ? Colors.white : Colors.white54,
-                      fontWeight: FontWeight.w600,
-                      fontSize: widget.size *14
-                    ),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedIndex = 1;
-                    FirebaseFirestore.instance
-                        .collection("user")
-                        .doc(fullUserId())
-                        .update({"index": 1});
-                  });
-                },
-                child: Container(
-                  color: selectedIndex == 1
-                      ? Color.fromRGBO(38, 153, 148, 1)
-                      : Colors.transparent,
-                  padding: EdgeInsets.all(widget.size *8),
-                  child: Text(
-                    'Regulation',
-                    style: TextStyle(
-                      color: selectedIndex == 1 ? Colors.white : Colors.white54,
-                        fontWeight: FontWeight.w600,
-                      fontSize: widget.size *14
-
-                    ),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedIndex = 2;
-                    FirebaseFirestore.instance
-                        .collection("user")
-                        .doc(fullUserId())
-                        .update({"index": 2});
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: selectedIndex == 2
-                        ? Color.fromRGBO(38, 153, 148, 1)
-                        : Colors.transparent,
-                    borderRadius:
-                        BorderRadius.horizontal(right: Radius.circular(widget.size *11)),
-                  ),
-                  padding: EdgeInsets.all(widget.size *8),
-                  child: Text(
-                    'Favorites',
-                    style: TextStyle(
-                      color: selectedIndex == 2 ? Colors.white : Colors.white54,
-                        fontWeight: FontWeight.w600,
-                      fontSize: widget.size *14
-
-                    ),
-                  ),
-                ),
-              ),
-            ],
+    return Padding(
+      padding:  EdgeInsets.symmetric(vertical: widget.size *10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text(
+            "Default : ",
+            style: TextStyle(color: Colors.white, fontSize: widget.size *23),
           ),
-        ),
-      ],
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(widget.size *11), color: Colors.white12),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = 0;
+                      FirebaseFirestore.instance
+                          .collection("user")
+                          .doc(fullUserId())
+                          .update({"index": 0});
+                    });
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius:
+                          BorderRadius.horizontal(left: Radius.circular(widget.size *11)),
+                      color: selectedIndex == 0
+                          ? Color.fromRGBO(38, 153, 148, 1)
+                          : Colors.transparent,
+                    ),
+                    padding: EdgeInsets.all(widget.size *8),
+                    child: Text(
+                      'Home',
+                      style: TextStyle(
+                        color: selectedIndex == 0 ? Colors.white : Colors.white54,
+                        fontWeight: FontWeight.w600,
+                        fontSize: widget.size *14
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = 1;
+                      FirebaseFirestore.instance
+                          .collection("user")
+                          .doc(fullUserId())
+                          .update({"index": 1});
+                    });
+                  },
+                  child: Container(
+                    color: selectedIndex == 1
+                        ? Color.fromRGBO(38, 153, 148, 1)
+                        : Colors.transparent,
+                    padding: EdgeInsets.all(widget.size *8),
+                    child: Text(
+                      'Regulation',
+                      style: TextStyle(
+                        color: selectedIndex == 1 ? Colors.white : Colors.white54,
+                          fontWeight: FontWeight.w600,
+                        fontSize: widget.size *14
+
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = 2;
+                      FirebaseFirestore.instance
+                          .collection("user")
+                          .doc(fullUserId())
+                          .update({"index": 2});
+                    });
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: selectedIndex == 2
+                          ? Color.fromRGBO(38, 153, 148, 1)
+                          : Colors.transparent,
+                      borderRadius:
+                          BorderRadius.horizontal(right: Radius.circular(widget.size *11)),
+                    ),
+                    padding: EdgeInsets.all(widget.size *8),
+                    child: Text(
+                      'Favorites',
+                      style: TextStyle(
+                        color: selectedIndex == 2 ? Colors.white : Colors.white54,
+                          fontWeight: FontWeight.w600,
+                        fontSize: widget.size *14
+
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

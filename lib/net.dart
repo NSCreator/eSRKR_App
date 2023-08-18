@@ -145,104 +145,94 @@ class _ImageScreenState extends State<ImageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      child: Padding(
-        padding:  EdgeInsets.all(widget.size *8.0),
-        child: Container(
-          decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(widget.size *15),
-              border: Border.all(color: Colors.white30)),
-          child: Padding(
-            padding:  EdgeInsets.symmetric(vertical:widget.size * 5, horizontal: widget.size *10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Support society => ",
-                      style: TextStyle(color: Colors.white, fontSize: widget.size *20),
-                    ),
-                    Text(
-                      "  for a small change",
-                      style: TextStyle(color: Colors.white54, fontSize: widget.size *15),
-                    ),
-                  ],
-                ),
-                _canOpenImage
-                    ? isAdLoaded
-                        ? InkWell(
-                            onTap: () async {
-                              if (_canOpenImage) {
-                                _showRewardedAd();
+    return Padding(
+      padding:  EdgeInsets.all(widget.size *20.0),
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(widget.size *15),
+            border: Border.all(color: Colors.white30)),
+        child: Padding(
+          padding:  EdgeInsets.symmetric(vertical:widget.size * 5, horizontal: widget.size *10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Support society => ",
+                    style: TextStyle(color: Colors.white, fontSize: widget.size *20),
+                  ),
+                  Text(
+                    "  for a small change",
+                    style: TextStyle(color: Colors.white54, fontSize: widget.size *15),
+                  ),
+                ],
+              ),
+              _canOpenImage
+                  ? isAdLoaded
+                  ? InkWell(
+                onTap: () async {
+                  if (_canOpenImage) {
+                    _showRewardedAd();
 
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => supportList(
-                                              branch: widget.branch,
-                                            )));
-                                final user = _auth.currentUser;
-                                if (user != null) {
-                                  final imageRef = _firestore
-                                      .collection('user')
-                                      .doc(fullUserId());
-                                  await imageRef.update({
-                                    'lastOpenAdTime':
-                                        FieldValue.serverTimestamp(),
-                                  });
-                                }
-                                setState(() {
-                                  _canOpenImage = false;
-                                });
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.lightGreenAccent,
-                                borderRadius: BorderRadius.circular(widget.size *10)
-                              ),
-                                child: Padding(
-                                  padding:  EdgeInsets.symmetric(vertical: widget.size *5,horizontal: widget.size *10),
-                                  child: Text('Help',style: TextStyle(color: Colors.black,fontSize: widget.size *20,fontWeight: FontWeight.w700),),
-                                )),
-                          )
-                        : Text(
-                            'Wait for few secs',
-                            style: TextStyle(fontSize:widget.size * 18, color: Colors.amber),
-                          )
-                    : Text(
-                        'Wait for ${remainingTime.round()} mins',
-                        style: TextStyle(fontSize: widget.size *18, color: Colors.amber),
-                      ),
-                if (!_canOpenImage)
-                  InkWell(
-                    child: Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                      size:widget.size * 35,
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => supportList(
+                              branch: widget.branch,
+                            )));
+                    final user = _auth.currentUser;
+                    if (user != null) {
+                      final imageRef = _firestore
+                          .collection('user')
+                          .doc(fullUserId());
+                      await imageRef.update({
+                        'lastOpenAdTime':
+                        FieldValue.serverTimestamp(),
+                      });
+                    }
+                    setState(() {
+                      _canOpenImage = false;
+                    });
+                  }
+                },
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.lightGreenAccent,
+                        borderRadius: BorderRadius.circular(widget.size *10)
                     ),
-                    onTap: () {
-                      _checkImageOpenStatus();
-                    },
-                  )
-              ],
-            ),
+                    child: Padding(
+                      padding:  EdgeInsets.symmetric(vertical: widget.size *5,horizontal: widget.size *10),
+                      child: Text('Help',style: TextStyle(color: Colors.black,fontSize: widget.size *20,fontWeight: FontWeight.w700),),
+                    )),
+              )
+                  : Text(
+                'Wait for few secs',
+                style: TextStyle(fontSize:widget.size * 18, color: Colors.amber),
+              )
+                  : Text(
+                'Wait for ${remainingTime.round()} mins',
+                style: TextStyle(fontSize: widget.size *18, color: Colors.amber),
+              ),
+              if (!_canOpenImage)
+                InkWell(
+                  child: Icon(
+                    Icons.refresh,
+                    color: Colors.white,
+                    size:widget.size * 35,
+                  ),
+                  onTap: () {
+                    _checkImageOpenStatus();
+                  },
+                )
+            ],
           ),
         ),
       ),
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => supportList(
-                      branch: widget.branch,
-                    )));
-      },
     );
   }
 }
@@ -315,173 +305,168 @@ class _supportListState extends State<supportList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        child: Column(
+    return backGroundImage(child: Column(
+      children: [
+        backButton(size: size(context),text: "Supported List",),
+        !commentsIds.contains(fullUserId())
+            ? Row(
           children: [
-            backButton(size: size(context),text: "Supported List",),
-            !commentsIds.contains(fullUserId())
-                ? Row(
-                    children: [
-                      Flexible(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white30,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: TextFormField(
-                              controller: _comment,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.multiline,
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 25),
-                              maxLines: null,
-                              // Allows the field to expand as needed
-                              decoration: const InputDecoration(
-                                hintStyle: TextStyle(
-                                  color: Colors.white60,
-                                ),
-                                border: InputBorder.none,
-                                hintText: 'write your message',
-                              ),
-                            ),
-                          ),
-                        ),
+            Flexible(
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white30,
+                    borderRadius: BorderRadius.circular(20)),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: TextFormField(
+                    controller: _comment,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.multiline,
+                    style:
+                    TextStyle(color: Colors.white, fontSize: 25),
+                    maxLines: null,
+                    // Allows the field to expand as needed
+                    decoration: const InputDecoration(
+                      hintStyle: TextStyle(
+                        color: Colors.white60,
                       ),
-                      InkWell(
-                        child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Icon(
-                            Icons.send,
-                            color: Colors.lightBlueAccent,
-                          ),
-                        ),
-                        onTap: () async {
-                          await addComment(true, _comment.text);
-                          getComments();
-                          _comment.clear();
-                        },
-                      )
-                    ],
-                  )
-                : Text(
-                    "Your already Submitted",
-                    style: TextStyle(
-                        color: Colors.greenAccent,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w700),
+                      border: InputBorder.none,
+                      hintText: 'write your message',
+                    ),
                   ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text(
-                "Note : You can send message only for one time",
-                style: TextStyle(color: Colors.amber, fontSize: 15),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-              child: Text(
-                "Thanks for being a member :)",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 25,
-                    fontWeight: FontWeight.w600),
-              ),
-            ),
-            Container(
-              height: 3,
-              width: 150,
-              decoration: BoxDecoration(
-                color: Colors.white54,
-                borderRadius: BorderRadius.circular(5),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  reverse: false,
-                  physics: BouncingScrollPhysics(),
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  itemCount: comments.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    String data = comments[index];
-                    String user = data.split(";").first;
-                    String comment = data.split(";").last;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: Colors.white54)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(3.0),
-                              child: Text(
-                                user.split(":").first,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "@${user.split(":").last}",
-                                style: TextStyle(
-                                    color: Colors.white54, fontSize: 13),
-                              ),
-                              Text(
-                                comment,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                            ],
-                          ),
-                          Spacer(),
-                          if (isUser())
-                            InkWell(
-                              child: Icon(
-                                Icons.delete,
-                                color: Colors.redAccent,
-                                size: 30,
-                              ),
-                              onTap: () {
-                                addComment(false, data);
-                                getComments();
-                              },
-                            )
-                        ],
-                      ),
-                    );
-                  },
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                "Earned money \$ $money",
-                style: TextStyle(
-                    color: Colors.white60,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13),
+            InkWell(
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Icon(
+                  Icons.send,
+                  color: Colors.lightBlueAccent,
+                ),
               ),
-            ),
+              onTap: () async {
+                await addComment(true, _comment.text);
+                getComments();
+                _comment.clear();
+              },
+            )
           ],
+        )
+            : Text(
+          "Your already Submitted",
+          style: TextStyle(
+              color: Colors.greenAccent,
+              fontSize: 30,
+              fontWeight: FontWeight.w700),
         ),
-      ),
-    );
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Text(
+            "Note : You can send message only for one time",
+            style: TextStyle(color: Colors.amber, fontSize: 15),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+          child: Text(
+            "Thanks for being a member :)",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 25,
+                fontWeight: FontWeight.w600),
+          ),
+        ),
+        Container(
+          height: 3,
+          width: 150,
+          decoration: BoxDecoration(
+            color: Colors.white54,
+            borderRadius: BorderRadius.circular(5),
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+            child: ListView.builder(
+              shrinkWrap: true,
+              reverse: false,
+              physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              itemCount: comments.length,
+              itemBuilder: (BuildContext context, int index) {
+                String data = comments[index];
+                String user = data.split(";").first;
+                String comment = data.split(";").last;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(color: Colors.white54)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(3.0),
+                          child: Text(
+                            user.split(":").first,
+                            style: TextStyle(
+                                color: Colors.white, fontSize: 20),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "@${user.split(":").last}",
+                            style: TextStyle(
+                                color: Colors.white54, fontSize: 13),
+                          ),
+                          Text(
+                            comment,
+                            style: TextStyle(
+                                color: Colors.white, fontSize: 20),
+                          ),
+                        ],
+                      ),
+                      Spacer(),
+                      if (isUser())
+                        InkWell(
+                          child: Icon(
+                            Icons.delete,
+                            color: Colors.redAccent,
+                            size: 30,
+                          ),
+                          onTap: () {
+                            addComment(false, data);
+                            getComments();
+                          },
+                        )
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Text(
+            "Earned money \$ $money",
+            style: TextStyle(
+                color: Colors.white60,
+                fontWeight: FontWeight.w500,
+                fontSize: 13),
+          ),
+        ),
+      ],
+    ));
   }
 }
 

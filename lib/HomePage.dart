@@ -267,33 +267,7 @@ class _HomePageState extends State<HomePage> {
                       }),
                   InkWell(
                     onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Dialog(
-                            backgroundColor:
-                            Colors.black.withOpacity(0.8),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    widget.size * 20)),
-                            elevation: 16,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border:
-                                Border.all(color: Colors.white38),
-                                borderRadius: BorderRadius.circular(
-                                    widget.size * 20),
-                              ),
-                              child: ListView(
-                                shrinkWrap: true,
-                                children: <Widget>[
-                                  years(branch: widget.branch,)
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
+                    ExternalLaunchUrl("https://srkrec.edu.in/");
                     },
                     child: Text(
                       "eSRKR",
@@ -857,7 +831,7 @@ class _HomePageState extends State<HomePage> {
                                 children: [
                                   Padding(
                                     padding:  EdgeInsets.all(widget.size *8.0),
-                                    child: Text("Flash News",style: secondHeadingTextStyle(color: Colors.red,size: widget.size),),
+                                    child: Text("Flash News",style: secondHeadingTextStyle(color: Colors.grey,size: widget.size),),
                                   ),
                                   CarouselSlider(
                                       items: List.generate(
@@ -908,22 +882,25 @@ class _HomePageState extends State<HomePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
 
-                            Column(
-                              children: [
-                                Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white30,
-                                      borderRadius: BorderRadius.circular(25),
-                                    image: DecorationImage(image: AssetImage("assets/timeTableIcon.png"))
+                            InkWell(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white30,
+                                        borderRadius: BorderRadius.circular(25),
+                                      image: DecorationImage(image: AssetImage("assets/timeTableIcon.png"))
+                                    ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Text("Time Table",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
-                                )
-                              ],
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text("Time Table",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                  )
+                                ],
+                              ),
+                              onTap: (){},
                             ),
                             InkWell(
                               child: Column(
@@ -1185,58 +1162,7 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               onTap: (){
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    transitionDuration:
-                                    const Duration(
-                                        milliseconds:
-                                        300),
-                                    pageBuilder: (context,
-                                        animation,
-                                        secondaryAnimation) =>
-                                        Subjects(
-                                          branch: widget
-                                              .branch,
-                                          reg: widget.reg,
-                                          width: widget.size ,
-                                          height: widget.size ,
-                                          size:
-                                          widget.size,
-                                        ),
-                                    transitionsBuilder:
-                                        (context,
-                                        animation,
-                                        secondaryAnimation,
-                                        child) {
-                                      final fadeTransition =
-                                      FadeTransition(
-                                        opacity:
-                                        animation,
-                                        child: child,
-                                      );
 
-                                      return Container(
-                                        color: Colors
-                                            .black
-                                            .withOpacity(
-                                            animation
-                                                .value),
-                                        child: AnimatedOpacity(
-                                            duration: Duration(
-                                                milliseconds:
-                                                300),
-                                            opacity: animation
-                                                .value
-                                                .clamp(
-                                                0.3,
-                                                1.0),
-                                            child:
-                                            fadeTransition),
-                                      );
-                                    },
-                                  ),
-                                );
                               },
                             ),
                             InkWell(
@@ -1394,6 +1320,21 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
+                  InkWell(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(40)
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 20),
+                        child: Text("Exam Notification",style: TextStyle(color: Colors.white,fontSize: 30),),
+                      ),
+                    ),
+                    onTap: (){
+                      ExternalLaunchUrl("http://www.srkrexams.in/Login.aspx");
+                    },
+                  )
                 ],
               ),
             ),
