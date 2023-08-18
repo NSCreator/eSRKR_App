@@ -396,7 +396,7 @@ class _settingsState extends State<settings> {
           ),
           ImageScreen(size:widget.size ,branch: widget.branch,),
 
-            Padding(
+            if(isUser())Padding(
               padding: EdgeInsets.symmetric(
                   vertical: widget.size * 10,
                   horizontal: widget.size * 20),
