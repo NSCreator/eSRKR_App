@@ -77,8 +77,7 @@ picText() {
 }
 
 isUser() {
-  var user = FirebaseAuth.instance.currentUser!.email!.split("@");
-  return user[1] == "sujithnimmala03@gmail.com";
+  return FirebaseAuth.instance.currentUser!.email! == "sujithnimmala03@gmail.com";
 }
 
 
