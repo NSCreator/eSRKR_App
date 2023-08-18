@@ -9,6 +9,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:async';
 import 'HomePage.dart';
+import 'SubPages.dart';
+import 'TextField.dart';
 import 'auth_page.dart';
 import 'firebase_options.dart';
 import 'functins.dart';

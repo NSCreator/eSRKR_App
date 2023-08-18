@@ -15,212 +15,972 @@ import 'package:http/http.dart' as http;
 
 import 'main.dart';
 import 'notification.dart';
-Stream<List<RegulationConvertor>> readRegulation(
-    {required String branch,required String reg}) =>
-    FirebaseFirestore.instance
-        .collection(branch)
-        .doc("regulation")
-        .collection("regulation").doc(reg).collection("tableTable")
-        .orderBy('id', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => RegulationConvertor.fromJson(doc.data()))
-        .toList());
-class timeTablePage extends StatefulWidget {
-  // const timeTablePage({super.key});
-
+class TimeTables extends StatefulWidget {
+String branch;
+String reg;
+double size;
+TimeTables({required this.branch,required this.size,required this.reg});
   @override
-  State<timeTablePage> createState() => _timeTablePageState();
+  State<TimeTables> createState() => _TimeTablesState();
 }
 
-class _timeTablePageState extends State<timeTablePage> {
+class _TimeTablesState extends State<TimeTables> {
+  @override
+  Widget build(BuildContext context) {
+    return  backGroundImage(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              backButton(size: widget.size,text:"TimeTables",),
+              StreamBuilder<List<TimeTableConvertor>>(
+                  stream: readTimeTable( branch: widget.branch,reg: widget.reg),
+                  builder: (context, snapshot) {
+                    final BranchNews = snapshot.data;
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 0.3,
+                              color: Colors.cyan,
+                            ));
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text(
+                                  'Error with TextBooks Data or\n Check Internet Connection'));
+                        } else {
+                          if (BranchNews!.length == 0) {
+                            return Center(
+                                child: Text(
+                                  "No Updates",
+                                  style: TextStyle(color: Colors.lightBlueAccent),
+                                ));
+                          } else
+                            return ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: BranchNews.length,
+                              itemBuilder: (context, int index) {
+                                var data = BranchNews[index];
+
+                                return Container();
+                              },
+                            );
+                        }
+                    }
+                  }),
+
+            ],
+          ),
+        ));
+  }
+}
+
+class syllabusPage extends StatefulWidget {
+  final String branch;
+  final double size;
+
+
+  syllabusPage(
+      {Key? key,
+        required this.branch,
+        required this.size,})
+      : super(key: key);
+
+
+  @override
+  State<syllabusPage> createState() => _syllabusPageState();
+}
+
+class _syllabusPageState extends State<syllabusPage> {
+  bool isLoading = true;
+  bool isDownloaded = false;
+  String folderPath = "";
+
+  Future<void> getPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    setState(() {
+      folderPath = '${directory.path}';
+    });
+  }
+
+  download(String photoUrl, String path) async {
+    final Uri uri = Uri.parse(photoUrl);
+    final String fileName = uri.pathSegments.last;
+    var name = fileName.split("/").last;
+    if (photoUrl.startsWith('https://drive.google.com')) {
+      name = photoUrl.split('/d/')[1].split('/')[0];
+
+      photoUrl = "https://drive.google.com/uc?export=download&id=$name";
+    }
+    final response = await http.get(Uri.parse(photoUrl));
+    final documentDirectory = await getApplicationDocumentsDirectory();
+    final newDirectory = Directory('${documentDirectory.path}/$path');
+    if (!await newDirectory.exists()) {
+      await newDirectory.create(recursive: true);
+    }
+    final file = File('${newDirectory.path}/${name}');
+    await file.writeAsBytes(response.bodyBytes);
+    setState(() {
+      isDownloaded = false;
+    });
+  }
+
+  String getFileName(String url) {
+    var name;
+    if (url.startsWith('https://drive.google.com')) {
+      name = url.split('/d/')[1].split('/')[0];
+    } else {
+      final Uri uri = Uri.parse(url);
+      final String fileName = uri.pathSegments.last;
+      name = fileName.split("/").last;
+    }
+
+    return name;
+  }
+
+  @override
+  void initState() {
+    getPath();
+    super.initState();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return backGroundImage(
         child: SingleChildScrollView(
-      child: Column(
-        children: [
-          // StreamBuilder<List<RegulationConvertor>>(
-          //     stream: readRegulation(branch: widget),
-          //     builder: (context, snapshot) {
-          //       final Notifications = snapshot.data;
-          //       switch (snapshot.connectionState) {
-          //         case ConnectionState.waiting:
-          //           return const Center(
-          //               child: CircularProgressIndicator(
-          //                 strokeWidth: 0.3,
-          //                 color: Colors.cyan,
-          //               ));
-          //         default:
-          //           if (snapshot.hasError) {
-          //             return const Center(
-          //                 child: Text(
-          //                     'Error with TextBooks Data or\n Check Internet Connection'));
-          //           } else {
-          //             return ListView.separated(
-          //                 physics: const BouncingScrollPhysics(),
-          //                 shrinkWrap: true,
-          //                 reverse: true,
-          //                 itemCount: Notifications!.length,
-          //                 itemBuilder: (context, int index) {
-          //                   final Notification = Notifications[index];
-          //
-          //                   return InkWell(
-          //                     child: Padding(
-          //                       padding: Notification.Name == fullUserId()
-          //                           ? EdgeInsets.only(
-          //                           left: widget.width * 45,
-          //                           right: widget.width * 5,
-          //                           top: widget.height * 5)
-          //                           : EdgeInsets.only(
-          //                           right: widget.width * 45,
-          //                           left: widget.width * 5,
-          //                           top: widget.height * 5),
-          //                       child: Container(
-          //                         width: double.infinity,
-          //                         alignment: Alignment.center,
-          //                         decoration: Notification.Name ==
-          //                             fullUserId()
-          //                             ? BoxDecoration(
-          //                           borderRadius: BorderRadius.only(
-          //                             topLeft: Radius.circular(
-          //                                 widget.size * 25),
-          //                             bottomLeft: Radius.circular(
-          //                                 widget.size * 25),
-          //                             topRight: Radius.circular(
-          //                                 widget.size * 25),
-          //                             bottomRight: Radius.circular(
-          //                                 widget.size * 5),
-          //                           ),
-          //                           color:
-          //                           Colors.black.withOpacity(0.8),
-          //                           border: Border.all(
-          //                               color: Colors
-          //                                   .blueAccent.shade100),
-          //                         )
-          //                             : BoxDecoration(
-          //                           borderRadius: BorderRadius.only(
-          //                             topLeft: Radius.circular(
-          //                                 widget.size * 25),
-          //                             bottomLeft: Radius.circular(
-          //                                 widget.size * 5),
-          //                             topRight: Radius.circular(
-          //                                 widget.size * 25),
-          //                             bottomRight: Radius.circular(
-          //                                 widget.size * 25),
-          //                           ),
-          //                           color:
-          //                           Colors.black.withOpacity(0.5),
-          //                           border: Border.all(
-          //                               color: Colors.white
-          //                                   .withOpacity(0.5)),
-          //                         ),
-          //                         child: Row(
-          //                           mainAxisAlignment:
-          //                           MainAxisAlignment.start,
-          //                           crossAxisAlignment:
-          //                           CrossAxisAlignment.start,
-          //                           children: [
-          //                             SizedBox(
-          //                               width: widget.width * 2,
-          //                             ),
-          //                             Expanded(
-          //                                 child: Column(
-          //                                   mainAxisAlignment:
-          //                                   MainAxisAlignment.start,
-          //                                   crossAxisAlignment:
-          //                                   CrossAxisAlignment.start,
-          //                                   children: [
-          //                                     Row(
-          //                                       children: [
-          //                                         Text(
-          //                                           "       @${Notification.Name}",
-          //                                           style: TextStyle(
-          //                                             fontSize:
-          //                                             widget.size * 12.0,
-          //                                             color: Colors.white54,
-          //                                             fontWeight:
-          //                                             FontWeight.w600,
-          //                                           ),
-          //                                         ),
-          //                                         Spacer(),
-          //                                         Padding(
-          //                                           padding:
-          //                                           EdgeInsets.fromLTRB(
-          //                                               widget.size * 8,
-          //                                               widget.size * 1,
-          //                                               widget.size * 25,
-          //                                               widget.size * 1),
-          //                                           child: Column(
-          //                                             children: [
-          //                                               Text(
-          //                                                 '${Notification.id}',
-          //                                                 style: TextStyle(
-          //                                                   fontSize:
-          //                                                   widget.size *
-          //                                                       9.0,
-          //                                                   color:
-          //                                                   Colors.white70,
-          //                                                   //   fontWeight: FontWeight.bold,
-          //                                                 ),
-          //                                               ),
-          //                                             ],
-          //                                           ),
-          //                                         ),
-          //                                       ],
-          //                                     ),
-          //                                     Padding(
-          //                                       padding: EdgeInsets.only(
-          //                                           left: widget.size * 8,
-          //                                           bottom: widget.size * 6,
-          //                                           right: widget.size * 3,
-          //                                           top: widget.size * 3),
-          //                                       child: NotificationText(
-          //                                           Notification.description),
-          //                                     ),
-          //                                     if (Notification.Url.length > 3)
-          //                                       Padding(
-          //                                         padding: EdgeInsets.all(
-          //                                             widget.size * 3.0),
-          //                                         child: Image.network(
-          //                                             Notification.Url),
-          //                                       )
-          //                                   ],
-          //                                 ))
-          //                           ],
-          //                         ),
-          //                       ),
-          //                     ),
-          //                     onLongPress: () {
-          //                       if (Notification.Name == fullUserId() ||
-          //                           isUser()) {
-          //                         final deleteFlashNews = FirebaseFirestore
-          //                             .instance
-          //                             .collection(widget.branch)
-          //                             .doc("Notification")
-          //                             .collection("AllNotification")
-          //                             .doc(Notification.id);
-          //                         deleteFlashNews.delete();
-          //                         showToastText(
-          //                             "Your Message has been Deleted");
-          //                       } else {
-          //                         showToastText(
-          //                             "You are not message user to delete");
-          //                       }
-          //                     },
-          //                   );
-          //                 },
-          //                 separatorBuilder: (context, index) => SizedBox(
-          //                   height: widget.height * 1,
-          //                 ));
-          //           }
-          //       }
-          //     }),
-        ],
-      ),
-    ));
+          child: Column(
+            children: [
+              backButton(size: widget.size,text:widget.branch,),
+              StreamBuilder<List<syllabusConvertor>>(
+                  stream: readsyllabus( branch: "ECE"),
+                  builder: (context, snapshot) {
+                    final BranchNews = snapshot.data;
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 0.3,
+                              color: Colors.cyan,
+                            ));
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text(
+                                  'Error with TextBooks Data or\n Check Internet Connection'));
+                        } else {
+                          if (BranchNews!.length == 0) {
+                            return Center(
+                                child: Text(
+                                  "No Updates",
+                                  style: TextStyle(color: Colors.lightBlueAccent),
+                                ));
+                          } else
+                            return ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: BranchNews.length,
+                              itemBuilder: (context, int index) {
+                                var data = BranchNews[index];
+                                if (data.syllabus.isNotEmpty)
+                                  file = File("${folderPath}/pdfs/${getFileName(data.syllabus)}");
+
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      left: widget.size * 15.0,
+                                      right: widget.size * 10,
+                                      top: widget.size * 4),
+                                  child: InkWell(
+                                    child: Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          color: Colors.black38,
+                                          borderRadius:
+                                          BorderRadius.all(
+                                              Radius.circular(
+                                                  widget.size *
+                                                      20))),
+                                      child:
+                                      SingleChildScrollView(
+                                        physics:
+                                        const BouncingScrollPhysics(),
+                                        child: Row(
+                                          children: [
+                                            file.existsSync() &&
+                                                data.syllabus.isNotEmpty
+                                                ?
+                                            ClipRRect(
+                                              borderRadius: BorderRadius.circular(widget.size * 25),
+                                              child: SizedBox(
+                                                height: widget.size * 160,
+                                                width: widget.size * 120,
+                                                child: isLoading
+                                                    ? PDFView(
+
+                                                  filePath:
+                                                  "${folderPath}/pdfs/${getFileName(data.syllabus)}",
+
+                                                ):Container()
+                                              ),
+                                            ):
+                                            SizedBox(
+                                                height: 98, child: Image.asset("assets/pdf_icon.png")),
+                                            SizedBox(
+                                              width:
+                                              widget.size *
+                                                  15,
+                                            ),
+                                            Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .center,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment
+                                                      .start,
+                                                  children: [
+                                                    Text(
+                                                      data.id.toUpperCase(),
+                                                      style:
+                                                      TextStyle(
+                                                        fontSize:
+                                                        widget.size *
+                                                            20.0,
+                                                        color: Colors
+                                                            .white,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .w600,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: widget
+                                                          .size *
+                                                          2,
+                                                    ),
+                                                    if (data.syllabus.isNotEmpty)
+                                                      Padding(
+                                                        padding:
+                                                        EdgeInsets.symmetric(vertical: widget.size * 10),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                InkWell(
+                                                                    child: Container(
+                                                                      decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.circular(
+                                                                            widget.size * 8),
+                                                                        color: Color.fromRGBO(2, 82, 87, 1),
+                                                                        border: Border.all(
+                                                                            color: file.existsSync()
+                                                                                ? Colors.green
+                                                                                : Colors.white),
+                                                                      ),
+                                                                      child: Padding(
+                                                                        padding: EdgeInsets.only(
+                                                                            left: widget.size * 3,
+                                                                            right: widget.size * 3),
+                                                                        child: Row(
+                                                                          children: [
+                                                                            Padding(
+                                                                              padding: EdgeInsets.only(
+                                                                                  left: widget.size * 5,
+                                                                                  right: widget.size * 5,
+                                                                                  top: widget.size * 3,
+                                                                                  bottom: widget.size * 3),
+                                                                              child: Text(
+                                                                                file.existsSync()
+                                                                                    ? "Read Now"
+                                                                                    : "Download",
+                                                                                style: TextStyle(
+                                                                                    color: Colors.white,
+                                                                                    fontSize:
+                                                                                    widget.size * 20),
+                                                                              ),
+                                                                            ),
+                                                                            Icon(
+                                                                              file.existsSync()
+                                                                                  ? Icons.open_in_new
+                                                                                  : Icons
+                                                                                  .download_for_offline_outlined,
+                                                                              color: Colors.greenAccent,
+                                                                              size: widget.size * 20,
+                                                                            )
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    onTap: () async {
+                                                                      File isFile = File(
+                                                                          "${folderPath}/pdfs/${getFileName(data.syllabus)}");
+                                                                      if (isFile.existsSync()) {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                                builder: (context) =>
+                                                                                    PdfViewerPage(
+                                                                                        size: widget.size,
+                                                                                        pdfUrl:
+                                                                                        "${folderPath}/pdfs/${getFileName(data.syllabus)}")));
+                                                                      } else {
+                                                                        setState(() {
+                                                                          isDownloaded = true;
+                                                                        });
+                                                                        await download(data.syllabus, "pdfs");
+                                                                      }
+                                                                    }),
+                                                                if (file.existsSync())
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        left: widget.size * 5,
+                                                                        right: widget.size * 5,
+                                                                        top: widget.size * 1,
+                                                                        bottom: widget.size * 1),
+                                                                    child: InkWell(
+                                                                      child: Icon(
+                                                                        Icons.delete,
+                                                                        color: Colors.redAccent,
+                                                                        size: widget.size * 25,
+                                                                      ),
+                                                                      onLongPress: () async {
+                                                                        if (file.existsSync()) {
+                                                                          await file.delete();
+                                                                        }
+                                                                        setState(() {});
+                                                                        showToastText(
+                                                                            "File has been deleted");
+                                                                      },
+                                                                      onTap: () {
+                                                                        showToastText("Long Press To Delete");
+                                                                      },
+                                                                    ),
+                                                                  )
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    if (isDownloaded)
+                                                      LinearProgressIndicator(
+                                                        color: Colors.amber,
+                                                      ),
+                                                    if(data.syllabus.isNotEmpty)
+                                                      InkWell(
+                                                        onTap: (){
+
+                                                          ExternalLaunchUrl(data.syllabus);
+                                                        },
+                                                        child: Text(
+                                                          "Link (open)",
+                                                          style:
+                                                          TextStyle(
+                                                            fontSize:
+                                                            widget.size *
+                                                                18.0,
+                                                            color: Colors.amber,
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                  ],
+                                                ))
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      // Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //         builder: (context) =>
+                                      //             subjectUnitsData(
+                                      //               reg: data[
+                                      //               'regulation'],
+                                      //
+                                      //               size: widget
+                                      //                   .size,
+                                      //               branch: widget
+                                      //                   .branch,
+                                      //               ID: data[
+                                      //               'id'],
+                                      //               mode:
+                                      //               "LabSubjects",
+                                      //               name: data[
+                                      //               "heading"],
+                                      //               fullName: data[
+                                      //               'description'],
+                                      //               photoUrl: data[
+                                      //               'image'],
+                                      //             )));
+                                    },
+                                  ),
+                                );
+                              },
+                            );
+                        }
+                    }
+                  }),
+
+            ],
+          ),
+        ));
   }
 }
+
+class ModalPapersPage extends StatefulWidget {
+  final String branch;
+  final double size;
+
+
+  ModalPapersPage(
+      {Key? key,
+        required this.branch,
+        required this.size,})
+      : super(key: key);
+
+
+  @override
+  State<ModalPapersPage> createState() => _ModalPapersPageState();
+}
+
+class _ModalPapersPageState extends State<ModalPapersPage> {
+  bool isLoading = true;
+  bool isDownloaded = false;
+  String folderPath = "";
+
+  Future<void> getPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    setState(() {
+      folderPath = '${directory.path}';
+    });
+  }
+
+  download(String photoUrl, String path) async {
+    final Uri uri = Uri.parse(photoUrl);
+    final String fileName = uri.pathSegments.last;
+    var name = fileName.split("/").last;
+    if (photoUrl.startsWith('https://drive.google.com')) {
+      name = photoUrl.split('/d/')[1].split('/')[0];
+
+      photoUrl = "https://drive.google.com/uc?export=download&id=$name";
+    }
+    final response = await http.get(Uri.parse(photoUrl));
+    final documentDirectory = await getApplicationDocumentsDirectory();
+    final newDirectory = Directory('${documentDirectory.path}/$path');
+    if (!await newDirectory.exists()) {
+      await newDirectory.create(recursive: true);
+    }
+    final file = File('${newDirectory.path}/${name}');
+    await file.writeAsBytes(response.bodyBytes);
+    setState(() {
+      isDownloaded = false;
+    });
+  }
+
+  String getFileName(String url) {
+    var name;
+    if (url.startsWith('https://drive.google.com')) {
+      name = url.split('/d/')[1].split('/')[0];
+    } else {
+      final Uri uri = Uri.parse(url);
+      final String fileName = uri.pathSegments.last;
+      name = fileName.split("/").last;
+    }
+
+    return name;
+  }
+
+  @override
+  void initState() {
+    getPath();
+    super.initState();
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return backGroundImage(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              backButton(size: widget.size,text: "Model Papers",),
+              StreamBuilder<List<modelPaperConvertor>>(
+                  stream: readmodelPaper( branch: widget.branch),
+                  builder: (context, snapshot) {
+                    final BranchNews = snapshot.data;
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 0.3,
+                              color: Colors.cyan,
+                            ));
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text(
+                                  'Error with TextBooks Data or\n Check Internet Connection'));
+                        } else {
+                          if (BranchNews!.length == 0) {
+                            return Center(
+                                child: Text(
+                                  "No Model Papers",
+                                  style: TextStyle(color: Colors.lightBlueAccent),
+                                ));
+                          } else
+                            return ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: BranchNews.length,
+                              itemBuilder: (context, int index) {
+                                var data = BranchNews[index];
+                                if (data.modelPaper.isNotEmpty)
+                                  file = File("${folderPath}/pdfs/${getFileName(data.modelPaper)}");
+
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      left: widget.size * 15.0,
+                                      right: widget.size * 10,
+                                      top: widget.size * 4),
+                                  child: InkWell(
+                                    child: Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          color: Colors.black38,
+                                          borderRadius:
+                                          BorderRadius.all(
+                                              Radius.circular(
+                                                  widget.size *
+                                                      20))),
+                                      child:
+                                      SingleChildScrollView(
+                                        physics:
+                                        const BouncingScrollPhysics(),
+                                        child: Row(
+                                          children: [
+                                            file.existsSync() &&
+                                                data.modelPaper.isNotEmpty
+                                                ?
+                                            ClipRRect(
+                                              borderRadius: BorderRadius.circular(widget.size * 25),
+                                              child: SizedBox(
+                                                  height: widget.size * 160,
+                                                  width: widget.size * 120,
+                                                  child: isLoading
+                                                      ? PDFView(
+
+                                                    filePath:
+                                                    "${folderPath}/pdfs/${getFileName(data.modelPaper)}",
+
+                                                  ):Container()
+                                              ),
+                                            ):
+                                            SizedBox(
+                                                height: 98, child: Image.asset("assets/pdf_icon.png")),
+                                            SizedBox(
+                                              width:
+                                              widget.size *
+                                                  15,
+                                            ),
+                                            Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .center,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment
+                                                      .start,
+                                                  children: [
+                                                    Text(
+                                                      data.id.toUpperCase(),
+                                                      style:
+                                                      TextStyle(
+                                                        fontSize:
+                                                        widget.size *
+                                                            20.0,
+                                                        color: Colors
+                                                            .white,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .w600,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: widget
+                                                          .size *
+                                                          2,
+                                                    ),
+                                                    if (data.modelPaper.isNotEmpty)
+                                                      Padding(
+                                                        padding:
+                                                        EdgeInsets.symmetric(vertical: widget.size * 10),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                InkWell(
+                                                                    child: Container(
+                                                                      decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.circular(
+                                                                            widget.size * 8),
+                                                                        color: Color.fromRGBO(2, 82, 87, 1),
+                                                                        border: Border.all(
+                                                                            color: file.existsSync()
+                                                                                ? Colors.green
+                                                                                : Colors.white),
+                                                                      ),
+                                                                      child: Padding(
+                                                                        padding: EdgeInsets.only(
+                                                                            left: widget.size * 3,
+                                                                            right: widget.size * 3),
+                                                                        child: Row(
+                                                                          children: [
+                                                                            Padding(
+                                                                              padding: EdgeInsets.only(
+                                                                                  left: widget.size * 5,
+                                                                                  right: widget.size * 5,
+                                                                                  top: widget.size * 3,
+                                                                                  bottom: widget.size * 3),
+                                                                              child: Text(
+                                                                                file.existsSync()
+                                                                                    ? "Read Now"
+                                                                                    : "Download",
+                                                                                style: TextStyle(
+                                                                                    color: Colors.white,
+                                                                                    fontSize:
+                                                                                    widget.size * 20),
+                                                                              ),
+                                                                            ),
+                                                                            Icon(
+                                                                              file.existsSync()
+                                                                                  ? Icons.open_in_new
+                                                                                  : Icons
+                                                                                  .download_for_offline_outlined,
+                                                                              color: Colors.greenAccent,
+                                                                              size: widget.size * 20,
+                                                                            )
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    onTap: () async {
+                                                                      File isFile = File(
+                                                                          "${folderPath}/pdfs/${getFileName(data.modelPaper)}");
+                                                                      if (isFile.existsSync()) {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                                builder: (context) =>
+                                                                                    PdfViewerPage(
+                                                                                        size: widget.size,
+                                                                                        pdfUrl:
+                                                                                        "${folderPath}/pdfs/${getFileName(data.modelPaper)}")));
+                                                                      } else {
+                                                                        setState(() {
+                                                                          isDownloaded = true;
+                                                                        });
+                                                                        await download(data.modelPaper, "pdfs");
+                                                                      }
+                                                                    }),
+                                                                if (file.existsSync())
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        left: widget.size * 5,
+                                                                        right: widget.size * 5,
+                                                                        top: widget.size * 1,
+                                                                        bottom: widget.size * 1),
+                                                                    child: InkWell(
+                                                                      child: Icon(
+                                                                        Icons.delete,
+                                                                        color: Colors.redAccent,
+                                                                        size: widget.size * 25,
+                                                                      ),
+                                                                      onLongPress: () async {
+                                                                        if (file.existsSync()) {
+                                                                          await file.delete();
+                                                                        }
+                                                                        setState(() {});
+                                                                        showToastText(
+                                                                            "File has been deleted");
+                                                                      },
+                                                                      onTap: () {
+                                                                        showToastText("Long Press To Delete");
+                                                                      },
+                                                                    ),
+                                                                  )
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    if (isDownloaded)
+                                                      LinearProgressIndicator(
+                                                        color: Colors.amber,
+                                                      ),
+                                                    if(data.modelPaper.isNotEmpty)
+                                                      InkWell(
+                                                        onTap: (){
+
+                                                          ExternalLaunchUrl(data.modelPaper);
+                                                        },
+                                                        child: Text(
+                                                          "Link (open)",
+                                                          style:
+                                                          TextStyle(
+                                                            fontSize:
+                                                            widget.size *
+                                                                18.0,
+                                                            color: Colors.amber,
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                  ],
+                                                ))
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      // Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //         builder: (context) =>
+                                      //             subjectUnitsData(
+                                      //               reg: data[
+                                      //               'regulation'],
+                                      //
+                                      //               size: widget
+                                      //                   .size,
+                                      //               branch: widget
+                                      //                   .branch,
+                                      //               ID: data[
+                                      //               'id'],
+                                      //               mode:
+                                      //               "LabSubjects",
+                                      //               name: data[
+                                      //               "heading"],
+                                      //               fullName: data[
+                                      //               'description'],
+                                      //               photoUrl: data[
+                                      //               'image'],
+                                      //             )));
+                                    },
+                                  ),
+                                );
+                              },
+                            );
+                        }
+                    }
+                  }),
+
+            ],
+          ),
+        ));
+  }
+}
+
+// class timeTablePage extends StatefulWidget {
+//   // const timeTablePage({super.key});
+//
+//   @override
+//   State<timeTablePage> createState() => _timeTablePageState();
+// }
+//
+// class _timeTablePageState extends State<timeTablePage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return backGroundImage(
+//         child: SingleChildScrollView(
+//       child: Column(
+//         children: [
+//           // StreamBuilder<List<RegulationConvertor>>(
+//           //     stream: readRegulation(branch: widget),
+//           //     builder: (context, snapshot) {
+//           //       final Notifications = snapshot.data;
+//           //       switch (snapshot.connectionState) {
+//           //         case ConnectionState.waiting:
+//           //           return const Center(
+//           //               child: CircularProgressIndicator(
+//           //                 strokeWidth: 0.3,
+//           //                 color: Colors.cyan,
+//           //               ));
+//           //         default:
+//           //           if (snapshot.hasError) {
+//           //             return const Center(
+//           //                 child: Text(
+//           //                     'Error with TextBooks Data or\n Check Internet Connection'));
+//           //           } else {
+//           //             return ListView.separated(
+//           //                 physics: const BouncingScrollPhysics(),
+//           //                 shrinkWrap: true,
+//           //                 reverse: true,
+//           //                 itemCount: Notifications!.length,
+//           //                 itemBuilder: (context, int index) {
+//           //                   final Notification = Notifications[index];
+//           //
+//           //                   return InkWell(
+//           //                     child: Padding(
+//           //                       padding: Notification.Name == fullUserId()
+//           //                           ? EdgeInsets.only(
+//           //                           left: widget.width * 45,
+//           //                           right: widget.width * 5,
+//           //                           top: widget.height * 5)
+//           //                           : EdgeInsets.only(
+//           //                           right: widget.width * 45,
+//           //                           left: widget.width * 5,
+//           //                           top: widget.height * 5),
+//           //                       child: Container(
+//           //                         width: double.infinity,
+//           //                         alignment: Alignment.center,
+//           //                         decoration: Notification.Name ==
+//           //                             fullUserId()
+//           //                             ? BoxDecoration(
+//           //                           borderRadius: BorderRadius.only(
+//           //                             topLeft: Radius.circular(
+//           //                                 widget.size * 25),
+//           //                             bottomLeft: Radius.circular(
+//           //                                 widget.size * 25),
+//           //                             topRight: Radius.circular(
+//           //                                 widget.size * 25),
+//           //                             bottomRight: Radius.circular(
+//           //                                 widget.size * 5),
+//           //                           ),
+//           //                           color:
+//           //                           Colors.black.withOpacity(0.8),
+//           //                           border: Border.all(
+//           //                               color: Colors
+//           //                                   .blueAccent.shade100),
+//           //                         )
+//           //                             : BoxDecoration(
+//           //                           borderRadius: BorderRadius.only(
+//           //                             topLeft: Radius.circular(
+//           //                                 widget.size * 25),
+//           //                             bottomLeft: Radius.circular(
+//           //                                 widget.size * 5),
+//           //                             topRight: Radius.circular(
+//           //                                 widget.size * 25),
+//           //                             bottomRight: Radius.circular(
+//           //                                 widget.size * 25),
+//           //                           ),
+//           //                           color:
+//           //                           Colors.black.withOpacity(0.5),
+//           //                           border: Border.all(
+//           //                               color: Colors.white
+//           //                                   .withOpacity(0.5)),
+//           //                         ),
+//           //                         child: Row(
+//           //                           mainAxisAlignment:
+//           //                           MainAxisAlignment.start,
+//           //                           crossAxisAlignment:
+//           //                           CrossAxisAlignment.start,
+//           //                           children: [
+//           //                             SizedBox(
+//           //                               width: widget.width * 2,
+//           //                             ),
+//           //                             Expanded(
+//           //                                 child: Column(
+//           //                                   mainAxisAlignment:
+//           //                                   MainAxisAlignment.start,
+//           //                                   crossAxisAlignment:
+//           //                                   CrossAxisAlignment.start,
+//           //                                   children: [
+//           //                                     Row(
+//           //                                       children: [
+//           //                                         Text(
+//           //                                           "       @${Notification.Name}",
+//           //                                           style: TextStyle(
+//           //                                             fontSize:
+//           //                                             widget.size * 12.0,
+//           //                                             color: Colors.white54,
+//           //                                             fontWeight:
+//           //                                             FontWeight.w600,
+//           //                                           ),
+//           //                                         ),
+//           //                                         Spacer(),
+//           //                                         Padding(
+//           //                                           padding:
+//           //                                           EdgeInsets.fromLTRB(
+//           //                                               widget.size * 8,
+//           //                                               widget.size * 1,
+//           //                                               widget.size * 25,
+//           //                                               widget.size * 1),
+//           //                                           child: Column(
+//           //                                             children: [
+//           //                                               Text(
+//           //                                                 '${Notification.id}',
+//           //                                                 style: TextStyle(
+//           //                                                   fontSize:
+//           //                                                   widget.size *
+//           //                                                       9.0,
+//           //                                                   color:
+//           //                                                   Colors.white70,
+//           //                                                   //   fontWeight: FontWeight.bold,
+//           //                                                 ),
+//           //                                               ),
+//           //                                             ],
+//           //                                           ),
+//           //                                         ),
+//           //                                       ],
+//           //                                     ),
+//           //                                     Padding(
+//           //                                       padding: EdgeInsets.only(
+//           //                                           left: widget.size * 8,
+//           //                                           bottom: widget.size * 6,
+//           //                                           right: widget.size * 3,
+//           //                                           top: widget.size * 3),
+//           //                                       child: NotificationText(
+//           //                                           Notification.description),
+//           //                                     ),
+//           //                                     if (Notification.Url.length > 3)
+//           //                                       Padding(
+//           //                                         padding: EdgeInsets.all(
+//           //                                             widget.size * 3.0),
+//           //                                         child: Image.network(
+//           //                                             Notification.Url),
+//           //                                       )
+//           //                                   ],
+//           //                                 ))
+//           //                           ],
+//           //                         ),
+//           //                       ),
+//           //                     ),
+//           //                     onLongPress: () {
+//           //                       if (Notification.Name == fullUserId() ||
+//           //                           isUser()) {
+//           //                         final deleteFlashNews = FirebaseFirestore
+//           //                             .instance
+//           //                             .collection(widget.branch)
+//           //                             .doc("Notification")
+//           //                             .collection("AllNotification")
+//           //                             .doc(Notification.id);
+//           //                         deleteFlashNews.delete();
+//           //                         showToastText(
+//           //                             "Your Message has been Deleted");
+//           //                       } else {
+//           //                         showToastText(
+//           //                             "You are not message user to delete");
+//           //                       }
+//           //                     },
+//           //                   );
+//           //                 },
+//           //                 separatorBuilder: (context, index) => SizedBox(
+//           //                   height: widget.height * 1,
+//           //                 ));
+//           //           }
+//           //       }
+//           //     }),
+//         ],
+//       ),
+//     ));
+//   }
+// }
 
 class NewsPage extends StatefulWidget {
   final String branch;
@@ -1833,6 +2593,7 @@ class _textBookSubState extends State<textBookSub> {
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       PdfViewerPage(
+                                                          size: widget.size,
                                                           pdfUrl:
                                                               "${folderPath}/pdfs/${getFileName(widget.data.link)}")));
                                         } else {
@@ -3858,6 +4619,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           PdfViewerPage(
+                                                            size: widget.size,
                                                               pdfUrl:
                                                                   "${folderPath}/pdfs/${getFileName(widget.unit.link)}")));
                                             } else {
@@ -3997,6 +4759,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             PdfViewerPage(
+                                                              size: widget.size,
                                                               pdfUrl:
                                                                   "${folderPath}/pdfs/${getFileName(widget.unit.link)}",
                                                               defaultPage:
@@ -4085,6 +4848,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             PdfViewerPage(
+                                                              size: widget.size,
                                                               pdfUrl:
                                                                   "${folderPath}/pdfs/${getFileName(widget.unit.link)}",
                                                               defaultPage:
@@ -4578,6 +5342,7 @@ class _subMoreState extends State<subMore> with TickerProviderStateMixin {
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           PdfViewerPage(
+                                                              size: widget.size,
                                                               pdfUrl:
                                                                   "${folderPath}/pdfs/${getFileName(widget.unit.link.split(";").last)}")));
                                             } else {
@@ -4722,6 +5487,7 @@ class _updatesPageState extends State<updatesPage> {
       physics: BouncingScrollPhysics(),
       child: Stack(
         children: [
+
           Padding(
             padding: EdgeInsets.symmetric(vertical: widget.size * 40),
             child: StreamBuilder<List<UpdateConvertor>>(

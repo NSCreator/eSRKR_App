@@ -900,7 +900,59 @@ class _HomePageState extends State<HomePage> {
                                   )
                                 ],
                               ),
-                              onTap: (){},
+                              onTap: (){
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                    const Duration(
+                                        milliseconds:
+                                        300),
+                                    pageBuilder: (context,
+                                        animation,
+                                        secondaryAnimation) =>
+                                        TimeTables(
+                                          reg: widget.reg,
+                                          branch: widget
+                                              .branch,
+
+                                          size:
+                                          widget.size,
+                                        ),
+                                    transitionsBuilder:
+                                        (context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child) {
+                                      final fadeTransition =
+                                      FadeTransition(
+                                        opacity:
+                                        animation,
+                                        child: child,
+                                      );
+
+                                      return Container(
+                                        color: Colors
+                                            .black
+                                            .withOpacity(
+                                            animation
+                                                .value),
+                                        child: AnimatedOpacity(
+                                            duration: Duration(
+                                                milliseconds:
+                                                300),
+                                            opacity: animation
+                                                .value
+                                                .clamp(
+                                                0.3,
+                                                1.0),
+                                            child:
+                                            fadeTransition),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
                             ),
                             InkWell(
                               child: Column(
@@ -1162,28 +1214,6 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               onTap: (){
-
-                              },
-                            ),
-                            InkWell(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    height: 50,
-                                    width: 50,
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(25),
-                                        image: DecorationImage(image: AssetImage("assets/lab.png"))
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text("Modal Papers",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
-                                  )
-                                ],
-                              ),
-                              onTap: (){
                                 Navigator.push(
                                   context,
                                   PageRouteBuilder(
@@ -1194,12 +1224,10 @@ class _HomePageState extends State<HomePage> {
                                     pageBuilder: (context,
                                         animation,
                                         secondaryAnimation) =>
-                                        LabSubjects(
+                                        syllabusPage(
                                           branch: widget
                                               .branch,
-                                          reg: widget.reg,
-                                          width: widget.size ,
-                                          height:widget.size ,
+
                                           size:
                                           widget.size,
                                         ),
@@ -1236,6 +1264,7 @@ class _HomePageState extends State<HomePage> {
                                     },
                                   ),
                                 );
+
                               },
                             ),
                             InkWell(
@@ -1247,12 +1276,12 @@ class _HomePageState extends State<HomePage> {
                                     decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(25),
-                                        image: DecorationImage(image: AssetImage("assets/books.png"))
+                                        image: DecorationImage(image: AssetImage("assets/lab.png"))
                                     ),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(5.0),
-                                    child: Text("Previous Paper",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                    child: Text("Modal Papers",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
                                   )
                                 ],
                               ),
@@ -1267,17 +1296,12 @@ class _HomePageState extends State<HomePage> {
                                     pageBuilder: (context,
                                         animation,
                                         secondaryAnimation) =>
-                                        backGroundImage(
-                                          child: Column(
-                                            children: [
-                                              backButton(size: widget.size,text: "Books",),
-                                              allBooks(
-                                                size: widget.size,
+                                        ModalPapersPage(
+                                          branch: widget
+                                              .branch,
 
-                                                branch: widget.branch,
-                                              ),
-                                            ],
-                                          ),
+                                          size:
+                                          widget.size,
                                         ),
                                     transitionsBuilder:
                                         (context,
@@ -1312,7 +1336,6 @@ class _HomePageState extends State<HomePage> {
                                     },
                                   ),
                                 );
-
                               },
                             )
                           ],
@@ -2555,71 +2578,9 @@ Future createHomeUpdate({
   await docflash.set(json);
 }
 
-// class MyHomePage extends StatefulWidget {
-//   @override
-//   _MyHomePageState createState() => _MyHomePageState();
-// }
-//
-// class _MyHomePageState extends State<MyHomePage> {
-//   int index=0;
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('SharedPreferences Example'),
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             ElevatedButton(
-//               onPressed: _addUpdateConvertor,
-//               child: Text('Add UpdateConvertor'),
-//             ),
-//             ElevatedButton(
-//               onPressed: _getUpdateConvertors,
-//               child: Text('Get UpdateConvertors'),
-//             ),
-//             ElevatedButton(
-//               onPressed: _removeUpdateConvertor,
-//               child: Text('Remove UpdateConvertor'),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Future<void> _addUpdateConvertor() async {
-//
-//     UpdateConvertor newUpdate = UpdateConvertor(
-//       heading: 'New Update ${index++}',
-//
-//       date: '2023-08-09', photoUrl: '', link: '', branch: '', description: '',
-//     );
-//     await UpdateConvertorUtil.addUpdateConvertor(newUpdate);
-//   }
-//
-//   Future<void> _getUpdateConvertors() async {
-//     List<UpdateConvertor> updateList =
-//     await UpdateConvertorUtil.getUpdateConvertorList();
-//
-//     for (UpdateConvertor update in updateList) {
-//       print(update.heading);
-//       showToastText(update.heading);
-//     }
-//   }
-//
-//   Future<void> _removeUpdateConvertor() async {
-//     int indexToRemove = 0; // Index of the item you want to remove
-//     await UpdateConvertorUtil.removeUpdateConvertor(indexToRemove);
-//   }
-// }
-
 class UpdateConvertor {
   String id;
   final String heading, photoUrl, link, description, branch;
-
 
   UpdateConvertor({
     this.id = "",
@@ -2651,28 +2612,72 @@ class UpdateConvertor {
   );
 }
 
-Stream<List<RegulationConvertor>> readRegulation(String branch) =>
-    FirebaseFirestore.instance
-        .collection(branch)
-        .doc("regulation")
-        .collection("regulation")
-        .orderBy("id", descending: false)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => RegulationConvertor.fromJson(doc.data()))
-            .toList());
 
-Future createRegulation({required String name, required String branch}) async {
+Future createRegulationYear({required String name, required String branch}) async {
   final docflash = FirebaseFirestore.instance
       .collection(branch)
       .doc("regulation")
-      .collection("regulation")
+      .collection("regulationWithYears")
       .doc(name);
   final flash = RegulationConvertor(id: name);
   final json = flash.toJson();
   await docflash.set(json);
 }
+Future createRegulationSem({required String name, required String branch}) async {
+  final docflash = FirebaseFirestore.instance
+      .collection(branch)
+      .doc("regulation")
+      .collection("regulationWithSem")
+      .doc(name);
+  final flash = RegulationConvertor(id: name);
+  final json = flash.toJson();
+  await docflash.set(json);
+}
+Stream<List<syllabusConvertor>> readsyllabus(
+    {required String branch}) =>
+    FirebaseFirestore.instance
+        .collection(branch)
+        .doc("regulation")
+        .collection("regulationWithYears")
+        .orderBy("id", descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((doc) => syllabusConvertor.fromJson(doc.data()))
+        .toList()
+    );
 
+Stream<List<modelPaperConvertor>> readmodelPaper(
+    {required String branch}) =>
+    FirebaseFirestore.instance
+        .collection(branch)
+        .doc("regulation")
+        .collection("regulationWithYears")
+        .orderBy("id", descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((doc) => modelPaperConvertor.fromJson(doc.data()))
+        .toList()
+    );
+class RegulationWithYearConvertor {
+  String id;
+  String modelPaper;
+  String syllabus;
+
+  RegulationWithYearConvertor({this.id = "",required this.modelPaper,required this.syllabus});
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "modelPaper": modelPaper,
+    "syllabus": syllabus,
+  };
+
+  static RegulationWithYearConvertor fromJson(Map<String, dynamic> json) =>
+      RegulationWithYearConvertor(
+          id: json['id'],
+        modelPaper: json['modelPaper'],
+        syllabus: json['syllabus'],
+      );
+}
 class RegulationConvertor {
   String id;
 
@@ -2684,12 +2689,52 @@ class RegulationConvertor {
       RegulationConvertor(id: json['id']);
 }
 
+
+
+class syllabusConvertor {
+  String id;
+  String syllabus;
+
+  syllabusConvertor({this.id = "",required this.syllabus});
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "syllabus": syllabus,
+  };
+
+  static syllabusConvertor fromJson(Map<String, dynamic> json) =>
+      syllabusConvertor(
+          id: json['id'],
+        syllabus: json['syllabus'],
+      );
+}
+
+class modelPaperConvertor {
+  String id;
+  String modelPaper;
+
+  modelPaperConvertor({this.id = "",required this.modelPaper});
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "modelPaper": modelPaper,
+  };
+
+  static modelPaperConvertor fromJson(Map<String, dynamic> json) =>
+      modelPaperConvertor(
+        id: json['id'],
+        modelPaper: json['modelPaper'],
+      );
+}
+
+
+
 Stream<List<TimeTableConvertor>> readTimeTable(
         {required String reg, required String branch}) =>
     FirebaseFirestore.instance
         .collection(branch)
         .doc("regulation")
-        .collection("regulation")
+        .collection("regulationWithSem")
         .doc(reg)
         .collection("timeTables")
         .orderBy("heading", descending: true)
@@ -2702,17 +2747,16 @@ Future createTimeTable(
     {required String branch,
     required String heading,
     required String photoUrl,
-    required String reg,
-    required String id1}) async {
+    required String reg}) async {
+  String id =getID();
   final docflash = FirebaseFirestore.instance
-      .collection(branch)
+  .collection(branch)
       .doc("regulation")
-      .collection("regulation")
+      .collection("regulationWithSem")
       .doc(reg)
       .collection("timeTables")
-      .doc();
-  final flash =
-      TimeTableConvertor(id: docflash.id, heading: heading, photoUrl: photoUrl);
+      .doc(id);
+  final flash = TimeTableConvertor(id:id, heading: heading, photoUrl: photoUrl);
   final json = flash.toJson();
   await docflash.set(json);
 }

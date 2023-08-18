@@ -1533,55 +1533,72 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
             SizedBox(
               height: 20,
             ),
-            // StreamBuilder<List<RegulationConvertor>>(
-            //     stream: readRegulation(widget.branch),
-            //     builder: (context, snapshot) {
-            //       final unit = snapshot.data;
-            //       switch (snapshot.connectionState) {
-            //         case ConnectionState.waiting:
-            //           return const Center(
-            //               child: CircularProgressIndicator(
-            //                 strokeWidth: 0.3,
-            //                 color: Colors.cyan,
-            //               ));
-            //         default:
-            //           if (snapshot.hasError) {
-            //             return const Center(
-            //                 child: Text(
-            //                     'Error with TextBooks Data or\n Check Internet Connection',style: TextStyle(color: Colors.white),));
-            //           } else {
-            //             showToastText("${widget.branch}");
-            //             return SizedBox(
-            //               height: 30,
-            //               child: ListView.separated(
-            //                 physics: const BouncingScrollPhysics(),
-            //                 scrollDirection: Axis.horizontal,
-            //                 itemCount: unit!.length, // Display only top 5 items
-            //                 itemBuilder: (context, int index) {
-            //                   return InkWell(
-            //                     child: Container(
-            //                         decoration: BoxDecoration(
-            //
-            //                             color: reg==unit[index].id?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
-            //                             borderRadius: BorderRadius.circular(10)
-            //                         ),
-            //                         child: Padding(
-            //                           padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
-            //                           child: Text(unit[index].id,style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
-            //                         )),
-            //                     onTap: (){
-            //                       setState(() {
-            //                         reg = unit[index].id;
-            //                       });
-            //                     },
-            //                   );
-            //                 },
-            //                 separatorBuilder: (context,index)=>SizedBox(width: 5,),),
-            //             );
-            //
-            //           }
-            //       }
-            //     }),
+            StreamBuilder<List<RegulationConvertor>>(
+                stream: readRegulation(widget.branch),
+                builder: (context, snapshot) {
+                  final user = snapshot.data;
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 0.3,
+                            color: Colors.cyan,
+                          ));
+                    default:
+                      if (snapshot.hasError) {
+                        return const Center(
+                            child: Text(
+                                'Error with TextBooks Data or\n Check Internet Connection'));
+                      } else {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 2,
+                                width: 30,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8)),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: user!.length,
+                                  itemBuilder: (context, int index) {
+                                    final SubjectsData = user[index];
+                                    return Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(3.0),
+                                        child: InkWell(
+                                          child: Text(
+                                            SubjectsData.id,
+                                            style: TextStyle(
+                                                color: Colors.lightGreenAccent,
+                                                fontSize: 30),
+                                          ),
+                                          onTap: () {
+                                            setState(() {
+                                              reg = SubjectsData.id;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                  }
+                }),
+
             Row(
               children: [
                 Spacer(),
@@ -2838,3 +2855,14 @@ class _UnitsCreatorState extends State<UnitsCreator> {
     ));
   }
 }
+
+Stream<List<RegulationConvertor>> readRegulation(String branch) =>
+    FirebaseFirestore.instance
+        .collection(branch)
+        .doc("regulation")
+        .collection("regulationWithSem")
+        .orderBy("id", descending: false)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((doc) => RegulationConvertor.fromJson(doc.data()))
+        .toList());

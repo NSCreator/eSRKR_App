@@ -618,8 +618,17 @@ class _settingsState extends State<settings> {
                                                 ),
                                               ),
                                               onTap: () {
-                                           createRegulation(name: InputController.text, branch: widget.branch);
-
+                                           FirebaseFirestore.instance
+                                               .collection(widget.branch)
+                                               .doc("regulation")
+                                               .collection("regulationWithYears").doc(InputController.text.substring(0, 10)).set(
+                                             {
+                                               "id":InputController.text.substring(0, 10),
+                                               "syllabus":"",
+                                               "modelPaper":"",
+                                             }
+                                           );
+                                           createRegulationSem(name: InputController.text, branch: widget.branch);
                                            Navigator.pop(context);
                                               },
                                             ),
@@ -719,7 +728,7 @@ class _settingsState extends State<settings> {
                         child: Row(
                           children: [
                             Text(
-                              "Create Subject or Lab Subject",
+                              "Create Sub or Lab Subject",
                               style: TextStyle(
                                   fontSize: widget.size * 22,
                                   color: Colors.white70,
