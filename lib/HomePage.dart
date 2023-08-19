@@ -1400,6 +1400,7 @@ class _HomePageState extends State<HomePage> {
                                     widget.size * 20)),
                             elevation: 16,
                             child: ListView(
+                              physics: BouncingScrollPhysics(),
                               shrinkWrap: true,
                               children: <Widget>[
                             StreamBuilder<List<RegulationConvertor>>(
@@ -1424,7 +1425,7 @@ class _HomePageState extends State<HomePage> {
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: ListView.builder(
-                                            physics: const BouncingScrollPhysics(),
+                                            physics: const NeverScrollableScrollPhysics(),
                                             shrinkWrap: true,
                                             itemCount: user!.length,
                                             itemBuilder: (context, int index) {

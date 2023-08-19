@@ -693,9 +693,7 @@ class _updateCreatorState extends State<updateCreator> {
                           branch: Branch,
                           description: subMessageController.text,
                           heading: MessageController.text,
-                          photoUrl: PhotoUrlController.text.isNotEmpty
-                              ? PhotoUrlController.text
-                              : " ",
+                          photoUrl: PhotoUrlController.text,
                           link: LinkController.text);
 
                       SendMessage("Update;$id",MessageController.text.trim(),widget.branch );

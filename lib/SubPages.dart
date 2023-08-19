@@ -2373,7 +2373,6 @@ class _textBookSubState extends State<textBookSub> {
   bool isLoading = true;
   bool isDownloaded = false;
   String folderPath = "";
-  File imageFile = File("");
   bool fullDescription = false;
   int pages = 0;
 
@@ -2442,9 +2441,7 @@ class _textBookSubState extends State<textBookSub> {
   Widget build(BuildContext context) {
     if (widget.data.link.isNotEmpty)
       file = File("${folderPath}/pdfs/${getFileName(widget.data.link)}");
-    if (widget.data.photoUrl.isNotEmpty && !file.existsSync())
-      imageFile =
-          File("${folderPath}/books/${getFileName(widget.data.photoUrl)}");
+
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -2599,7 +2596,7 @@ class _textBookSubState extends State<textBookSub> {
                             image: widget.data.photoUrl.isNotEmpty
                                 ? DecorationImage(
                                     image: FileImage(
-                                      imageFile,
+                                      File("${folderPath}/books/${getFileName(widget.data.photoUrl)}"),
                                     ),
                                     fit: BoxFit.cover,
                                   )
@@ -3214,170 +3211,177 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                       controller: _unitsTabController,
                                       physics: NeverScrollableScrollPhysics(),
                                       children: [
-                                    StreamBuilder<List<UnitsConvertor>>(
-                                      stream:
-                                          readUnits(widget.ID, widget.branch),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const Center(
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 0.3,
-                                              color: Colors.cyan,
-                                            ),
-                                          );
-                                        } else if (snapshot.hasError) {
-                                          return const Center(
-                                            child: Text(
-                                                'Error with TextBooks Data or\n Check Internet Connection'),
-                                          );
-                                        } else {
-                                          final units = snapshot.data;
-
-                                          return Padding(
-                                            padding: EdgeInsets.all(
-                                                widget.size * 5.0),
-                                            child: ListView.separated(
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: units!.length,
-                                              itemBuilder:
-                                                  (context, int index) {
-                                                final unit = units[index];
-
-                                                return Column(
-                                                  children: [
-                                                    subUnit(
-                                                      width: widget.size,
-                                                      height: widget.size,
-                                                      size: widget.size,
-                                                      ID: widget.ID,
-                                                      branch: widget.branch,
-                                                      unit: unit,
-                                                      mode: widget.mode,
-                                                      photoUrl: widget.photoUrl,
-                                                    ),
-                                                    if (isUser())
-                                                      Row(
-                                                        children: [
-                                                          InkWell(
-                                                            child: Chip(
-                                                              elevation: 20,
-                                                              backgroundColor:
-                                                                  Colors.black,
-                                                              avatar:
-                                                                  CircleAvatar(
-                                                                      backgroundColor:
-                                                                          Colors
-                                                                              .black45,
-                                                                      child:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .edit_outlined,
-                                                                      )),
-                                                              label: Text(
-                                                                "Edit",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        widget.size *
-                                                                            14),
-                                                              ),
-                                                            ),
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) =>
-                                                                          UnitsCreator(
-                                                                            type:
-                                                                                "unit",
-                                                                            branch:
-                                                                                widget.branch,
-                                                                            mode:
-                                                                                widget.mode,
-                                                                            UnitId:
-                                                                                widget.ID,
-                                                                            id: unit.id,
-                                                                            Heading:
-                                                                                unit.heading,
-                                                                            Description:
-                                                                                unit.description,
-                                                                            questions:
-                                                                                unit.questions,
-                                                                            PDFUrl:
-                                                                                unit.link,
-                                                                          )));
-                                                            },
-                                                          ),
-                                                          InkWell(
-                                                            child: Chip(
-                                                              elevation: 20,
-                                                              backgroundColor:
-                                                                  Colors.black,
-                                                              avatar:
-                                                                  CircleAvatar(
-                                                                      backgroundColor:
-                                                                          Colors
-                                                                              .black45,
-                                                                      child:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .delete_rounded,
-                                                                      )),
-                                                              label: Text(
-                                                                "Delete",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        widget.size *
-                                                                            14),
-                                                              ),
-                                                            ),
-                                                            onLongPress: () {
-                                                              final deleteFlashNews = FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      widget
-                                                                          .branch)
-                                                                  .doc(widget
-                                                                      .mode)
-                                                                  .collection(
-                                                                      widget
-                                                                          .mode)
-                                                                  .doc(
-                                                                      widget.ID)
-                                                                  .collection(
-                                                                      "Units")
-                                                                  .doc(unit.id);
-                                                              deleteFlashNews
-                                                                  .delete();
-                                                              pushNotificationsSpecificPerson(
-                                                                  fullUserId(),
-                                                                  "${unit.heading} Unit is deleted from ${widget.mode}",
-                                                                  "");
-                                                            },
-                                                            onTap: () {
-                                                              showToastText(
-                                                                  "Long Press to Delete");
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                                  ],
+                                    SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          StreamBuilder<List<UnitsConvertor>>(
+                                            stream:
+                                                readUnits(widget.ID, widget.branch),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 0.3,
+                                                    color: Colors.cyan,
+                                                  ),
                                                 );
-                                              },
-                                              separatorBuilder:
-                                                  (context, index) => SizedBox(
-                                                height: widget.size * 5,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
+                                              } else if (snapshot.hasError) {
+                                                return const Center(
+                                                  child: Text(
+                                                      'Error with TextBooks Data or\n Check Internet Connection'),
+                                                );
+                                              } else {
+                                                final units = snapshot.data;
+
+                                                return Padding(
+                                                  padding: EdgeInsets.all(
+                                                      widget.size * 5.0),
+                                                  child: ListView.separated(
+                                                    physics:
+                                                        const BouncingScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    itemCount: units!.length,
+                                                    itemBuilder:
+                                                        (context, int index) {
+                                                      final unit = units[index];
+
+                                                      return Column(
+                                                        children: [
+                                                          subUnit(
+                                                            width: widget.size,
+                                                            height: widget.size,
+                                                            size: widget.size,
+                                                            ID: widget.ID,
+                                                            branch: widget.branch,
+                                                            unit: unit,
+                                                            mode: widget.mode,
+                                                            photoUrl: widget.photoUrl,
+                                                          ),
+                                                          if (isUser())
+                                                            Row(
+                                                              children: [
+                                                                InkWell(
+                                                                  child: Chip(
+                                                                    elevation: 20,
+                                                                    backgroundColor:
+                                                                        Colors.black,
+                                                                    avatar:
+                                                                        CircleAvatar(
+                                                                            backgroundColor:
+                                                                                Colors
+                                                                                    .black45,
+                                                                            child:
+                                                                                Icon(
+                                                                              Icons
+                                                                                  .edit_outlined,
+                                                                            )),
+                                                                    label: Text(
+                                                                      "Edit",
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .white,
+                                                                          fontSize:
+                                                                              widget.size *
+                                                                                  14),
+                                                                    ),
+                                                                  ),
+                                                                  onTap: () {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) =>
+                                                                                UnitsCreator(
+                                                                                  type:
+                                                                                      "unit",
+                                                                                  branch:
+                                                                                      widget.branch,
+                                                                                  mode:
+                                                                                      widget.mode,
+                                                                                  UnitId:
+                                                                                      widget.ID,
+                                                                                  id: unit.id,
+                                                                                  Heading:
+                                                                                      unit.heading,
+                                                                                  Description:
+                                                                                      unit.description,
+                                                                                  questions:
+                                                                                      unit.questions,
+                                                                                  PDFUrl:
+                                                                                      unit.link,
+                                                                                )));
+                                                                  },
+                                                                ),
+                                                                InkWell(
+                                                                  child: Chip(
+                                                                    elevation: 20,
+                                                                    backgroundColor:
+                                                                        Colors.black,
+                                                                    avatar:
+                                                                        CircleAvatar(
+                                                                            backgroundColor:
+                                                                                Colors
+                                                                                    .black45,
+                                                                            child:
+                                                                                Icon(
+                                                                              Icons
+                                                                                  .delete_rounded,
+                                                                            )),
+                                                                    label: Text(
+                                                                      "Delete",
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .white,
+                                                                          fontSize:
+                                                                              widget.size *
+                                                                                  14),
+                                                                    ),
+                                                                  ),
+                                                                  onLongPress: () {
+                                                                    final deleteFlashNews = FirebaseFirestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            widget
+                                                                                .branch)
+                                                                        .doc(widget
+                                                                            .mode)
+                                                                        .collection(
+                                                                            widget
+                                                                                .mode)
+                                                                        .doc(
+                                                                            widget.ID)
+                                                                        .collection(
+                                                                            "Units")
+                                                                        .doc(unit.id);
+                                                                    deleteFlashNews
+                                                                        .delete();
+                                                                    pushNotificationsSpecificPerson(
+                                                                        fullUserId(),
+                                                                        "${unit.heading} Unit is deleted from ${widget.mode}",
+                                                                        "");
+                                                                  },
+                                                                  onTap: () {
+                                                                    showToastText(
+                                                                        "Long Press to Delete");
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            ),
+                                                        ],
+                                                      );
+                                                    },
+                                                    separatorBuilder:
+                                                        (context, index) => SizedBox(
+                                                      height: widget.size * 5,
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          ),
+                                          SizedBox(height: 150,)
+                                        ],
+                                      ),
                                     ),
                                     StreamBuilder<List<UnitsConvertor>>(
                                       stream:
@@ -3682,128 +3686,245 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                   ]))
                             ],
                           )
-                        : Column(
-                            children: [
-                              if (isUser())
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(right: widget.size * 10),
-                                  child: InkWell(
-                                    child: Chip(
-                                      elevation: 20,
-                                      backgroundColor: Colors.white38,
-                                      avatar: CircleAvatar(
-                                          backgroundColor: Colors.black,
-                                          child: Icon(
-                                            Icons.add,
-                                          )),
-                                      label: Text(
-                                        "Add",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: widget.size * 14),
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  UnitsCreator(
-                                                    type: "unit",
-                                                    branch: widget.branch,
-                                                    id: widget.ID,
-                                                    mode: widget.mode,
-                                                  )));
-                                    },
-                                  ),
-                                ),
-                              StreamBuilder<List<UnitsConvertor>>(
-                                stream: readUnits(widget.ID, widget.branch),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 0.3,
-                                        color: Colors.cyan,
-                                      ),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    return const Center(
-                                      child: Text(
-                                          'Error with TextBooks Data or\n Check Internet Connection'),
-                                    );
-                                  } else {
-                                    final units = snapshot.data;
+                        : SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
 
-                                    return Padding(
-                                      padding:
-                                          EdgeInsets.all(widget.size * 5.0),
-                                      child: ListView.separated(
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemCount: units!.length,
-                                        itemBuilder: (context, int index) {
-                                          final unit = units[index];
-
-                                          return subUnit(
-                                            width: widget.size,
-                                            height: widget.size,
-                                            size: widget.size,
-                                            ID: widget.ID,
-                                            branch: widget.branch,
-                                            unit: unit,
-                                            mode: widget.mode,
-                                            photoUrl: widget.photoUrl,
-                                          );
-                                        },
-                                        separatorBuilder: (context, index) =>
-                                            SizedBox(
-                                          height: widget.size * 5,
+                      child: Column(
+                              children: [
+                                if (isUser())
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.only(right: widget.size * 10),
+                                    child: InkWell(
+                                      child: Chip(
+                                        elevation: 20,
+                                        backgroundColor: Colors.white38,
+                                        avatar: CircleAvatar(
+                                            backgroundColor: Colors.black,
+                                            child: Icon(
+                                              Icons.add,
+                                            )),
+                                        label: Text(
+                                          "Add",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: widget.size * 14),
                                         ),
                                       ),
-                                    );
-                                  }
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UnitsCreator(
+                                                      type: "unit",
+                                                      branch: widget.branch,
+                                                      id: widget.ID,
+                                                      mode: widget.mode,
+                                                    )));
+                                      },
+                                    ),
+                                  ),
+                                StreamBuilder<List<UnitsConvertor>>(
+                                  stream: readUnits(widget.ID, widget.branch),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 0.3,
+                                          color: Colors.cyan,
+                                        ),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return const Center(
+                                        child: Text(
+                                            'Error with TextBooks Data or\n Check Internet Connection'),
+                                      );
+                                    } else {
+                                      final units = snapshot.data;
+
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.all(widget.size * 5.0),
+                                        child: ListView.separated(
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: units!.length,
+                                          itemBuilder: (context, int index) {
+                                            final unit = units[index];
+
+                                            return Column(
+                                              children: [
+                                                subUnit(
+                                                  width: widget.size,
+                                                  height: widget.size,
+                                                  size: widget.size,
+                                                  ID: widget.ID,
+                                                  branch: widget.branch,
+                                                  unit: unit,
+                                                  mode: widget.mode,
+                                                  photoUrl: widget.photoUrl,
+                                                ),
+                                                if (isUser())
+                                                  Row(
+                                                    children: [
+                                                      InkWell(
+                                                        child: Chip(
+                                                          elevation: 20,
+                                                          backgroundColor:
+                                                          Colors.black,
+                                                          avatar:
+                                                          CircleAvatar(
+                                                              backgroundColor:
+                                                              Colors
+                                                                  .black45,
+                                                              child:
+                                                              Icon(
+                                                                Icons
+                                                                    .edit_outlined,
+                                                              )),
+                                                          label: Text(
+                                                            "Edit",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize:
+                                                                widget.size *
+                                                                    14),
+                                                          ),
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      UnitsCreator(
+                                                                        type:
+                                                                        "unit",
+                                                                        branch:
+                                                                        widget.branch,
+                                                                        mode:
+                                                                        widget.mode,
+                                                                        UnitId:
+                                                                        widget.ID,
+                                                                        id: unit.id,
+                                                                        Heading:
+                                                                        unit.heading,
+                                                                        Description:
+                                                                        unit.description,
+                                                                        questions:
+                                                                        unit.questions,
+                                                                        PDFUrl:
+                                                                        unit.link,
+                                                                      )));
+                                                        },
+                                                      ),
+                                                      InkWell(
+                                                        child: Chip(
+                                                          elevation: 20,
+                                                          backgroundColor:
+                                                          Colors.black,
+                                                          avatar:
+                                                          CircleAvatar(
+                                                              backgroundColor:
+                                                              Colors
+                                                                  .black45,
+                                                              child:
+                                                              Icon(
+                                                                Icons
+                                                                    .delete_rounded,
+                                                              )),
+                                                          label: Text(
+                                                            "Delete",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize:
+                                                                widget.size *
+                                                                    14),
+                                                          ),
+                                                        ),
+                                                        onLongPress: () {
+                                                          final deleteFlashNews = FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                              widget
+                                                                  .branch)
+                                                              .doc(widget
+                                                              .mode)
+                                                              .collection(
+                                                              widget
+                                                                  .mode)
+                                                              .doc(
+                                                              widget.ID)
+                                                              .collection(
+                                                              "Units")
+                                                              .doc(unit.id);
+                                                          deleteFlashNews
+                                                              .delete();
+                                                          pushNotificationsSpecificPerson(
+                                                              fullUserId(),
+                                                              "${unit.heading} Unit is deleted from ${widget.mode}",
+                                                              "");
+                                                        },
+                                                        onTap: () {
+                                                          showToastText(
+                                                              "Long Press to Delete");
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                              ],
+                                            );
+                                          },
+                                          separatorBuilder: (context, index) =>
+                                              SizedBox(
+                                            height: widget.size * 5,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                        ),
+                    SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          if (isUser())
+                            Padding(
+                              padding: EdgeInsets.only(right: widget.size * 10),
+                              child: InkWell(
+                                child: Chip(
+                                  elevation: 20,
+                                  backgroundColor: Colors.white38,
+                                  avatar: CircleAvatar(
+                                      backgroundColor: Colors.black,
+                                      child: Icon(
+                                        Icons.add,
+                                      )),
+                                  label: Text(
+                                    "Edit",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => UnitsCreator(
+                                                type: "textbook",
+                                                branch: widget.branch,
+                                                id: widget.ID,
+                                                mode: widget.mode,
+                                              )));
                                 },
                               ),
-                            ],
-                          ),
-                    Column(
-                      children: [
-                        if (isUser())
-                          Padding(
-                            padding: EdgeInsets.only(right: widget.size * 10),
-                            child: InkWell(
-                              child: Chip(
-                                elevation: 20,
-                                backgroundColor: Colors.white38,
-                                avatar: CircleAvatar(
-                                    backgroundColor: Colors.black,
-                                    child: Icon(
-                                      Icons.add,
-                                    )),
-                                label: Text(
-                                  "Edit",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => UnitsCreator(
-                                              type: "textbook",
-                                              branch: widget.branch,
-                                              id: widget.ID,
-                                              mode: widget.mode,
-                                            )));
-                              },
                             ),
-                          ),
-                        Expanded(
-                          child: StreamBuilder<List<BooksConvertor>>(
+                          StreamBuilder<List<BooksConvertor>>(
                             stream: readTextBooks(widget.ID, widget.branch),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
@@ -3825,7 +3946,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                 return Padding(
                                   padding: EdgeInsets.all(widget.size * 5.0),
                                   child: ListView.separated(
-                                    physics: const BouncingScrollPhysics(),
+                                    physics: NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     itemCount: units!.length,
                                     itemBuilder: (context, int index) {
@@ -3949,43 +4070,45 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                               }
                             },
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    Column(
-                      children: [
-                        if (isUser())
-                          Padding(
-                            padding: EdgeInsets.only(right: widget.size * 10),
-                            child: InkWell(
-                              child: Chip(
-                                elevation: 20,
-                                backgroundColor: Colors.white38,
-                                avatar: CircleAvatar(
-                                    backgroundColor: Colors.black,
-                                    child: Icon(
-                                      Icons.add,
-                                    )),
-                                label: Text(
-                                  "Edit",
-                                  style: TextStyle(color: Colors.black),
+                    SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+
+                      child: Column(
+                        children: [
+                          if (isUser())
+                            Padding(
+                              padding: EdgeInsets.only(right: widget.size * 10),
+                              child: InkWell(
+                                child: Chip(
+                                  elevation: 20,
+                                  backgroundColor: Colors.white38,
+                                  avatar: CircleAvatar(
+                                      backgroundColor: Colors.black,
+                                      child: Icon(
+                                        Icons.add,
+                                      )),
+                                  label: Text(
+                                    "Edit",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
                                 ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => UnitsCreator(
+                                                type: "more",
+                                                branch: widget.branch,
+                                                id: widget.ID,
+                                                mode: widget.mode,
+                                              )));
+                                },
                               ),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => UnitsCreator(
-                                              type: "more",
-                                              branch: widget.branch,
-                                              id: widget.ID,
-                                              mode: widget.mode,
-                                            )));
-                              },
                             ),
-                          ),
-                        Expanded(
-                          child: StreamBuilder<List<UnitsMoreConvertor>>(
+                          StreamBuilder<List<UnitsMoreConvertor>>(
                             stream: readMore(widget.ID, widget.branch),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
@@ -4007,7 +4130,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                 return Padding(
                                   padding: EdgeInsets.all(widget.size * 5.0),
                                   child: ListView.separated(
-                                    physics: const BouncingScrollPhysics(),
+                                    physics: NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     itemCount: units!.length,
                                     itemBuilder: (context, int index) {
@@ -4126,8 +4249,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                               }
                             },
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ]),
             ),
@@ -5578,11 +5701,9 @@ class _updatesPageState extends State<updatesPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     setState(() {
       getPath();
     });
-
     super.initState();
   }
 
@@ -5675,10 +5796,10 @@ class _updatesPageState extends State<updatesPage> {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               widget.size * 17),
-                                                      image: DecorationImage(
+                                                      image: BranchNew.photoUrl.isNotEmpty && file.existsSync()?DecorationImage(
                                                         image: FileImage(file),
                                                         fit: BoxFit.cover,
-                                                      ),
+                                                      ):noImageFound,
                                                     ),
                                                   ),
                                                   Expanded(

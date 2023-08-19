@@ -350,14 +350,21 @@ class _createNewUserState extends State<createNewUser> {
                     ),
                   ),
                   onTap: () async {
-                    otp = generateCode();
+
+
                     if (isSend) {
-                      if (otp == otpController.text) {
+                      if (otp == otpController.text.trim()) {
                         isTrue = true;
+                        FirebaseFirestore.instance
+                            .collection("tempRegisters")
+                            .doc(emailController.text)
+                            .delete();
                       } else {
                         showToastText("Please Enter Correct OTP");
                       }
-                    } else {
+                    }
+                    else {
+                      otp = generateCode();
                       var email = emailController.text.trim().split('@');
                       if (email[1] == 'srkrec.ac.in') {
 
@@ -380,32 +387,38 @@ class _createNewUserState extends State<createNewUser> {
                         } else if (str == '03') {
                           branch = 'MECH';
                         } else {
-                          branch = 'None';
+                          Navigator.pop(context);
+                          showToastText("Your Branch Is Not Registered");
+                          FirebaseFirestore.instance
+                              .collection("tempRegisters")
+                              .doc(emailController.text)
+                              .delete();
                         }
-                        // pushNotificationsSpecificPerson(
-                        //     "sujithnimmala03@gmail.com",
-                        //     emailController.text + getID()+ "Otp : $otp",
-                        //     "");
-
+                        pushNotificationsToOwner(
+                          emailController.text + "'s Otp : $otp",
+                        );
                         otp;
-
-                      } else {
-
+                      }
+                      else {
                         if (emailController.text.split('@').last == 'gmail.com') {
                           showToastText("OTP is Not Sent to Email");
                           FirebaseFirestore.instance
                               .collection("tempRegisters")
                               .doc(emailController.text)
                               .set({"email": emailController.text, "opt": otp});
-
                           pushNotificationsToOwner(
-
-                              emailController.text + "'s Otp : $otp",
+                            emailController.text + "'s Otp : $otp",
                           );
 
-                        }else
+
+                          sendEmail("esrkr.app@gmail.com", otp);
+                        }
+                        else
                         showToastText("Please Enter Correct Email ID");
                       }
+                    }
+
+                    if(branch!='None'||emailController.text.split('@').last == 'gmail.com'){
                       isSend = true;
                     }
 
@@ -519,7 +532,7 @@ class _createNewUserState extends State<createNewUser> {
                     style: creatorHeadingTextStyle,
                   ),
                 ),
-                if (branch == "None")
+                if (emailController.text.split('@').last == 'gmail.com')
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(

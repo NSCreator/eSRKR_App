@@ -209,14 +209,65 @@ class _MyAppState extends State<MyApp> {
                               size: size(context),
                             );
                           } else {
-                            showToastText(
-                                mainsnapshot.data!['branch'].toString());
+
                             return Scaffold(
                               backgroundColor: Color.fromRGBO(4, 48, 46, 1),
                               body: SafeArea(
-                                  child: years(
-                                branch: mainsnapshot.data!["branch"].toString(),
-                              )),
+                                  child:  StreamBuilder<List<RegulationConvertor>>(
+                                      stream: readRegulation(mainsnapshot.data!['branch'].toString()),
+                                      builder: (context, snapshot) {
+                                        final user = snapshot.data;
+                                        switch (snapshot.connectionState) {
+                                          case ConnectionState.waiting:
+                                            return const Center(
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 0.3,
+                                                  color: Colors.cyan,
+                                                ));
+                                          default:
+                                            if (snapshot.hasError) {
+                                              return const Center(
+                                                  child: Text(
+                                                      'Error with TextBooks Data or\n Check Internet Connection'));
+                                            } else {
+                                              return Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: ListView.builder(
+                                                    physics: const BouncingScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    itemCount: user!.length,
+                                                    itemBuilder: (context, int index) {
+                                                      final SubjectsData = user[index];
+                                                      return Center(
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(3.0),
+                                                          child: InkWell(
+                                                            child: Text(
+                                                              SubjectsData.id.toUpperCase(),
+                                                              style: TextStyle(
+                                                                  color: Colors.amber,
+                                                                  fontSize: 30),
+                                                            ),
+                                                            onTap: () {
+                                                              FirebaseFirestore.instance
+                                                                  .collection("user")
+                                                                  .doc(fullUserId())
+                                                                  .update({"reg": SubjectsData.id});
+                                                           
+
+                                                            },
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                        }
+                                      })),
                             );
                           }
                         }
