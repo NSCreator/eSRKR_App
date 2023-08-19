@@ -105,9 +105,9 @@ Future main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await NotificationService().initNotification();
-  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
-  MobileAds.instance.initialize();
+  // await NotificationService().initNotification();
+  // FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  // MobileAds.instance.initialize();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
