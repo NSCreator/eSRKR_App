@@ -101,7 +101,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
               elevation: 16,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white38,
+                  color: Colors.white54,
                   border: Border.all(color: Colors.white24),
                   borderRadius: BorderRadius.circular(widget.size * 20),
                 ),
@@ -114,7 +114,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                       child: Text(
                         "Press Yes to go back",
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontWeight: FontWeight.w600,
                             fontSize: widget.size * 18),
                       ),
@@ -134,7 +134,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                             child: Text(
                               'No',
                               style: TextStyle(
-                                  color: Colors.redAccent,
+                                  color: Colors.black,
                                   fontSize: widget.size * 20,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -146,7 +146,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                             child: Text(
                               'Yes',
                               style: TextStyle(
-                                  color: Colors.greenAccent,
+                                  color: Colors.black,
                                   fontSize: widget.size * 20,
                                   fontWeight: FontWeight.w600),
                             ),

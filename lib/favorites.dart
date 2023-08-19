@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:srkr_study_app/settings.dart';
 import 'SubPages.dart';
 import 'functins.dart';
 TextStyle favoritesHeadingTextStyle = TextStyle(
@@ -88,13 +89,15 @@ class _favoritesState extends State<favorites> {
                                       itemCount: Favourites.length,
                                       itemBuilder: (context, int index) {
                                         final Favourite = Favourites[index];
-                                        final Uri uri =
-                                            Uri.parse(Favourite.photoUrl);
-                                        final String fileName =
-                                            uri.pathSegments.last;
-                                        var name = fileName.split("/").last;
-                                        final file = File(
-                                            "${folderPath}/subjects/$name");
+                                        if(Favourite.photoUrl.isNotEmpty){
+                                          final Uri uri =
+                                          Uri.parse(Favourite.photoUrl);
+                                          final String fileName =
+                                              uri.pathSegments.last;
+                                          var name = fileName.split("/").last;
+                                           file = File(
+                                              "${folderPath}/subjects/$name");
+                                        }
                                         return InkWell(
                                           child: Container(
                                             width: double.infinity,
@@ -391,13 +394,15 @@ class _favoritesState extends State<favorites> {
                                       itemCount: Favourites.length,
                                       itemBuilder: (context, int index) {
                                         final Favourite = Favourites[index];
-                                        final Uri uri =
-                                            Uri.parse(Favourite.photoUrl);
-                                        final String fileName =
-                                            uri.pathSegments.last;
-                                        var name = fileName.split("/").last;
-                                        final file = File(
-                                            "${folderPath}/labsubjects/$name");
+                                        if(Favourite.photoUrl.isNotEmpty){
+                                          final Uri uri =
+                                          Uri.parse(Favourite.photoUrl);
+                                          final String fileName =
+                                              uri.pathSegments.last;
+                                          var name = fileName.split("/").last;
+                                           file = File(
+                                              "${folderPath}/labsubjects/$name");
+                                        }
                                         return InkWell(
                                           child: Container(
                                             width: double.infinity,

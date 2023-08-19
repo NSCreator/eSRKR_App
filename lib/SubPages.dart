@@ -2813,7 +2813,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
     getPath();
     _tabController = new TabController(
       vsync: this,
-      length: 3,
+      length: widget.mode == "Subjects"?3:2,
     );
     _unitsTabController = new TabController(
       vsync: this,
@@ -3094,12 +3094,12 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                     tabs: [
                       Tab(
                         child: Text(
-                          widget.mode == "Subjects" ? "Units" : "Records",
+                          widget.mode == "Subjects" ? "Units" : "Records & Manuals",
                         ),
                       ),
-                      Tab(
+                     if( widget.mode == "Subjects")Tab(
                         child: Text(
-                          widget.mode == "Subjects" ? "TextBooks" : "Manuals",
+                          "TextBooks",
                         ),
                       ),
                       Tab(
@@ -3212,6 +3212,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                       physics: NeverScrollableScrollPhysics(),
                                       children: [
                                     SingleChildScrollView(
+                                      physics: BouncingScrollPhysics(),
                                       child: Column(
                                         children: [
                                           StreamBuilder<List<UnitsConvertor>>(
@@ -3890,7 +3891,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                               ],
                             ),
                         ),
-                    SingleChildScrollView(
+                    if( widget.mode == "Subjects") SingleChildScrollView(
                       physics: BouncingScrollPhysics(),
                       child: Column(
                         children: [
