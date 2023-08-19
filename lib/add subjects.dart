@@ -29,7 +29,6 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
   late bool isExpand = false;
   bool isReady = false;
   int? pages = 0;
-
   late bool isNightMode = false;
   late bool isScrolling = false;
   late bool isSwipeHorizontal = false;

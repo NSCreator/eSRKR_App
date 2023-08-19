@@ -243,78 +243,61 @@ class years extends StatefulWidget {
 class _yearsState extends State<years> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        StreamBuilder<List<RegulationConvertor>>(
-            stream: readRegulation(widget.branch),
-            builder: (context, snapshot) {
-              final user = snapshot.data;
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return const Center(
-                      child: CircularProgressIndicator(
-                    strokeWidth: 0.3,
-                    color: Colors.cyan,
-                  ));
-                default:
-                  if (snapshot.hasError) {
-                    return const Center(
-                        child: Text(
-                            'Error with TextBooks Data or\n Check Internet Connection'));
-                  } else {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 2,
-                            width: 30,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: user!.length,
-                              itemBuilder: (context, int index) {
-                                final SubjectsData = user[index];
-                                return Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(3.0),
-                                    child: InkWell(
-                                      child: Text(
-                                        SubjectsData.id,
-                                        style: TextStyle(
-                                            color: Colors.lightGreenAccent,
-                                            fontSize: 30),
-                                      ),
-                                      onTap: () {
-                                        FirebaseFirestore.instance
-                                            .collection("user")
-                                            .doc(fullUserId())
-                                            .update({"reg": SubjectsData.id});
-                                        Navigator.pop(context);
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ),
-                                );
+    return StreamBuilder<List<RegulationConvertor>>(
+        stream: readRegulation(widget.branch),
+        builder: (context, snapshot) {
+          final user = snapshot.data;
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return const Center(
+                  child: CircularProgressIndicator(
+                strokeWidth: 0.3,
+                color: Colors.cyan,
+              ));
+            default:
+              if (snapshot.hasError) {
+                return const Center(
+                    child: Text(
+                        'Error with TextBooks Data or\n Check Internet Connection'));
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: user!.length,
+                      itemBuilder: (context, int index) {
+                        final SubjectsData = user[index];
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: InkWell(
+                              child: Text(
+                                SubjectsData.id.toUpperCase(),
+                                style: TextStyle(
+                                    color: Colors.amber,
+                                    fontSize: 30),
+                              ),
+                              onTap: () {
+                                FirebaseFirestore.instance
+                                    .collection("user")
+                                    .doc(fullUserId())
+                                    .update({"reg": SubjectsData.id});
+                                Navigator.pop(context);
+                                Navigator.pop(context);
                               },
                             ),
                           ),
-                        ],
-                      ),
-                    );
-                  }
+                        );
+                      },
+                    ),
+                  ),
+                );
               }
-            }),
-      ],
-    );
+          }
+        });
   }
 }
 

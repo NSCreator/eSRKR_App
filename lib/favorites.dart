@@ -654,7 +654,7 @@ class _favoritesState extends State<favorites> {
                   }),
 
               SizedBox(
-                height: 100,
+                height: 150,
               )
             ],
           ),

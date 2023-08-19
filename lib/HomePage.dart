@@ -13,6 +13,7 @@ import 'package:srkr_study_app/notification.dart';
 import 'package:srkr_study_app/search%20bar.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'TextField.dart';
 import 'favorites.dart';
 import 'functins.dart';
 import 'main.dart';
@@ -424,7 +425,6 @@ class _HomePageState extends State<HomePage> {
         body: TabBarView(
           physics: BouncingScrollPhysics(),
           children: [
-
             SingleChildScrollView(
               physics: BouncingScrollPhysics(),
               child: Column(
@@ -1387,6 +1387,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     onTap: () {
+
                       showDialog(
                         context: context,
                         builder: (context) {
@@ -1394,22 +1395,69 @@ class _HomePageState extends State<HomePage> {
                             backgroundColor:
                             Colors.black.withOpacity(0.8),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
+                                borderRadius:
+                                BorderRadius.circular(
                                     widget.size * 20)),
                             elevation: 16,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border:
-                                Border.all(color: Colors.white38),
-                                borderRadius: BorderRadius.circular(
-                                    widget.size * 20),
-                              ),
-                              child: ListView(
-                                shrinkWrap: true,
-                                children: <Widget>[
-                                  years(branch: widget.branch,)
-                                ],
-                              ),
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: <Widget>[
+                            StreamBuilder<List<RegulationConvertor>>(
+                                stream: readRegulation(widget.branch),
+                              builder: (context, snapshot) {
+                                final user = snapshot.data;
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                    return const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 0.3,
+                                          color: Colors.cyan,
+                                        ));
+                                  default:
+                                    if (snapshot.hasError) {
+                                      return const Center(
+                                          child: Text(
+                                              'Error with TextBooks Data or\n Check Internet Connection'));
+                                    } else {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: ListView.builder(
+                                            physics: const BouncingScrollPhysics(),
+                                            shrinkWrap: true,
+                                            itemCount: user!.length,
+                                            itemBuilder: (context, int index) {
+                                              final SubjectsData = user[index];
+                                              return Center(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(3.0),
+                                                  child: InkWell(
+                                                    child: Text(
+                                                      SubjectsData.id.toUpperCase(),
+                                                      style: TextStyle(
+                                                          color: Colors.amber,
+                                                          fontSize: 30),
+                                                    ),
+                                                    onTap: () {
+                                                      FirebaseFirestore.instance
+                                                          .collection("user")
+                                                          .doc(fullUserId())
+                                                          .update({"reg": SubjectsData.id});
+                                                      Navigator.pop(context);
+
+                                                    },
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                }
+                              })
+                              ],
                             ),
                           );
                         },
@@ -1725,7 +1773,7 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisSpacing:
                                             widget.size * 15,
                                             
-                                            childAspectRatio: 7/5,
+                                            childAspectRatio: 7/4,
                                             crossAxisCount: Width(context)>800?3:2,
                                           ),
                                           itemCount: filteredItems
@@ -1791,47 +1839,6 @@ class _HomePageState extends State<HomePage> {
                                                   SizedBox(
                                                     height: widget.size *
                                                         3,
-                                                  ),
-                                                  Container(
-                                                    width: double
-                                                        .infinity,
-                                                    height: widget.size *
-                                                        20,
-                                                    decoration:
-                                                    BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.all(Radius.circular(widget.size *
-                                                          8.0)),
-
-                                                    ),
-                                                    child: Padding(
-                                                      padding:  EdgeInsets.symmetric(horizontal:widget.size * 6),
-                                                      child: Marquee(
-                                                        text: SubjectsData
-                                                            .description.isNotEmpty
-                                                            ? SubjectsData.description
-                                                            : "No Full Name",
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: widget.size * 18),
-                                                        scrollAxis: Axis.horizontal,
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
-                                                        blankSpace: 20.0,
-                                                        velocity: 50.0,
-                                                        pauseAfterRound:
-                                                        Duration(seconds: 1),
-                                                        startPadding: 0.0,
-                                                        accelerationDuration:
-                                                        Duration(seconds: 1),
-                                                        accelerationCurve:
-                                                        Curves.linear,
-                                                        decelerationDuration:
-                                                        Duration(milliseconds: 500),
-                                                        decelerationCurve: Curves
-                                                            .easeOut,
-                                                      ),
-                                                    ),
                                                   ),
                                                 ],
                                               ),

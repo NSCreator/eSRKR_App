@@ -131,6 +131,7 @@ class _notificationsState extends State<notifications>
         ),
         Expanded(
           child: TabBarView(
+            physics: BouncingScrollPhysics(),
             controller: _tabController,
             children: [
               StreamBuilder<List<NotificationsConvertor>>(
@@ -288,8 +289,7 @@ class _notificationsState extends State<notifications>
                                     ),
                                   ),
                                   onLongPress: () {
-                                    if (Notification.Name == fullUserId() ||
-                                        isUser()) {
+                                    if (isUser()) {
                                       final deleteFlashNews = FirebaseFirestore
                                           .instance
                                           .collection(widget.branch)
@@ -301,7 +301,7 @@ class _notificationsState extends State<notifications>
                                           "Your Message has been Deleted");
                                     } else {
                                       showToastText(
-                                          "You are not message user to delete");
+                                          "You can't delete");
                                     }
                                   },
                                 );
@@ -808,6 +808,7 @@ Future<bool> pushNotificationsSpecificDevice({
   );
   return true;
 }
+
 Future<void> pushNotificationsToOwner(
     String message) async {
   FirebaseFirestore.instance

@@ -94,13 +94,8 @@ class _settingsState extends State<settings> {
               height: widget.size * 140,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(widget.size * 18),
-                color: Colors.black,
-                image: DecorationImage(
-                  image: NetworkImage(
-                    "https://images.pond5.com/blue-burning-eagle-animated-logo-footage-102505417_iconl.jpeg",
-                  ),
-                  fit: BoxFit.cover,
-                ),
+                color: Colors.black54,
+
               ),
               child: Container(
                 decoration: BoxDecoration(
@@ -1116,6 +1111,14 @@ class _settingsState extends State<settings> {
           ),
           SizedBox(
             height: widget.size *  30,
+          ),
+          Center(
+              child: Text(
+                "from NS",
+                style: TextStyle(color: Colors.white54,fontSize: widget.size * 14),
+              )),
+          SizedBox(
+            height: widget.size *  150,
           ),
         ],
       ),
