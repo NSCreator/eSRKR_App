@@ -197,7 +197,7 @@ class _settingsState extends State<settings> {
                                   child: ListView(
                                     shrinkWrap: true,
                                     children: <Widget>[
-                                      years(branch: widget.branch,)
+                                      years(branch: widget.branch,size: widget.size,)
                                     ],
                                   ),
                                 );

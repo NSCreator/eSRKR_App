@@ -44,40 +44,40 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAP803anoIN6coz2XMs04u2ZcDEy4k4psQ',
-    appId: '1:913804156436:web:854d4ecb2d98e99e71d101',
-    messagingSenderId: '913804156436',
-    projectId: 'esrkr-f97aa',
-    authDomain: 'esrkr-f97aa.firebaseapp.com',
-    storageBucket: 'esrkr-f97aa.appspot.com',
-    measurementId: 'G-MQKKND804J',
+    apiKey: 'AIzaSyCm8BPwoYXL9naD5dj0sgKlOBREmvBGy4M',
+    appId: '1:922256000367:web:24e2825759a72968d6949a',
+    messagingSenderId: '922256000367',
+    projectId: 'esrkr-app',
+    authDomain: 'esrkr-app.firebaseapp.com',
+    storageBucket: 'esrkr-app.appspot.com',
+    measurementId: 'G-G2D7G5LCM6',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD7n7K_ycEwkkeIbEVTCII_JoPg3W3zTxU',
-    appId: '1:913804156436:android:cf03e9ec50e021df71d101',
-    messagingSenderId: '913804156436',
-    projectId: 'esrkr-f97aa',
-    storageBucket: 'esrkr-f97aa.appspot.com',
+    apiKey: 'AIzaSyBDqW-2hA1dM5rOLl9kVE6Dhp5EsqUhNfE',
+    appId: '1:922256000367:android:0e7207af16b065c6d6949a',
+    messagingSenderId: '922256000367',
+    projectId: 'esrkr-app',
+    storageBucket: 'esrkr-app.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC7QorjBu2p6HruF_4PJdIikwUu6QqRsSI',
-    appId: '1:913804156436:ios:7120737f948dc16371d101',
-    messagingSenderId: '913804156436',
-    projectId: 'esrkr-f97aa',
-    storageBucket: 'esrkr-f97aa.appspot.com',
-    iosClientId: '913804156436-9jt8hskafd6q4jca75qbo2rmvvfai97e.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAVKhC-9Laj55wmlfZqc8fMeNrHWZj2wT4',
+    appId: '1:922256000367:ios:dc35cbefa75b43b4d6949a',
+    messagingSenderId: '922256000367',
+    projectId: 'esrkr-app',
+    storageBucket: 'esrkr-app.appspot.com',
+    iosClientId: '922256000367-u9kgisrv0d2c9buuo8al8u294qgljrf7.apps.googleusercontent.com',
     iosBundleId: 'com.nimmalasujith.esrkr',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC7QorjBu2p6HruF_4PJdIikwUu6QqRsSI',
-    appId: '1:913804156436:ios:06c60baef1808b4771d101',
-    messagingSenderId: '913804156436',
-    projectId: 'esrkr-f97aa',
-    storageBucket: 'esrkr-f97aa.appspot.com',
-    iosClientId: '913804156436-gu52effn25cffluv608ln9s7np9c7q4o.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAVKhC-9Laj55wmlfZqc8fMeNrHWZj2wT4',
+    appId: '1:922256000367:ios:8cbb5de2e8413c4bd6949a',
+    messagingSenderId: '922256000367',
+    projectId: 'esrkr-app',
+    storageBucket: 'esrkr-app.appspot.com',
+    iosClientId: '922256000367-b0b4huch1imm0aa7nlvhdpmn5u8j1o9j.apps.googleusercontent.com',
     iosBundleId: 'com.nimmalasujith.srkrStudyApp.RunnerTests',
   );
 }

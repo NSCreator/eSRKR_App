@@ -1,40 +1,40 @@
 {
   "project_info": {
-    "project_number": "913804156436",
-    "project_id": "esrkr-f97aa",
-    "storage_bucket": "esrkr-f97aa.appspot.com"
+    "project_number": "922256000367",
+    "project_id": "esrkr-app",
+    "storage_bucket": "esrkr-app.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:913804156436:android:cf03e9ec50e021df71d101",
+        "mobilesdk_app_id": "1:922256000367:android:0e7207af16b065c6d6949a",
         "android_client_info": {
           "package_name": "com.nimmalasujith.esrkr"
         }
       },
       "oauth_client": [
         {
-          "client_id": "913804156436-ig3hpge28be7t09utsqi8evaectk3oc2.apps.googleusercontent.com",
+          "client_id": "922256000367-1i36d2s531rmr8t4k6khdch3mo99323m.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD7n7K_ycEwkkeIbEVTCII_JoPg3W3zTxU"
+          "current_key": "AIzaSyBDqW-2hA1dM5rOLl9kVE6Dhp5EsqUhNfE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "913804156436-ig3hpge28be7t09utsqi8evaectk3oc2.apps.googleusercontent.com",
+              "client_id": "922256000367-1i36d2s531rmr8t4k6khdch3mo99323m.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "913804156436-9jt8hskafd6q4jca75qbo2rmvvfai97e.apps.googleusercontent.com",
+              "client_id": "922256000367-b0b4huch1imm0aa7nlvhdpmn5u8j1o9j.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.nimmalasujith.esrkr"
+                "bundle_id": "com.nimmalasujith.srkrStudyApp.RunnerTests"
               }
             }
           ]

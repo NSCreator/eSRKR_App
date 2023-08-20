@@ -36,7 +36,7 @@ class _TimeTablesState extends State<TimeTables> {
         children: [
           backButton(
             size: widget.size,
-            text: "TimeTables",
+            text: "Time Tables",
           ),
           StreamBuilder<List<TimeTableConvertor>>(
               stream: readTimeTable(branch: widget.branch, reg: widget.reg),
@@ -53,7 +53,7 @@ class _TimeTablesState extends State<TimeTables> {
                     if (snapshot.hasError) {
                       return const Center(
                           child: Text(
-                              'Error with TextBooks Data or\n Check Internet Connection'));
+                              'Error with Time Table Data or\n Check Internet Connection'));
                     } else {
                       if (BranchNews!.length == 0) {
                         return Center(
@@ -70,7 +70,7 @@ class _TimeTablesState extends State<TimeTables> {
                             var data = BranchNews[index];
 
                             return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                              padding:  EdgeInsets.symmetric(horizontal: widget.size*5,vertical:widget.size* 5),
                               child: InkWell(
                                 child: AspectRatio(
                                   aspectRatio: 16 / 9,
@@ -78,18 +78,18 @@ class _TimeTablesState extends State<TimeTables> {
                                     decoration: BoxDecoration(
                                         image: DecorationImage(
                                             image: NetworkImage(data.photoUrl),fit: BoxFit.cover),
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(widget.size*20),
                                       border: Border.all(color: Colors.white12)
                                     ),
 
                                     child: Align(
                                       alignment: Alignment.bottomRight,
                                       child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
+                                        padding:  EdgeInsets.all(widget.size*8.0),
                                         child: Text(
                                           data.heading.toUpperCase(),
                                           style: TextStyle(
-                                              color: Colors.amber, fontSize: 30),
+                                              color: Colors.amber, fontSize: widget.size*30),
                                         ),
                                       ),
                                     ),
@@ -212,12 +212,12 @@ class _syllabusPageState extends State<syllabusPage> {
                     if (snapshot.hasError) {
                       return const Center(
                           child: Text(
-                              'Error with TextBooks Data or\n Check Internet Connection'));
+                              'Error with Syllabus Data or\n Check Internet Connection'));
                     } else {
                       if (BranchNews!.length == 0) {
                         return Center(
                             child: Text(
-                          "No Updates",
+                          "No Syllabus",
                           style: TextStyle(color: Colors.lightBlueAccent),
                         ));
                       } else
@@ -236,257 +236,230 @@ class _syllabusPageState extends State<syllabusPage> {
                                   left: widget.size * 15.0,
                                   right: widget.size * 10,
                                   top: widget.size * 4),
-                              child: InkWell(
-                                child: Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                      color: Colors.black38,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(widget.size * 20))),
-                                  child: SingleChildScrollView(
-                                    physics: const BouncingScrollPhysics(),
-                                    child: Row(
-                                      children: [
-                                        file.existsSync() &&
-                                                data.syllabus.isNotEmpty
-                                            ? ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        widget.size * 25),
-                                                child: SizedBox(
-                                                    height: widget.size * 160,
-                                                    width: widget.size * 120,
-                                                    child: isLoading
-                                                        ? PDFView(
-                                                            filePath:
-                                                                "${folderPath}/pdfs/${getFileName(data.syllabus)}",
-                                                          )
-                                                        : Container()),
-                                              )
-                                            : SizedBox(
-                                                height: 98,
-                                                child: Image.asset(
-                                                    "assets/pdf_icon.png")),
-                                        SizedBox(
-                                          width: widget.size * 15,
-                                        ),
-                                        Expanded(
-                                            child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              data.id.toUpperCase(),
-                                              style: TextStyle(
-                                                fontSize: widget.size * 20.0,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                              ),
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    color: Colors.black38,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(widget.size * 20))),
+                                child: SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  child: Row(
+                                    children: [
+                                      file.existsSync() &&
+                                              data.syllabus.isNotEmpty
+                                          ? ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      widget.size * 25),
+                                              child: SizedBox(
+                                                  height: widget.size * 160,
+                                                  width: widget.size * 120,
+                                                  child: isLoading
+                                                      ? PDFView(
+                                                          filePath:
+                                                              "${folderPath}/pdfs/${getFileName(data.syllabus)}",
+                                                        )
+                                                      : Container()),
+                                            )
+                                          : SizedBox(
+                                              height:widget.size* 98,
+                                              child: Image.asset(
+                                                  "assets/pdf_icon.png")),
+                                      SizedBox(
+                                        width: widget.size * 15,
+                                      ),
+                                      Expanded(
+                                          child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            data.id.toUpperCase(),
+                                            style: TextStyle(
+                                              fontSize: widget.size * 20.0,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
                                             ),
-                                            SizedBox(
-                                              height: widget.size * 2,
-                                            ),
-                                            if (data.syllabus.isNotEmpty)
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: widget.size * 10),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        InkWell(
-                                                            child: Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            widget.size *
-                                                                                8),
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        2,
-                                                                        82,
-                                                                        87,
-                                                                        1),
-                                                                border: Border.all(
-                                                                    color: file
-                                                                            .existsSync()
-                                                                        ? Colors
-                                                                            .green
-                                                                        : Colors
-                                                                            .white),
-                                                              ),
-                                                              child: Padding(
-                                                                padding: EdgeInsets.only(
-                                                                    left: widget
-                                                                            .size *
-                                                                        3,
-                                                                    right: widget
-                                                                            .size *
-                                                                        3),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          left: widget.size *
-                                                                              5,
-                                                                          right: widget.size *
-                                                                              5,
-                                                                          top: widget.size *
-                                                                              3,
-                                                                          bottom:
-                                                                              widget.size * 3),
-                                                                      child:
-                                                                          Text(
-                                                                        file.existsSync()
-                                                                            ? "Read Now"
-                                                                            : "Download",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white,
-                                                                            fontSize: widget.size * 20),
-                                                                      ),
-                                                                    ),
-                                                                    Icon(
+                                          ),
+                                          SizedBox(
+                                            height: widget.size * 2,
+                                          ),
+                                          if (data.syllabus.isNotEmpty)
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: widget.size * 10),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      InkWell(
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          widget.size *
+                                                                              8),
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      2,
+                                                                      82,
+                                                                      87,
+                                                                      1),
+                                                              border: Border.all(
+                                                                  color: file
+                                                                          .existsSync()
+                                                                      ? Colors
+                                                                          .green
+                                                                      : Colors
+                                                                          .white),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.only(
+                                                                  left: widget
+                                                                          .size *
+                                                                      3,
+                                                                  right: widget
+                                                                          .size *
+                                                                      3),
+                                                              child: Row(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        left: widget.size *
+                                                                            5,
+                                                                        right: widget.size *
+                                                                            5,
+                                                                        top: widget.size *
+                                                                            3,
+                                                                        bottom:
+                                                                            widget.size * 3),
+                                                                    child:
+                                                                        Text(
                                                                       file.existsSync()
-                                                                          ? Icons
-                                                                              .open_in_new
-                                                                          : Icons
-                                                                              .download_for_offline_outlined,
-                                                                      color: Colors
-                                                                          .greenAccent,
-                                                                      size: widget
-                                                                              .size *
-                                                                          20,
-                                                                    )
-                                                                  ],
-                                                                ),
+                                                                          ? "Read Now"
+                                                                          : "Download",
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          fontSize: widget.size * 20),
+                                                                    ),
+                                                                  ),
+                                                                  Icon(
+                                                                    file.existsSync()
+                                                                        ? Icons
+                                                                            .open_in_new
+                                                                        : Icons
+                                                                            .download_for_offline_outlined,
+                                                                    color: Colors
+                                                                        .greenAccent,
+                                                                    size: widget
+                                                                            .size *
+                                                                        20,
+                                                                  )
+                                                                ],
                                                               ),
                                                             ),
-                                                            onTap: () async {
-                                                              File isFile = File(
-                                                                  "${folderPath}/pdfs/${getFileName(data.syllabus)}");
-                                                              if (isFile
+                                                          ),
+                                                          onTap: () async {
+                                                            File isFile = File(
+                                                                "${folderPath}/pdfs/${getFileName(data.syllabus)}");
+                                                            if (isFile
+                                                                .existsSync()) {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => PdfViewerPage(
+                                                                          size:
+                                                                              widget.size,
+                                                                          pdfUrl: "${folderPath}/pdfs/${getFileName(data.syllabus)}")));
+                                                            } else {
+                                                              setState(() {
+                                                                isDownloaded =
+                                                                    true;
+                                                              });
+                                                              await download(
+                                                                  data.syllabus,
+                                                                  "pdfs");
+                                                            }
+                                                          }),
+                                                      if (file.existsSync())
+                                                        Padding(
+                                                          padding: EdgeInsets.only(
+                                                              left: widget
+                                                                      .size *
+                                                                  5,
+                                                              right: widget
+                                                                      .size *
+                                                                  5,
+                                                              top: widget
+                                                                      .size *
+                                                                  1,
+                                                              bottom: widget
+                                                                      .size *
+                                                                  1),
+                                                          child: InkWell(
+                                                            child: Icon(
+                                                              Icons.delete,
+                                                              color: Colors
+                                                                  .redAccent,
+                                                              size: widget
+                                                                      .size *
+                                                                  25,
+                                                            ),
+                                                            onLongPress:
+                                                                () async {
+                                                              if (file
                                                                   .existsSync()) {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => PdfViewerPage(
-                                                                            size:
-                                                                                widget.size,
-                                                                            pdfUrl: "${folderPath}/pdfs/${getFileName(data.syllabus)}")));
-                                                              } else {
-                                                                setState(() {
-                                                                  isDownloaded =
-                                                                      true;
-                                                                });
-                                                                await download(
-                                                                    data.syllabus,
-                                                                    "pdfs");
+                                                                await file
+                                                                    .delete();
                                                               }
-                                                            }),
-                                                        if (file.existsSync())
-                                                          Padding(
-                                                            padding: EdgeInsets.only(
-                                                                left: widget
-                                                                        .size *
-                                                                    5,
-                                                                right: widget
-                                                                        .size *
-                                                                    5,
-                                                                top: widget
-                                                                        .size *
-                                                                    1,
-                                                                bottom: widget
-                                                                        .size *
-                                                                    1),
-                                                            child: InkWell(
-                                                              child: Icon(
-                                                                Icons.delete,
-                                                                color: Colors
-                                                                    .redAccent,
-                                                                size: widget
-                                                                        .size *
-                                                                    25,
-                                                              ),
-                                                              onLongPress:
-                                                                  () async {
-                                                                if (file
-                                                                    .existsSync()) {
-                                                                  await file
-                                                                      .delete();
-                                                                }
-                                                                setState(() {});
-                                                                showToastText(
-                                                                    "File has been deleted");
-                                                              },
-                                                              onTap: () {
-                                                                showToastText(
-                                                                    "Long Press To Delete");
-                                                              },
-                                                            ),
-                                                          )
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            if (isDownloaded)
-                                              LinearProgressIndicator(
-                                                color: Colors.amber,
-                                              ),
-                                            if (data.syllabus.isNotEmpty)
-                                              InkWell(
-                                                onTap: () {
-                                                  ExternalLaunchUrl(
-                                                      data.syllabus);
-                                                },
-                                                child: Text(
-                                                  "Link (open)",
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        widget.size * 18.0,
-                                                    color: Colors.amber,
+                                                              setState(() {});
+                                                              showToastText(
+                                                                  "File has been deleted");
+                                                            },
+                                                            onTap: () {
+                                                              showToastText(
+                                                                  "Long Press To Delete");
+                                                            },
+                                                          ),
+                                                        )
+                                                    ],
                                                   ),
+                                                ],
+                                              ),
+                                            ),
+                                          if (isDownloaded)
+                                            LinearProgressIndicator(
+                                              color: Colors.amber,
+                                            ),
+                                          if (data.syllabus.isNotEmpty)
+                                            InkWell(
+                                              onTap: () {
+                                                ExternalLaunchUrl(
+                                                    data.syllabus);
+                                              },
+                                              child: Text(
+                                                "Link (open)",
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      widget.size * 18.0,
+                                                  color: Colors.amber,
                                                 ),
                                               ),
-                                          ],
-                                        ))
-                                      ],
-                                    ),
+                                            ),
+                                        ],
+                                      ))
+                                    ],
                                   ),
                                 ),
-                                onTap: () {
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //             subjectUnitsData(
-                                  //               reg: data[
-                                  //               'regulation'],
-                                  //
-                                  //               size: widget
-                                  //                   .size,
-                                  //               branch: widget
-                                  //                   .branch,
-                                  //               ID: data[
-                                  //               'id'],
-                                  //               mode:
-                                  //               "LabSubjects",
-                                  //               name: data[
-                                  //               "heading"],
-                                  //               fullName: data[
-                                  //               'description'],
-                                  //               photoUrl: data[
-                                  //               'image'],
-                                  //             )));
-                                },
                               ),
                             );
                           },
@@ -592,7 +565,7 @@ class _ModalPapersPageState extends State<ModalPapersPage> {
                     if (snapshot.hasError) {
                       return const Center(
                           child: Text(
-                              'Error with TextBooks Data or\n Check Internet Connection'));
+                              'Error with Model Papers Data or\n Check Internet Connection'));
                     } else {
                       if (BranchNews!.length == 0) {
                         return Center(
@@ -616,257 +589,230 @@ class _ModalPapersPageState extends State<ModalPapersPage> {
                                   left: widget.size * 15.0,
                                   right: widget.size * 10,
                                   top: widget.size * 4),
-                              child: InkWell(
-                                child: Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                      color: Colors.black38,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(widget.size * 20))),
-                                  child: SingleChildScrollView(
-                                    physics: const BouncingScrollPhysics(),
-                                    child: Row(
-                                      children: [
-                                        file.existsSync() &&
-                                                data.modelPaper.isNotEmpty
-                                            ? ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        widget.size * 25),
-                                                child: SizedBox(
-                                                    height: widget.size * 160,
-                                                    width: widget.size * 120,
-                                                    child: isLoading
-                                                        ? PDFView(
-                                                            filePath:
-                                                                "${folderPath}/pdfs/${getFileName(data.modelPaper)}",
-                                                          )
-                                                        : Container()),
-                                              )
-                                            : SizedBox(
-                                                height: 98,
-                                                child: Image.asset(
-                                                    "assets/pdf_icon.png")),
-                                        SizedBox(
-                                          width: widget.size * 15,
-                                        ),
-                                        Expanded(
-                                            child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              data.id.toUpperCase(),
-                                              style: TextStyle(
-                                                fontSize: widget.size * 20.0,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                              ),
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    color: Colors.black38,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(widget.size * 20))),
+                                child: SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  child: Row(
+                                    children: [
+                                      file.existsSync() &&
+                                              data.modelPaper.isNotEmpty
+                                          ? ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      widget.size * 25),
+                                              child: SizedBox(
+                                                  height: widget.size * 160,
+                                                  width: widget.size * 120,
+                                                  child: isLoading
+                                                      ? PDFView(
+                                                          filePath:
+                                                              "${folderPath}/pdfs/${getFileName(data.modelPaper)}",
+                                                        )
+                                                      : Container()),
+                                            )
+                                          : SizedBox(
+                                              height:widget.size* 98,
+                                              child: Image.asset(
+                                                  "assets/pdf_icon.png")),
+                                      SizedBox(
+                                        width: widget.size * 15,
+                                      ),
+                                      Expanded(
+                                          child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            data.id.toUpperCase(),
+                                            style: TextStyle(
+                                              fontSize: widget.size * 20.0,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
                                             ),
-                                            SizedBox(
-                                              height: widget.size * 2,
-                                            ),
-                                            if (data.modelPaper.isNotEmpty)
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: widget.size * 10),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        InkWell(
-                                                            child: Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            widget.size *
-                                                                                8),
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        2,
-                                                                        82,
-                                                                        87,
-                                                                        1),
-                                                                border: Border.all(
-                                                                    color: file
-                                                                            .existsSync()
-                                                                        ? Colors
-                                                                            .green
-                                                                        : Colors
-                                                                            .white),
-                                                              ),
-                                                              child: Padding(
-                                                                padding: EdgeInsets.only(
-                                                                    left: widget
-                                                                            .size *
-                                                                        3,
-                                                                    right: widget
-                                                                            .size *
-                                                                        3),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          left: widget.size *
-                                                                              5,
-                                                                          right: widget.size *
-                                                                              5,
-                                                                          top: widget.size *
-                                                                              3,
-                                                                          bottom:
-                                                                              widget.size * 3),
-                                                                      child:
-                                                                          Text(
-                                                                        file.existsSync()
-                                                                            ? "Read Now"
-                                                                            : "Download",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white,
-                                                                            fontSize: widget.size * 20),
-                                                                      ),
-                                                                    ),
-                                                                    Icon(
+                                          ),
+                                          SizedBox(
+                                            height: widget.size * 2,
+                                          ),
+                                          if (data.modelPaper.isNotEmpty)
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: widget.size * 10),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      InkWell(
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          widget.size *
+                                                                              8),
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      2,
+                                                                      82,
+                                                                      87,
+                                                                      1),
+                                                              border: Border.all(
+                                                                  color: file
+                                                                          .existsSync()
+                                                                      ? Colors
+                                                                          .green
+                                                                      : Colors
+                                                                          .white),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.only(
+                                                                  left: widget
+                                                                          .size *
+                                                                      3,
+                                                                  right: widget
+                                                                          .size *
+                                                                      3),
+                                                              child: Row(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        left: widget.size *
+                                                                            5,
+                                                                        right: widget.size *
+                                                                            5,
+                                                                        top: widget.size *
+                                                                            3,
+                                                                        bottom:
+                                                                            widget.size * 3),
+                                                                    child:
+                                                                        Text(
                                                                       file.existsSync()
-                                                                          ? Icons
-                                                                              .open_in_new
-                                                                          : Icons
-                                                                              .download_for_offline_outlined,
-                                                                      color: Colors
-                                                                          .greenAccent,
-                                                                      size: widget
-                                                                              .size *
-                                                                          20,
-                                                                    )
-                                                                  ],
-                                                                ),
+                                                                          ? "Read Now"
+                                                                          : "Download",
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          fontSize: widget.size * 20),
+                                                                    ),
+                                                                  ),
+                                                                  Icon(
+                                                                    file.existsSync()
+                                                                        ? Icons
+                                                                            .open_in_new
+                                                                        : Icons
+                                                                            .download_for_offline_outlined,
+                                                                    color: Colors
+                                                                        .greenAccent,
+                                                                    size: widget
+                                                                            .size *
+                                                                        20,
+                                                                  )
+                                                                ],
                                                               ),
                                                             ),
-                                                            onTap: () async {
-                                                              File isFile = File(
-                                                                  "${folderPath}/pdfs/${getFileName(data.modelPaper)}");
-                                                              if (isFile
+                                                          ),
+                                                          onTap: () async {
+                                                            File isFile = File(
+                                                                "${folderPath}/pdfs/${getFileName(data.modelPaper)}");
+                                                            if (isFile
+                                                                .existsSync()) {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => PdfViewerPage(
+                                                                          size:
+                                                                              widget.size,
+                                                                          pdfUrl: "${folderPath}/pdfs/${getFileName(data.modelPaper)}")));
+                                                            } else {
+                                                              setState(() {
+                                                                isDownloaded =
+                                                                    true;
+                                                              });
+                                                              await download(
+                                                                  data.modelPaper,
+                                                                  "pdfs");
+                                                            }
+                                                          }),
+                                                      if (file.existsSync())
+                                                        Padding(
+                                                          padding: EdgeInsets.only(
+                                                              left: widget
+                                                                      .size *
+                                                                  5,
+                                                              right: widget
+                                                                      .size *
+                                                                  5,
+                                                              top: widget
+                                                                      .size *
+                                                                  1,
+                                                              bottom: widget
+                                                                      .size *
+                                                                  1),
+                                                          child: InkWell(
+                                                            child: Icon(
+                                                              Icons.delete,
+                                                              color: Colors
+                                                                  .redAccent,
+                                                              size: widget
+                                                                      .size *
+                                                                  25,
+                                                            ),
+                                                            onLongPress:
+                                                                () async {
+                                                              if (file
                                                                   .existsSync()) {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => PdfViewerPage(
-                                                                            size:
-                                                                                widget.size,
-                                                                            pdfUrl: "${folderPath}/pdfs/${getFileName(data.modelPaper)}")));
-                                                              } else {
-                                                                setState(() {
-                                                                  isDownloaded =
-                                                                      true;
-                                                                });
-                                                                await download(
-                                                                    data.modelPaper,
-                                                                    "pdfs");
+                                                                await file
+                                                                    .delete();
                                                               }
-                                                            }),
-                                                        if (file.existsSync())
-                                                          Padding(
-                                                            padding: EdgeInsets.only(
-                                                                left: widget
-                                                                        .size *
-                                                                    5,
-                                                                right: widget
-                                                                        .size *
-                                                                    5,
-                                                                top: widget
-                                                                        .size *
-                                                                    1,
-                                                                bottom: widget
-                                                                        .size *
-                                                                    1),
-                                                            child: InkWell(
-                                                              child: Icon(
-                                                                Icons.delete,
-                                                                color: Colors
-                                                                    .redAccent,
-                                                                size: widget
-                                                                        .size *
-                                                                    25,
-                                                              ),
-                                                              onLongPress:
-                                                                  () async {
-                                                                if (file
-                                                                    .existsSync()) {
-                                                                  await file
-                                                                      .delete();
-                                                                }
-                                                                setState(() {});
-                                                                showToastText(
-                                                                    "File has been deleted");
-                                                              },
-                                                              onTap: () {
-                                                                showToastText(
-                                                                    "Long Press To Delete");
-                                                              },
-                                                            ),
-                                                          )
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            if (isDownloaded)
-                                              LinearProgressIndicator(
-                                                color: Colors.amber,
-                                              ),
-                                            if (data.modelPaper.isNotEmpty)
-                                              InkWell(
-                                                onTap: () {
-                                                  ExternalLaunchUrl(
-                                                      data.modelPaper);
-                                                },
-                                                child: Text(
-                                                  "Link (open)",
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        widget.size * 18.0,
-                                                    color: Colors.amber,
+                                                              setState(() {});
+                                                              showToastText(
+                                                                  "File has been deleted");
+                                                            },
+                                                            onTap: () {
+                                                              showToastText(
+                                                                  "Long Press To Delete");
+                                                            },
+                                                          ),
+                                                        )
+                                                    ],
                                                   ),
+                                                ],
+                                              ),
+                                            ),
+                                          if (isDownloaded)
+                                            LinearProgressIndicator(
+                                              color: Colors.amber,
+                                            ),
+                                          if (data.modelPaper.isNotEmpty)
+                                            InkWell(
+                                              onTap: () {
+                                                ExternalLaunchUrl(
+                                                    data.modelPaper);
+                                              },
+                                              child: Text(
+                                                "Link (open)",
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      widget.size * 18.0,
+                                                  color: Colors.amber,
                                                 ),
                                               ),
-                                          ],
-                                        ))
-                                      ],
-                                    ),
+                                            ),
+                                        ],
+                                      ))
+                                    ],
                                   ),
                                 ),
-                                onTap: () {
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //             subjectUnitsData(
-                                  //               reg: data[
-                                  //               'regulation'],
-                                  //
-                                  //               size: widget
-                                  //                   .size,
-                                  //               branch: widget
-                                  //                   .branch,
-                                  //               ID: data[
-                                  //               'id'],
-                                  //               mode:
-                                  //               "LabSubjects",
-                                  //               name: data[
-                                  //               "heading"],
-                                  //               fullName: data[
-                                  //               'description'],
-                                  //               photoUrl: data[
-                                  //               'image'],
-                                  //             )));
-                                },
                               ),
                             );
                           },
@@ -880,201 +826,6 @@ class _ModalPapersPageState extends State<ModalPapersPage> {
   }
 }
 
-// class timeTablePage extends StatefulWidget {
-//   // const timeTablePage({super.key});
-//
-//   @override
-//   State<timeTablePage> createState() => _timeTablePageState();
-// }
-//
-// class _timeTablePageState extends State<timeTablePage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return backGroundImage(
-//         child: SingleChildScrollView(
-//       child: Column(
-//         children: [
-//           // StreamBuilder<List<RegulationConvertor>>(
-//           //     stream: readRegulation(branch: widget),
-//           //     builder: (context, snapshot) {
-//           //       final Notifications = snapshot.data;
-//           //       switch (snapshot.connectionState) {
-//           //         case ConnectionState.waiting:
-//           //           return const Center(
-//           //               child: CircularProgressIndicator(
-//           //                 strokeWidth: 0.3,
-//           //                 color: Colors.cyan,
-//           //               ));
-//           //         default:
-//           //           if (snapshot.hasError) {
-//           //             return const Center(
-//           //                 child: Text(
-//           //                     'Error with TextBooks Data or\n Check Internet Connection'));
-//           //           } else {
-//           //             return ListView.separated(
-//           //                 physics: const BouncingScrollPhysics(),
-//           //                 shrinkWrap: true,
-//           //                 reverse: true,
-//           //                 itemCount: Notifications!.length,
-//           //                 itemBuilder: (context, int index) {
-//           //                   final Notification = Notifications[index];
-//           //
-//           //                   return InkWell(
-//           //                     child: Padding(
-//           //                       padding: Notification.Name == fullUserId()
-//           //                           ? EdgeInsets.only(
-//           //                           left: widget.width * 45,
-//           //                           right: widget.width * 5,
-//           //                           top: widget.height * 5)
-//           //                           : EdgeInsets.only(
-//           //                           right: widget.width * 45,
-//           //                           left: widget.width * 5,
-//           //                           top: widget.height * 5),
-//           //                       child: Container(
-//           //                         width: double.infinity,
-//           //                         alignment: Alignment.center,
-//           //                         decoration: Notification.Name ==
-//           //                             fullUserId()
-//           //                             ? BoxDecoration(
-//           //                           borderRadius: BorderRadius.only(
-//           //                             topLeft: Radius.circular(
-//           //                                 widget.size * 25),
-//           //                             bottomLeft: Radius.circular(
-//           //                                 widget.size * 25),
-//           //                             topRight: Radius.circular(
-//           //                                 widget.size * 25),
-//           //                             bottomRight: Radius.circular(
-//           //                                 widget.size * 5),
-//           //                           ),
-//           //                           color:
-//           //                           Colors.black.withOpacity(0.8),
-//           //                           border: Border.all(
-//           //                               color: Colors
-//           //                                   .blueAccent.shade100),
-//           //                         )
-//           //                             : BoxDecoration(
-//           //                           borderRadius: BorderRadius.only(
-//           //                             topLeft: Radius.circular(
-//           //                                 widget.size * 25),
-//           //                             bottomLeft: Radius.circular(
-//           //                                 widget.size * 5),
-//           //                             topRight: Radius.circular(
-//           //                                 widget.size * 25),
-//           //                             bottomRight: Radius.circular(
-//           //                                 widget.size * 25),
-//           //                           ),
-//           //                           color:
-//           //                           Colors.black.withOpacity(0.5),
-//           //                           border: Border.all(
-//           //                               color: Colors.white
-//           //                                   .withOpacity(0.5)),
-//           //                         ),
-//           //                         child: Row(
-//           //                           mainAxisAlignment:
-//           //                           MainAxisAlignment.start,
-//           //                           crossAxisAlignment:
-//           //                           CrossAxisAlignment.start,
-//           //                           children: [
-//           //                             SizedBox(
-//           //                               width: widget.width * 2,
-//           //                             ),
-//           //                             Expanded(
-//           //                                 child: Column(
-//           //                                   mainAxisAlignment:
-//           //                                   MainAxisAlignment.start,
-//           //                                   crossAxisAlignment:
-//           //                                   CrossAxisAlignment.start,
-//           //                                   children: [
-//           //                                     Row(
-//           //                                       children: [
-//           //                                         Text(
-//           //                                           "       @${Notification.Name}",
-//           //                                           style: TextStyle(
-//           //                                             fontSize:
-//           //                                             widget.size * 12.0,
-//           //                                             color: Colors.white54,
-//           //                                             fontWeight:
-//           //                                             FontWeight.w600,
-//           //                                           ),
-//           //                                         ),
-//           //                                         Spacer(),
-//           //                                         Padding(
-//           //                                           padding:
-//           //                                           EdgeInsets.fromLTRB(
-//           //                                               widget.size * 8,
-//           //                                               widget.size * 1,
-//           //                                               widget.size * 25,
-//           //                                               widget.size * 1),
-//           //                                           child: Column(
-//           //                                             children: [
-//           //                                               Text(
-//           //                                                 '${Notification.id}',
-//           //                                                 style: TextStyle(
-//           //                                                   fontSize:
-//           //                                                   widget.size *
-//           //                                                       9.0,
-//           //                                                   color:
-//           //                                                   Colors.white70,
-//           //                                                   //   fontWeight: FontWeight.bold,
-//           //                                                 ),
-//           //                                               ),
-//           //                                             ],
-//           //                                           ),
-//           //                                         ),
-//           //                                       ],
-//           //                                     ),
-//           //                                     Padding(
-//           //                                       padding: EdgeInsets.only(
-//           //                                           left: widget.size * 8,
-//           //                                           bottom: widget.size * 6,
-//           //                                           right: widget.size * 3,
-//           //                                           top: widget.size * 3),
-//           //                                       child: NotificationText(
-//           //                                           Notification.description),
-//           //                                     ),
-//           //                                     if (Notification.Url.length > 3)
-//           //                                       Padding(
-//           //                                         padding: EdgeInsets.all(
-//           //                                             widget.size * 3.0),
-//           //                                         child: Image.network(
-//           //                                             Notification.Url),
-//           //                                       )
-//           //                                   ],
-//           //                                 ))
-//           //                           ],
-//           //                         ),
-//           //                       ),
-//           //                     ),
-//           //                     onLongPress: () {
-//           //                       if (Notification.Name == fullUserId() ||
-//           //                           isUser()) {
-//           //                         final deleteFlashNews = FirebaseFirestore
-//           //                             .instance
-//           //                             .collection(widget.branch)
-//           //                             .doc("Notification")
-//           //                             .collection("AllNotification")
-//           //                             .doc(Notification.id);
-//           //                         deleteFlashNews.delete();
-//           //                         showToastText(
-//           //                             "Your Message has been Deleted");
-//           //                       } else {
-//           //                         showToastText(
-//           //                             "You are not message user to delete");
-//           //                       }
-//           //                     },
-//           //                   );
-//           //                 },
-//           //                 separatorBuilder: (context, index) => SizedBox(
-//           //                   height: widget.height * 1,
-//           //                 ));
-//           //           }
-//           //       }
-//           //     }),
-//         ],
-//       ),
-//     ));
-//   }
-// }
 
 class NewsPage extends StatefulWidget {
   final String branch;
@@ -1256,7 +1007,7 @@ class _NewsPageState extends State<NewsPage> {
                                                     right: widget.size * 10,
                                                     top: widget.size * 5,
                                                     bottom: widget.size * 5),
-                                                child: Text("Edit"),
+                                                child: Text("Edit",style: TextStyle(color: Colors.black,fontSize: widget.size*14),),
                                               ),
                                             ),
                                             onTap: () {
@@ -1359,7 +1110,7 @@ class _NewsPageState extends State<NewsPage> {
                   }
                 }),
             SizedBox(
-              height: 150,
+              height: widget.size*150,
             )
           ],
         ),
@@ -1774,8 +1525,7 @@ class _SubjectsState extends State<Subjects> {
                                     );
                                   },
                                 ),
-                                // if ((index + 1) % 1 == 0)
-                                //   CustomBannerAd01(),
+
                               ],
                             ),
                           );
@@ -2444,7 +2194,7 @@ class _textBookSubState extends State<textBookSub> {
 
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding:  EdgeInsets.all(widget.size*8.0),
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(widget.size * 30),
@@ -2454,7 +2204,7 @@ class _textBookSubState extends State<textBookSub> {
                   blurRadius: 5, color: Colors.white24, offset: Offset(1, 3))
             ]),
         child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding:  EdgeInsets.all(widget.size*8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -3165,10 +2915,10 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                   indicatorSize: TabBarIndicatorSize.tab,
                                   indicator: UnderlineTabIndicator(
                                       borderSide: BorderSide(
-                                          width: 3.0, color: Colors.white),
+                                          width: widget.size * 3.0, color: Colors.white),
                                       insets: EdgeInsets.symmetric(
-                                          horizontal: 22.0, vertical: 5),
-                                      borderRadius: BorderRadius.circular(8)),
+                                          horizontal:widget.size * 22.0, vertical:widget.size * 5),
+                                      borderRadius: BorderRadius.circular(widget.size * 8)),
                                   labelStyle: TextStyle(
                                       fontSize: widget.size * 18,
                                       fontWeight: FontWeight.w500),
@@ -3380,7 +3130,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                               }
                                             },
                                           ),
-                                          SizedBox(height: 150,)
+                                          SizedBox(height: widget.size *150,)
                                         ],
                                       ),
                                     ),
@@ -4712,7 +4462,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                       ),
                     )
                   : SizedBox(
-                      height: 98, child: Image.asset("assets/pdf_icon.png")),
+                      height: widget.size *98, child: Image.asset("assets/pdf_icon.png")),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(
@@ -4732,7 +4482,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                         maxLines: isExp ? 6 : 1,
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(5.0),
+                        padding:  EdgeInsets.all(widget.size *5.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -4755,7 +4505,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                   ),
                                 )),
                             SizedBox(
-                              width: 10,
+                              width:widget.size * 10,
                             ),
                             Container(
                               decoration: BoxDecoration(
@@ -5125,7 +4875,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                     left: 0,
                     right: 0,
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 8),
+                      padding:  EdgeInsets.only(top:widget.size * 8),
                       child: Container(
                         height: widget.size * 40,
                         child: Center(
@@ -5137,7 +4887,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                 color: Color.fromRGBO(4, 11, 23, 1)),
                             controller: _tabController,
                             isScrollable: true,
-                            labelPadding: EdgeInsets.symmetric(horizontal: 25),
+                            labelPadding: EdgeInsets.symmetric(horizontal: widget.size *25),
                             tabs: [
                               Tab(
                                 child: Text(
@@ -5435,7 +5185,7 @@ class _subMoreState extends State<subMore> with TickerProviderStateMixin {
                           ),
                         )
                       : SizedBox(
-                          height: 120,
+                          height: widget.size *90,
                           child: Image.asset("assets/pdf_icon.png")),
                 if (widget.unit.link.split(";").first == "Image")
                   InkWell(
@@ -5769,222 +5519,236 @@ class _updatesPageState extends State<updatesPage> {
                                     file = File("${folderPath}/updates/$name");
                                   }
 
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: widget.size * 2,
-                                        horizontal: widget.size * 8),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.all(5),
-                                          width: double.infinity,
-                                          decoration: BoxDecoration(
-                                              color:
-                                                  Colors.black.withOpacity(0.3),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      widget.size * 15),
-                                              border: Border.all(
-                                                  color: Colors.white10)),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    width: widget.size * 35,
-                                                    height: widget.size * 35,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              widget.size * 17),
-                                                      image: BranchNew.photoUrl.isNotEmpty && file.existsSync()?DecorationImage(
-                                                        image: FileImage(file),
-                                                        fit: BoxFit.cover,
-                                                      ):noImageFound,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  widget.size *
-                                                                      5),
-                                                      child: Text(
-                                                        BranchNew.heading,
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize:
-                                                                widget.size *
-                                                                    20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500),
+                                  return InkWell(
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: widget.size * 2,
+                                          horizontal: widget.size * 8),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.all(5),
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                                color:
+                                                    Colors.black.withOpacity(0.3),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        widget.size * 15),
+                                                border: Border.all(
+                                                    color: Colors.white10)),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      width: widget.size * 35,
+                                                      height: widget.size * 35,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                widget.size * 17),
+                                                        image: BranchNew.photoUrl.isNotEmpty && file.existsSync()?DecorationImage(
+                                                          image: FileImage(file),
+                                                          fit: BoxFit.cover,
+                                                        ):noImageFound,
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: widget.size * 45,
-                                                    right: widget.size * 10,
-                                                    bottom: widget.size * 5),
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      BranchNew.description,
-                                                      style: TextStyle(
-                                                          color: Colors.white70,
-                                                          fontSize:
-                                                              widget.size * 15),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: widget.size * 40,
-                                                    right: widget.size * 10),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    if (BranchNew
-                                                        .link.isNotEmpty)
-                                                      InkWell(
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    widget.size *
+                                                                        5),
                                                         child: Text(
-                                                          "Open (Link)",
+                                                          BranchNew.heading,
                                                           style: TextStyle(
-                                                              color: Colors
-                                                                  .lightBlueAccent,
+                                                              color: Colors.white,
                                                               fontSize:
                                                                   widget.size *
-                                                                      15),
+                                                                      20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
                                                         ),
-                                                        onTap: () {
-                                                          ExternalLaunchUrl(
-                                                              BranchNew.link);
-                                                        },
-                                                      ),
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          top: widget.size * 5),
-                                                      child: Text(
-                                                        BranchNew.id
-                                                            .split("-")
-                                                            .first,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white38,
-                                                            fontSize:
-                                                                widget.size *
-                                                                    10),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        if (isUser())
-                                          Row(
-                                            children: [
-                                              Spacer(),
-                                              InkWell(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.grey[500],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            widget.size * 15),
-                                                    border: Border.all(
-                                                        color: Colors.white),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: widget.size * 10,
-                                                        right: widget.size * 10,
-                                                        top: widget.size * 5,
-                                                        bottom:
-                                                            widget.size * 5),
-                                                    child: Text("Edit"),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: widget.size * 45,
+                                                      right: widget.size * 10,
+                                                      bottom: widget.size * 5),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        BranchNew.description,
+                                                        style: TextStyle(
+                                                            color: Colors.white70,
+                                                            fontSize:
+                                                                widget.size * 15),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                                onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              updateCreator(
-                                                                NewsId:
-                                                                    BranchNew
-                                                                        .id,
-                                                                link: BranchNew
-                                                                    .link,
-                                                                heading:
-                                                                    BranchNew
-                                                                        .heading,
-                                                                photoUrl:
-                                                                    BranchNew
-                                                                        .photoUrl,
-                                                                subMessage:
-                                                                    BranchNew
-                                                                        .description,
-                                                                branch: widget
-                                                                    .branch,
-                                                                width:
-                                                                    widget.size,
-                                                                height:
-                                                                    widget.size,
-                                                                size:
-                                                                    widget.size,
-                                                              )));
-                                                },
-                                              ),
-                                              SizedBox(
-                                                width: widget.size * 20,
-                                              ),
-                                              InkWell(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.grey[500],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            widget.size * 15),
-                                                    border: Border.all(
-                                                        color: Colors.white),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: widget.size * 10,
-                                                        right: widget.size * 10,
-                                                        top: widget.size * 5,
-                                                        bottom:
-                                                            widget.size * 5),
-                                                    child: Text("Delete"),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: widget.size * 40,
+                                                      right: widget.size * 10),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      if (BranchNew
+                                                          .link.isNotEmpty)
+                                                        InkWell(
+                                                          child: Text(
+                                                            "Open (Link)",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .lightBlueAccent,
+                                                                fontSize:
+                                                                    widget.size *
+                                                                        15),
+                                                          ),
+                                                          onTap: () {
+                                                            ExternalLaunchUrl(
+                                                                BranchNew.link);
+                                                          },
+                                                        ),
+                                                      Padding(
+                                                        padding: EdgeInsets.only(
+                                                            top: widget.size * 5),
+                                                        child: Text(
+                                                          BranchNew.id
+                                                              .split("-")
+                                                              .first,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white38,
+                                                              fontSize:
+                                                                  widget.size *
+                                                                      10),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                                onTap: () async {
-                                                  FirebaseFirestore.instance
-                                                      .collection("update")
-                                                      .doc(BranchNew.id)
-                                                      .delete();
-                                                  pushNotificationsSpecificPerson(
-                                                      fullUserId(),
-                                                      " ${BranchNew.heading} Deleted from Updates",
-                                                      "");
-                                                },
-                                              ),
-                                              SizedBox(
-                                                width: widget.size * 20,
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                      ],
+                                          if (isUser())
+                                            Row(
+                                              children: [
+                                                Spacer(),
+                                                InkWell(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.grey[500],
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              widget.size * 15),
+                                                      border: Border.all(
+                                                          color: Colors.white),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: widget.size * 10,
+                                                          right: widget.size * 10,
+                                                          top: widget.size * 5,
+                                                          bottom:
+                                                              widget.size * 5),
+                                                      child: Text("Edit"),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                updateCreator(
+                                                                  NewsId:
+                                                                      BranchNew
+                                                                          .id,
+                                                                  link: BranchNew
+                                                                      .link,
+                                                                  heading:
+                                                                      BranchNew
+                                                                          .heading,
+                                                                  photoUrl:
+                                                                      BranchNew
+                                                                          .photoUrl,
+                                                                  subMessage:
+                                                                      BranchNew
+                                                                          .description,
+                                                                  branch: widget
+                                                                      .branch,
+                                                                  width:
+                                                                      widget.size,
+                                                                  height:
+                                                                      widget.size,
+                                                                  size:
+                                                                      widget.size,
+                                                                )));
+                                                  },
+                                                ),
+                                                SizedBox(
+                                                  width: widget.size * 20,
+                                                ),
+                                                InkWell(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.grey[500],
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              widget.size * 15),
+                                                      border: Border.all(
+                                                          color: Colors.white),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: widget.size * 10,
+                                                          right: widget.size * 10,
+                                                          top: widget.size * 5,
+                                                          bottom:
+                                                              widget.size * 5),
+                                                      child: Text("Delete"),
+                                                    ),
+                                                  ),
+                                                  onTap: () async {
+                                                    FirebaseFirestore.instance
+                                                        .collection("update")
+                                                        .doc(BranchNew.id)
+                                                        .delete();
+                                                    pushNotificationsSpecificPerson(
+                                                        fullUserId(),
+                                                        " ${BranchNew.heading} Deleted from Updates",
+                                                        "");
+                                                  },
+                                                ),
+                                                SizedBox(
+                                                  width: widget.size * 20,
+                                                ),
+                                              ],
+                                            ),
+                                        ],
+                                      ),
                                     ),
+                                    onTap: (){
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => ImageZoom(
+                                                size: widget.size,
+                                                width: widget.size,
+                                                height: widget.size,
+                                                url: BranchNew.photoUrl,
+                                                file: file,
+                                              )));
+                                    },
                                   );
                                 },
                               );

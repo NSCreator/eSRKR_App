@@ -16,7 +16,7 @@ dependencies:
   google_mobile_ads: ^3.0.0
   carousel_slider: ^4.2.1
   firebase_core: ^2.15.0
-  cloud_firestore: ^4.8.4
+  cloud_firestore: ^4.8.5
   firebase_auth: ^4.7.2
   email_validator: ^2.1.17
   intl: ^0.18.1

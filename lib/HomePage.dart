@@ -150,13 +150,13 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             Navigator.pop(context, false);
                           },
-                          child: const Text('No',style: TextStyle(color: Colors.redAccent,fontSize: 20,fontWeight: FontWeight.w600),),
+                          child:  Text('No',style: TextStyle(color: Colors.redAccent,fontSize:widget.size *20,fontWeight: FontWeight.w600),),
                         ),
                         InkWell(
                           onTap: () {
                             Navigator.pop(context, true);
                           },
-                          child: const Text('Yes',style: TextStyle(color: Colors.greenAccent,fontSize: 20,fontWeight: FontWeight.w600),),
+                          child:  Text('Yes',style: TextStyle(color: Colors.greenAccent,fontSize: widget.size *20,fontWeight: FontWeight.w600),),
                         ),
                       ],
                     ),
@@ -180,7 +180,7 @@ class _HomePageState extends State<HomePage> {
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           SliverAppBar(
             expandedHeight: widget.size*55,
-            collapsedHeight: widget.size*55,
+            // collapsedHeight: widget.size*55,
             backgroundColor: Colors.transparent,
             flexibleSpace: Padding(
               padding:  EdgeInsets.all(widget.size *8.0),
@@ -681,7 +681,7 @@ class _HomePageState extends State<HomePage> {
                                          final Uri uri = Uri.parse(BranchNew.photoUrl);
                                          final String fileName = uri.pathSegments.last;
                                          var name = fileName.split("/").last;
-                                         final file = File("${folderPath}/${widget.branch.toLowerCase()}_news/$name");
+                                          file = File("${folderPath}/${widget.branch.toLowerCase()}_news/$name");
 
                                        }
                                         return Padding(
@@ -870,14 +870,14 @@ class _HomePageState extends State<HomePage> {
                               );}
                         }}),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding:  EdgeInsets.all(widget.size *8.0),
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white24,
-                        borderRadius: BorderRadius.circular(40)
+                        borderRadius: BorderRadius.circular(widget.size *40)
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 10,right: 10),
+                        padding:  EdgeInsets.only(top: widget.size *10,right: widget.size *10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -886,17 +886,17 @@ class _HomePageState extends State<HomePage> {
                               child: Column(
                                 children: [
                                   Container(
-                                    height: 50,
-                                    width: 50,
+                                    height: widget.size *50,
+                                    width: widget.size *50,
                                     decoration: BoxDecoration(
                                         color: Colors.white30,
-                                        borderRadius: BorderRadius.circular(25),
+                                        borderRadius: BorderRadius.circular(widget.size *25),
                                       image: DecorationImage(image: AssetImage("assets/timeTableIcon.png"))
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text("Time Table",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                    padding:  EdgeInsets.all(widget.size *5.0),
+                                    child: Text("Time Table",style: TextStyle(color: Colors.white,fontSize: widget.size *16,fontWeight: FontWeight.w600),),
                                   )
                                 ],
                               ),
@@ -958,17 +958,17 @@ class _HomePageState extends State<HomePage> {
                               child: Column(
                                 children: [
                                   Container(
-                                    height: 50,
-                                    width: 50,
+                                    height: widget.size *50,
+                                    width: widget.size *50,
                                     decoration: BoxDecoration(
                                         color: Colors.white30,
-                                        borderRadius: BorderRadius.circular(25),
+                                        borderRadius: BorderRadius.circular(widget.size *25),
                                       image: DecorationImage(image: AssetImage("assets/subjects.png"),fit: BoxFit.cover)
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text("Sub",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                    padding:  EdgeInsets.all(widget.size *5.0),
+                                    child: Text("Sub",style: TextStyle(color: Colors.white,fontSize: widget.size *16,fontWeight: FontWeight.w600),),
                                   )
                                 ],
                               ),
@@ -1031,17 +1031,17 @@ class _HomePageState extends State<HomePage> {
                               child: Column(
                                 children: [
                                   Container(
-                                    height: 50,
-                                    width: 50,
+                                    height:widget.size * 50,
+                                    width: widget.size *50,
                                     decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(25),
+                                        borderRadius: BorderRadius.circular(widget.size *25),
                                         image: DecorationImage(image: AssetImage("assets/lab.png"))
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text("Lab",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                    padding:  EdgeInsets.all(widget.size *5.0),
+                                    child: Text("Lab",style: TextStyle(color: Colors.white,fontSize: widget.size *16,fontWeight: FontWeight.w600),),
                                   )
                                 ],
                               ),
@@ -1104,17 +1104,17 @@ class _HomePageState extends State<HomePage> {
                               child: Column(
                                 children: [
                                   Container(
-                                    height: 50,
-                                    width: 50,
+                                    height:widget.size * 50,
+                                    width: widget.size *50,
                                     decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(25),
+                                        borderRadius: BorderRadius.circular(widget.size *25),
                                         image: DecorationImage(image: AssetImage("assets/books.png"))
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text("Books",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                    padding:  EdgeInsets.all(widget.size *5.0),
+                                    child: Text("Books",style: TextStyle(color: Colors.white,fontSize: widget.size *16,fontWeight: FontWeight.w600),),
                                   )
                                 ],
                               ),
@@ -1183,14 +1183,14 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding:  EdgeInsets.all(widget.size *8.0),
                     child: Container(
                       decoration: BoxDecoration(
                           color: Colors.white24,
-                          borderRadius: BorderRadius.circular(40)
+                          borderRadius: BorderRadius.circular(widget.size *40)
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 10,left: 20),
+                        padding:  EdgeInsets.only(top: widget.size *10,left:widget.size * 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -1199,17 +1199,17 @@ class _HomePageState extends State<HomePage> {
                               child: Column(
                                 children: [
                                   Container(
-                                    height: 50,
-                                    width: 50,
+                                    height: widget.size *50,
+                                    width:widget.size * 50,
                                     decoration: BoxDecoration(
                                         color: Colors.white30,
-                                        borderRadius: BorderRadius.circular(25),
+                                        borderRadius: BorderRadius.circular(widget.size *25),
                                         image: DecorationImage(image: AssetImage("assets/subjects.png"),fit: BoxFit.cover)
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text("Syllabus",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                    padding:  EdgeInsets.all(widget.size *5.0),
+                                    child: Text("Syllabus",style: TextStyle(color: Colors.white,fontSize:widget.size * 16,fontWeight: FontWeight.w600),),
                                   )
                                 ],
                               ),
@@ -1271,17 +1271,17 @@ class _HomePageState extends State<HomePage> {
                               child: Column(
                                 children: [
                                   Container(
-                                    height: 50,
-                                    width: 50,
+                                    height:widget.size * 50,
+                                    width:widget.size * 50,
                                     decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(25),
+                                        borderRadius: BorderRadius.circular(widget.size *25),
                                         image: DecorationImage(image: AssetImage("assets/lab.png"))
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text("Modal Papers",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600),),
+                                    padding:  EdgeInsets.all(widget.size *5.0),
+                                    child: Text("Modal Papers",style: TextStyle(color: Colors.white,fontSize:widget.size * 16,fontWeight: FontWeight.w600),),
                                   )
                                 ],
                               ),
@@ -1347,11 +1347,11 @@ class _HomePageState extends State<HomePage> {
                     child: Container(
                       decoration: BoxDecoration(
                           color: Colors.white24,
-                          borderRadius: BorderRadius.circular(40)
+                          borderRadius: BorderRadius.circular(widget.size *40)
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 20),
-                        child: Text("Exam Notification",style: TextStyle(color: Colors.white,fontSize: 30),),
+                        padding:   EdgeInsets.symmetric(vertical: widget.size *6,horizontal: widget.size *20),
+                        child: Text("Exam Notification",style: TextStyle(color: Colors.white,fontSize:widget.size * 30),),
                       ),
                     ),
                     onTap: (){
@@ -1381,7 +1381,7 @@ class _HomePageState extends State<HomePage> {
                           "Your Regulation : ${widget.reg}",
                           style: TextStyle(
                               color: Colors.white38,
-                              fontSize: widget.size *25,
+                              fontSize: widget.size *20,
                               fontWeight: FontWeight.w500),
                         ),
                       ),
@@ -1421,9 +1421,9 @@ class _HomePageState extends State<HomePage> {
                                               'Error with TextBooks Data or\n Check Internet Connection'));
                                     } else {
                                       return Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                                        padding:   EdgeInsets.symmetric(horizontal:widget.size * 20),
                                         child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                          padding:   EdgeInsets.all(widget.size *8.0),
                                           child: ListView.builder(
                                             physics: const NeverScrollableScrollPhysics(),
                                             shrinkWrap: true,
@@ -1432,13 +1432,13 @@ class _HomePageState extends State<HomePage> {
                                               final SubjectsData = user[index];
                                               return Center(
                                                 child: Padding(
-                                                  padding: const EdgeInsets.all(3.0),
+                                                  padding:   EdgeInsets.all(widget.size *3.0),
                                                   child: InkWell(
                                                     child: Text(
                                                       SubjectsData.id.toUpperCase(),
                                                       style: TextStyle(
                                                           color: Colors.amber,
-                                                          fontSize: 30),
+                                                          fontSize: widget.size *30),
                                                     ),
                                                     onTap: () {
                                                       FirebaseFirestore.instance
@@ -2264,7 +2264,7 @@ class _HomePageState extends State<HomePage> {
                         }
                       },
                     ),
-                  SizedBox(height: 150,)
+                  SizedBox(height: widget.size *150,)
                 ],
               ),
             ),

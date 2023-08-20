@@ -60,31 +60,6 @@ class _notificationsState extends State<notifications>
     super.dispose();
   }
 
-  Widget NotificationText(String text) {
-    final regex = RegExp(r'(http[s]?:\/\/[^\s]+)');
-    final matches = regex.allMatches(text);
-    final List t = text.split(" ");
-    return Wrap(
-      children: [
-        for (String number in t)
-          if (matches.map((match) => match.group(0)!).toList().contains(number))
-            InkWell(
-              child: Text(
-                "$number ",
-                style: TextStyle(color: Colors.blueAccent),
-              ),
-              onTap: () {
-                ExternalLaunchUrl(number);
-              },
-            )
-          else
-            Text(
-              "$number ",
-              style: TextStyle(color: Colors.white),
-            ),
-      ],
-    );
-  }
 
   @override
   Widget build(BuildContext context) => backGroundImage(
@@ -95,7 +70,7 @@ class _notificationsState extends State<notifications>
         ),
         Container(
           color: Colors.transparent,
-          height: widget.height * 40,
+          height:widget.size * 40,
           child: Center(
             child: TabBar(
               indicator: BoxDecoration(
@@ -272,8 +247,7 @@ class _notificationsState extends State<notifications>
                                                     bottom: widget.size * 6,
                                                     right: widget.size * 3,
                                                     top: widget.size * 3),
-                                                child: NotificationText(
-                                                    Notification.description),
+                                                child: StyledTextWidget(fontSize: widget.size*14, text: Notification.description,),
                                               ),
                                               if (Notification.Url.length > 3)
                                                 Padding(
@@ -456,6 +430,7 @@ class _notificationsState extends State<notifications>
                                                         .first,
                                                     style: TextStyle(
                                                       color: Colors.white,
+                                                      fontSize: 20
                                                     ),
                                                   ),
                                                 )
@@ -466,8 +441,7 @@ class _notificationsState extends State<notifications>
                                                       bottom: widget.size * 6,
                                                       right: widget.size * 3,
                                                       top: widget.size * 3),
-                                                  child: NotificationText(
-                                                      Notification.description),
+                                                  child: StyledTextWidget(fontSize: widget.size*14, text: Notification.description,),
                                                 ),
                                               if (Notification.Url.length > 10)
                                                 Padding(
@@ -633,7 +607,7 @@ class _searchBarState extends State<searchBar> {
                             child: AnimatedContainer(
                               duration: Duration(milliseconds: 300),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(widget.size * 15),
                                 color: Colors.white.withOpacity(0.1),
                                 image: DecorationImage(
                                     image: NetworkImage(isExp
@@ -711,7 +685,7 @@ class _searchBarState extends State<searchBar> {
                 flex: 7,
                 child: TextFieldContainer(
                   child: TextField(
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: widget.size * 20),
                     cursorColor: Colors.white,
                     cursorHeight: widget.size * 20,
                     controller: bodyController,
@@ -750,7 +724,7 @@ class _searchBarState extends State<searchBar> {
                               Text(
                                 "Send",
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 17),
+                                    color: Colors.white, fontSize: widget.size * 17),
                               ),
                               SizedBox(
                                 width: widget.size * 3,

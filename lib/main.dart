@@ -12,7 +12,6 @@ import 'HomePage.dart';
 import 'SubPages.dart';
 import 'TextField.dart';
 import 'auth_page.dart';
-import 'firebase_options.dart';
 import 'functins.dart';
 import 'net.dart';
 import 'notification.dart';
@@ -103,11 +102,11 @@ Future<void> _handleMessageData(RemoteMessage message) async {
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    // options: DefaultFirebaseOptions.currentPlatform,
   );
-  // await NotificationService().initNotification();
-  // FirebaseMessaging.onBackgroundMessage(backgroundHandler);
-  // MobileAds.instance.initialize();
+  await NotificationService().initNotification();
+  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  MobileAds.instance.initialize();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
@@ -284,8 +283,9 @@ class _MyAppState extends State<MyApp> {
 
 class years extends StatefulWidget {
   final String branch;
+  final double size;
 
-  const years({Key? key, required this.branch}) : super(key: key);
+  const years({Key? key, required this.branch,required this.size}) : super(key: key);
 
   @override
   State<years> createState() => _yearsState();
@@ -309,12 +309,12 @@ class _yearsState extends State<years> {
               if (snapshot.hasError) {
                 return const Center(
                     child: Text(
-                        'Error with TextBooks Data or\n Check Internet Connection'));
+                        'Error with Regulation Data or\n Check Internet Connection'));
               } else {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding:  EdgeInsets.symmetric(horizontal: widget.size*20),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding:  EdgeInsets.all(widget.size*8.0),
                     child: ListView.builder(
                       physics: const BouncingScrollPhysics(),
                       shrinkWrap: true,
@@ -323,13 +323,13 @@ class _yearsState extends State<years> {
                         final SubjectsData = user[index];
                         return Center(
                           child: Padding(
-                            padding: const EdgeInsets.all(3.0),
+                            padding:  EdgeInsets.all(widget.size*3.0),
                             child: InkWell(
                               child: Text(
                                 SubjectsData.id.toUpperCase(),
                                 style: TextStyle(
                                     color: Colors.amber,
-                                    fontSize: 30),
+                                    fontSize: widget.size*30),
                               ),
                               onTap: () {
                                 FirebaseFirestore.instance

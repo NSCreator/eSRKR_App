@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>913804156436-9jt8hskafd6q4jca75qbo2rmvvfai97e.apps.googleusercontent.com</string>
+	<string>922256000367-u9kgisrv0d2c9buuo8al8u294qgljrf7.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.913804156436-9jt8hskafd6q4jca75qbo2rmvvfai97e</string>
+	<string>com.googleusercontent.apps.922256000367-u9kgisrv0d2c9buuo8al8u294qgljrf7</string>
 	<key>API_KEY</key>
-	<string>AIzaSyC7QorjBu2p6HruF_4PJdIikwUu6QqRsSI</string>
+	<string>AIzaSyAVKhC-9Laj55wmlfZqc8fMeNrHWZj2wT4</string>
 	<key>GCM_SENDER_ID</key>
-	<string>913804156436</string>
+	<string>922256000367</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.nimmalasujith.esrkr</string>
 	<key>PROJECT_ID</key>
-	<string>esrkr-f97aa</string>
+	<string>esrkr-app</string>
 	<key>STORAGE_BUCKET</key>
-	<string>esrkr-f97aa.appspot.com</string>
+	<string>esrkr-app.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:913804156436:ios:7120737f948dc16371d101</string>
+	<string>1:922256000367:ios:dc35cbefa75b43b4d6949a</string>
 </dict>
 </plist>
