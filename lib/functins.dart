@@ -16,8 +16,8 @@ import 'notification.dart';
 
 class Constants {
   static final String BASE_URL = 'https://fcm.googleapis.com/fcm/send';
-  static final String KEY_SERVER = "AAAA1ML43hQ:APA91bHaPKvO5LrkitzMFrPoBUAJcus5ZwEkciqDDu_FN1XZhRCFrD29VbfS93EeTjXb7FkF608p6_5nWvPgUyIZnxz1Igf_emP3hPvVvlutv7SdDjSJQPuezvQMELom3SXzUQ5PmJ2p	";
-  static final String SENDER_ID = '913804156436	';
+  static final String KEY_SERVER = "AAAA1rq9xW8:APA91bE_dMaAdvS09kz8BOFA2Oy6ZUEee8tcTUMmNYsiyWVyBPbMRfoZ1VgmGD_arVZ9Uib_TDHhmjBvkW75tMovO8jdV6zgUOwZ4z5pmdrAz0MAodlFVd9ssphVxJ2l_WCDuB0KSjiU";
+  static final String SENDER_ID = '922256000367	';
 }
 
 Future<void> sendingMails(String urlIn) async {

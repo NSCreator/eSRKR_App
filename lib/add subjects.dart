@@ -171,6 +171,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
               isLoading && isReady
                   ? Center(child: CircularProgressIndicator())
                   : PDFView(
+                pageSnap:false,
                       filePath: widget.pdfUrl,
                       defaultPage: currentPage as int,
                       swipeHorizontal: isSwipeHorizontal,

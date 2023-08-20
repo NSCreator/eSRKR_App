@@ -195,6 +195,8 @@ class _settingsState extends State<settings> {
                                           widget.size * 20)),
                                   elevation: 16,
                                   child: ListView(
+                                    physics: const BouncingScrollPhysics(),
+
                                     shrinkWrap: true,
                                     children: <Widget>[
                                       years(branch: widget.branch,size: widget.size,)
