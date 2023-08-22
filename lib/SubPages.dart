@@ -2781,7 +2781,108 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                                   print(e);
                                                 }
                                               },
-                                            )
+                                            )else InkWell(
+                                            child: StreamBuilder<
+                                                DocumentSnapshot>(
+                                              stream: FirebaseFirestore
+                                                  .instance
+                                                  .collection('user')
+                                                  .doc(fullUserId())
+                                                  .collection(
+                                                  "FavouriteLabSubjects")
+                                                  .doc(widget.ID)
+                                                  .snapshots(),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.hasData) {
+                                                  if (snapshot.data!.exists) {
+                                                    return Row(
+                                                      children: [
+                                                        Icon(
+                                                            Icons
+                                                                .library_add_check,
+                                                            size:
+                                                            widget.size *
+                                                                23,
+                                                            color: Colors
+                                                                .cyanAccent),
+                                                        Text(
+                                                          " Saved",
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .white,
+                                                              fontSize: widget
+                                                                  .size *
+                                                                  20),
+                                                        )
+                                                      ],
+                                                    );
+                                                  } else {
+                                                    return Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons
+                                                              .library_add_outlined,
+                                                          size: widget.size *
+                                                              23,
+                                                          color: Colors
+                                                              .cyanAccent,
+                                                        ),
+                                                        Text(
+                                                          " Save",
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .white,
+                                                              fontSize: widget
+                                                                  .size *
+                                                                  20),
+                                                        )
+                                                      ],
+                                                    );
+                                                  }
+                                                } else {
+                                                  return Container();
+                                                }
+                                              },
+                                            ),
+                                            onTap: () async {
+                                              try {
+                                                await FirebaseFirestore
+                                                    .instance
+                                                    .collection('user')
+                                                    .doc(fullUserId())
+                                                    .collection(
+                                                    "FavouriteLabSubjects")
+                                                    .doc(widget.ID)
+                                                    .get()
+                                                    .then((docSnapshot) {
+                                                  if (docSnapshot.exists) {
+                                                    FirebaseFirestore.instance
+                                                        .collection('user')
+                                                        .doc(fullUserId())
+                                                        .collection(
+                                                        "FavouriteLabSubjects")
+                                                        .doc(widget.ID)
+                                                        .delete();
+                                                    showToastText(
+                                                        "Removed from saved list");
+                                                  } else {
+                                                    FavouriteLabSubjectsSubjects(
+                                                        branch: widget.branch,
+                                                        SubjectId: widget.ID,
+                                                        name: widget.name,
+                                                        description:
+                                                        widget.fullName,
+                                                        photoUrl:
+                                                        widget.photoUrl);
+                                                    showToastText(
+                                                        "${widget.name} in favorites");
+                                                  }
+                                                });
+                                              } catch (e) {
+                                                print(e);
+                                              }
+                                            },
+                                          )
                                         ],
                                       ),
                                     ),
@@ -2789,10 +2890,10 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                   SizedBox(
                                     width: widget.size * 10,
                                   ),
-                                  downloadAllPdfs(
+                                 downloadAllPdfs(
                                     branch: widget.branch,
                                     SubjectID: widget.ID,
-                                    pdfs: [],
+                                    mode: widget.mode,
                                     size: widget.size,
                                   ),
                                 ],

@@ -273,9 +273,9 @@ Future<void> updateToken() async {
 
 class downloadAllPdfs extends StatefulWidget {
   String branch,SubjectID;
-  List pdfs;
+  String mode;
   double size;
- downloadAllPdfs({required this.branch,required this.SubjectID,required this.pdfs,required this.size});
+ downloadAllPdfs({required this.branch,required this.SubjectID,required this.mode,required this.size});
 
   @override
   State<downloadAllPdfs> createState() => _downloadAllPdfsState();
@@ -316,8 +316,8 @@ class _downloadAllPdfsState extends State<downloadAllPdfs> {
     
     final CollectionReference subjects = FirebaseFirestore.instance
         .collection(widget.branch)
-        .doc("Subjects")
-        .collection("Subjects").doc(widget.SubjectID).collection("Units");
+        .doc(widget.mode=="Subjects"?"Subjects":"LabSubjects")
+        .collection(widget.mode=="Subjects"?"Subjects":"LabSubjects").doc(widget.SubjectID).collection("Units");
 
     try {
       final QuerySnapshot querySnapshot = await subjects.get();

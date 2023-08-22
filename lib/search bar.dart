@@ -111,7 +111,7 @@ class _MyAppqState extends State<MyAppq> {
                       uri.pathSegments.last;
                   var filename =
                       fileName.split("/").last;
-                  final file = File(
+                   file = File(
                       "${folderPath}/subjects/$filename");
                 }
                       if (name.isEmpty) {
@@ -445,7 +445,7 @@ class _MyAppqState extends State<MyAppq> {
                             uri.pathSegments.last;
                         var filename =
                             fileName.split("/").last;
-                        final file = File(
+                         file = File(
                             "${folderPath}/labsubjects/$filename");
                       }
                       if (name.isEmpty) {

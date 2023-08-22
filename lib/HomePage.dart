@@ -273,9 +273,9 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       "eSRKR",
                       style: TextStyle(
-                        fontSize: widget.size *28.0,
+                        fontSize: widget.size *30.0,
                         color: Color.fromRGBO(192, 237, 252, 1),
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -2209,7 +2209,7 @@ class _HomePageState extends State<HomePage> {
                                                         ID: SubjectsData
                                                             .id,
                                                         mode:
-                                                        "Subjects",
+                                                        "LabSubjects",
                                                         name: SubjectsData
                                                             .heading,
                                                         fullName:

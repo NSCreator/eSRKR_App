@@ -309,50 +309,53 @@ class _supportListState extends State<supportList> {
       children: [
         backButton(size: size(context),text: "Supported List",),
         !commentsIds.contains(fullUserId())
-            ? Row(
+            ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 20),
+              child: Row(
           children: [
-            Flexible(
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white30,
-                    borderRadius: BorderRadius.circular(20)),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: TextFormField(
-                    controller: _comment,
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.multiline,
-                    style:
-                    TextStyle(color: Colors.white, fontSize: 25),
-                    maxLines: null,
-                    // Allows the field to expand as needed
-                    decoration: const InputDecoration(
-                      hintStyle: TextStyle(
-                        color: Colors.white60,
+              Flexible(
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white30,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: TextFormField(
+                      controller: _comment,
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.multiline,
+                      style:
+                      TextStyle(color: Colors.white, fontSize: 25),
+                      maxLines: null,
+                      // Allows the field to expand as needed
+                      decoration: const InputDecoration(
+                        hintStyle: TextStyle(
+                          color: Colors.white60,
+                        ),
+                        border: InputBorder.none,
+                        hintText: 'write your message',
                       ),
-                      border: InputBorder.none,
-                      hintText: 'write your message',
                     ),
                   ),
                 ),
               ),
-            ),
-            InkWell(
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Icon(
-                  Icons.send,
-                  color: Colors.lightBlueAccent,
+              InkWell(
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Icon(
+                    Icons.send,
+                    color: Colors.lightBlueAccent,
+                  ),
                 ),
-              ),
-              onTap: () async {
-                await addComment(true, _comment.text);
-                getComments();
-                _comment.clear();
-              },
-            )
+                onTap: () async {
+                  await addComment(true, _comment.text);
+                  getComments();
+                  _comment.clear();
+                },
+              )
           ],
-        )
+        ),
+            )
             : Text(
           "Your already Submitted",
           style: TextStyle(
