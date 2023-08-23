@@ -231,7 +231,7 @@ class _syllabusPageState extends State<syllabusPage> {
                               file = File(
                                   "${folderPath}/pdfs/${getFileName(data.syllabus)}");
 
-                            return Padding(
+                            return  data.syllabus.length>3?Padding(
                               padding: EdgeInsets.only(
                                   left: widget.size * 15.0,
                                   right: widget.size * 10,
@@ -461,7 +461,7 @@ class _syllabusPageState extends State<syllabusPage> {
                                   ),
                                 ),
                               ),
-                            );
+                            ):Container();
                           },
                         );
                     }
@@ -584,7 +584,7 @@ class _ModalPapersPageState extends State<ModalPapersPage> {
                               file = File(
                                   "${folderPath}/pdfs/${getFileName(data.modelPaper)}");
 
-                            return Padding(
+                            return data.modelPaper.length>3?Padding(
                               padding: EdgeInsets.only(
                                   left: widget.size * 15.0,
                                   right: widget.size * 10,
@@ -814,7 +814,7 @@ class _ModalPapersPageState extends State<ModalPapersPage> {
                                   ),
                                 ),
                               ),
-                            );
+                            ):Container();
                           },
                         );
                     }
@@ -4396,13 +4396,16 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
   @override
   void initState() {
     getPath();
-    newQuestionsList = widget.unit.questions.split(";");
-    newList = widget.unit.description.split(";");
+    set();
     _tabController = new TabController(
       vsync: this,
       length: 2,
     );
     super.initState();
+  }
+  set(){
+    newQuestionsList = widget.unit.questions.split(";");
+    newList = widget.unit.description.split(";");
   }
 
   void _reloadPage() {
@@ -4773,249 +4776,187 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
               child: LinearProgressIndicator(),
             ),
           if (isExp)
-            SizedBox(
-              height: Height(context) / 2.7,
-              child: Stack(
+            Padding(
+              padding:  EdgeInsets.all(widget.size*8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.all(widget.size * 8.0),
-                    child: TabBarView(
-                        physics: BouncingScrollPhysics(),
-                        controller: _tabController,
-                        children: [
-                          SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: widget.size * 60,
-                                ),
-                                ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: newList.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      if (newList.length > 1) {
-                                        return Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: widget.height * 8),
-                                          child: InkWell(
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.circle,
-                                                  size: widget.size * 8,
-                                                  color: Colors.lightBlueAccent,
-                                                ),
-                                                Flexible(
-                                                  child: Text(
-                                                    isUser()
-                                                        ? newList[index]
-                                                        : newList[index]
-                                                            .split("@")
-                                                            .first,
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize:
-                                                            widget.size * 18),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            onTap: () {
-                                              int indexNumber = 0;
-                                              try {
-                                                indexNumber = int.parse(
-                                                    newList[index]
-                                                        .split('@')
-                                                        .last
-                                                        .trim());
-                                              } catch (e) {
-                                                indexNumber = 0;
-                                              }
-                                              if (file.existsSync()) {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            PdfViewerPage(
-                                                              size: widget.size,
-                                                              pdfUrl:
-                                                                  "${folderPath}/pdfs/${getFileName(widget.unit.link)}",
-                                                              defaultPage:
-                                                                  indexNumber -
-                                                                      1,
-                                                            )));
-                                              } else {
-                                                showToastText("Download PDF");
-                                              }
-                                            },
-                                          ),
-                                        );
-                                      } else {
-                                        return Center(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(
-                                                widget.size * 8.0),
-                                            child: Text(
-                                              newList[0],
-                                              style: TextStyle(
-                                                  color: Colors.amberAccent,
-                                                  fontSize: widget.size * 18),
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    }),
-                              ],
-                            ),
-                          ),
-                          SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: widget.size * 60,
-                                ),
-                                ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: newQuestionsList.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      if (newQuestionsList.length > 1) {
-                                        return Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: widget.height * 8),
-                                          child: InkWell(
-                                            child: Row(
-                                              children: [
-                                                Text("${index + 1}. ",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize:
-                                                            widget.size * 18)),
-                                                Flexible(
-                                                  child: Text(
-                                                    isUser()
-                                                        ? newQuestionsList[
-                                                            index]
-                                                        : newQuestionsList[
-                                                                index]
-                                                            .split("@")
-                                                            .first,
-                                                    style: TextStyle(
-                                                        color: Colors.white70,
-                                                        fontSize:
-                                                            widget.size * 15),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            onTap: () {
-                                              int indexNumber = 0;
-                                              try {
-                                                indexNumber = int.parse(
-                                                    newQuestionsList[index]
-                                                        .split('@')
-                                                        .last
-                                                        .trim());
-                                              } catch (e) {
-                                                indexNumber = 0;
-                                              }
-                                              if (file.existsSync()) {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            PdfViewerPage(
-                                                              size: widget.size,
-                                                              pdfUrl:
-                                                                  "${folderPath}/pdfs/${getFileName(widget.unit.link)}",
-                                                              defaultPage:
-                                                                  indexNumber -
-                                                                      1,
-                                                            )));
-                                              } else {
-                                                showToastText("Download PDF");
-                                              }
-                                            },
-                                          ),
-                                        );
-                                      } else {
-                                        return Center(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.white
-                                                    .withOpacity(0.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        widget.size * 8)),
-                                            child: Padding(
-                                              padding: EdgeInsets.all(
-                                                  widget.size * 8.0),
-                                              child: Text(
-                                                "No Question",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: widget.size * 18,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    }),
-                              ],
-                            ),
-                          ),
-                        ]),
-                  ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: Padding(
-                      padding:  EdgeInsets.only(top:widget.size * 8),
-                      child: Container(
-                        height: widget.size * 40,
-                        child: Center(
-                          child: TabBar(
-                            indicator: BoxDecoration(
-                                border: Border.all(color: Colors.white12),
-                                borderRadius:
-                                    BorderRadius.circular(widget.size * 15),
-                                color: Color.fromRGBO(4, 11, 23, 1)),
-                            controller: _tabController,
-                            isScrollable: true,
-                            labelPadding: EdgeInsets.symmetric(horizontal: widget.size *25),
-                            tabs: [
-                              Tab(
-                                child: Text(
-                                  "Description",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: widget.size * 25,
+                  Text("Description",style: TextStyle(color: Colors.amber,fontSize: widget.size*30,fontWeight: FontWeight.w600),),
+                  ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: newList.length,
+                      itemBuilder:
+                          (BuildContext context, int index) {
+                        if (newList.length > 1) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                bottom: widget.height * 8),
+                            child: InkWell(
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.circle,
+                                    size: widget.size * 8,
+                                    color: Colors.lightBlueAccent,
                                   ),
-                                ),
+                                  Flexible(
+                                    child: Text(
+                                      isUser()
+                                          ? newList[index]
+                                          : newList[index]
+                                          .split("@")
+                                          .first,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize:
+                                          widget.size * 18),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Tab(
+                              onTap: () {
+                                int indexNumber = 0;
+                                try {
+                                  indexNumber = int.parse(
+                                      newList[index]
+                                          .split('@')
+                                          .last
+                                          .trim());
+                                } catch (e) {
+                                  indexNumber = 0;
+                                }
+                                if (file.existsSync()) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PdfViewerPage(
+                                                size: widget.size,
+                                                pdfUrl:
+                                                "${folderPath}/pdfs/${getFileName(widget.unit.link)}",
+                                                defaultPage:
+                                                indexNumber -
+                                                    1,
+                                              )));
+                                } else {
+                                  showToastText("Download PDF");
+                                }
+                              },
+                            ),
+                          );
+                        } else {
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(
+                                  widget.size * 8.0),
+                              child: Text(
+                                newList[0],
+                                style: TextStyle(
+                                    color: Colors.amberAccent,
+                                    fontSize: widget.size * 18),
+                              ),
+                            ),
+                          );
+                        }
+                      }),
+                  Text("Questions",style: TextStyle(color: Colors.amber,fontSize: widget.size*30,fontWeight: FontWeight.w600),),
+
+                  ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: newQuestionsList.length,
+                      itemBuilder:
+                          (BuildContext context, int index) {
+                        if (newQuestionsList.length > 1) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                bottom: widget.height * 8),
+                            child: InkWell(
+                              child: Row(
+                                children: [
+                                  Text("${index + 1}. ",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize:
+                                          widget.size * 18)),
+                                  Flexible(
+                                    child: Text(
+                                      isUser()
+                                          ? newQuestionsList[
+                                      index]
+                                          : newQuestionsList[
+                                      index]
+                                          .split("@")
+                                          .first,
+                                      style: TextStyle(
+                                          color: Colors.white70,
+                                          fontSize:
+                                          widget.size * 15),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              onTap: () {
+                                int indexNumber = 0;
+                                try {
+                                  indexNumber = int.parse(
+                                      newQuestionsList[index]
+                                          .split('@')
+                                          .last
+                                          .trim());
+                                } catch (e) {
+                                  indexNumber = 0;
+                                }
+                                if (file.existsSync()) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PdfViewerPage(
+                                                size: widget.size,
+                                                pdfUrl:
+                                                "${folderPath}/pdfs/${getFileName(widget.unit.link)}",
+                                                defaultPage:
+                                                indexNumber -
+                                                    1,
+                                              )));
+                                } else {
+                                  showToastText("Download PDF");
+                                }
+                              },
+                            ),
+                          );
+                        } else {
+                          return Center(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white
+                                      .withOpacity(0.5),
+                                  borderRadius:
+                                  BorderRadius.circular(
+                                      widget.size * 8)),
+                              child: Padding(
+                                padding: EdgeInsets.all(
+                                    widget.size * 8.0),
                                 child: Text(
-                                  "Questions",
+                                  "No Question",
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: widget.size * 25),
+                                      fontSize: widget.size * 18,
+                                      fontWeight:
+                                      FontWeight.w600),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
+                            ),
+                          );
+                        }
+                      }),
                 ],
               ),
             ),
+
         ],
       ),
     );
@@ -5338,157 +5279,151 @@ class _subMoreState extends State<subMore> with TickerProviderStateMixin {
                     padding: EdgeInsets.symmetric(
                         vertical: widget.size * 5,
                         horizontal: widget.size * 10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.unit.heading.split(";").first,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: widget.size * 22),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Padding(
-                          padding:
-                              EdgeInsets.symmetric(vertical: widget.size * 5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              if (widget.unit.link.split(";").first == "PDF")
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(widget.size * 8),
-                                    color: Colors.white.withOpacity(0.07),
-                                    border: Border.all(
-                                        color: Colors.white.withOpacity(0.3)),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      InkWell(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      widget.size * 8),
-                                              color:
-                                                  Colors.black.withOpacity(0.5),
-                                              border: Border.all(
-                                                  color: file.existsSync()
-                                                      ? Colors.green
-                                                      : Colors.white),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: widget.width * 3,
-                                                  right: widget.width * 3),
-                                              child: Row(
-                                                children: [
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: widget.width * 5,
-                                                        right: widget.width * 5,
-                                                        top: widget.height * 3,
-                                                        bottom:
-                                                            widget.height * 3),
-                                                    child: Text(
-                                                      file.existsSync()
-                                                          ? "Open"
-                                                          : "Download",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize:
-                                                              widget.size * 20),
-                                                    ),
-                                                  ),
-                                                  Icon(
-                                                    file.existsSync()
-                                                        ? Icons.open_in_new
-                                                        : Icons
-                                                            .download_for_offline_outlined,
-                                                    color: Colors.greenAccent,
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          onTap: () async {
-                                            if (file.existsSync()) {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          PdfViewerPage(
-                                                              size: widget.size,
-                                                              pdfUrl:
-                                                                  "${folderPath}/pdfs/${getFileName(widget.unit.link.split(";").last)}")));
-                                            } else {
-                                              setState(() {
-                                                isDownloaded = true;
-                                              });
-                                              await download(
-                                                  widget.unit.link
-                                                      .split(";")
-                                                      .last,
-                                                  "pdfs");
-                                            }
-                                          }),
-                                      if (file.existsSync())
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              left: widget.width * 5,
-                                              right: widget.width * 5,
-                                              top: widget.height * 1,
-                                              bottom: widget.height * 1),
-                                          child: InkWell(
-                                            child: Icon(
-                                              Icons.delete,
-                                              color: Colors.redAccent,
-                                              size: widget.size * 25,
-                                            ),
-                                            onLongPress: () async {
-                                              if (file.existsSync()) {
-                                                await file.delete();
-                                              }
-                                              setState(() {});
-                                              showToastText(
-                                                  "File has been deleted");
-                                            },
-                                            onTap: () {
-                                              showToastText(
-                                                  "Long Press To Delete");
-                                            },
-                                          ),
-                                        )
-                                    ],
-                                  ),
-                                ),
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.1),
-                                    borderRadius:
-                                        BorderRadius.circular(widget.size * 13),
-                                    border: Border.all(
-                                        color: Colors.white.withOpacity(0.3))),
-                                padding: EdgeInsets.all(widget.size * 3),
-                                child: Text(
-                                  " ${widget.unit.id.split("-").first}",
-                                  style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: widget.size * 14),
-                                ),
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: widget.size * 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          if (widget.unit.link.split(";").first == "PDF")
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(widget.size * 8),
+                                color: Colors.white.withOpacity(0.07),
+                                border: Border.all(
+                                    color: Colors.white.withOpacity(0.3)),
                               ),
-                            ],
+                              child: Row(
+                                children: [
+                                  InkWell(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(
+                                                  widget.size * 8),
+                                          color:
+                                              Colors.black.withOpacity(0.5),
+                                          border: Border.all(
+                                              color: file.existsSync()
+                                                  ? Colors.green
+                                                  : Colors.white),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: widget.width * 3,
+                                              right: widget.width * 3),
+                                          child: Row(
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: widget.width * 5,
+                                                    right: widget.width * 5,
+                                                    top: widget.height * 3,
+                                                    bottom:
+                                                        widget.height * 3),
+                                                child: Text(
+                                                  file.existsSync()
+                                                      ? "Open"
+                                                      : "Download",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize:
+                                                          widget.size * 20),
+                                                ),
+                                              ),
+                                              Icon(
+                                                file.existsSync()
+                                                    ? Icons.open_in_new
+                                                    : Icons
+                                                        .download_for_offline_outlined,
+                                                color: Colors.greenAccent,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      onTap: () async {
+                                        if (file.existsSync()) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PdfViewerPage(
+                                                          size: widget.size,
+                                                          pdfUrl:
+                                                              "${folderPath}/pdfs/${getFileName(widget.unit.link.split(";").last)}")));
+                                        } else {
+                                          setState(() {
+                                            isDownloaded = true;
+                                          });
+                                          await download(
+                                              widget.unit.link
+                                                  .split(";")
+                                                  .last,
+                                              "pdfs");
+                                        }
+                                      }),
+                                  if (file.existsSync())
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: widget.width * 5,
+                                          right: widget.width * 5,
+                                          top: widget.height * 1,
+                                          bottom: widget.height * 1),
+                                      child: InkWell(
+                                        child: Icon(
+                                          Icons.delete,
+                                          color: Colors.redAccent,
+                                          size: widget.size * 25,
+                                        ),
+                                        onLongPress: () async {
+                                          if (file.existsSync()) {
+                                            await file.delete();
+                                          }
+                                          setState(() {});
+                                          showToastText(
+                                              "File has been deleted");
+                                        },
+                                        onTap: () {
+                                          showToastText(
+                                              "Long Press To Delete");
+                                        },
+                                      ),
+                                    )
+                                ],
+                              ),
+                            ),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.1),
+                                borderRadius:
+                                    BorderRadius.circular(widget.size * 13),
+                                border: Border.all(
+                                    color: Colors.white.withOpacity(0.3))),
+                            padding: EdgeInsets.all(widget.size * 3),
+                            child: Text(
+                              " ${widget.unit.id.split("-").first}",
+                              style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: widget.size * 14),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ],
+            ),
+            Text(
+              widget.unit.heading.split(";").first,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: widget.size * 22),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
             if (widget.unit.description.isNotEmpty)
               Padding(
@@ -5498,14 +5433,8 @@ class _subMoreState extends State<subMore> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.unit.description,
-                      style: TextStyle(
-                          color: Colors.white70,
-                          fontWeight: FontWeight.w600,
-                          fontSize: widget.size * 18),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    StyledTextWidget(text: widget.unit.description,fontSize: widget.size * 18 ,color: Colors.white70,),
+
                   ],
                 ),
               ),

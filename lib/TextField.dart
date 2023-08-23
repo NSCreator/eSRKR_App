@@ -35,7 +35,6 @@ class TextFieldContainer extends StatefulWidget {
   State<TextFieldContainer> createState() => _TextFieldContainerState();
 }
 
-
 class _TextFieldContainerState extends State<TextFieldContainer> {
   @override
   Widget build(BuildContext context) {
@@ -2100,7 +2099,7 @@ class UnitsCreator extends StatefulWidget {
 class _UnitsCreatorState extends State<UnitsCreator> {
   String unit = "Unknown";
   bool isEdit = false;
-  List list =["PDF","Image","YouTube","WebSite"];
+  List list =["PDF","Image","YouTube","WebSite","More"];
   final HeadingController = TextEditingController();
 
   final PDFUrlController = TextEditingController();
@@ -2390,7 +2389,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                     },
                     separatorBuilder: (context,index)=>SizedBox(width: 3,),),
                 ),
-                TextFieldContainer(
+                if(unit!="More")TextFieldContainer(
                   child: TextFormField(
                     controller: PDFUrlController,
                     textInputAction: TextInputAction.next,
@@ -2485,7 +2484,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                           maxLines: null,
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Enter Images Here',
+                            hintText: 'Enter Description Here',
                             hintStyle: TextStyle(color: Colors.white54),
                           ),
                         ) ,),
