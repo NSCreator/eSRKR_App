@@ -5429,14 +5429,7 @@ class _subMoreState extends State<subMore> with TickerProviderStateMixin {
               Padding(
                 padding: EdgeInsets.symmetric(
                     vertical: widget.size * 5, horizontal: widget.size * 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    StyledTextWidget(text: widget.unit.description,fontSize: widget.size * 18 ,color: Colors.white70,),
-
-                  ],
-                ),
+                child: StyledTextWidget(text: widget.unit.description,fontSize: widget.size * 18 ,color: Colors.white70,),
               ),
             if (isDownloaded)
               Padding(
