@@ -66,7 +66,7 @@ class _notificationsState extends State<notifications>
           child: Column(children: [
         backButton(
           size: widget.size,
-          text: "Notifications",
+          text: "Notifications",child: SizedBox(width: 45,)
         ),
         Container(
           color: Colors.transparent,

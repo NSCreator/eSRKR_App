@@ -48,7 +48,6 @@ class _MyAppqState extends State<MyAppq> {
   Widget build(BuildContext context) =>backGroundImage(child: Stack(
     children: [
       SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,7 +253,11 @@ class _MyAppqState extends State<MyAppq> {
                           .toString()
                           .toLowerCase()
                           .startsWith(
-                          name.toLowerCase()) ) {
+                          name.toLowerCase())||data['regulation']
+                          .toString()
+                          .toLowerCase()
+                          .startsWith(
+                          name.toLowerCase())) {
                         return Padding(
                           padding: EdgeInsets.only(
                               left: widget.size * 15.0,
@@ -593,6 +596,10 @@ class _MyAppqState extends State<MyAppq> {
                           .toString()
                           .toLowerCase()
                           .startsWith(
+                          name.toLowerCase())||data['regulation']
+                          .toString()
+                          .toLowerCase()
+                          .startsWith(
                           name.toLowerCase())) {
                         return Padding(
                           padding: EdgeInsets.only(
@@ -745,7 +752,7 @@ class _MyAppqState extends State<MyAppq> {
         child: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: widget.size * 20,
-              vertical: widget.size * 10),
+              vertical: widget.size * 5),
           child: Row(
             children: [
               InkWell(
@@ -767,18 +774,18 @@ class _MyAppqState extends State<MyAppq> {
                   },
                   style: TextStyle(
                       color: Colors.white,
-                      fontSize: widget.size * 25),
+                      fontSize: widget.size * 20),
                   decoration: InputDecoration(
                     icon: Icon(
                       Icons.search,
                       color: Colors.white,
-                      size: widget.size * 25,
+                      size: widget.size * 20,
                     ),
                     border: InputBorder.none,
                     hintText: 'Search Bar',
                     hintStyle: TextStyle(
                         color: Colors.white60,
-                        fontSize: widget.size * 23),
+                        fontSize: widget.size * 20),
                   ),
                 ))
               ),

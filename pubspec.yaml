@@ -1,7 +1,7 @@
 name: srkr_study_app
 description: A new Flutter project.
 publish_to: 'none'
-version: 3.0.10+18
+version: 3.1.04+23
 
 environment:
   sdk: ">=2.12.0-dev.68.0 <3.0.0"
@@ -32,7 +32,7 @@ dependencies:
   marquee: ^2.2.3
   shared_preferences: ^2.2.0
   mailer: ^6.0.1
-
+  open_file: ^3.3.2
 
 
 

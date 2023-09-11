@@ -307,7 +307,7 @@ class _supportListState extends State<supportList> {
   Widget build(BuildContext context) {
     return backGroundImage(child: Column(
       children: [
-        backButton(size: size(context),text: "Supported List",),
+        backButton(size: size(context),text: "Supported List",child: SizedBox(width: 45,)),
         !commentsIds.contains(fullUserId())
             ? Padding(
               padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 20),

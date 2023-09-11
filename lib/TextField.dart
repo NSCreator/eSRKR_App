@@ -38,28 +38,29 @@ class TextFieldContainer extends StatefulWidget {
 class _TextFieldContainerState extends State<TextFieldContainer> {
   @override
   Widget build(BuildContext context) {
+    double Size = size(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if(widget.heading.isNotEmpty)Padding(
-          padding: const EdgeInsets.only(left: 15, top: 8),
+          padding:  EdgeInsets.only(left: Size*15, top:Size* 8),
           child: Text(
             widget.heading,
             style: creatorHeadingTextStyle,
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(
-              left: 10, right: 10, top: 5, bottom: 5),
+          padding:  EdgeInsets.only(
+              left: Size*10, right: Size*10, top: Size*5, bottom: Size*5),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white24,
               border: Border.all(color: Colors.white54),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(Size*14),
             ),
             child: Padding(
-              padding: const EdgeInsets.only(left: 10),
+              padding:  EdgeInsets.only(left: Size*10),
               child: widget.child,
             ),
           ),
@@ -118,7 +119,7 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          backButton(size: widget.size,text: "Flash News Creator",),
+          backButton(size: widget.size,text: "Flash News Creator",child: SizedBox(width: 45,)),
           TextFieldContainer(heading: "Heading",
               child: Padding(
             padding: const EdgeInsets.only(left: 10),
@@ -242,6 +243,216 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
   }
 }
 
+class timeTableSyllabusModalPaperCreator extends StatefulWidget {
+  String id;
+  String heading;
+  String link;
+  String link1;
+  String mode;
+  String reg;
+  String branch;
+  final double size;
+  timeTableSyllabusModalPaperCreator(
+      {this.id = "",
+        this.link = '',
+        this.link1 = '',
+        this.heading = "",
+        required this.size,
+        required this.mode,
+        required this.reg,
+        required this.branch,
+      });
+
+  @override
+  State<timeTableSyllabusModalPaperCreator> createState() => _timeTableSyllabusModalPaperCreatorState();
+}
+
+class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusModalPaperCreator> {
+
+  final HeadingController = TextEditingController();
+
+  final LinkController = TextEditingController();
+  final LinkController1 = TextEditingController();
+
+  void AutoFill() async {
+    HeadingController.text = widget.heading;
+    if(widget.mode!="Time Table")HeadingController.text = widget.reg.substring(0,10);
+    LinkController.text = widget.link;
+    LinkController1.text = widget.link1;
+  }
+
+  @override
+  void initState() {
+    AutoFill();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    HeadingController.dispose();
+    LinkController.dispose();
+    LinkController1.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return backGroundImage(
+
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            backButton(size: widget.size,text: widget.mode,child: SizedBox(width: 45,)),
+            TextFieldContainer(heading: "Heading",
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: TextFormField(
+                    controller: HeadingController,
+                    textInputAction: TextInputAction.next,
+                    maxLines: null,
+                    style: TextStyle(color: Colors.white,fontSize: 20),
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(color: Colors.white54),
+                      border: InputBorder.none,
+                      hintText: 'Heading',
+                    ),
+                  ),
+                )),
+
+            if( widget.mode!="modalPaper")TextFieldContainer(heading: widget.mode!="Time Table"?"Syllabus":"Time Table",
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: TextFormField(
+                    //obscureText: true,
+                    controller: LinkController,
+                    textInputAction: TextInputAction.next,
+                    maxLines: null,
+                    style: TextStyle(color: Colors.white,fontSize: 20),
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: widget.mode!="Time Table"?"Syllabus Link":"Time Table Link",
+                        hintStyle: TextStyle(color: Colors.white54)
+                    ),
+                  ),
+                )),
+            if( widget.mode=="modalPaper")TextFieldContainer(heading: "Modal Paper",
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: TextFormField(
+                    //obscureText: true,
+                    controller: LinkController1,
+                    textInputAction: TextInputAction.next,
+                    maxLines: null,
+                    style: TextStyle(color: Colors.white,fontSize: 20),
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Modal Paper Link',
+                        hintStyle: TextStyle(color: Colors.white54)
+                    ),
+                  ),
+                )),
+
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Back..."),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                   if(widget.mode=="Time Table"){
+                     if (widget.id.length > 3) {
+                       FirebaseFirestore.instance
+                           .collection(widget.branch)
+                           .doc("regulation")
+                           .collection("regulationWithSem")
+                           .doc(widget.reg)
+                           .collection("timeTables")
+                           .doc(widget.id).update({"heading":HeadingController.text.trim(),"photoUrl":LinkController.text.trim()});
+                     } else {
+                       createTimeTable(branch: widget.branch, heading: HeadingController.text.trim(), photoUrl: LinkController.text.trim(), reg: widget.reg);
+                     }
+                   }else{
+                     if (widget.id.length > 3) {
+                      if(widget.mode=="modalPaper"){
+                        FirebaseFirestore.instance
+                            .collection(widget.branch)
+                            .doc("regulation")
+                            .collection("regulationWithYears")
+                            .doc(widget.id.substring(0, 10)).update({"modelPaper":LinkController1.text.trim(),});
+
+                      }else{
+                        FirebaseFirestore.instance
+                            .collection(widget.branch)
+                            .doc("regulation")
+                            .collection("regulationWithYears")
+                            .doc(widget.id.substring(0, 10)).update({"syllabus":LinkController.text.trim(),});
+
+                      }
+                     }
+                   }
+
+
+                    HeadingController.clear();
+                    LinkController.clear();
+
+                    Navigator.pop(context);
+                  },
+                  child: widget.id.length < 3
+                      ? Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Create"),
+                    ),
+                  )
+                      : Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Update"),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),);
+  }
+}
+
 class updateCreator extends StatefulWidget {
   String NewsId;
   String heading;
@@ -311,7 +522,7 @@ class _updateCreatorState extends State<updateCreator> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          backButton(size: widget.size,text: "Updater",),
+          backButton(size: widget.size,text: "Updater",child: SizedBox(width: 45,)),
           Padding(
             padding: const EdgeInsets.only(left: 15, top: 8, bottom: 5),
             child: Text(
@@ -1192,7 +1403,7 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            backButton(size: size(context),text:"Subject Editor" ,),
+            backButton(size: size(context),text:"Subject Editor" ,child: SizedBox(width: 45,)),
 
             TextFieldContainer(child: TextFormField(
               controller: HeadingController,
@@ -2080,7 +2291,7 @@ class UnitsCreator extends StatefulWidget {
 
   UnitsCreator(
       {required this.id,
-      required this.mode,
+       required this.mode,
       required this.branch,
       required this.type,
       this.edition = "",
@@ -2275,7 +2486,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
     return backGroundImage(
         child: Column(
       children: [
-        backButton(size: size(context),text: "Create Unit",),
+        backButton(size: size(context),text: "Create Unit",child: SizedBox(width: 45,)),
         Expanded(
           child: SingleChildScrollView(
             child: Column(

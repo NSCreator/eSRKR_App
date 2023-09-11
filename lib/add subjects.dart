@@ -210,7 +210,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                 top: widget.size * 50,
                 child: backButton(
                   color: Colors.black,
-                  size: widget.size,
+                  size: widget.size,child: SizedBox(width: 45,)
                 ),
               ),
             ],
@@ -222,8 +222,8 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                 width: widget.size * 40,
                 decoration: BoxDecoration(
                   color: isNightMode
-                      ? Colors.white.withOpacity(0.6)
-                      : Colors.black.withOpacity(0.6),
+                      ? Colors.white.withOpacity(0.5)
+                      : Colors.black.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(widget.size * 16),
                 ),
                 child: Column(

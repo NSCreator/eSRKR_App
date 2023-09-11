@@ -152,6 +152,11 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       navigatorKey: navigatorKey,
       title: 'eSRKR',
+      theme: ThemeData(
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
+        splashFactory: NoSplash.splashFactory,
+      ),
       builder: (context, child) {
         return MediaQuery(
             data: MediaQuery.of(context).copyWith(

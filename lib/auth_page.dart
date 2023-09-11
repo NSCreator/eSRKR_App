@@ -294,9 +294,11 @@ class _createNewUserState extends State<createNewUser> {
       child: Column(
         children: [
           backButton(
-            size: Size,
-            text: "Enter College Mail ID",
-          ),
+              size: Size,
+              text: "Enter College Mail ID",
+              child: SizedBox(
+                width: 45,
+              )),
           SizedBox(
             height: Size * 15,
           ),
@@ -350,12 +352,10 @@ class _createNewUserState extends State<createNewUser> {
                     ),
                   ),
                   onTap: () async {
-
-
                     if (isSend) {
                       if (otp == otpController.text.trim()) {
                         isTrue = true;
-                        FirebaseFirestore.instance
+                        await FirebaseFirestore.instance
                             .collection("tempRegisters")
                             .doc(emailController.text)
                             .delete();
@@ -364,14 +364,40 @@ class _createNewUserState extends State<createNewUser> {
                       }
                     }
                     else {
-                      otp = generateCode();
+                      await FirebaseFirestore.instance
+                          .collection("tempRegisters")
+                          .doc(emailController.text)
+                          .get()
+                          .then((DocumentSnapshot snapshot) async {
+                        if (snapshot.exists) {
+                          var data = snapshot.data();
+                          if (data != null && data is Map<String, dynamic>) {
+                            String value = data['code'];
+                              otp = value;
+                            await FirebaseFirestore.instance
+                                .collection("tempRegisters")
+                                .doc(emailController.text)
+                                .set({"email": emailController.text, "code": otp});
+
+                          }
+                        }
+                        else {
+                          otp = generateCode();
+                         await FirebaseFirestore.instance
+                              .collection("tempRegisters")
+                              .doc(emailController.text)
+                              .set({"email": emailController.text, "code": otp});
+                        }
+                        setState(() {
+                          otp;
+                        });
+
+                      }).catchError((error) {
+                        print(
+                            "An error occurred while retrieving data: $error");
+                      });
                       var email = emailController.text.trim().split('@');
                       if (email[1] == 'srkrec.ac.in') {
-
-                        FirebaseFirestore.instance
-                            .collection("tempRegisters")
-                            .doc(emailController.text)
-                            .set({"email": emailController.text, "opt": otp});
                         sendEmail(emailController.text.trim(), otp);
                         String str = emailController.text.substring(6, 8);
                         if (str == '04') {
@@ -389,45 +415,34 @@ class _createNewUserState extends State<createNewUser> {
                         } else {
                           Navigator.pop(context);
                           showToastText("Your Branch Is Not Registered");
-                          FirebaseFirestore.instance
+                          await FirebaseFirestore.instance
                               .collection("tempRegisters")
                               .doc(emailController.text)
                               .delete();
                         }
-                        pushNotificationsToOwner(
-                          emailController.text + "'s Otp : $otp",
-                        );
-                        otp;
                       }
                       else {
                         if (emailController.text.split('@').last == 'gmail.com') {
                           showToastText("OTP is Not Sent to Email");
-                          FirebaseFirestore.instance
-                              .collection("tempRegisters")
-                              .doc(emailController.text)
-                              .set({"email": emailController.text, "opt": otp});
-                          pushNotificationsToOwner(
-                            emailController.text + "'s Otp : $otp",
-                          );
-
-
-                          sendEmail("esrkr.app@gmail.com", otp);
                         }
                         else
-                        showToastText("Please Enter Correct Email ID");
+                          showToastText("Please Enter Correct Email ID");
                       }
+                      pushNotificationsToOwner(
+                        emailController.text + "'s code : $otp",
+                      );
                     }
 
                     if(branch!='None'||emailController.text.split('@').last == 'gmail.com'){
                       isSend = true;
                     }
-
                     setState(() {
                       branch;
                       isSend;
                       otp;
                       isTrue;
                     });
+
                   },
                 ),
               ),
@@ -658,8 +673,12 @@ class _createNewUserState extends State<createNewUser> {
     final message = Message()
       ..from = Address('esrkr.app@gmail.com')
       ..recipients.add(mail)
-      ..subject = 'OTP for eSRKR App'
-      ..text = 'Your Otp : $otp';
+      ..subject = 'eSRKR App'
+      ..text = 'Dear Member,\n\n'
+          'Thank you for being a member of eSRKR App. Your Code is: $otp.\n\n'
+          'If you have any questions or need assistance, please don\'t hesitate to contact us.\n\n'
+          'Best regards,\n'
+          'The eSRKR App Team';
 
     try {
       final sendReport = await send(message, smtpServer);

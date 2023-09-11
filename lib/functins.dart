@@ -28,7 +28,6 @@ Future<void> sendingMails(String urlIn) async {
 class Utils {
   static showSnackBar(String? text) {
     if (text == null) return;
-
     SnackBar(content: Text(text), backgroundColor: Colors.orange);
   }
 }
@@ -40,11 +39,7 @@ double Width(BuildContext context) {
   return screenWidth;
 }
 
-double Height(BuildContext context) {
-  MediaQueryData mediaQuery = MediaQuery.of(context);
-  double screenHeight = mediaQuery.size.height;
-  return screenHeight;
-}
+
 double size(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenHeight = ((mediaQuery.size.height/800)+(mediaQuery.size.width/400))/2;
@@ -91,11 +86,17 @@ Future<void> showToastText(String message) async {
   );
 }
 class backButton extends StatefulWidget {
-  Color color;
-  double size;
-  String text;
+  final Color color;
+  final double size;
+  final String text;
+   Widget child;
 
-  backButton({ this.color=Colors.white,required this.size, this.text=""});
+  backButton({
+    this.color = Colors.white,
+    required this.size,
+    this.text = "",
+    required this.child,
+  }) ;
   @override
   State<backButton> createState() => _backButtonState();
 }
@@ -117,19 +118,23 @@ class _backButtonState extends State<backButton> {
               Navigator.pop(context);
             },
           ),
-         if(widget.text.isNotEmpty) Padding(
-            padding: EdgeInsets.only(bottom: widget.size * 10),
-            child: Text(
-              widget.text,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: widget.size * 30,
-                  fontWeight: FontWeight.w600),
-            ),
-          ),
-          if(widget.text.isNotEmpty)SizedBox(
-            width: 45,
-          )
+         if(widget.text.isNotEmpty) Expanded(
+           child: Center(
+             child: Padding(
+                padding: EdgeInsets.only(bottom: widget.size * 10),
+                child: Text(
+                  widget.text,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: widget.size * 30,
+                      fontWeight: FontWeight.w600),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+           ),
+         ),
+          widget.child
         ],
       ),
     );

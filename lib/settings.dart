@@ -23,7 +23,7 @@ DecorationImage noImageFound =DecorationImage(
     fit: BoxFit.cover);
 DecorationImage ImageNotFoundForTextBooks =DecorationImage(
     image:AssetImage(
-        "assets/app_logo.png"),
+        "assets/pdfTextBookIcon.png"),
     fit: BoxFit.cover);
 TextStyle secondTabBarTextStyle({Color color = Colors.white,required double size}) {
   return TextStyle(color: Colors.white,
@@ -84,10 +84,9 @@ class _settingsState extends State<settings> {
   @override
   Widget build(BuildContext context) {
     return backGroundImage(child: SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
       child: Column(
         children: [
-          backButton(size:widget.size,text: "Settings",),
+          backButton(size:widget.size,text: "Settings",child: SizedBox(width: 45,)),
           Padding(
             padding: EdgeInsets.all(widget.size * 8.0),
             child: Container(
@@ -419,12 +418,12 @@ class _settingsState extends State<settings> {
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: widget.size * 20),
+                          horizontal: widget.size * 20,vertical: widget.size * 5,),
                       child: InkWell(
                         child: Row(
                           children: [
                             Text(
-                              "Create Flash News",
+                              "Flash News",
                               style: TextStyle(
                                   fontSize: widget.size * 22,
                                   color: Colors.white70,
@@ -453,7 +452,75 @@ class _settingsState extends State<settings> {
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: widget.size * 20),
+                          horizontal: widget.size * 20,vertical: widget.size * 5,),
+                      child: InkWell(
+                        child: Row(
+                          children: [
+                            Text(
+                              "Time Table",
+                              style: TextStyle(
+                                  fontSize: widget.size * 22,
+                                  color: Colors.white70,
+                                  fontWeight: FontWeight.w500
+                              ),
+                            ),
+                            Spacer(),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  right: widget.size * 10),
+                              child:
+                              Icon(Icons.arrow_forward_ios),
+                            )
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      timeTableSyllabusModalPaperCreator(
+                                        size: widget.size, mode: 'Time Table', reg: widget.reg, branch: widget.branch,
+                                      )));
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: widget.size * 20,vertical: widget.size * 5,),
+                      child: InkWell(
+                        child: Row(
+                          children: [
+                            Text(
+                              "Syllabus & Modal Paper",
+                              style: TextStyle(
+                                  fontSize: widget.size * 22,
+                                  color: Colors.white70,
+                                  fontWeight: FontWeight.w500
+                              ),
+                            ),
+                            Spacer(),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  right: widget.size * 10),
+                              child:
+                              Icon(Icons.arrow_forward_ios),
+                            )
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      timeTableSyllabusModalPaperCreator(
+                                        size: widget.size, mode: 'Syllabus & Modal Paper', reg: widget.reg, branch: widget.branch,id: widget.reg,
+                                      )));
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: widget.size * 20,vertical: widget.size * 5,),
                       child: InkWell(
                         child: Row(
                           children: [
@@ -650,12 +717,12 @@ class _settingsState extends State<settings> {
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: widget.size * 20),
+                          horizontal: widget.size * 20,vertical: widget.size * 5,),
                       child: InkWell(
                         child: Row(
                           children: [
                             Text(
-                              "Create Home Page Update",
+                              "Home Page Update",
                               style: TextStyle(
                                   fontSize: widget.size * 22,
                                   color: Colors.white70,
@@ -692,7 +759,7 @@ class _settingsState extends State<settings> {
                         child: Row(
                           children: [
                             Text(
-                              "Create ${widget.branch} News",
+                              "News",
                               style: TextStyle(
                                   fontSize: widget.size * 22,
                                   color: Colors.white70,
@@ -725,7 +792,7 @@ class _settingsState extends State<settings> {
                         child: Row(
                           children: [
                             Text(
-                              "Create Sub or Lab Subject",
+                              "Sub or Lab Subject",
                               style: TextStyle(
                                   fontSize: widget.size * 22,
                                   color: Colors.white70,
@@ -759,7 +826,7 @@ class _settingsState extends State<settings> {
                         child: Row(
                           children: [
                             Text(
-                              "Create Books",
+                              "Books",
                               style: TextStyle(
                                   fontSize: widget.size * 22,
                                   color: Colors.white70,
@@ -789,37 +856,6 @@ class _settingsState extends State<settings> {
                 ),
               ),
             ),
-
-          // Center(
-          //   child: InkWell(
-          //     child: Container(
-          //       decoration: BoxDecoration(
-          //         borderRadius: BorderRadius.circular(15),
-          //         color: Colors.white.withOpacity(0.1),
-          //         border: Border.all(
-          //             color: Colors.white.withOpacity(0.3)),
-          //       ),
-          //       child: Padding(
-          //         padding: const EdgeInsets.all(5.0),
-          //         child: Text(
-          //           "Saved Images and PDFs ( In App )",
-          //           style: TextStyle(
-          //               fontSize: 22,
-          //               color: Colors.white,
-          //               fontWeight: FontWeight.w500),
-          //         ),
-          //       ),
-          //     ),
-          //     onTap: () {
-          //       Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //               builder: (context) => unseenImages(
-          //                     branch: widget.branch,
-          //                   )));
-          //     },
-          //   ),
-          // ),
 
           SizedBox(height: widget.size *  5.0),
           Padding(
@@ -948,113 +984,114 @@ class _settingsState extends State<settings> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: widget.size * 40,
-                              child: ListView.separated(
-                                physics:
-                                BouncingScrollPhysics(),
-                                scrollDirection:
-                                Axis.horizontal,
-                                itemCount: Books.length,
-                                itemBuilder:
-                                    (BuildContext context,
-                                    int index) =>
-                                    InkWell(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                            left: widget.size *  5,
-                                            bottom:
-                                            widget.size * 10),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: const Color
-                                                  .fromRGBO(174,
-                                                  228, 242, 0.15),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                height: widget.size * 40,
+                                child: ListView.separated(
+                                  scrollDirection:
+                                  Axis.horizontal,
+                                  itemCount: Books.length,
+                                  itemBuilder:
+                                      (BuildContext context,
+                                      int index) =>
+                                      InkWell(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: widget.size *  5,
+                                              bottom:
+                                              widget.size * 10),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: const Color
+                                                    .fromRGBO(174,
+                                                    228, 242, 0.15),
+                                              ),
+                                              borderRadius:
+                                              BorderRadius
+                                                  .circular(widget
+                                                  .size *
+                                                  15),
+                                              color: Colors.black
+                                                  .withOpacity(0.3),
+                                              // border: Border.all(color: Colors.white),
                                             ),
-                                            borderRadius:
-                                            BorderRadius
-                                                .circular(widget
-                                                .size *
-                                                15),
-                                            color: Colors.black
-                                                .withOpacity(0.3),
-                                            // border: Border.all(color: Colors.white),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                decoration:
-                                                BoxDecoration(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(
-                                                      widget.size *
-                                                          15),
-                                                  color: Colors
-                                                      .black
-                                                      .withOpacity(
-                                                      0.4),
-                                                  image:
-                                                  DecorationImage(
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  decoration:
+                                                  BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(
+                                                        widget.size *
+                                                            15),
+                                                    color: Colors
+                                                        .black
+                                                        .withOpacity(
+                                                        0.4),
                                                     image:
-                                                    NetworkImage(
-                                                      Books[index]
-                                                          .photoUrl,
+                                                    DecorationImage(
+                                                      image:
+                                                      NetworkImage(
+                                                        Books[index]
+                                                            .photoUrl,
+                                                      ),
+                                                      fit: BoxFit
+                                                          .cover,
                                                     ),
-                                                    fit: BoxFit
-                                                        .cover,
+                                                  ),
+                                                  height:
+                                                  widget.size *
+                                                      35,
+                                                  width:
+                                                  widget.size *
+                                                      50,
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets
+                                                      .all(widget
+                                                      .size *
+                                                      5.0),
+                                                  child: Text(
+                                                    Books[index].name,
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                        widget.size *
+                                                            16,
+                                                        color: Colors
+                                                            .white),
                                                   ),
                                                 ),
-                                                height:
-                                                widget.size *
-                                                    35,
-                                                width:
-                                                widget.size *
-                                                    50,
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets
-                                                    .all(widget
-                                                    .size *
-                                                    5.0),
-                                                child: Text(
-                                                  Books[index].name,
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                      widget.size *
-                                                          16,
-                                                      color: Colors
-                                                          .white),
-                                                ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      onTap: () {
-                                        if (Books[index].name ==
-                                            "Gmail") {
-                                          sendingMails(
-                                              Books[index].link);
-                                        } else {
-                                          if (Books[index]
-                                              .link
-                                              .isNotEmpty)
-                                            ExternalLaunchUrl(
+                                        onTap: () {
+                                          if (Books[index].name ==
+                                              "Gmail") {
+                                            sendingMails(
                                                 Books[index].link);
-                                          else
-                                            showToastText(
-                                                "No ${Books[index].name} Link");
-                                        }
-                                      },
-                                    ),
-                                shrinkWrap: true,
-                                separatorBuilder:
-                                    (context, index) =>
-                                    SizedBox(
-                                      width: widget.size * 9,
-                                    ),
+                                          } else {
+                                            if (Books[index]
+                                                .link
+                                                .isNotEmpty)
+                                              ExternalLaunchUrl(
+                                                  Books[index].link);
+                                            else
+                                              showToastText(
+                                                  "No ${Books[index].name} Link");
+                                          }
+                                        },
+                                      ),
+                                  shrinkWrap: true,
+                                  separatorBuilder:
+                                      (context, index) =>
+                                      SizedBox(
+                                        width: widget.size * 9,
+                                      ),
+                                ),
                               ),
                             ),
                           ],
@@ -1063,36 +1100,7 @@ class _settingsState extends State<settings> {
                     }
                 }
               }),
-          Center(
-            child: InkWell(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius:
-                  BorderRadius.circular(widget.size * 15),
-                  color: Colors.white.withOpacity(0.1),
-                  border: Border.all(
-                      color: Colors.white.withOpacity(0.3)),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(widget.size * 5.0),
-                  child: Text(
-                    "APP DEVELOPMENT TEAM",
-                    style: TextStyle(
-                        fontSize: widget.size * 22,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ),
-              ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                         appDevelopmentTeam(size: widget.size,)));
-              },
-            ),
-          ),
+
           SizedBox(
             height: widget.size *  30,
           ),
@@ -1403,468 +1411,6 @@ mixin aboutDataApi {
   }
 }
 
-class appDevelopmentTeam extends StatelessWidget {
-    double size;
-   appDevelopmentTeam({required this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    return backGroundImage(child: Padding(
-      padding:  EdgeInsets.all(size*8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          backButton(size: size),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(size*25),
-              color: const Color.fromRGBO(38, 39, 43, 0.4),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children:  [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(20, 8, 8, 1),
-                      child: Text('APP Development Team',
-                          style: TextStyle(
-                              fontSize: size*20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white54)),
-                    ),
-                    Spacer()
-                  ],
-                ),
-                InkWell(
-                  child: Container(
-                    margin:  EdgeInsets.symmetric(
-                        vertical:size* 3, horizontal: size*10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(size*20),
-                      color: const Color.fromRGBO(0, 2, 10, 0.5),
-                    ),
-                    child: Row(
-                      children: [
-                         SizedBox(
-                          width: size*3,
-                        ),
-                        Container(
-                          height: size*60,
-                          width: size*60,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(size*20),
-                              image: DecorationImage(
-                                  image: NetworkImage(
-                                      "https://drive.google.com/uc?export=view&id=1g0pUY2mr2EU8M-fb9ZEsyioyLRKXtsuR"),fit: BoxFit.cover)),
-                        ),
-                         SizedBox(
-                          width: size*20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding:  EdgeInsets.all(size*5.0),
-                              child: Text(
-                                "NIMMALA SUJITH",
-                                style:  TextStyle(
-                                  color: Colors.white70,
-                                  fontSize:size* 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding:  EdgeInsets.only(left:size* 13),
-                              child: Text(
-                                "R20-ECE-20B91A04H1",
-                                style:  TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: size*12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding:  EdgeInsets.only(left:size* 13),
-                              child: Text(
-                                "App Developer",
-                                style:  TextStyle(
-                                  color: Colors.blueGrey,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: size*12,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  onTap: () {
-                    sendingMails("sujithnimmala03@gmail.com");
-                  },
-                ),
-                StreamBuilder<List<studentConvertor>>(
-                    stream: Readstudent(),
-                    builder: (context, snapshot) {
-                      final students = snapshot.data;
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return const Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 0.3,
-                                color: Colors.cyan,
-                              ));
-                        default:
-                          if (snapshot.hasError) {
-                            return const Center(
-                                child: Text(
-                                    'Error with TextBooks Data or\n Check Internet Connection'));
-                          } else {
-                            return ListView.separated(
-                              physics: const BouncingScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: students!.length,
-                              itemBuilder: (context, int index) {
-                                final studentData = students[index];
-                                return InkWell(
-                                  child: Container(
-                                    margin:  EdgeInsets.symmetric(
-                                        vertical: size*3, horizontal: size*10),
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(size*30),
-                                      color: const Color.fromRGBO(
-                                          0, 2, 10, 0.5),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                         SizedBox(
-                                          width:size* 3,
-                                        ),
-                                        Container(
-                                          height: size*60,
-                                          width: size*60,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  size*30),
-                                              image: DecorationImage(
-                                                  image: NetworkImage(
-                                                      studentData
-                                                          .PhotoUrl),fit: BoxFit.cover)),
-                                        ),
-                                         SizedBox(
-                                          width: size*20,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .spaceBetween,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                               EdgeInsets.all(
-                                                  size*5.0),
-                                              child: Text(
-                                                studentData.name,
-                                                style:  TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: size*16,
-                                                  fontWeight:
-                                                  FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                               EdgeInsets.only(
-                                                  left: size*13),
-                                              child: Text(
-                                                studentData.description,
-                                                style:  TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize:size* 12,
-                                                  fontWeight:
-                                                  FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                               EdgeInsets.only(
-                                                  left: size*13),
-                                              child: Text(
-                                                studentData.Role,
-                                                style:  TextStyle(
-                                                  color:
-                                                  Colors.blueGrey,
-                                                  fontWeight:
-                                                  FontWeight.w500,
-                                                  fontSize: size*12,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    sendingMails(studentData.email);
-                                  },
-                                );
-                              },
-                              separatorBuilder: (context, index) =>
-                               SizedBox(
-                                height: size*1,
-                              ),
-                            );
-                          }
-                      }
-                    }),
-              ],
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  Padding(
-                    padding:  EdgeInsets.only(top: size*10),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(size*25),
-                        border: Border.all(
-                            color: Colors.white.withOpacity(0.1)),
-                        color: const Color.fromRGBO(38, 39, 43, 0.4),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children:  [
-                              Padding(
-                                padding:
-                                EdgeInsets.fromLTRB(20, 8, 8, 1),
-                                child: Text('Faculty Team',
-                                    style: TextStyle(
-                                        fontSize: size*20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white54)),
-                              ),
-                              Spacer()
-                            ],
-                          ),
-                          StreamBuilder<List<FacultyConvertor>>(
-                              stream: ReadFaculty(),
-                              builder: (context, snapshot) {
-                                final students = snapshot.data;
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.waiting:
-                                    return const Center(
-                                        child:
-                                        CircularProgressIndicator(
-                                          strokeWidth: 0.3,
-                                          color: Colors.cyan,
-                                        ));
-                                  default:
-                                    if (snapshot.hasError) {
-                                      return const Center(
-                                          child: Text(
-                                              'Error with TextBooks Data or\n Check Internet Connection'));
-                                    } else {
-                                      return buildFaculty(students!);
-                                    }
-                                }
-                              }),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    ));
-  }
-
-  Widget buildFaculty(List<FacultyConvertor> facultyDatas) =>
-      ListView.separated(
-          physics: const BouncingScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: facultyDatas.length,
-          itemBuilder: (context, int index) {
-            final facultyData = facultyDatas[index];
-            return InkWell(
-              child: Container(
-                margin:  EdgeInsets.symmetric(vertical: size*3, horizontal: size*10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(size*20),
-                  color: const Color.fromRGBO(0, 2, 10, 0.5),
-                ),
-                child: Row(
-                  children: [
-                     SizedBox(
-                      width: size*3,
-                    ),
-                    Container(
-                      height: size*60,
-                      width: size*60,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(size*20),
-                          image: DecorationImage(
-                              image: NetworkImage(facultyData.PhotoUrl))),
-                    ),
-                     SizedBox(
-                      width: size*20,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding:  EdgeInsets.all(size*5.0),
-                          child: Text(
-                            facultyData.name,
-                            style:  TextStyle(
-                              color: Colors.white70,
-                              fontSize: size*16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding:  EdgeInsets.only(left:size* 13),
-                          child: Text(
-                            facultyData.description,
-                            style:  TextStyle(
-                              color: Colors.grey,
-                              fontSize: size*12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding:  EdgeInsets.only(left: size*13),
-                          child: Text(
-                            facultyData.Role,
-                            style:  TextStyle(
-                              color: Colors.blueGrey,
-                              fontWeight: FontWeight.w500,
-                              fontSize: size*12,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              onTap: () {
-                sendingMails(facultyData.email);
-              },
-            );
-          },
-          separatorBuilder: (context, index) =>  SizedBox(
-                height:size* 1,
-              ));
-}
-
-Stream<List<studentConvertor>> Readstudent() => FirebaseFirestore.instance
-    .collection('App Dev')
-    .snapshots()
-    .map((snapshot) => snapshot.docs
-        .map((doc) => studentConvertor.fromJson(doc.data()))
-        .toList());
-
-class studentConvertor {
-  String email;
-  String name;
-  String description;
-  String Role;
-  String PhotoUrl, id;
-
-  studentConvertor({
-    required this.id,
-    required this.email,
-    required this.name,
-    required this.description,
-    required this.Role,
-    required this.PhotoUrl,
-  });
-
-  static studentConvertor fromJson(json) => studentConvertor(
-        id: json['id'],
-        email: json['Email'],
-        name: json['Name'],
-        description: json['Description'],
-        Role: json['Role'],
-        PhotoUrl: json['PhotoUrl'],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "Name": name,
-        "Email": email,
-        "Description": description,
-        "PhotoUrl": PhotoUrl,
-        "Role": Role,
-      };
-}
-
-Stream<List<FacultyConvertor>> ReadFaculty() => FirebaseFirestore.instance
-    .collection('Faculty')
-    .snapshots()
-    .map((snapshot) => snapshot.docs
-        .map((doc) => FacultyConvertor.fromJson(doc.data()))
-        .toList());
-
-class FacultyConvertor {
-  String email;
-  String name;
-  String description;
-  String Role;
-  String PhotoUrl, id;
-
-  FacultyConvertor({
-    required this.id,
-    required this.email,
-    required this.name,
-    required this.description,
-    required this.Role,
-    required this.PhotoUrl,
-  });
-
-  static FacultyConvertor fromJson(json) => FacultyConvertor(
-        id: json['id'],
-        email: json['Email'],
-        name: json['Name'],
-        description: json['Description'],
-        Role: json['Role'],
-        PhotoUrl: json['PhotoUrl'],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "Name": name,
-        "Email": email,
-        "Description": description,
-        "PhotoUrl": PhotoUrl,
-        "Role": Role,
-      };
-}
 
 Stream<List<followUsConvertor>> readfollowUs() => FirebaseFirestore.instance
     .collection('FollowUs')
