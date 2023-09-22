@@ -9,8 +9,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:srkr_study_app/HomePage.dart';
-import 'package:srkr_study_app/TextField.dart';
-import 'package:srkr_study_app/settings.dart';
 import 'package:http/http.dart' as http;
 import 'functins.dart';
 import 'main.dart';
@@ -47,6 +45,16 @@ class _notificationsState extends State<notifications>
       length: 2,
     );
   }
+  Map<String, Color> colorMap = {};
+
+  // Function to get or generate a color for a given combination
+  Color getColorForCombination(String combination) {
+    if (!colorMap.containsKey(combination)) {
+      // Generate a random color if the combination is not in the map
+      colorMap[combination] = Color(0xFF000000 + (combination.hashCode & 0xFFFFFF));
+    }
+    return colorMap[combination]!;
+  }
 
   onChage(String name) {
     setState(() {
@@ -60,19 +68,21 @@ class _notificationsState extends State<notifications>
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) => backGroundImage(
           child: Column(children: [
         backButton(
-          size: widget.size,
-          text: "Notifications",child: SizedBox(width: 45,)
-        ),
+            size: widget.size,
+            text: "Notifications",
+            child: SizedBox(
+              width: 45,
+            )),
         Container(
           color: Colors.transparent,
-          height:widget.size * 40,
+          height: widget.size * 40,
           child: Center(
             child: TabBar(
+              dividerColor: Colors.transparent,
               indicator: BoxDecoration(
                   border: Border.all(color: Colors.white12),
                   borderRadius: BorderRadius.circular(widget.size * 15),
@@ -101,9 +111,7 @@ class _notificationsState extends State<notifications>
             ),
           ),
         ),
-        SizedBox(
-          height: widget.height * 10,
-        ),
+
         Expanded(
           child: TabBarView(
             physics: BouncingScrollPhysics(),
@@ -130,154 +138,225 @@ class _notificationsState extends State<notifications>
                                   'Error with TextBooks Data or\n Check Internet Connection'));
                         } else {
                           return ListView.separated(
-                              physics: const BouncingScrollPhysics(),
                               shrinkWrap: true,
                               reverse: true,
                               itemCount: Notifications!.length,
                               itemBuilder: (context, int index) {
                                 final Notification = Notifications[index];
 
-                                return InkWell(
-                                  child: Padding(
-                                    padding: Notification.Name == fullUserId()
-                                        ? EdgeInsets.only(
-                                            left: widget.width * 45,
-                                            right: widget.width * 5,
-                                            top: widget.height * 5)
-                                        : EdgeInsets.only(
-                                            right: widget.width * 45,
-                                            left: widget.width * 5,
-                                            top: widget.height * 5),
-                                    child: Container(
-                                      width: double.infinity,
-                                      alignment: Alignment.center,
-                                      decoration: Notification.Name ==
-                                              fullUserId()
-                                          ? BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomLeft: Radius.circular(
-                                                    widget.size * 25),
-                                                topRight: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomRight: Radius.circular(
-                                                    widget.size * 5),
-                                              ),
-                                              color:
-                                                  Colors.black.withOpacity(0.8),
-                                              border: Border.all(
-                                                  color: Colors
-                                                      .blueAccent.shade100),
-                                            )
-                                          : BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomLeft: Radius.circular(
-                                                    widget.size * 5),
-                                                topRight: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomRight: Radius.circular(
-                                                    widget.size * 25),
-                                              ),
-                                              color:
-                                                  Colors.black.withOpacity(0.5),
-                                              border: Border.all(
-                                                  color: Colors.white
-                                                      .withOpacity(0.5)),
+                                return Padding(
+                                  padding: Notification.fromTo == fullUserId()
+                                      ? EdgeInsets.only(
+                                          left: widget.width * 45,
+                                          right: widget.width * 5,
+                                          top: widget.height * 5)
+                                      : EdgeInsets.only(
+                                          right: widget.width * 45,
+                                          left: widget.width * 5,
+                                          top: widget.height * 5),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (Notification.fromTo.split("~")[0] != fullUserId())
+                                        Padding(
+                                          padding: EdgeInsets.all(
+                                              widget.size * 3.0),
+                                          child: Container(
+                                            height: widget.size * 35,
+                                            width: widget.size * 35,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      widget.size * 17),
+                                              color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
                                             ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            width: widget.width * 2,
+                                            child: Center(
+                                                child: Text(
+                                              picText(Notification.fromTo.split("~")[0]),
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: widget.size * 13,
+                                                  fontWeight:
+                                                      FontWeight.w800),
+                                            )),
                                           ),
-                                          Expanded(
-                                              child: Column(
+                                        ),
+                                      Expanded(
+                                        child: Container(
+                                          width: double.infinity,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(
+                                              widget.size * 15,
+                                            ),
+                                            color: Notification.fromTo.split("~")[0] != fullUserId()?Colors.white12:Colors.blue.withOpacity(0.3),
+                                          ),
+                                          child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Row(
+                                              Expanded(
+                                                  child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(
-                                                    "       @${Notification.Name}",
-                                                    style: TextStyle(
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        "   ~ ${Notification.fromTo.split("@")[0]}",
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              widget.size *
+                                                                  13.0,
+                                                          color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                        ),
+                                                      ),
+                                                      Spacer(),
+                                                      Padding(
+                                                        padding: EdgeInsets
+                                                            .fromLTRB(
+                                                                widget.size *
+                                                                    8,
+                                                                widget.size *
+                                                                    1,
+                                                                widget.size *
+                                                                    10,
+                                                                widget.size *
+                                                                    1),
+                                                        child: Column(
+                                                          children: [
+                                                            Text(
+                                                              '${Notification.id}',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      widget.size *
+                                                                          10.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800
+                                                                  //   fontWeight: FontWeight.bold,
+                                                                  ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left:
+                                                            widget.size * 10,
+                                                        right:
+                                                            widget.size * 5,
+                                                        top: widget.size * 3,
+                                                        bottom: widget.size * 8,
+                                                    ),
+                                                    child: StyledTextWidget(
                                                       fontSize:
-                                                          widget.size * 12.0,
-                                                      color: Colors.white54,
+                                                          widget.size * 15,
+                                                      text: Notification.data,
                                                       fontWeight:
                                                           FontWeight.w600,
                                                     ),
                                                   ),
-                                                  Spacer(),
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            widget.size * 8,
-                                                            widget.size * 1,
-                                                            widget.size * 25,
-                                                            widget.size * 1),
-                                                    child: Column(
-                                                      children: [
-                                                        Text(
-                                                          '${Notification.id}',
-                                                          style: TextStyle(
-                                                            fontSize:
-                                                                widget.size *
-                                                                    9.0,
-                                                            color:
-                                                                Colors.white70,
-                                                            //   fontWeight: FontWeight.bold,
-                                                          ),
+                                                  if (Notification
+                                                          .image.length >
+                                                      3)
+                                                    InkWell(
+                                                      child: Padding(
+                                                        padding: EdgeInsets.all(
+                                                            widget.size * 3.0),
+                                                        child: ClipRRect(
+                                                          borderRadius: BorderRadius.circular(15),
+                                                          child: Image.network(
+                                                              Notification.image),
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ),
+                                                      ),
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          PageRouteBuilder(
+                                                            transitionDuration:
+                                                            const Duration(milliseconds: 300),
+                                                            pageBuilder: (context, animation,
+                                                                secondaryAnimation) =>
+                                                                ImageZoom(
+
+                                                                  size: widget.size, url:Notification
+                                                                    .image , file: File(""),
+                                                                ),
+                                                            transitionsBuilder: (context, animation,
+                                                                secondaryAnimation, child) {
+                                                              final fadeTransition = FadeTransition(
+                                                                opacity: animation,
+                                                                child: child,
+                                                              );
+
+                                                              return Container(
+                                                                color: Colors.black
+                                                                    .withOpacity(animation.value),
+                                                                child: AnimatedOpacity(
+                                                                    duration:
+                                                                    Duration(milliseconds: 300),
+                                                                    opacity: animation.value
+                                                                        .clamp(0.3, 1.0),
+                                                                    child: fadeTransition),
+                                                              );
+                                                            },
+                                                          ),
+                                                        );
+                                                      },
+                                                    )
                                                 ],
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: widget.size * 8,
-                                                    bottom: widget.size * 6,
-                                                    right: widget.size * 3,
-                                                    top: widget.size * 3),
-                                                child: StyledTextWidget(fontSize: widget.size*14, text: Notification.description,),
-                                              ),
-                                              if (Notification.Url.length > 3)
-                                                Padding(
-                                                  padding: EdgeInsets.all(
-                                                      widget.size * 3.0),
-                                                  child: Image.network(
-                                                      Notification.Url),
-                                                )
+                                              ))
                                             ],
-                                          ))
-                                        ],
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      if (isUser()||Notification.fromTo.split("~")[0] == fullUserId())
+                                        PopupMenuButton(
+                                          icon: Icon(
+                                            Icons.more_vert,
+                                            color: Colors.white,
+                                            size: widget.size * 25,
+                                          ),
+                                          // Callback that sets the selected popup menu item.
+                                          onSelected: (item) {
+                                            if (item == "delete") {
+                                              FirebaseFirestore.instance
+                                                  .collection(widget.branch)
+                                                  .doc("Notification")
+                                                  .collection(
+                                                      "AllNotification")
+                                                  .doc(Notification.id)
+                                                  .delete();
+                                              showToastText(
+                                                  "Your Message has been Deleted");
+                                            }
+                                          },
+                                          itemBuilder:
+                                              (BuildContext context) =>
+                                                  <PopupMenuEntry>[
+                                            const PopupMenuItem(
+                                              value: "delete",
+                                              child: Text('Delete'),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
                                   ),
-                                  onLongPress: () {
-                                    if (isUser()) {
-                                      final deleteFlashNews = FirebaseFirestore
-                                          .instance
-                                          .collection(widget.branch)
-                                          .doc("Notification")
-                                          .collection("AllNotification")
-                                          .doc(Notification.id);
-                                      deleteFlashNews.delete();
-                                      showToastText(
-                                          "Your Message has been Deleted");
-                                    } else {
-                                      showToastText(
-                                          "You can't delete");
-                                    }
-                                  },
                                 );
                               },
                               separatorBuilder: (context, index) => SizedBox(
@@ -288,7 +367,7 @@ class _notificationsState extends State<notifications>
                   }),
               StreamBuilder<List<NotificationsConvertor>>(
                   stream: readNotifications(
-                      c0: "user", d0:fullUserId(), c1: "Notification"),
+                      c0: "user", d0: fullUserId(), c1: "Notification"),
                   builder: (context, snapshot) {
                     final Notifications = snapshot.data;
                     switch (snapshot.connectionState) {
@@ -305,171 +384,234 @@ class _notificationsState extends State<notifications>
                                   'Error with Notifications or\n Check Internet Connection'));
                         } else {
                           return ListView.separated(
-                              physics: const BouncingScrollPhysics(),
                               shrinkWrap: true,
                               reverse: true,
                               itemCount: Notifications!.length,
                               itemBuilder: (context, int index) {
                                 final Notification = Notifications[index];
 
-                                return InkWell(
-                                  child: Padding(
-                                    padding: Notification.Name == fullUserId()
-                                        ? EdgeInsets.only(
-                                            left: widget.size * 45,
-                                            right: widget.size * 5)
-                                        : EdgeInsets.only(
-                                            right: widget.size * 45,
-                                            left: widget.size * 5),
-                                    child: Container(
-                                      width: double.infinity,
-                                      alignment: Alignment.center,
-                                      decoration: Notification.Name ==
-                                              fullUserId()
-                                          ? BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomLeft: Radius.circular(
-                                                    widget.size * 25),
-                                                topRight: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomRight: Radius.circular(
-                                                    widget.size * 5),
-                                              ),
-                                              color:
-                                                  Colors.black.withOpacity(0.8),
-                                              border: Border.all(
-                                                  color: Colors
-                                                      .blueAccent.shade100),
-                                            )
-                                          : BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomLeft: Radius.circular(
-                                                    widget.size * 5),
-                                                topRight: Radius.circular(
-                                                    widget.size * 25),
-                                                bottomRight: Radius.circular(
-                                                    widget.size * 25),
-                                              ),
-                                              color:
-                                                  Colors.black.withOpacity(0.5),
-                                              border: Border.all(
-                                                  color: Colors.white
-                                                      .withOpacity(0.5)),
+                                return Padding(
+                                  padding: Notification.fromTo.split("~")[0] == fullUserId()
+                                      ? EdgeInsets.only(
+                                    bottom: index==0?widget.width * 15:0,
+                                      left: widget.width * 45,
+                                      right: widget.width * 5,
+                                      top: widget.height * 5)
+                                      : EdgeInsets.only(
+                                      bottom: index==0?widget.width * 15:0,
+
+                                      right: widget.width * 45,
+                                      left: widget.width * 5,
+                                      top: widget.height * 5),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      if (Notification.fromTo.split("~")[0] != fullUserId())
+                                        Padding(
+                                          padding: EdgeInsets.all(
+                                              widget.size * 3.0),
+                                          child: Container(
+                                            height: widget.size * 35,
+                                            width: widget.size * 35,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  widget.size * 17),
+                                              color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
                                             ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            width: widget.width * 2,
-                                          ),
-                                          Expanded(
-                                              child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    "       @${Notification.Name}",
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                          widget.size * 12.0,
-                                                      color: Colors.white54,
+                                            child: Center(
+                                                child: Text(
+                                                  picText(Notification.fromTo),
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: widget.size * 13,
                                                       fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                  Spacer(),
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            widget.size * 8,
-                                                            widget.size * 1,
-                                                            widget.size * 25,
-                                                            widget.size * 1),
-                                                    child: Column(
-                                                      children: [
-                                                        Text(
-                                                          '${Notification.id}',
-                                                          style: TextStyle(
-                                                            fontSize:
-                                                                widget.size *
-                                                                    9.0,
-                                                            color:
-                                                                Colors.white70,
-                                                            //   fontWeight: FontWeight.bold,
+                                                      FontWeight.w800),
+                                                )),
+                                          ),
+                                        ),
+                                      Expanded(
+                                        child: Container(
+                                          width: double.infinity,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(
+                                              widget.size * 15,
+                                            ),
+                                            color: Notification.fromTo.split("~")[0] != fullUserId()?Colors.white12:Colors.blue.withOpacity(0.3),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                          Notification.fromTo.split("~")[0] != fullUserId()?"   ~ ${Notification.fromTo.split("~")[0].split("@")[0]}":"   to ${Notification.fromTo.split("~")[1].split("@")[0]}",
+                                                            style: TextStyle(
+                                                              fontSize:
+                                                              widget.size *
+                                                                  13.0,
+                                                              color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
+                                                              fontWeight:
+                                                              FontWeight.w700,
+                                                            ),
                                                           ),
+                                                          Spacer(),
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .fromLTRB(
+                                                                widget.size *
+                                                                    8,
+                                                                widget.size *
+                                                                    1,
+                                                                widget.size *
+                                                                    10,
+                                                                widget.size *
+                                                                    1),
+                                                            child: Column(
+                                                              children: [
+                                                                Text(
+                                                                  '${Notification.id}',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                      widget.size *
+                                                                          10.0,
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w800
+                                                                    //   fontWeight: FontWeight.bold,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Padding(
+                                                        padding: EdgeInsets.only(
+                                                          left:
+                                                          widget.size * 10,
+                                                          right:
+                                                          widget.size * 5,
+                                                          top: widget.size * 3,
+                                                          bottom: widget.size * 8,
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              if (Notification.description
-                                                      .split("@")
-                                                      .first ==
-                                                  "Forgot Password ")
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: widget.size * 8,
-                                                      bottom: widget.size * 6,
-                                                      right: widget.size * 3,
-                                                      top: widget.size * 3),
-                                                  child: Text(
-                                                    Notification.description
-                                                        .split("@")
-                                                        .first,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20
-                                                    ),
-                                                  ),
-                                                )
-                                              else
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: widget.size * 8,
-                                                      bottom: widget.size * 6,
-                                                      right: widget.size * 3,
-                                                      top: widget.size * 3),
-                                                  child: StyledTextWidget(fontSize: widget.size*14, text: Notification.description,),
-                                                ),
-                                              if (Notification.Url.length > 10)
-                                                Padding(
-                                                  padding: EdgeInsets.all(
-                                                      widget.size * 3.0),
-                                                  child: Image.network(
-                                                      Notification.Url),
-                                                )
+                                                        child: StyledTextWidget(
+                                                          fontSize:
+                                                          widget.size * 15,
+                                                          text: Notification.data,
+                                                          fontWeight:
+                                                          FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                      if (Notification
+                                                          .image.length >
+                                                          3)
+                                                        InkWell(
+                                                          child: Padding(
+                                                            padding: EdgeInsets.all(
+                                                                widget.size * 3.0),
+                                                            child: ClipRRect(
+                                                              borderRadius: BorderRadius.circular(15),
+                                                              child: Image.network(
+                                                                  Notification.image),
+                                                            ),
+                                                          ),
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                              context,
+                                                              PageRouteBuilder(
+                                                                transitionDuration:
+                                                                const Duration(milliseconds: 300),
+                                                                pageBuilder: (context, animation,
+                                                                    secondaryAnimation) =>
+                                                                    ImageZoom(
+
+                                                                      size: widget.size, url:Notification
+                                                                        .image , file: File(""),
+                                                                    ),
+                                                                transitionsBuilder: (context, animation,
+                                                                    secondaryAnimation, child) {
+                                                                  final fadeTransition = FadeTransition(
+                                                                    opacity: animation,
+                                                                    child: child,
+                                                                  );
+
+                                                                  return Container(
+                                                                    color: Colors.black
+                                                                        .withOpacity(animation.value),
+                                                                    child: AnimatedOpacity(
+                                                                        duration:
+                                                                        Duration(milliseconds: 300),
+                                                                        opacity: animation.value
+                                                                            .clamp(0.3, 1.0),
+                                                                        child: fadeTransition),
+                                                                  );
+                                                                },
+                                                              ),
+                                                            );
+                                                          },
+                                                        )
+                                                    ],
+                                                  ))
                                             ],
-                                          ))
-                                        ],
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                        PopupMenuButton(
+                                          icon: Icon(
+                                            Icons.more_vert,
+                                            color: Colors.white,
+                                            size: widget.size * 25,
+                                          ),
+                                          // Callback that sets the selected popup menu item.
+                                          onSelected: (item) {
+                                            if (item == "delete") {
+                                              FirebaseFirestore
+                                                  .instance
+                                                  .collection("user")
+                                                  .doc(fullUserId())
+                                                  .collection("Notification")
+                                                  .doc(Notification.id).delete();
+                                              showToastText(
+                                                  "Your Message Has Been Deleted");
+                                            }else if(item == "reply"){
+                                              if (Notification.fromTo.split("~")[0] != fullUserId())onChage(Notification.fromTo.split("~")[0]);
+                                              else{
+                                                onChage(Notification.fromTo.split("~")[1]);
+                                              }
+                                            }
+                                          },
+                                          itemBuilder:
+                                              (BuildContext context) =>
+                                          <PopupMenuEntry>[
+                                            const PopupMenuItem(
+                                              value: "delete",
+                                              child: Text('Delete'),
+                                            ), const PopupMenuItem(
+                                              value: "reply",
+                                              child: Text('Reply'),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
                                   ),
-                                  onLongPress: () {
-                                    final deleteFlashNews = FirebaseFirestore
-                                        .instance
-                                        .collection("user")
-                                        .doc(fullUserId())
-                                        .collection("Notification")
-                                        .doc(Notification.id);
-                                    deleteFlashNews.delete();
-                                    showToastText(
-                                        "Your Message Has Been Deleted");
-                                  },
-                                  onDoubleTap: () {
-                                    onChage(Notification.Name);
-                                  },
                                 );
                               },
                               separatorBuilder: (context, index) => SizedBox(
@@ -481,6 +623,7 @@ class _notificationsState extends State<notifications>
             ],
           ),
         ),
+
         searchBar(
           width: widget.width,
           height: widget.height,
@@ -491,6 +634,7 @@ class _notificationsState extends State<notifications>
         )
       ]));
 }
+
 
 class searchBar extends StatefulWidget {
   final TabController tabController;
@@ -518,7 +662,7 @@ class _searchBarState extends State<searchBar> {
   late TextEditingController emailController;
   final TextEditingController bodyController = TextEditingController();
   late TabController _tabController;
-  int currentIndex =0;
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -537,7 +681,6 @@ class _searchBarState extends State<searchBar> {
     setState(() {
       currentIndex = _tabController.index;
     });
-
   }
 
   @override
@@ -547,7 +690,7 @@ class _searchBarState extends State<searchBar> {
   }
 
   bool isExp = false;
-  late String Url = "";
+  late String image = "";
   final FirebaseStorage storage = FirebaseStorage.instance;
 
   @override
@@ -556,147 +699,72 @@ class _searchBarState extends State<searchBar> {
       alignment: Alignment.bottomCenter,
       child: Column(
         children: [
-          Row(
+          if(currentIndex == 1)Row(
             children: [
-              Flexible(
-                flex: 7,
-                child: currentIndex == 1
-                    ? Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: widget.size * 10,
-                            vertical: widget.size * 5),
-                        child: Container(
-                          height: widget.size * 35,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            border: Border.all(
-                                color: Colors.white.withOpacity(0.5)),
-                            borderRadius:
-                                BorderRadius.circular(widget.size * 12),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.only(left: widget.size * 10),
-                            child: TextField(
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: widget.size * 18),
-                              cursorColor: Colors.white,
-                              cursorHeight: widget.size * 10,
-                              controller: emailController,
-                              textInputAction: TextInputAction.next,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'Enter Email',
-                                hintStyle: TextStyle(
-                                  color: Colors.white.withOpacity(0.6),
-                                ),
-                              ),
-                            ),
+              SizedBox(
+                width: widget.size *250,
+                child: Padding(
+                  padding: EdgeInsets.only(left:widget.size * 5,),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white10,
+                      border: Border.all(color: Colors.white24),
+                      borderRadius: BorderRadius.circular(widget.size *50),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.only(left:widget.size * 10),
+                      child: TextField(
+                        style: TextStyle(
+                            color: Colors.white, fontSize: widget.size * 13),
+                        cursorColor: Colors.white,
+                        cursorHeight: widget.size * 10,
+                        controller: emailController,
+                        maxLines: 1,
+                        textInputAction: TextInputAction.newline,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: ' ID ',
+                          hintStyle: TextStyle(
+                            color: Colors.white.withOpacity(0.6),
                           ),
                         ),
-                      )
-                    : Container(),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              Flexible(
-                  flex: 4,
-                  //fit: FlexFit.tight,
-                  child: isUser()
-                      ? Padding(
-                          padding: EdgeInsets.only(right: widget.size * 10),
-                          child: InkWell(
-                            child: AnimatedContainer(
-                              duration: Duration(milliseconds: 300),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(widget.size * 15),
-                                color: Colors.white.withOpacity(0.1),
-                                image: DecorationImage(
-                                    image: NetworkImage(isExp
-                                        ? Url
-                                        : "https://firebasestorage.googleapis.com/v0/b/e-srkr.appspot.com/o/old-black-background-grunge-texture-dark-wallpaper-blackboard-chalkboard-room-wall_1258-28312.avif?alt=media&token=7435f44c-7a51-4000-9b90-bf33e008f75d"),
-                                    fit: BoxFit.fill),
-                                border: Border.all(
-                                    color: Colors.white.withOpacity(0.1)),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  AspectRatio(
-                                    aspectRatio: isExp ? 16 / 9 : 4 / 1,
-                                    child: !isExp
-                                        ? InkWell(
-                                            child: Center(
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    "Upload Photo",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize:
-                                                            widget.size * 16),
-                                                  ),
-                                                  SizedBox(
-                                                    width: widget.size * 3,
-                                                  ),
-                                                  Icon(
-                                                    Icons.upload,
-                                                    color: Colors.blue,
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            onTap: () async {
-                                              final pickedFile =
-                                                  await ImagePicker().pickImage(
-                                                      source:
-                                                          ImageSource.gallery);
-                                              final Reference ref = storage
-                                                  .ref()
-                                                  .child(
-                                                      'notification/${fullUserId()}/${pickedFile!.path.split("/").last}');
-                                              final TaskSnapshot task =
-                                                  await ref.putFile(
-                                                      File(pickedFile.path));
-                                              Url = await task.ref
-                                                  .getDownloadURL();
-                                              setState(() {
-                                                Url;
-                                              });
-                                              isExp = true;
-                                            },
-                                          )
-                                        : Container(),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container())
             ],
           ),
           Row(
             children: [
               Flexible(
                 flex: 7,
-                child: TextFieldContainer(
-                  child: TextField(
-                    style: TextStyle(color: Colors.white, fontSize: widget.size * 20),
-                    cursorColor: Colors.white,
-                    cursorHeight: widget.size * 20,
-                    controller: bodyController,
-                    maxLines: null,
-                    scrollPhysics: BouncingScrollPhysics(),
-                    textInputAction: TextInputAction.newline,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Enter Message ',
-                      hintStyle: TextStyle(
-                        color: Colors.white.withOpacity(0.6),
+                child: Padding(
+                  padding: EdgeInsets.only(left: widget.size *5, right: widget.size *5, top: widget.size *5, bottom: widget.size *5),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white10,
+                      border: Border.all(color: Colors.white24),
+                      borderRadius: BorderRadius.circular(widget.size *50),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: widget.size *25 ),
+                      child: TextField(
+                        style: TextStyle(
+                            color: Colors.white, fontSize: widget.size * 15),
+                        cursorColor: Colors.white,
+                        cursorHeight: widget.size * 10,
+                        controller: bodyController,
+                        maxLines: null,
+                        scrollPhysics: BouncingScrollPhysics(),
+                        textInputAction: TextInputAction.newline,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: ' Message ',
+                          hintStyle: TextStyle(
+                            color: Colors.white.withOpacity(0.6),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -710,28 +778,53 @@ class _searchBarState extends State<searchBar> {
                     child: InkWell(
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(widget.size * 15),
-                          color: Colors.white.withOpacity(0.1),
-                          border:
-                              Border.all(color: Colors.white.withOpacity(0.1)),
+                          borderRadius: BorderRadius.circular(widget.size * 30),
+                          border: Border.all(color: Colors.white.withOpacity(0.2)),
                         ),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: widget.size * 3,
-                              vertical: widget.size * 10),
+                              vertical: widget.size * 5),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text(
-                                "Send",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: widget.size * 17),
-                              ),
-                              SizedBox(
-                                width: widget.size * 3,
-                              ),
+                              if (isUser())
+                                InkWell(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: NetworkImage(isExp ? image : ""),
+                                          fit: BoxFit.fill),
+                                    ),
+                                    child: !isExp
+                                        ? InkWell(
+                                            child: Icon(
+                                              Icons.upload,
+                                              color: Colors.blue,
+                                              size: widget.size *30,
+                                            ),
+                                            onTap: () async {
+                                              final pickedFile = await ImagePicker()
+                                                  .pickImage(
+                                                      source: ImageSource.gallery);
+                                              final Reference ref = storage.ref().child(
+                                                  'notification/${fullUserId()}/${pickedFile!.path.split("/").last}');
+                                              final TaskSnapshot task = await ref
+                                                  .putFile(File(pickedFile.path));
+                                              image = await task.ref.getDownloadURL();
+                                              setState(() {
+                                                image;
+                                              });
+                                              isExp = true;
+                                            },
+                                          )
+                                        : Container(),
+                                  ),
+                                ),
                               Icon(
                                 Icons.send,
                                 color: Colors.blue,
+                                size: widget.size *30,
                               )
                             ],
                           ),
@@ -740,14 +833,13 @@ class _searchBarState extends State<searchBar> {
                       onTap: () {
                         if (currentIndex == 0) {
                           SendMessageInBackground(
-                              widget.branch, bodyController.text.trim(), Url);
+                              widget.branch, bodyController.text.trim(), image);
                         } else {
                           pushNotificationsSpecificPerson(
-                              emailController.text.trim(),
+                              "${fullUserId()}~${emailController.text.trim()}",
                               bodyController.text,
-                              Url);
+                              image);
                         }
-                        emailController.clear();
                         bodyController.clear();
                       },
                     ),
@@ -783,12 +875,10 @@ Future<bool> pushNotificationsSpecificDevice({
   return true;
 }
 
-Future<void> pushNotificationsToOwner(
-    String message) async {
+Future<void> pushNotificationsToOwner(String message) async {
   FirebaseFirestore.instance
       .collection("tokens")
-      .doc(
-      "sujithnimmala03@gmail.com")
+      .doc("sujithnimmala03@gmail.com")
       .get()
       .then((DocumentSnapshot snapshot) {
     if (snapshot.exists) {
@@ -804,9 +894,9 @@ Future<void> pushNotificationsToOwner(
             .doc(getID())
             .set({
           "id": getID(),
-          "Name": "sujithnimmala03@gmail.com",
-          "Description": message,
-          "Link": ""
+          "fromTo": "sujithnimmala03@gmail.com",
+          "data": message,
+          "image": ""
         });
 
         pushNotificationsSpecificDevice(
@@ -827,8 +917,7 @@ Future<void> pushNotificationsSpecificPerson(
     String sendTo, String message, String url) async {
   FirebaseFirestore.instance
       .collection("tokens")
-      .doc(
-          sendTo)
+      .doc(sendTo.split("~").last)
       .get()
       .then((DocumentSnapshot snapshot) {
     if (snapshot.exists) {
@@ -839,15 +928,14 @@ Future<void> pushNotificationsSpecificPerson(
 
         FirebaseFirestore.instance
             .collection("user")
-            .doc(sendTo)
+            .doc(sendTo.split("~").last)
             .collection("Notification")
             .doc(getID())
             .set({
           "id": getID(),
-          "Name": fullUserId(),
-
-          "Description": message,
-          "Link": url
+          "fromTo": sendTo,
+          "data": message,
+          "image": url
         });
         FirebaseFirestore.instance
             .collection("user")
@@ -856,9 +944,9 @@ Future<void> pushNotificationsSpecificPerson(
             .doc(getID())
             .set({
           "id": getID(),
-          "Name": fullUserId(),
-          "Description": message,
-          "Link": url
+          "fromTo": sendTo,
+          "data": message,
+          "image": url
         });
 
         pushNotificationsSpecificDevice(
@@ -935,12 +1023,12 @@ void SendMessageInBackground(String branch, String message, String url) async {
               .doc(getID())
               .set({
             "id": getID(),
-            "Name": "${fullUserId()}",
-            "Description": message,
-            "Link": url
+            "fromTo": "${fullUserId()}",
+            "data": message,
+            "image": url
           });
         } else {
-          List B = ["ECE", "EEE","MECH","CIVIL","CSE","IT"];
+          List B = ["ECE", "EEE", "MECH", "CIVIL", "CSE", "IT"];
           for (final b in B) {
             FirebaseFirestore.instance
                 .collection(b)
@@ -949,10 +1037,9 @@ void SendMessageInBackground(String branch, String message, String url) async {
                 .doc(getID())
                 .set({
               "id": getID(),
-              "Name": "${fullUserId()} (owner)",
-
-              "Description": message,
-              "Link": url
+              "fromTo": "${fullUserId()} (owner)",
+              "data": message,
+              "image": url
             });
           }
         }
@@ -989,14 +1076,14 @@ void SendMessageInBackground(String branch, String message, String url) async {
             .doc(getID())
             .set({
           "id": getID(),
-          "Name": "${fullUserId()}",
-
-          "Description": message,
-          "Link": url
+          "fromTo": "${fullUserId()}",
+          "data": message,
+          "image": url
         });
         FirebaseFirestore.instance
             .collection("tokens")
-            .doc("sujithnimmala03@gmail.com") // Replace "documentId" with the ID of the document you want to retrieve
+            .doc(
+                "sujithnimmala03@gmail.com") // Replace "documentId" with the ID of the document you want to retrieve
             .get()
             .then((DocumentSnapshot snapshot) {
           if (snapshot.exists) {
@@ -1076,28 +1163,29 @@ Stream<List<NotificationsConvertor>> readNotifications(
 
 class NotificationsConvertor {
   String id;
-  final String Name, Url, description;
+  final String fromTo, image, data;
 
-  NotificationsConvertor(
-      {this.id = "",
-      required this.Name,
-      required this.Url,
-      required this.description,
-     });
+  NotificationsConvertor({
+    this.id = "",
+    required this.fromTo,
+    required this.image,
+    required this.data,
+  });
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "Name": Name,
-        "Link": Url,
-        "Description": description,
+        "fromTo": fromTo,
+        "image": image,
+        "data": data,
       };
 
   static NotificationsConvertor fromJson(Map<String, dynamic> json) =>
       NotificationsConvertor(
-          id: json['id'],
-          Name: json["Name"],
-          Url: json["Link"],
-          description: json["Description"],);
+        id: json['id'],
+        fromTo: json["fromTo"],
+        image: json["image"],
+        data: json["data"],
+      );
 }
 
 Future<void> downloadAllImages(
@@ -1154,62 +1242,6 @@ Future<void> downloadAllImages(
           final file = await File("${folderPath}/news/$name");
           if (!file.existsSync()) {
             list.add(data["image"] + ";" + "news");
-          }
-        }
-      }
-    } else {
-      print('No documents found');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-  final CollectionReference subjects = FirebaseFirestore.instance
-      .collection(branch)
-      .doc("Subjects")
-      .collection("Subjects");
-
-  try {
-    final QuerySnapshot querySnapshot = await subjects.get();
-    if (querySnapshot.docs.isNotEmpty) {
-      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-
-      for (final document in documents) {
-        final data = document.data() as Map<String, dynamic>;
-        if (data["image"].length > 3) {
-          final Uri uri = Uri.parse(data["image"]);
-          final String fileName = uri.pathSegments.last;
-          var name = fileName.split("/").last;
-          final file = await File("${folderPath}/subjects/$name");
-          if (!file.existsSync()) {
-            list.add(data["image"] + ";" + "subjects");
-          }
-        }
-      }
-    } else {
-      print('No documents found');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-
-  final CollectionReference labSubjects = FirebaseFirestore.instance
-      .collection(branch)
-      .doc("LabSubjects")
-      .collection("LabSubjects");
-
-  try {
-    final QuerySnapshot querySnapshot = await labSubjects.get();
-    if (querySnapshot.docs.isNotEmpty) {
-      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-      for (final document in documents) {
-        final data = document.data() as Map<String, dynamic>;
-        if (data["image"].length > 3) {
-          final Uri uri = Uri.parse(data["image"]);
-          final String fileName = uri.pathSegments.last;
-          var name = fileName.split("/").last;
-          final file = await File("${folderPath}/labsubjects/$name");
-          if (!file.existsSync()) {
-            list.add(data["image"] + ";" + "labsubjects");
           }
         }
       }

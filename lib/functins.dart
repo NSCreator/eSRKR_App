@@ -66,8 +66,10 @@ Future<void> ExternalLaunchUrl(String url) async {
 
 
 
-picText() {
-  var user = FirebaseAuth.instance.currentUser!.email!.split("@");
+picText(String id) {
+  var user;
+  user = FirebaseAuth.instance.currentUser!.email!.split("@");
+  if(id.isNotEmpty)user = id.split("@");
   return user[0].substring(user[0].length - 3).toUpperCase();
 }
 
@@ -167,8 +169,9 @@ class StyledTextWidget extends StatelessWidget {
             WidgetSpan(
               child: InkWell(
                 child: Text(
-                  "$word ",
-                  style: TextStyle(color: Colors.blueAccent),
+                  "${word.substring(0,35)}.... ",
+                  style: TextStyle(color: Colors.blueAccent,
+                      fontSize: fontSize-2,fontWeight: fontWeight),
                 ),
                 onTap: () {
                   ExternalLaunchUrl(word);
@@ -178,15 +181,6 @@ class StyledTextWidget extends StatelessWidget {
             TextSpan(text: ' '),
           ],
         ));
-        InkWell(
-          child: Text(
-            "$word ",
-            style: TextStyle(color: Colors.blueAccent),
-          ),
-          onTap: () {
-            ExternalLaunchUrl(word);
-          },
-        );
       }
       else if (word.startsWith('**')) {
         spans.add(TextSpan(
@@ -200,7 +194,7 @@ class StyledTextWidget extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2),
                 child: Text(
                   word.substring(2),
-                  style: TextStyle(color: Colors.white, fontSize: fontSize - 5),
+                  style: TextStyle(color: Colors.white, fontSize: fontSize ),
                 ),
               ),
             ),
@@ -212,6 +206,8 @@ class StyledTextWidget extends StatelessWidget {
           text: word.substring(1, word.length - 1) + ' ',
           style: TextStyle(
             fontWeight: FontWeight.bold,
+
+              fontSize: fontSize, color: color,
           ),
         ));
 
@@ -219,28 +215,12 @@ class StyledTextWidget extends StatelessWidget {
         spans.add(TextSpan(
           text: word.substring(1, word.length - 1) + ' ',
           style: TextStyle(
+
+            fontSize: fontSize, color: color,
             fontWeight: FontWeight.bold,
           ),
         ));
 
-      } else if (word.contains('@')) {
-        String url = word.substring(word.indexOf('@') + 1);
-        spans.add(
-          WidgetSpan(
-            child: InkWell(
-              onTap: () async {
-                if (await canLaunch(url)) {
-                  await launch(url);
-                }
-              },
-              child: Text(
-                word.split("@").first + ' ',
-                style: TextStyle(
-                    color: Colors.lightBlueAccent, fontSize: fontSize),
-              ),
-            ),
-          ),
-        );
       } else {
         spans.add(TextSpan(text: word + ' '));
       }
@@ -360,30 +340,39 @@ class _downloadAllPdfsState extends State<downloadAllPdfs> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white12,
+            borderRadius: BorderRadius.circular(20)
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
 
-          SizedBox(
-            height:widget.size* 28,
-            width: widget.size*28,
-            child: CircularProgressIndicator(
-               strokeWidth: 3,
-              color: Colors.green,
-              value:_downloadProgress,
-            ),
-          ),
-          if(isDownloaded)SizedBox(
-            height:widget.size* 34,
-            width: widget.size*34,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
+              SizedBox(
+                height:widget.size* 28,
+                width: widget.size*28,
+                child: CircularProgressIndicator(
+                   strokeWidth: 3,
+                  color: Colors.green,
+                  value:_downloadProgress,
+                ),
+              ),
+              if(isDownloaded)SizedBox(
+                height:widget.size* 34,
+                width: widget.size*34,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
 
-              color: Colors.red,
-            ),
+                  color: Colors.red,
+                ),
+              ),
+              Icon(isDownloaded?Icons.download_done:Icons.file_download_outlined, size:widget.size* 30.0,color: isDownloaded?Colors.greenAccent:Colors.purpleAccent,),
+            ],
           ),
-          Icon(isDownloaded?Icons.download_done:Icons.download_for_offline_outlined, size:widget.size* 30.0,color: isDownloaded?Colors.greenAccent:Colors.white54,),
-        ],
+        ),
       ),
       onTap: (){
         setState(() {

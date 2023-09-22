@@ -32,7 +32,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
   late bool isNightMode = false;
   late bool isScrolling = false;
   late bool isSwipeHorizontal = false;
-
+  late PDFViewController pdfController;
   Timer? _timer;
 
   bool isLoading = false;
@@ -172,6 +172,8 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                   ? Center(child: CircularProgressIndicator())
                   : PDFView(
                 pageSnap:false,
+                      fitPolicy: FitPolicy.BOTH,
+                fitEachPage:false,
                       filePath: widget.pdfUrl,
                       defaultPage: currentPage as int,
                       swipeHorizontal: isSwipeHorizontal,
@@ -196,11 +198,16 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                       onPageError: (page, error) {
                         print('$page: ${error.toString()}');
                       },
-                      onViewCreated: (PDFViewController pdfViewController) {
-                        Completer<PDFViewController> controller =
-                            Completer<PDFViewController>();
-                        controller.complete(pdfViewController);
-                      },
+                      // onViewCreated: (PDFViewController pdfViewController) {
+                      //   Completer<PDFViewController> controller =
+                      //       Completer<PDFViewController>();
+                      //   controller.complete(pdfViewController);
+                      // },
+                onViewCreated: (PDFViewController pdfViewController) {
+                  pdfController = pdfViewController; // Assign the controller
+                  // Enable side-scrolling by setting scroll direction to horizontal
+                 
+                },
                     ),
               Align(
                   alignment: Alignment.bottomCenter,

@@ -40,7 +40,7 @@ const TextStyle creatorHeadingTextStyle = TextStyle(
     color: Colors.white);
 
 TextStyle secondHeadingTextStyle({Color color = Colors.white,required double size}) {
-  return TextStyle(color: color, fontSize: size*30, fontWeight: FontWeight.w500);
+  return TextStyle(color: color, fontSize: size*22, fontWeight: FontWeight.w500);
 }
 
 class settings extends StatefulWidget {
@@ -121,7 +121,7 @@ class _settingsState extends State<settings> {
                             ),
                             child: Center(
                                 child: Text(
-                                  picText(),
+                                  picText(""),
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: widget.size * 25),

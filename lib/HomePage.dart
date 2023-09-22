@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
@@ -12,11 +13,13 @@ import 'package:srkr_study_app/notification.dart';
 import 'package:srkr_study_app/search%20bar.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 import 'TextField.dart';
 import 'favorites.dart';
 import 'functins.dart';
 import 'main.dart';
 import 'net.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class backGroundImage extends StatefulWidget {
   Widget child;
@@ -38,7 +41,7 @@ class _backGroundImageState extends State<backGroundImage> {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Scaffold(
-          backgroundColor: Colors.black.withOpacity(0.75),
+          backgroundColor: Colors.black.withOpacity(0.85),
           body: SafeArea(
             child: widget.child,
           ),
@@ -66,7 +69,11 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  List searchList = ["Search About", "Subjects", "Lab Subjects"];
+
+  late TabController _tabController;
   String folderPath = "";
   int index = 0;
 
@@ -83,98 +90,137 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       getPath();
     });
+    _tabController = new TabController(
+      vsync: this,
+      length: 4,
+    );
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) => WillPopScope(
-        onWillPop: () async {
-          final shouldPop = await showDialog(
-            context: context,
-            builder: (context) {
-              return Dialog(
-                backgroundColor: Colors.transparent,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(widget.size * 20)),
-                elevation: 16,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white38,
-                    border: Border.all(color: Colors.white24),
-                    borderRadius: BorderRadius.circular(widget.size * 20),
-                  ),
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      SizedBox(height: widget.size * 15),
-                      Padding(
-                        padding: EdgeInsets.only(left: widget.size * 15),
-                        child: Text(
-                          "Press Yes to Exit",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: widget.size * 18),
-                        ),
-                      ),
-                      SizedBox(
-                        height: widget.size * 5,
-                      ),
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context, false);
-                              },
-                              child: Text(
-                                'No',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: widget.size * 20,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context, true);
-                              },
-                              child: Text(
-                                'Yes',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: widget.size * 20,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: widget.size * 10,
-                      ),
-                    ],
-                  ),
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _tabController.dispose();
+  }
+
+  void changeTab(int newIndex) {
+    // Use _tabController.animateTo to change the selected tab
+    _tabController.animateTo(newIndex);
+  }
+
+  reg() async {
+    List list = [];
+
+    final CollectionReference updates = FirebaseFirestore.instance
+        .collection(widget.branch)
+        .doc("Subjects")
+        .collection("Subjects");
+
+    try {
+      final QuerySnapshot querySnapshot = await updates.get();
+      if (querySnapshot.docs.isNotEmpty) {
+        final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+      } else {
+        print('No documents found');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+  bool visible = false;
+
+  @override
+  Widget build(BuildContext context) {
+    double Size = size(context);
+    return WillPopScope(
+      onWillPop: () async {
+        final shouldPop = await showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(widget.size * 20)),
+              elevation: 16,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white38,
+                  border: Border.all(color: Colors.white24),
+                  borderRadius: BorderRadius.circular(widget.size * 20),
                 ),
-              );
-            },
-          );
-          return shouldPop;
-        },
-        child: backGroundImage(
-            child: DefaultTabController(
-          initialIndex: index,
-          length: 6,
+                child: ListView(
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    SizedBox(height: widget.size * 15),
+                    Padding(
+                      padding: EdgeInsets.only(left: widget.size * 15),
+                      child: Text(
+                        "Press Yes to Exit",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: widget.size * 18),
+                      ),
+                    ),
+                    SizedBox(
+                      height: widget.size * 5,
+                    ),
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context, false);
+                            },
+                            child: Text(
+                              'No',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: widget.size * 20,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context, true);
+                            },
+                            child: Text(
+                              'Yes',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: widget.size * 20,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: widget.size * 10,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+        return shouldPop;
+      },
+      child: backGroundImage(
           child: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              SliverAppBar(
-                expandedHeight: widget.size * 55,
-                // collapsedHeight: widget.size*55,
-                backgroundColor: Colors.transparent,
-                flexibleSpace: Padding(
-                  padding: EdgeInsets.all(widget.size * 8.0),
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverAppBar(
+            expandedHeight: widget.size * 58,
+            collapsedHeight: widget.size * 58,
+            toolbarHeight: widget.size *58,
+            backgroundColor: Colors.transparent,
+            flexibleSpace: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: widget.size * 8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -193,7 +239,7 @@ class _HomePageState extends State<HomePage> {
                                   child: Icon(
                                     Icons.settings,
                                     color: Colors.white70,
-                                    size: widget.size * 30,
+                                    size: widget.size * 28,
                                   ),
                                 ),
                               ),
@@ -204,17 +250,17 @@ class _HomePageState extends State<HomePage> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
-                                      picText(),
+                                      picText(""),
                                       style: TextStyle(
                                           color: Colors.white70,
-                                          fontSize: widget.size * 15,
+                                          fontSize: widget.size * 12,
                                           fontWeight: FontWeight.w600),
                                     ),
                                     Text(
                                       widget.branch,
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: widget.size * 15,
+                                          fontSize: widget.size * 14,
                                           fontWeight: FontWeight.w800),
                                     ),
                                   ],
@@ -256,855 +302,1387 @@ class _HomePageState extends State<HomePage> {
                               ),
                             );
                           }),
-                      InkWell(
-                        onTap: () {
-                          ExternalLaunchUrl("https://srkrec.edu.in/");
-                        },
-                        child: Text(
-                          "eSRKR",
-                          style: TextStyle(
-                            fontSize: widget.size * 30.0,
-                            color: Color.fromRGBO(192, 237, 252, 1),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                      SizedBox(
+                        width: widget.size * 5,
                       ),
-                      Row(
-                        children: [
-                          InkWell(
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration:
+                                    const Duration(milliseconds: 300),
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        MyAppq(
+                                            branch: widget.branch,
+                                            reg: widget.reg,
+                                            size: widget.size),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  final fadeTransition = FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+
+                                  return Container(
+                                    color: Colors.black
+                                        .withOpacity(animation.value),
+                                    child: AnimatedOpacity(
+                                        duration: Duration(milliseconds: 300),
+                                        opacity:
+                                            animation.value.clamp(0.3, 1.0),
+                                        child: fadeTransition),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding:  EdgeInsets.symmetric(horizontal: widget.size *10),
                             child: Container(
+                              width: widget.size *210,
                               decoration: BoxDecoration(
                                 color: Colors.white10,
-                                borderRadius:
-                                    BorderRadius.circular(widget.size * 25),
+                                borderRadius: BorderRadius.circular(15),
                                 border: Border.all(color: Colors.white54),
                               ),
                               child: Padding(
-                                padding: EdgeInsets.all(widget.size * 3.0),
-                                child: Icon(
-                                  Icons.search,
-                                  color: Colors.white70,
-                                  size: widget.size * 30,
+                                padding:
+                                     EdgeInsets.symmetric(horizontal: widget.size *5),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.search,
+                                      color: Colors.white,
+                                      size: widget.size *25,
+                                    ),
+                                    SizedBox(width: widget.size *3),
+                                    Flexible(
+                                      child: CarouselSlider(
+                                        items: List.generate(
+                                          searchList.length,
+                                          (int index) {
+                                            return Center(
+                                              child: Text(
+                                                searchList[index],
+                                                style: TextStyle(
+                                                  fontSize: widget.size *19.0,
+                                                  color: Color.fromRGBO(
+                                                      192, 237, 252, 1),
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        //Slider Container properties
+                                        options: CarouselOptions(
+                                          scrollDirection: Axis.vertical,
+                                          // Set the axis to vertical
+                                          viewportFraction: 0.95,
+                                          disableCenter: true,
+                                          enlargeCenterPage: true,
+                                          height: widget.size *40,
+                                          autoPlayAnimationDuration:
+                                              const Duration(seconds: 3),
+                                          autoPlay: true,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  transitionDuration:
-                                      const Duration(milliseconds: 300),
-                                  pageBuilder: (context, animation,
-                                          secondaryAnimation) =>
-                                      MyAppq(
-                                    branch: widget.branch,
-                                    reg: widget.reg,
-                                    size: widget.size,
-                                  ),
-                                  transitionsBuilder: (context, animation,
-                                      secondaryAnimation, child) {
-                                    final fadeTransition = FadeTransition(
-                                      opacity: animation,
-                                      child: child,
-                                    );
-
-                                    return Container(
-                                      color: Colors.black
-                                          .withOpacity(animation.value),
-                                      child: AnimatedOpacity(
-                                          duration: Duration(milliseconds: 300),
-                                          opacity:
-                                              animation.value.clamp(0.3, 1.0),
-                                          child: fadeTransition),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
                           ),
-                          SizedBox(
-                            width: widget.size * 10,
+                        ),
+                      ),
+                      InkWell(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius:
+                                BorderRadius.circular(widget.size * 25),
+                            border: Border.all(color: Colors.white54),
                           ),
-                          if (isUser())
-                            InkWell(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white10,
-                                  borderRadius:
-                                      BorderRadius.circular(widget.size * 25),
-                                  border: Border.all(color: Colors.white54),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(widget.size * 3.0),
-                                  child: Icon(
-                                    Icons.notifications_active,
-                                    color: Colors.white70,
-                                    size: widget.size * 30,
-                                  ),
-                                ),
+                          child: Padding(
+                            padding: EdgeInsets.all(widget.size * 3.0),
+                            child: Icon(
+                              Icons.notifications_active,
+                              color: Colors.white70,
+                              size: widget.size * 28,
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration:
+                                  const Duration(milliseconds: 300),
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      notifications(
+                                width: widget.size,
+                                size: widget.size,
+                                height: widget.size,
+                                branch: widget.branch,
                               ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    transitionDuration:
-                                        const Duration(milliseconds: 300),
-                                    pageBuilder: (context, animation,
-                                            secondaryAnimation) =>
-                                        notifications(
-                                      width: widget.size,
-                                      size: widget.size,
-                                      height: widget.size,
-                                      branch: widget.branch,
-                                    ),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      final fadeTransition = FadeTransition(
-                                        opacity: animation,
-                                        child: child,
-                                      );
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                final fadeTransition = FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                );
 
-                                      return Container(
-                                        color: Colors.black
-                                            .withOpacity(animation.value),
-                                        child: AnimatedOpacity(
-                                            duration:
-                                                Duration(milliseconds: 300),
-                                            opacity:
-                                                animation.value.clamp(0.3, 1.0),
-                                            child: fadeTransition),
-                                      );
-                                    },
-                                  ),
+                                return Container(
+                                  color:
+                                      Colors.black.withOpacity(animation.value),
+                                  child: AnimatedOpacity(
+                                      duration: Duration(milliseconds: 300),
+                                      opacity: animation.value.clamp(0.3, 1.0),
+                                      child: fadeTransition),
                                 );
                               },
                             ),
-                        ],
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        width: widget.size * 5,
                       )
                     ],
                   ),
                 ),
-                floating: false,
-                primary: true,
-              ),
-              SliverAppBar(
-                expandedHeight: widget.size * 20,
-                backgroundColor: Colors.black.withOpacity(0.8),
-                flexibleSpace: TabBar(
+                Divider(
+                  color: Colors.white12,
+                ),
+              ],
+            ),
+            floating: false,
+            primary: true,
+          ),
+        ],
+        body: Column(
+          children: [
+            Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                    ExternalLaunchUrl("https://srkrec.edu.in/");
+                    // changeTab(2);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      "eSRKR",
+                      style: TextStyle(
+                          fontSize: widget.size * 30.0,
+                          color: Color.fromRGBO(192, 237, 252, 1),
+                          fontWeight: FontWeight.w700,
+                          fontFamily: "test"),
+                    ),
+                  ),
+                ),
+                Expanded(
+                    child: TabBar(
+                  controller: _tabController,
                   dividerColor: Colors.transparent,
-                  indicatorColor: Colors.amber,
+                  labelPadding: EdgeInsets.symmetric(horizontal: 5.0),
+                  // Adjust padding as needed
+                  indicator: BoxDecoration(
+                    borderRadius: BorderRadius.circular(widget.size * 15),
+                    color: Color.fromRGBO(50, 50, 50, 1),
+                  ),
                   labelColor: Colors.white,
-                  labelStyle: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: widget.size * 20),
+                  unselectedLabelColor: Colors.white24,
                   isScrollable: true,
                   tabs: [
                     Tab(
-                      text: 'Home',
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(widget.size * 15),
+                          // color:  _tabController. == 0?Color.fromRGBO(4, 11, 23, 1):Colors.white,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: widget.size * 15.0),
+                        // Adjust padding as needed
+                        child: Text('Home'),
+                      ),
                     ),
-                    Tab(text: 'Regulation'),
-                    Tab(text: 'Favorites'),
-                    Tab(text: 'Books'),
-                    Tab(text: 'News'),
-                    Tab(text: 'Updates'),
+                    Tab(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: widget.size * 15.0),
+                        // Adjust padding as needed
+
+                        child: Text('Books'),
+                      ),
+                    ),
+                    Tab(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: widget.size * 15.0),
+                        // Adjust padding as needed
+
+                        child: Text('News'),
+                      ),
+                    ),
+                    Tab(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: widget.size * 15.0),
+                        // Adjust padding as needed
+
+                        child: Text('Updates'),
+                      ),
+                    ),
                   ],
-                ),
-                floating: false,
-                primary: false,
-                snap: false,
-                pinned: true,
-              ),
-            ],
-            body: TabBarView(
-              children: [
-                SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      FutureBuilder<List<UpdateConvertor>>(
-                        future: UpdateConvertorUtil.getUpdateConvertorList(),
-                        builder: (context, snapshot) {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting:
-                              return const Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 0.3,
-                                  color: Colors.cyan,
-                                ),
-                              );
-                            default:
-                              if (snapshot.hasError) {
-                                return const Center(
-                                  child: Text(
-                                      'Error with updates Data or\n Check Internet Connection'),
-                                );
-                              } else {
-                                final List<UpdateConvertor> updates =
-                                    snapshot.data ?? [];
-
-                                if (updates.isEmpty) {
-                                  return Container();
-                                } else {
-                                  final List<UpdateConvertor> updates =
-                                      snapshot.data ?? [];
-                                  return updates.isEmpty
-                                      ? Container()
-                                      : Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: widget.size * 10,
-                                                  horizontal: widget.size * 15),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text("New Updates",
-                                                      style:
-                                                          secondHeadingTextStyle(
-                                                              size:
-                                                                  widget.size)),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              height: widget.size * 95,
-                                              child: ListView.builder(
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                itemCount:
-                                                    min(updates.length, 5),
-                                                // Display only top 5 items
-                                                itemBuilder:
-                                                    (context, int index) {
-                                                  final BranchNew =
-                                                      updates[index];
-                                                  final Uri uri = Uri.parse(
-                                                      BranchNew.photoUrl);
-                                                  final String fileName =
-                                                      uri.pathSegments.last;
-                                                  var name =
-                                                      fileName.split("/").last;
-                                                  final file = File(
-                                                      "${folderPath}/updates/$name");
-
-                                                  return Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: widget.size * 10),
-                                                    child: InkWell(
-                                                      child: Container(
-                                                        padding: EdgeInsets.all(
-                                                            widget.size * 5),
-                                                        width: Width(context) /
-                                                            1.35,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors.black
-                                                              .withOpacity(0.8),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      widget.size *
-                                                                          15),
-                                                          border: Border.all(
-                                                              color: Colors
-                                                                  .white10),
-                                                        ),
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              children: [
-                                                                Container(
-                                                                  width: widget
-                                                                          .size *
-                                                                      35,
-                                                                  height: widget
-                                                                          .size *
-                                                                      35,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(widget.size *
-                                                                            17),
-                                                                    image:
-                                                                        DecorationImage(
-                                                                      image: FileImage(
-                                                                          file),
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: EdgeInsets.symmetric(
-                                                                        horizontal:
-                                                                            widget.size *
-                                                                                5),
-                                                                    child: Text(
-                                                                      BranchNew
-                                                                          .heading,
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          fontSize: widget.size *
-                                                                              20,
-                                                                          fontWeight:
-                                                                              FontWeight.w500),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Padding(
-                                                              padding: EdgeInsets.only(
-                                                                  left: widget
-                                                                          .size *
-                                                                      45,
-                                                                  right: widget
-                                                                          .size *
-                                                                      10,
-                                                                  bottom: widget
-                                                                          .size *
-                                                                      5),
-                                                              child: Row(
-                                                                children: [
-                                                                  Text(
-                                                                    BranchNew
-                                                                        .description,
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .white70,
-                                                                        fontSize:
-                                                                            widget.size *
-                                                                                15),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Padding(
-                                                              padding: EdgeInsets.only(
-                                                                  left: widget
-                                                                          .size *
-                                                                      40,
-                                                                  right: widget
-                                                                          .size *
-                                                                      10),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  InkWell(
-                                                                    child:
-                                                                        Container(
-                                                                      decoration: BoxDecoration(
-                                                                          borderRadius: BorderRadius.circular(widget.size *
-                                                                              8),
-                                                                          border:
-                                                                              Border.all(color: Colors.white30)),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: EdgeInsets.symmetric(
-                                                                            vertical: widget.size *
-                                                                                3,
-                                                                            horizontal:
-                                                                                widget.size * 8),
-                                                                        child:
-                                                                            Text(
-                                                                          "Remove",
-                                                                          style: TextStyle(
-                                                                              color: Colors.red,
-                                                                              fontSize: widget.size * 18),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        UpdateConvertorUtil.removeUpdateConvertor(
-                                                                            index);
-                                                                      });
-                                                                    },
-                                                                  ),
-                                                                  if (BranchNew
-                                                                      .link
-                                                                      .isNotEmpty)
-                                                                    InkWell(
-                                                                      child:
-                                                                          Text(
-                                                                        "Open (Link)",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.lightBlueAccent),
-                                                                      ),
-                                                                      onTap:
-                                                                          () {
-                                                                        ExternalLaunchUrl(
-                                                                            BranchNew.link);
-                                                                      },
-                                                                    ),
-                                                                  Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        top: widget.size *
-                                                                            5),
-                                                                    child: Text(
-                                                                      BranchNew
-                                                                          .id,
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .white38,
-                                                                          fontSize:
-                                                                              widget.size * 10),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        );
-                                }
-                              }
-                          }
-                        },
-                      ),
-                      FutureBuilder<List<BranchNewConvertor>>(
-                        future: BranchNewConvertorUtil.getUpdateConvertorList(),
-                        builder: (context, snapshot) {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting:
-                              return const Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 0.3,
-                                  color: Colors.cyan,
-                                ),
-                              );
-                            default:
-                              if (snapshot.hasError) {
-                                return const Center(
-                                  child: Text(
-                                      'Error with updates Data or\n Check Internet Connection'),
-                                );
-                              } else {
-                                final List<BranchNewConvertor> updates =
-                                    snapshot.data ?? [];
-
-                                if (updates.isEmpty) {
-                                  return Container();
-                                } else {
-                                  final List<BranchNewConvertor> updates =
-                                      snapshot.data ?? [];
-                                  return updates.isEmpty
-                                      ? Container()
-                                      : Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: widget.size * 10,
-                                                  horizontal: widget.size * 15),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    "${widget.branch} News",
-                                                    style:
-                                                        secondHeadingTextStyle(
-                                                            size: widget.size),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              height: widget.size * 145,
-                                              child: ListView.builder(
-                                                physics:
-                                                    const BouncingScrollPhysics(),
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                itemCount:
-                                                    min(updates.length, 5),
-                                                // Display only top 5 items
-                                                itemBuilder:
-                                                    (context, int index) {
-                                                  final BranchNew =
-                                                      updates[index];
-                                                  if (BranchNew
-                                                      .photoUrl.isNotEmpty) {
-                                                    final Uri uri = Uri.parse(
-                                                        BranchNew.photoUrl);
-                                                    final String fileName =
-                                                        uri.pathSegments.last;
-                                                    var name = fileName
-                                                        .split("/")
-                                                        .last;
-                                                    file = File(
-                                                        "${folderPath}/${widget.branch.toLowerCase()}_news/$name");
-                                                  }
-                                                  return Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: widget.size * 10),
-                                                    child: InkWell(
-                                                      child: Container(
-                                                        padding: EdgeInsets.all(
-                                                            widget.size * 5),
-                                                        width: Width(context) /
-                                                            1.35,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors.black
-                                                              .withOpacity(0.8),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      widget.size *
-                                                                          15),
-                                                          border: Border.all(
-                                                              color: Colors
-                                                                  .white10),
-                                                        ),
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Container(
-                                                                  width: widget
-                                                                          .size *
-                                                                      150,
-                                                                  height: widget
-                                                                          .size *
-                                                                      100,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(widget.size *
-                                                                            17),
-                                                                    image: BranchNew
-                                                                            .photoUrl
-                                                                            .isNotEmpty
-                                                                        ? DecorationImage(
-                                                                            image:
-                                                                                FileImage(file),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                          )
-                                                                        : noImageFound,
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child: Column(
-                                                                    children: [
-                                                                      InkWell(
-                                                                        child:
-                                                                            Container(
-                                                                          decoration: BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(widget.size * 8),
-                                                                              border: Border.all(color: Colors.white30)),
-                                                                          child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(vertical: widget.size * 3, horizontal: widget.size * 8),
-                                                                            child:
-                                                                                Text(
-                                                                              "Remove",
-                                                                              style: TextStyle(color: Colors.red, fontSize: widget.size * 18),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        onTap:
-                                                                            () {
-                                                                          setState(
-                                                                              () {
-                                                                            BranchNewConvertorUtil.removeUpdateConvertor(index);
-                                                                          });
-                                                                        },
-                                                                      ),
-                                                                      Padding(
-                                                                        padding: EdgeInsets.symmetric(
-                                                                            horizontal: widget.size *
-                                                                                5,
-                                                                            vertical:
-                                                                                widget.size * 5),
-                                                                        child:
-                                                                            Text(
-                                                                          BranchNew
-                                                                              .heading,
-                                                                          style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 20,
-                                                                              fontWeight: FontWeight.w700),
-                                                                        ),
-                                                                      ),
-                                                                      Padding(
-                                                                        padding:
-                                                                            EdgeInsets.only(top: widget.size * 5),
-                                                                        child:
-                                                                            Text(
-                                                                          BranchNew
-                                                                              .id
-                                                                              .split("-")
-                                                                              .first,
-                                                                          style: TextStyle(
-                                                                              color: Colors.white54,
-                                                                              fontSize: widget.size * 10,
-                                                                              fontWeight: FontWeight.w700),
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Padding(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      vertical:
-                                                                          widget.size *
-                                                                              5,
-                                                                      horizontal:
-                                                                          widget.size *
-                                                                              5),
-                                                              child: Row(
-                                                                children: [
-                                                                  Text(
-                                                                    BranchNew
-                                                                        .description,
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        fontSize:
-                                                                            widget.size *
-                                                                                20,
-                                                                        fontWeight:
-                                                                            FontWeight.w600),
-                                                                    maxLines: 1,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        );
-                                }
-                              }
-                          }
-                        },
-                      ),
-                      StreamBuilder<List<FlashNewsConvertor>>(
-                          stream: readSRKRFlashNews(),
+                )),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        StreamBuilder<List<BranchNewConvertor>>(
+                          stream: readBranchNew(widget.branch),
                           builder: (context, snapshot) {
-                            final Favourites = snapshot.data;
+                            final BranchNews = snapshot.data;
                             switch (snapshot.connectionState) {
                               case ConnectionState.waiting:
                                 return const Center(
-                                    child: CircularProgressIndicator(
-                                  strokeWidth: 0.3,
-                                  color: Colors.cyan,
-                                ));
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 0.3,
+                                    color: Colors.cyan,
+                                  ),
+                                );
                               default:
                                 if (snapshot.hasError) {
-                                  return Center(child: Text("Error"));
+                                  return const Center(
+                                    child: Text(
+                                        'Error with TextBooks Data or\n Check Internet Connection'),
+                                  );
                                 } else {
-                                  return Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.all(widget.size * 8.0),
-                                        child: Text(
-                                          "Flash News",
-                                          style: secondHeadingTextStyle(
-                                              color: Colors.grey,
-                                              size: widget.size),
-                                        ),
-                                      ),
-                                      CarouselSlider(
-                                          items: List.generate(
-                                              Favourites!.length, (int index) {
-                                            final BranchNew = Favourites[index];
+                                  final filteredNews =
+                                      BranchNews?.take(3).toList() ?? [];
 
-                                            return Row(
-                                              children: [
-                                                Expanded(
-                                                  child: InkWell(
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left:
-                                                              widget.size * 20),
-                                                      child: Text(
-                                                        BranchNew.heading,
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize:
-                                                                widget.size *
-                                                                    20),
-                                                        maxLines: 3,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
+                                  if (filteredNews.isNotEmpty) {
+                                    return SizedBox(
+                                      height: 110,
+                                      child: ListView(
+                                        scrollDirection: Axis.horizontal,
+                                        children: filteredNews.map((BranchNew) {
+                                          if (BranchNew.photoUrl.isNotEmpty) {
+                                            final Uri uri =
+                                                Uri.parse(BranchNew.photoUrl);
+                                            final String fileName =
+                                                uri.pathSegments.last;
+                                            var name = fileName.split("/").last;
+                                            file = File(
+                                                "${folderPath}/news/$name");
+                                          }
+                                          return InkWell(
+                                            child: VisibilityDetector(
+                                              key: Key("${widget.branch}News"), // Give a unique key to your widget
+                                              onVisibilityChanged: (info) {
+                                                if (info.visibleFraction == 1.0) {
+                                                  FirebaseFirestore.instance
+                                                      .collection(widget.branch)
+                                                      .doc("${widget.branch}News")
+                                                      .collection("${widget.branch}News")
+                                                      .doc(BranchNew.id)
+                                                      .update({
+                                                    "isViewed": FieldValue.arrayUnion([fullUserId()])
+                                                  });
+
+                                              };
+                                                },
+                                              child: Padding(
+                                                padding: EdgeInsets.only(left: 10),
+                                                child: Container(
+                                                  width: 320,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(15),
+                                                      border: Border.all(
+                                                          color: Colors.white12)),
+                                                  child: Row(
+                                                    children: [
+                                                      Flexible(
+                                                        flex:2,
+                                                        child: SingleChildScrollView(
+                                                          child: Column(
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  Expanded(child: BranchNew
+                                                                      .heading.isNotEmpty?Text(
+                                                                    " ${BranchNew.heading}",
+                                                                    style: TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize:
+                                                                      widget.size *
+                                                                          16,
+                                                                      fontWeight:
+                                                                      FontWeight.w600,
+                                                                    ),
+                                                                  ):Text(
+                                                                    " ${widget.branch} (SRKR)",
+                                                                    style: TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize:
+                                                                      widget.size *
+                                                                          16,
+                                                                      fontWeight:
+                                                                      FontWeight.w400,
+                                                                    ),
+                                                                  )),
+
+                                                                  if (isUser())
+                                                                    PopupMenuButton(
+                                                                      icon: Icon(
+                                                                        Icons.more_vert,
+                                                                        color: Colors.white,
+                                                                        size: widget.size *
+                                                                            16,
+                                                                      ),
+                                                                      // Callback that sets the selected popup menu item.
+                                                                      onSelected:
+                                                                          (item) async {
+                                                                        if (item ==
+                                                                            "edit") {
+                                                                          Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder:
+                                                                                  (context) =>
+                                                                                  NewsCreator(
+                                                                                    branch: widget
+                                                                                        .branch,
+                                                                                    NewsId:
+                                                                                    BranchNew
+                                                                                        .id,
+                                                                                    heading:
+                                                                                    BranchNew
+                                                                                        .heading,
+                                                                                    description:
+                                                                                    BranchNew
+                                                                                        .description,
+                                                                                    photoUrl:
+                                                                                    BranchNew
+                                                                                        .photoUrl,
+                                                                                  ),
+                                                                            ),
+                                                                          );
+                                                                        } else if (item ==
+                                                                            "delete") {
+                                                                          if (BranchNew
+                                                                              .photoUrl
+                                                                              .isNotEmpty) {
+                                                                            final Uri uri =
+                                                                            Uri.parse(
+                                                                                BranchNew
+                                                                                    .photoUrl);
+                                                                            final String
+                                                                            fileName =
+                                                                                uri.pathSegments
+                                                                                    .last;
+                                                                            final Reference
+                                                                            ref =
+                                                                            FirebaseStorage
+                                                                                .instance
+                                                                                .ref()
+                                                                                .child(
+                                                                                "/${fileName}");
+                                                                            try {
+                                                                              await ref
+                                                                                  .delete();
+                                                                              showToastText(
+                                                                                  'Image deleted successfully');
+                                                                            } catch (e) {
+                                                                              showToastText(
+                                                                                  'Error deleting image: $e');
+                                                                            }
+                                                                          }
+                                                                          FirebaseFirestore
+                                                                              .instance
+                                                                              .collection(
+                                                                              widget
+                                                                                  .branch)
+                                                                              .doc(
+                                                                              "${widget.branch}News")
+                                                                              .collection(
+                                                                              "${widget.branch}News")
+                                                                              .doc(BranchNew
+                                                                              .id)
+                                                                              .delete();
+                                                                          pushNotificationsSpecificPerson(
+                                                                            fullUserId(),
+                                                                            " ${BranchNew.heading} Deleted from News",
+                                                                            "",
+                                                                          );
+                                                                        }
+                                                                      },
+                                                                      itemBuilder: (BuildContext
+                                                                      context) =>
+                                                                      <PopupMenuEntry>[
+                                                                        const PopupMenuItem(
+                                                                          value: "edit",
+                                                                          child:
+                                                                          Text('Edit'),
+                                                                        ),
+                                                                        const PopupMenuItem(
+                                                                          value: "delete",
+                                                                          child: Text(
+                                                                              'Delete'),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                ],
+                                                              ),
+                                                              if (BranchNew.description
+                                                                  .isNotEmpty)
+                                                                Padding(
+                                                                  padding:
+                                                                      EdgeInsets.symmetric(
+                                                                          horizontal:widget.size *
+                                                                              8),
+                                                                  child:
+                                                                      StyledTextWidget(
+                                                                    text: BranchNew
+                                                                        .description,
+                                                                    fontSize:
+                                                                        widget.size *
+                                                                            12,
+                                                                    fontWeight:
+                                                                        FontWeight.w600,
+                                                                        color: Colors.white.withOpacity(0.8),
+                                                                  ),
+                                                                ),
+                                                              Padding(
+                                                                padding:
+                                                                    EdgeInsets.only(
+                                                                  left: widget.size * 8,
+                                                                  bottom:
+                                                                      widget.size * 8,
+                                                                ),
+                                                                child: Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      BranchNew.id
+                                                                                  .split(
+                                                                                      "-")
+                                                                                  .first
+                                                                                  .length <
+                                                                              12
+                                                                          ? "~ ${BranchNew.id.split('-').first}"
+                                                                          : "No Date",
+                                                                      style: TextStyle(
+                                                                        color: Colors.white70,
+                                                                        fontSize:
+                                                                            widget.size *
+                                                                                10,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets.only(right: 20),
+                                                                      child: Icon(BranchNew.isViewed.contains(fullUserId())?Icons.remove_red_eye:Icons.remove_red_eye_outlined,size: 14,color: Colors.white70,),
+                                                                    ),
+
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
                                                       ),
-                                                    ),
-                                                    onTap: () {
-                                                      if (BranchNew
-                                                          .Url.isNotEmpty) {
-                                                        ExternalLaunchUrl(
-                                                            BranchNew.Url);
-                                                      } else {
-                                                        showToastText(
-                                                            "No Url Found");
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                                if (isUser())
-                                                  PopupMenuButton(
-                                                    icon: Icon(
-                                                      Icons.more_vert,
-                                                      color: Colors.white,
-                                                      size: widget.size * 25,
-                                                    ),
-                                                    // Callback that sets the selected popup menu item.
-                                                    onSelected: (item) {
-                                                      if (item == "edit") {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        flashNewsCreator(
-                                                                          size:
-                                                                              widget.size,
-                                                                          heading:
-                                                                              BranchNew.heading,
-                                                                          link:
-                                                                              BranchNew.Url,
-                                                                          NewsId:
-                                                                              BranchNew.id,
-                                                                        )));
-                                                      } else if (item ==
-                                                          "delete") {
-                                                        FirebaseFirestore
-                                                            .instance
-                                                            .collection(
-                                                                "srkrPage")
-                                                            .doc("flashNews")
-                                                            .collection(
-                                                                "flashNews")
-                                                            .doc(BranchNew.id)
-                                                            .delete();
-                                                      }
-                                                    },
-                                                    itemBuilder: (BuildContext
-                                                            context) =>
-                                                        <PopupMenuEntry>[
-                                                      const PopupMenuItem(
-                                                        value: "edit",
-                                                        child: Text('Edit'),
-                                                      ),
-                                                      const PopupMenuItem(
-                                                        value: "delete",
-                                                        child: Text('Delete'),
+                                                      if(BranchNew
+                                                          .photoUrl.isNotEmpty)Flexible(
+                                                        child:Image.file(file),
                                                       ),
                                                     ],
                                                   ),
-                                              ],
-                                            );
-                                          }),
-                                          options: CarouselOptions(
-                                            viewportFraction: 1,
-                                            enlargeCenterPage: true,
-                                            height: widget.size * 60,
-                                            autoPlayAnimationDuration:
-                                                Duration(milliseconds: 1800),
-                                            autoPlay: Favourites.length > 1
-                                                ? true
-                                                : false,
-                                          )),
-                                    ],
-                                  );
+                                                ),
+                                              ),
+                                            ),
+                                            onTap: () async {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ImageZoom(
+                                                    size: widget.size,
+                                                    url: "",
+                                                    file: file,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        }).toList(),
+                                      ),
+                                    );
+                                  } else {
+                                    return Container(); // No data, don't show anything
+                                  }
                                 }
                             }
-                          }),
-                      Padding(
-                        padding: EdgeInsets.all(widget.size * 8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white24,
-                              borderRadius:
-                                  BorderRadius.circular(widget.size * 40)),
+                          },
+                        ),
+                        StreamBuilder<List<UpdateConvertor>>(
+                          stream: readUpdate(widget.branch),
+                          builder: (context, snapshot) {
+                            final BranchNews = snapshot.data;
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.waiting:
+                                return const Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 0.3,
+                                    color: Colors.cyan,
+                                  ),
+                                );
+                              default:
+                                if (snapshot.hasError) {
+                                  return const Center(
+                                    child: Text(
+                                        'Error with TextBooks Data or\n Check Internet Connection'),
+                                  );
+                                } else {
+                                  final filteredNews =
+                                      BranchNews?.take(3).toList() ?? [];
+
+                                  if (filteredNews.isNotEmpty) {
+                                    return SizedBox(
+                                      height: 110,
+                                      child: ListView(
+                                        scrollDirection: Axis.horizontal,
+                                        children: filteredNews.map((BranchNew) {
+                                          if (BranchNew.photoUrl.isNotEmpty) {
+                                            final Uri uri =
+                                            Uri.parse(BranchNew.photoUrl);
+                                            final String fileName =
+                                                uri.pathSegments.last;
+                                            var name = fileName.split("/").last;
+                                            file = File(
+                                                "${folderPath}/updates/$name");
+                                          }
+                                          return InkWell(
+                                            child: VisibilityDetector(
+                                              key: Key("update"), // Give a unique key to your widget
+                                              onVisibilityChanged: (info) {
+                                                if (info.visibleFraction == 1.0) {
+                                                  FirebaseFirestore.instance
+                                                      .collection("update")
+                                                      .doc(BranchNew.id)
+                                                      .update({
+                                                    "isViewed": FieldValue.arrayUnion([fullUserId()])
+                                                  });
+
+                                                };
+                                              },
+                                              child: Padding(
+                                                padding: EdgeInsets.only(left: 10),
+                                                child: Container(
+                                                  width: 320,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius.circular(15),
+                                                      border: Border.all(
+                                                          color: Colors.white12)),
+                                                  child: Row(
+                                                    children: [
+                                                      Flexible(
+                                                        flex:2,
+                                                        child: SingleChildScrollView(
+                                                          child: Column(
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  Expanded(child: BranchNew
+                                                                      .heading.isNotEmpty?Text(
+                                                                    " ${BranchNew.heading}",
+                                                                    style: TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize:
+                                                                      widget.size *
+                                                                          16,
+                                                                      fontWeight:
+                                                                      FontWeight.w600,
+                                                                    ),
+                                                                  ):Text(
+                                                                    " ${widget.branch} (SRKR)",
+                                                                    style: TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize:
+                                                                      widget.size *
+                                                                          16,
+                                                                      fontWeight:
+                                                                      FontWeight.w400,
+                                                                    ),
+                                                                  )),
+
+                                                                  if (isUser())
+                                                                    PopupMenuButton(
+                                                                      icon: Icon(
+                                                                        Icons.more_vert,
+                                                                        color: Colors.white,
+                                                                        size: widget.size *
+                                                                            16,
+                                                                      ),
+                                                                      // Callback that sets the selected popup menu item.
+                                                                      onSelected:
+                                                                          (item) async {
+                                                                        if (item ==
+                                                                            "edit") {
+                                                                          Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder:
+                                                                                  (context) =>
+                                                                                  NewsCreator(
+                                                                                    branch: widget
+                                                                                        .branch,
+                                                                                    NewsId:
+                                                                                    BranchNew
+                                                                                        .id,
+                                                                                    heading:
+                                                                                    BranchNew
+                                                                                        .heading,
+                                                                                    description:
+                                                                                    BranchNew
+                                                                                        .description,
+                                                                                    photoUrl:
+                                                                                    BranchNew
+                                                                                        .photoUrl,
+                                                                                  ),
+                                                                            ),
+                                                                          );
+                                                                        } else if (item ==
+                                                                            "delete") {
+                                                                          if (BranchNew
+                                                                              .photoUrl
+                                                                              .isNotEmpty) {
+                                                                            final Uri uri =
+                                                                            Uri.parse(
+                                                                                BranchNew
+                                                                                    .photoUrl);
+                                                                            final String
+                                                                            fileName =
+                                                                                uri.pathSegments
+                                                                                    .last;
+                                                                            final Reference
+                                                                            ref =
+                                                                            FirebaseStorage
+                                                                                .instance
+                                                                                .ref()
+                                                                                .child(
+                                                                                "/${fileName}");
+                                                                            try {
+                                                                              await ref
+                                                                                  .delete();
+                                                                              showToastText(
+                                                                                  'Image deleted successfully');
+                                                                            } catch (e) {
+                                                                              showToastText(
+                                                                                  'Error deleting image: $e');
+                                                                            }
+                                                                          }
+                                                                          FirebaseFirestore
+                                                                              .instance
+                                                                              .collection(
+                                                                              widget
+                                                                                  .branch)
+                                                                              .doc(
+                                                                              "${widget.branch}News")
+                                                                              .collection(
+                                                                              "${widget.branch}News")
+                                                                              .doc(BranchNew
+                                                                              .id)
+                                                                              .delete();
+                                                                          pushNotificationsSpecificPerson(
+                                                                            fullUserId(),
+                                                                            " ${BranchNew.heading} Deleted from News",
+                                                                            "",
+                                                                          );
+                                                                        }
+                                                                      },
+                                                                      itemBuilder: (BuildContext
+                                                                      context) =>
+                                                                      <PopupMenuEntry>[
+                                                                        const PopupMenuItem(
+                                                                          value: "edit",
+                                                                          child:
+                                                                          Text('Edit'),
+                                                                        ),
+                                                                        const PopupMenuItem(
+                                                                          value: "delete",
+                                                                          child: Text(
+                                                                              'Delete'),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                ],
+                                                              ),
+                                                              if (BranchNew.description
+                                                                  .isNotEmpty)
+                                                                Padding(
+                                                                  padding:
+                                                                  EdgeInsets.symmetric(
+                                                                      horizontal:widget.size *
+                                                                          8),
+                                                                  child:
+                                                                  StyledTextWidget(
+                                                                    text: BranchNew
+                                                                        .description,
+                                                                    fontSize:
+                                                                    widget.size *
+                                                                        12,
+                                                                    fontWeight:
+                                                                    FontWeight.w600,
+                                                                    color: Colors.white.withOpacity(0.8),
+                                                                  ),
+                                                                ),
+                                                              Padding(
+                                                                padding:
+                                                                EdgeInsets.only(
+                                                                  left: widget.size * 8,
+                                                                  bottom:
+                                                                  widget.size * 8,
+                                                                ),
+                                                                child: Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      BranchNew.id
+                                                                          .split(
+                                                                          "-")
+                                                                          .first
+                                                                          .length <
+                                                                          12
+                                                                          ? "~ ${BranchNew.id.split('-').first}"
+                                                                          : "No Date",
+                                                                      style: TextStyle(
+                                                                        color: Colors.white70,
+                                                                        fontSize:
+                                                                        widget.size *
+                                                                            10,
+                                                                        fontWeight:
+                                                                        FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets.only(right: 20),
+                                                                      child: Icon(BranchNew.isViewed.contains(fullUserId())?Icons.remove_red_eye:Icons.remove_red_eye_outlined,size: 14,color: Colors.white70,),
+                                                                    ),
+
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      if(BranchNew
+                                                          .photoUrl.length>3)Flexible(
+                                                        child:Image.file(file),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            onTap: () async {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ImageZoom(
+                                                        size: widget.size,
+                                                        url: "",
+                                                        file: file,
+                                                      ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        }).toList(),
+                                      ),
+                                    );
+                                  } else {
+                                    return Container(); // No data, don't show anything
+                                  }
+                                }
+                            }
+                          },
+                        ),
+                        StreamBuilder<List<FlashNewsConvertor>>(
+                            stream: readSRKRFlashNews(),
+                            builder: (context, snapshot) {
+                              final Favourites = snapshot.data;
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.waiting:
+                                  return const Center(
+                                      child: CircularProgressIndicator(
+                                    strokeWidth: 0.3,
+                                    color: Colors.cyan,
+                                  ));
+                                default:
+                                  if (snapshot.hasError) {
+                                    return Center(child: Text("Error"));
+                                  } else {
+                                    return Favourites!.isNotEmpty?
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              EdgeInsets.all(widget.size * 8.0),
+                                          child: Text(
+                                            "Flash News",
+                                            style: secondHeadingTextStyle(
+                                                color: Colors.grey,
+                                                size: widget.size),
+                                          ),
+                                        ),
+                                        CarouselSlider(
+                                            items: List.generate(
+                                                Favourites!.length,
+                                                (int index) {
+                                              final BranchNew =
+                                                  Favourites[index];
+
+                                              return Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: InkWell(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: widget
+                                                                        .size *
+                                                                    20),
+                                                        child: Text(
+                                                          BranchNew.heading,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontFamily:
+                                                                  "test",
+                                                              fontSize:
+                                                                  widget.size *
+                                                                      16),
+                                                          maxLines: 3,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                      onTap: () {
+                                                        if (BranchNew
+                                                            .Url.isNotEmpty) {
+                                                          ExternalLaunchUrl(
+                                                              BranchNew.Url);
+                                                        } else {
+                                                          showToastText(
+                                                              "No Url Found");
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                  if (isUser())
+                                                    PopupMenuButton(
+                                                      icon: Icon(
+                                                        Icons.more_vert,
+                                                        color: Colors.white,
+                                                        size: widget.size * 25,
+                                                      ),
+                                                      // Callback that sets the selected popup menu item.
+                                                      onSelected: (item) {
+                                                        if (item == "edit") {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          flashNewsCreator(
+                                                                            size:
+                                                                                widget.size,
+                                                                            heading:
+                                                                                BranchNew.heading,
+                                                                            link:
+                                                                                BranchNew.Url,
+                                                                            NewsId:
+                                                                                BranchNew.id,
+                                                                          )));
+                                                        } else if (item ==
+                                                            "delete") {
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  "srkrPage")
+                                                              .doc("flashNews")
+                                                              .collection(
+                                                                  "flashNews")
+                                                              .doc(BranchNew.id)
+                                                              .delete();
+                                                        }
+                                                      },
+                                                      itemBuilder: (BuildContext
+                                                              context) =>
+                                                          <PopupMenuEntry>[
+                                                        const PopupMenuItem(
+                                                          value: "edit",
+                                                          child: Text('Edit'),
+                                                        ),
+                                                        const PopupMenuItem(
+                                                          value: "delete",
+                                                          child: Text('Delete'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                ],
+                                              );
+                                            }),
+                                            options: CarouselOptions(
+                                              viewportFraction: 1,
+                                              enlargeCenterPage: true,
+                                              height: widget.size * 60,
+                                              autoPlayAnimationDuration:
+                                                  Duration(milliseconds: 1800),
+                                              autoPlay: Favourites.length > 1
+                                                  ? true
+                                                  : false,
+                                            )),
+                                      ],
+                                    ):
+                                    Container();
+                                  }
+                              }
+                            }),
+                        Row(
+                          children: [
+                            Flexible(
+                              flex: 4,
+                              child: Padding(
+                                padding: EdgeInsets.all(widget.size * 8.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white24,
+                                      borderRadius: BorderRadius.circular(
+                                          widget.size * 30)),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(widget.size * 5),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        StreamBuilder<List<FlashConvertor>>(
+                                          stream: readFlashNews(widget.branch),
+                                          builder: (context, flashSnapshot) {
+                                            final flashData =
+                                                flashSnapshot.data;
+
+                                            return StreamBuilder<
+                                                List<LabSubjectsConvertor>>(
+                                              stream: readLabSubjects(
+                                                  widget.branch),
+                                              builder: (context, labSnapshot) {
+                                                final labData =
+                                                    labSnapshot.data;
+
+                                                final combinedData =
+                                                    <dynamic>[];
+                                                if (flashData != null) {
+                                                  combinedData
+                                                      .addAll(flashData);
+                                                }
+                                                if (labData != null) {
+                                                  combinedData.addAll(labData);
+                                                }
+
+                                                switch (labSnapshot
+                                                    .connectionState) {
+                                                  case ConnectionState.waiting:
+                                                    return Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        strokeWidth: 0.3,
+                                                        color: Colors.cyan,
+                                                      ),
+                                                    );
+                                                  default:
+                                                    if (labSnapshot.hasError) {
+                                                      return Center(
+                                                          child: Text("Error"));
+                                                    } else {
+                                                      List<dynamic>
+                                                          filteredItems =
+                                                          combinedData
+                                                              .where((item) => item
+                                                                  .regulation
+                                                                  .toString()
+                                                                  .startsWith(
+                                                                      widget.reg ??
+                                                                          ""))
+                                                              .toList();
+
+                                                      if (filteredItems
+                                                          .isNotEmpty) {
+                                                        return GridView.builder(
+                                                          shrinkWrap: true,
+                                                          gridDelegate:
+                                                              SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisSpacing:
+                                                                widget.size *
+                                                                    15,
+                                                            childAspectRatio:
+                                                                5 / 4,
+                                                            crossAxisCount: 4,
+                                                          ),
+                                                          itemCount:
+                                                              filteredItems
+                                                                  .length,
+                                                          itemBuilder: (context,
+                                                              int index) {
+                                                            final itemData =
+                                                                filteredItems[
+                                                                    index];
+                                                            final isFlashConvertor =
+                                                                itemData
+                                                                    is FlashConvertor;
+
+                                                            return InkWell(
+                                                              child: Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                          widget.size *
+                                                                              25),
+                                                                  border: Border.all(
+                                                                      color: Colors
+                                                                          .white30),
+                                                                  color: isFlashConvertor
+                                                                      ? Colors
+                                                                          .black
+                                                                      : Colors
+                                                                          .white, // Change the color here
+                                                                ),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .symmetric(
+                                                                    vertical:
+                                                                        widget.size *
+                                                                            5,
+                                                                    horizontal:
+                                                                        widget.size *
+                                                                            8,
+                                                                  ),
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      itemData
+                                                                          .heading
+                                                                          .split(
+                                                                              ";")
+                                                                          .first,
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: isFlashConvertor
+                                                                            ? Colors.purpleAccent
+                                                                            : Colors.purpleAccent,
+                                                                        // Change the text color here
+                                                                        fontSize:
+                                                                            widget.size *
+                                                                                18,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                  context,
+                                                                  PageRouteBuilder(
+                                                                    transitionDuration:
+                                                                        const Duration(
+                                                                            milliseconds:
+                                                                                300),
+                                                                    pageBuilder: (context,
+                                                                            animation,
+                                                                            secondaryAnimation) =>
+                                                                        subjectUnitsData(
+                                                                      reg: itemData
+                                                                          .regulation,
+                                                                      size: widget
+                                                                          .size,
+                                                                      branch: widget
+                                                                          .branch,
+                                                                      ID: itemData
+                                                                          .id,
+                                                                      mode: isFlashConvertor
+                                                                          ? "Subjects"
+                                                                          : "LabSubjects",
+                                                                      name: itemData
+                                                                          .heading,
+                                                                      description:
+                                                                          itemData
+                                                                              .description,
+                                                                    ),
+                                                                    transitionsBuilder: (context,
+                                                                        animation,
+                                                                        secondaryAnimation,
+                                                                        child) {
+                                                                      final fadeTransition =
+                                                                          FadeTransition(
+                                                                        opacity:
+                                                                            animation,
+                                                                        child:
+                                                                            child,
+                                                                      );
+
+                                                                      return Container(
+                                                                        color: Colors
+                                                                            .black
+                                                                            .withOpacity(animation.value),
+                                                                        child:
+                                                                            AnimatedOpacity(
+                                                                          duration:
+                                                                              Duration(milliseconds: 300),
+                                                                          opacity: animation.value.clamp(
+                                                                              0.3,
+                                                                              1.0),
+                                                                          child:
+                                                                              fadeTransition,
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                        );
+                                                      } else {
+                                                        return Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .tealAccent),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        widget.size *
+                                                                            20),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .all(widget
+                                                                        .size *
+                                                                    8.0),
+                                                            child: Text(
+                                                              "No Subjects in this Regulation",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                    }
+                                                }
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Flexible(
+                                flex: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: Column(
+                                    children: [
+                                      InkWell(
+                                        child: Container(
+                                          height: widget.size * 55,
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                                widget.size * 20),
+                                            color:
+                                                Colors.white.withOpacity(0.2),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "SUB",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: widget.size * 25,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: "test"),
+                                            ),
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            PageRouteBuilder(
+                                              transitionDuration:
+                                                  const Duration(
+                                                      milliseconds: 300),
+                                              pageBuilder: (context, animation,
+                                                      secondaryAnimation) =>
+                                                  Subjects(
+                                                branch: widget.branch,
+                                                reg: widget.reg,
+                                                width: widget.size,
+                                                height: widget.size,
+                                                size: widget.size,
+                                              ),
+                                              transitionsBuilder: (context,
+                                                  animation,
+                                                  secondaryAnimation,
+                                                  child) {
+                                                final fadeTransition =
+                                                    FadeTransition(
+                                                  opacity: animation,
+                                                  child: child,
+                                                );
+
+                                                return Container(
+                                                  color: Colors.black
+                                                      .withOpacity(
+                                                          animation.value),
+                                                  child: AnimatedOpacity(
+                                                      duration: Duration(
+                                                          milliseconds: 300),
+                                                      opacity: animation.value
+                                                          .clamp(0.3, 1.0),
+                                                      child: fadeTransition),
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      InkWell(
+                                        child: Container(
+                                          height: widget.size * 55,
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                                widget.size * 20),
+                                            color:
+                                                Colors.white.withOpacity(0.2),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "LAB",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: widget.size * 25,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: "test"),
+                                            ),
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            PageRouteBuilder(
+                                              transitionDuration:
+                                                  const Duration(
+                                                      milliseconds: 300),
+                                              pageBuilder: (context, animation,
+                                                      secondaryAnimation) =>
+                                                  LabSubjects(
+                                                branch: widget.branch,
+                                                reg: widget.reg,
+                                                width: widget.size,
+                                                height: widget.size,
+                                                size: widget.size,
+                                              ),
+                                              transitionsBuilder: (context,
+                                                  animation,
+                                                  secondaryAnimation,
+                                                  child) {
+                                                final fadeTransition =
+                                                    FadeTransition(
+                                                  opacity: animation,
+                                                  child: child,
+                                                );
+
+                                                return Container(
+                                                  color: Colors.black
+                                                      .withOpacity(
+                                                          animation.value),
+                                                  child: AnimatedOpacity(
+                                                      duration: Duration(
+                                                          milliseconds: 300),
+                                                      opacity: animation.value
+                                                          .clamp(0.3, 1.0),
+                                                      child: fadeTransition),
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ))
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(widget.size * 8.0),
                           child: Padding(
-                            padding: EdgeInsets.only(
-                                top: widget.size * 10, right: widget.size * 10),
+                            padding: EdgeInsets.only(top: widget.size * 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 InkWell(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: widget.size * 50,
-                                        width: widget.size * 50,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white30,
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 25),
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/timeTableIcon.png"))),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.all(widget.size * 5.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          widget.size * 15),
+                                      color: Colors.white.withOpacity(0.2),
+                                    ),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          "Time Table",
+                                          "Time\nTable",
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: widget.size * 16,
-                                              fontWeight: FontWeight.w600),
+                                              fontSize: widget.size * 20,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                      )
-                                    ],
+                                      ),
+                                    ),
                                   ),
                                   onTap: () {
                                     Navigator.push(
@@ -1142,32 +1720,24 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 ),
                                 InkWell(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: widget.size * 50,
-                                        width: widget.size * 50,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white30,
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 25),
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/subjects.png"),
-                                                fit: BoxFit.cover)),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.all(widget.size * 5.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          widget.size * 15),
+                                      color: Colors.white.withOpacity(0.2),
+                                    ),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          "Sub",
+                                          "Syllabus",
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: widget.size * 16,
-                                              fontWeight: FontWeight.w600),
+                                              fontSize: widget.size * 20,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                      )
-                                    ],
+                                      ),
+                                    ),
                                   ),
                                   onTap: () {
                                     Navigator.push(
@@ -1177,11 +1747,9 @@ class _HomePageState extends State<HomePage> {
                                             const Duration(milliseconds: 300),
                                         pageBuilder: (context, animation,
                                                 secondaryAnimation) =>
-                                            Subjects(
+                                            syllabusPage(
                                           branch: widget.branch,
                                           reg: widget.reg,
-                                          width: widget.size,
-                                          height: widget.size,
                                           size: widget.size,
                                         ),
                                         transitionsBuilder: (context, animation,
@@ -1207,31 +1775,24 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 ),
                                 InkWell(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: widget.size * 50,
-                                        width: widget.size * 50,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 25),
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/lab.png"))),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.all(widget.size * 5.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          widget.size * 15),
+                                      color: Colors.white.withOpacity(0.2),
+                                    ),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          "Lab",
+                                          "Model\nPaper",
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: widget.size * 16,
-                                              fontWeight: FontWeight.w600),
+                                              fontSize: widget.size * 20,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                      )
-                                    ],
+                                      ),
+                                    ),
                                   ),
                                   onTap: () {
                                     Navigator.push(
@@ -1241,11 +1802,9 @@ class _HomePageState extends State<HomePage> {
                                             const Duration(milliseconds: 300),
                                         pageBuilder: (context, animation,
                                                 secondaryAnimation) =>
-                                            LabSubjects(
+                                            ModalPapersPage(
                                           branch: widget.branch,
                                           reg: widget.reg,
-                                          width: widget.size,
-                                          height: widget.size,
                                           size: widget.size,
                                         ),
                                         transitionsBuilder: (context, animation,
@@ -1271,31 +1830,24 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 ),
                                 InkWell(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: widget.size * 50,
-                                        width: widget.size * 50,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 25),
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/books.png"))),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.all(widget.size * 5.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          widget.size * 15),
+                                      color: Colors.white.withOpacity(0.2),
+                                    ),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
                                         child: Text(
                                           "Books",
                                           style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: widget.size * 16,
-                                              fontWeight: FontWeight.w600),
+                                              fontSize: widget.size * 20,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                      )
-                                    ],
+                                      ),
+                                    ),
                                   ),
                                   onTap: () {
                                     Navigator.push(
@@ -1348,664 +1900,607 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(widget.size * 8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white24,
-                              borderRadius:
-                                  BorderRadius.circular(widget.size * 40)),
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                top: widget.size * 10, left: widget.size * 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                InkWell(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: widget.size * 50,
-                                        width: widget.size * 50,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white30,
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 25),
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/subjects.png"),
-                                                fit: BoxFit.cover)),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.all(widget.size * 5.0),
-                                        child: Text(
-                                          "Syllabus",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: widget.size * 16,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        transitionDuration:
-                                            const Duration(milliseconds: 300),
-                                        pageBuilder: (context, animation,
-                                                secondaryAnimation) =>
-                                            syllabusPage(
-                                          branch: widget.branch,
-                                          reg: widget.reg,
-                                          size: widget.size,
-                                        ),
-                                        transitionsBuilder: (context, animation,
-                                            secondaryAnimation, child) {
-                                          final fadeTransition = FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          );
+                        StreamBuilder<List<FavouriteSubjectsConvertor>>(
+                          stream: readFavouriteSubjects(),
+                          builder: (context, snapshot1) {
+                            final favourites1 = snapshot1.data;
 
-                                          return Container(
-                                            color: Colors.black
-                                                .withOpacity(animation.value),
-                                            child: AnimatedOpacity(
-                                                duration:
-                                                    Duration(milliseconds: 300),
-                                                opacity: animation.value
-                                                    .clamp(0.3, 1.0),
-                                                child: fadeTransition),
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                ),
-                                InkWell(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: widget.size * 50,
-                                        width: widget.size * 50,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 25),
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/lab.png"))),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.all(widget.size * 5.0),
-                                        child: Text(
-                                          "Modal Papers",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: widget.size * 16,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        transitionDuration:
-                                            const Duration(milliseconds: 300),
-                                        pageBuilder: (context, animation,
-                                                secondaryAnimation) =>
-                                            ModalPapersPage(
-                                          branch: widget.branch,
-                                          reg: widget.reg,
-                                          size: widget.size,
-                                        ),
-                                        transitionsBuilder: (context, animation,
-                                            secondaryAnimation, child) {
-                                          final fadeTransition = FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          );
+                            return StreamBuilder<
+                                List<FavouriteLabSubjectsConvertor>>(
+                              stream: readFavouriteLabSubjects(),
+                              builder: (context, snapshot2) {
+                                final favourites2 = snapshot2.data;
 
-                                          return Container(
-                                            color: Colors.black
-                                                .withOpacity(animation.value),
-                                            child: AnimatedOpacity(
-                                                duration:
-                                                    Duration(milliseconds: 300),
-                                                opacity: animation.value
-                                                    .clamp(0.3, 1.0),
-                                                child: fadeTransition),
-                                          );
-                                        },
+                                if (snapshot1.connectionState ==
+                                        ConnectionState.waiting ||
+                                    snapshot2.connectionState ==
+                                        ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 0.3,
+                                      color: Colors.cyan,
+                                    ),
+                                  );
+                                } else if (snapshot1.hasError ||
+                                    snapshot2.hasError) {
+                                  return Center(child: Text("Error"));
+                                } else if ((favourites1 != null &&
+                                        favourites1.isNotEmpty) ||
+                                    (favourites2 != null &&
+                                        favourites2.isNotEmpty)) {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: widget.size * 5,
+                                          horizontal: widget.size * 10,
+                                        ),
+                                        child: Text(
+                                          "Short Cut",
+                                          style: secondHeadingTextStyle(
+                                              size: widget.size),
+                                        ),
                                       ),
-                                    );
-                                  },
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white24,
-                              borderRadius:
-                                  BorderRadius.circular(widget.size * 40)),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: widget.size * 6,
-                                horizontal: widget.size * 20),
-                            child: Text(
-                              "Exam Notification",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: widget.size * 30),
-                            ),
-                          ),
-                        ),
-                        onTap: () {
-                          ExternalLaunchUrl(
-                              "http://www.srkrexams.in/Login.aspx");
-                        },
-                      )
-                    ],
-                  ),
-                ),
-                SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: widget.size * 10,
-                      ),
-                      InkWell(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(widget.size * 10),
-                              border: Border.all(color: Colors.white38)),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: widget.size * 3,
-                                horizontal: widget.size * 15),
-                            child: Text(
-                              "Your Regulation : ${widget.reg}",
-                              style: TextStyle(
-                                  color: Colors.white38,
-                                  fontSize: widget.size * 20,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                        ),
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return Dialog(
-                                backgroundColor: Colors.black.withOpacity(0.8),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        widget.size * 20)),
-                                elevation: 16,
-                                child: ListView(
-                                  physics: BouncingScrollPhysics(),
-                                  shrinkWrap: true,
-                                  children: <Widget>[
-                                    StreamBuilder<List<RegulationConvertor>>(
-                                        stream: readRegulation(widget.branch),
-                                        builder: (context, snapshot) {
-                                          final user = snapshot.data;
-                                          switch (snapshot.connectionState) {
-                                            case ConnectionState.waiting:
-                                              return const Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                strokeWidth: 0.3,
-                                                color: Colors.cyan,
-                                              ));
-                                            default:
-                                              if (snapshot.hasError) {
-                                                return const Center(
-                                                    child: Text(
-                                                        'Error with TextBooks Data or\n Check Internet Connection'));
-                                              } else {
-                                                return Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal:
-                                                          widget.size * 20),
+                                      if (favourites1 != null &&
+                                          favourites1.isNotEmpty)
+                                        SizedBox(
+                                          height: widget.size * 70,
+                                          child: ListView.separated(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: favourites1.length,
+                                              itemBuilder:
+                                                  (context, int index) {
+                                                final Favourite =
+                                                    favourites1[index];
+                                                return InkWell(
                                                   child: Padding(
-                                                    padding: EdgeInsets.all(
-                                                        widget.size * 8.0),
-                                                    child: ListView.builder(
-                                                      physics:
-                                                          const NeverScrollableScrollPhysics(),
-                                                      shrinkWrap: true,
-                                                      itemCount: user!.length,
-                                                      itemBuilder:
-                                                          (context, int index) {
-                                                        final SubjectsData =
-                                                            user[index];
-                                                        return Center(
+                                                    padding: EdgeInsets.only(
+                                                        left: index == 0
+                                                            ? widget.size * 20
+                                                            : 0),
+                                                    child: Stack(
+                                                      children: [
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  top: 10.0,
+                                                                  right: 9),
+                                                          decoration: BoxDecoration(
+                                                              color: Colors
+                                                                  .white12,
+                                                              borderRadius: BorderRadius.all(
+                                                                  Radius.circular(
+                                                                      widget.size *
+                                                                          20))),
                                                           child: Padding(
-                                                            padding: EdgeInsets
-                                                                .all(widget
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        10,
+                                                                    horizontal:
+                                                                        25),
+                                                            child: Text(
+                                                              Favourite.name
+                                                                  .split(";")
+                                                                  .first,
+                                                              style: TextStyle(
+                                                                fontSize: widget
                                                                         .size *
-                                                                    3.0),
-                                                            child: InkWell(
-                                                              child: Text(
-                                                                SubjectsData.id
-                                                                    .toUpperCase(),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .amber,
-                                                                    fontSize:
-                                                                        widget.size *
-                                                                            30),
+                                                                    22.0,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
                                                               ),
-                                                              onTap: () {
-                                                                FirebaseFirestore
-                                                                    .instance
-                                                                    .collection(
-                                                                        "user")
-                                                                    .doc(
-                                                                        fullUserId())
-                                                                    .update({
-                                                                  "reg":
-                                                                      SubjectsData
-                                                                          .id
-                                                                });
-                                                                Navigator.pop(
-                                                                    context);
-                                                              },
                                                             ),
                                                           ),
-                                                        );
-                                                      },
+                                                        ),
+                                                        Positioned(
+                                                          top: 0,
+                                                          right: 0,
+                                                          child: InkWell(
+                                                            child: Icon(
+                                                              Icons
+                                                                  .highlight_remove_outlined,
+                                                              color:
+                                                                  Colors.orange,
+                                                              size:
+                                                                  widget.size *
+                                                                      25,
+                                                            ),
+                                                            onTap: () {
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) {
+                                                                  return Dialog(
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(widget.size *
+                                                                                20)),
+                                                                    elevation:
+                                                                        16,
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                Colors.white54),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(widget.size *
+                                                                                20),
+                                                                      ),
+                                                                      child:
+                                                                          ListView(
+                                                                        shrinkWrap:
+                                                                            true,
+                                                                        children: <Widget>[
+                                                                          SizedBox(
+                                                                              height: widget.size * 10),
+                                                                          SizedBox(
+                                                                              height: widget.size * 5),
+                                                                          Padding(
+                                                                            padding:
+                                                                                EdgeInsets.only(left: widget.size * 15),
+                                                                            child:
+                                                                                Text(
+                                                                              "Do you want Remove from Favourites",
+                                                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: widget.size * 20),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            height:
+                                                                                widget.size * 5,
+                                                                          ),
+                                                                          Center(
+                                                                            child:
+                                                                                Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                                              children: [
+                                                                                Spacer(),
+                                                                                InkWell(
+                                                                                  child: Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: Colors.white24,
+                                                                                      border: Border.all(color: Colors.white10),
+                                                                                      borderRadius: BorderRadius.circular(widget.size * 25),
+                                                                                    ),
+                                                                                    child: Padding(
+                                                                                      padding: EdgeInsets.only(left: widget.size * 15, right: widget.size * 15, top: widget.size * 5, bottom: widget.size * 5),
+                                                                                      child: Text(
+                                                                                        "Back",
+                                                                                        style: TextStyle(
+                                                                                          color: Colors.white,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  onTap: () {
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: widget.size * 10,
+                                                                                ),
+                                                                                InkWell(
+                                                                                  child: Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: Colors.red,
+                                                                                      border: Border.all(color: Colors.black),
+                                                                                      borderRadius: BorderRadius.circular(widget.size * 25),
+                                                                                    ),
+                                                                                    child: Padding(
+                                                                                      padding: EdgeInsets.only(left: widget.size * 15, right: widget.size * 15, top: widget.size * 5, bottom: widget.size * 5),
+                                                                                      child: Text(
+                                                                                        "Delete",
+                                                                                        style: TextStyle(color: Colors.white),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  onTap: () {
+                                                                                    FirebaseFirestore.instance.collection('user').doc(FirebaseAuth.instance.currentUser!.email!).collection("FavouriteSubject").doc(Favourite.id).delete();
+                                                                                    Navigator.pop(context);
+                                                                                    showToastText("${Favourite.name} as been removed");
+                                                                                  },
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: widget.size * 20,
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            height:
+                                                                                widget.size * 10,
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              );
+                                                            },
+                                                          ),
+                                                        )
+                                                      ],
                                                     ),
                                                   ),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                subjectUnitsData(
+                                                                  reg: Favourite
+                                                                      .name,
+                                                                  size: widget
+                                                                      .size,
+                                                                  branch:
+                                                                      Favourite
+                                                                          .branch,
+                                                                  ID: Favourite
+                                                                      .subjectId,
+                                                                  mode:
+                                                                      "Subjects",
+                                                                  name:
+                                                                      Favourite
+                                                                          .name,
+                                                                  description:
+                                                                      Favourite
+                                                                          .description,
+                                                                )));
+                                                  },
                                                 );
-                                              }
-                                          }
-                                        })
-                                  ],
+                                              },
+                                              separatorBuilder:
+                                                  (context, index) => SizedBox(
+                                                        width: widget.size * 6,
+                                                      )),
+                                        ),
+                                      if (favourites2 != null &&
+                                          favourites2.isNotEmpty)
+                                        SizedBox(
+                                          height: widget.size * 70,
+                                          child: ListView.separated(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: favourites2.length,
+                                              itemBuilder:
+                                                  (context, int index) {
+                                                final Favourite =
+                                                    favourites2[index];
+                                                return InkWell(
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: index == 0
+                                                            ? widget.size * 20
+                                                            : 0),
+                                                    child: Stack(
+                                                      children: [
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  top: 10.0,
+                                                                  right: 9),
+                                                          decoration: BoxDecoration(
+                                                              color: Colors
+                                                                  .white12,
+                                                              borderRadius: BorderRadius.all(
+                                                                  Radius.circular(
+                                                                      widget.size *
+                                                                          20))),
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        10,
+                                                                    horizontal:
+                                                                        25),
+                                                            child: Text(
+                                                              Favourite.name
+                                                                  .split(";")
+                                                                  .first,
+                                                              style: TextStyle(
+                                                                fontSize: widget
+                                                                        .size *
+                                                                    22.0,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Positioned(
+                                                          top: 0,
+                                                          right: 0,
+                                                          child: InkWell(
+                                                            child: Icon(
+                                                              Icons
+                                                                  .highlight_remove_outlined,
+                                                              color:
+                                                                  Colors.orange,
+                                                              size:
+                                                                  widget.size *
+                                                                      25,
+                                                            ),
+                                                            onTap: () {
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) {
+                                                                  return Dialog(
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(widget.size *
+                                                                                20)),
+                                                                    elevation:
+                                                                        16,
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                Colors.white54),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(widget.size *
+                                                                                20),
+                                                                      ),
+                                                                      child:
+                                                                          ListView(
+                                                                        shrinkWrap:
+                                                                            true,
+                                                                        children: <Widget>[
+                                                                          SizedBox(
+                                                                              height: widget.size * 10),
+                                                                          SizedBox(
+                                                                              height: widget.size * 5),
+                                                                          Padding(
+                                                                            padding:
+                                                                                EdgeInsets.only(left: widget.size * 15),
+                                                                            child:
+                                                                                Text(
+                                                                              "Do you want Remove from Favourites",
+                                                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: widget.size * 20),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            height:
+                                                                                widget.size * 5,
+                                                                          ),
+                                                                          Center(
+                                                                            child:
+                                                                                Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                                              children: [
+                                                                                Spacer(),
+                                                                                InkWell(
+                                                                                  child: Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: Colors.white24,
+                                                                                      border: Border.all(color: Colors.white10),
+                                                                                      borderRadius: BorderRadius.circular(widget.size * 25),
+                                                                                    ),
+                                                                                    child: Padding(
+                                                                                      padding: EdgeInsets.only(left: widget.size * 15, right: widget.size * 15, top: widget.size * 5, bottom: widget.size * 5),
+                                                                                      child: Text(
+                                                                                        "Back",
+                                                                                        style: TextStyle(
+                                                                                          color: Colors.white,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  onTap: () {
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: widget.size * 10,
+                                                                                ),
+                                                                                InkWell(
+                                                                                  child: Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: Colors.red,
+                                                                                      border: Border.all(color: Colors.black),
+                                                                                      borderRadius: BorderRadius.circular(widget.size * 25),
+                                                                                    ),
+                                                                                    child: Padding(
+                                                                                      padding: EdgeInsets.only(left: widget.size * 15, right: widget.size * 15, top: widget.size * 5, bottom: widget.size * 5),
+                                                                                      child: Text(
+                                                                                        "Delete",
+                                                                                        style: TextStyle(color: Colors.white),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  onTap: () {
+                                                                                    FirebaseFirestore.instance.collection('user').doc(FirebaseAuth.instance.currentUser!.email!).collection("FavouriteLabSubjects").doc(Favourite.id).delete();
+                                                                                    Navigator.pop(context);
+                                                                                    showToastText("${Favourite.name} as been removed");
+                                                                                  },
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: widget.size * 20,
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            height:
+                                                                                widget.size * 10,
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              );
+                                                            },
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                subjectUnitsData(
+                                                                  reg: Favourite
+                                                                      .name,
+                                                                  size: widget
+                                                                      .size,
+                                                                  branch:
+                                                                      Favourite
+                                                                          .branch,
+                                                                  ID: Favourite
+                                                                      .subjectId,
+                                                                  mode:
+                                                                      "LabSubjects",
+                                                                  name:
+                                                                      Favourite
+                                                                          .name,
+                                                                  description:
+                                                                      Favourite
+                                                                          .description,
+                                                                )));
+                                                  },
+                                                );
+                                              },
+                                              separatorBuilder:
+                                                  (context, index) => SizedBox(
+                                                        width: widget.size * 6,
+                                                      )),
+                                        ),
+                                    ],
+                                  );
+                                } else {
+                                  return Container(); // No data, don't show anything
+                                }
+                              },
+                            );
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10),
+                          child: InkWell(
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(Size * 20))),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Text To Speech",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  transitionDuration:
+                                      const Duration(milliseconds: 300),
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      MyHomePage(),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    final fadeTransition = FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    );
+
+                                    return Container(
+                                      color: Colors.black
+                                          .withOpacity(animation.value),
+                                      child: AnimatedOpacity(
+                                          duration: Duration(milliseconds: 300),
+                                          opacity:
+                                              animation.value.clamp(0.3, 1.0),
+                                          child: fadeTransition),
+                                    );
+                                  },
                                 ),
                               );
                             },
-                          );
-                        },
-                      ),
-                      SizedBox(height: widget.size * 10,),
-
-                      StreamBuilder<List<FlashConvertor>>(
-                          stream: readFlashNews(widget.branch),
-                          builder: (context, snapshot) {
-                            final Favourites = snapshot.data;
-                            switch (snapshot.connectionState) {
-                              case ConnectionState.waiting:
-                                return const Center(
-                                    child: CircularProgressIndicator(
-                                  strokeWidth: 0.3,
-                                  color: Colors.cyan,
-                                ));
-                              default:
-                                if (snapshot.hasError) {
-                                  return Center(child: Text("Error"));
-                                } else {
-                                  List<FlashConvertor> filteredItems =
-                                      Favourites!
-                                          .where((item) => item.regulation
-                                              .toString()
-                                              .startsWith(widget.reg))
-                                          .toList();
-                                  if (Favourites.length > 0) {
-                                    return Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: widget.size * 10),
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            "Theory",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: widget.size * 30,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          SizedBox(
-                                            height: widget.size * 15,
-                                          ),
-                                          GridView.builder(
-                                            shrinkWrap: true,
-                                            gridDelegate:
-                                                SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisSpacing:
-                                                  widget.size * 15,
-                                              childAspectRatio: 15 / 11,
-                                              crossAxisCount:
-                                                  Width(context) > 800 ? 5 : 3,
-                                            ),
-                                            itemCount: filteredItems.length,
-                                            itemBuilder: (context, int index) {
-                                              final SubjectsData =
-                                                  filteredItems[index];
-
-                                              return InkWell(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius
-                                                              .circular(
-                                                                  widget.size *
-                                                                      50),
-                                                      border: Border.all(color: Colors.white30),
-                                                      color:
-                                                          Colors.black),
-                                                  child: Padding(
-                                                    padding: EdgeInsets
-                                                        .symmetric(
-                                                            vertical:
-                                                                widget.size *
-                                                                    5,
-                                                            horizontal:
-                                                                widget.size *
-                                                                    10),
-                                                    child: Center(
-                                                      child: Text(
-                                                        SubjectsData
-                                                            .heading,
-                                                        style: TextStyle(
-                                                            color: Colors
-                                                                .tealAccent,
-                                                            fontSize:
-                                                                widget.size *
-                                                                    30,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    PageRouteBuilder(
-                                                      transitionDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  300),
-                                                      pageBuilder: (context,
-                                                              animation,
-                                                              secondaryAnimation) =>
-                                                          subjectUnitsData(
-                                                        reg: SubjectsData
-                                                            .regulation,
-                                                        size: widget.size,
-                                                        branch: widget.branch,
-                                                        ID: SubjectsData.id,
-                                                        mode: "Subjects",
-                                                        name: SubjectsData
-                                                            .heading,
-                                                        fullName: SubjectsData
-                                                            .description,
-                                                        photoUrl: SubjectsData
-                                                            .PhotoUrl,
-                                                      ),
-                                                      transitionsBuilder:
-                                                          (context,
-                                                              animation,
-                                                              secondaryAnimation,
-                                                              child) {
-                                                        final fadeTransition =
-                                                            FadeTransition(
-                                                          opacity: animation,
-                                                          child: child,
-                                                        );
-
-                                                        return Container(
-                                                          color: Colors.black
-                                                              .withOpacity(
-                                                                  animation
-                                                                      .value),
-                                                          child: AnimatedOpacity(
-                                                              duration: Duration(
-                                                                  milliseconds:
-                                                                      300),
-                                                              opacity: animation
-                                                                  .value
-                                                                  .clamp(
-                                                                      0.3, 1.0),
-                                                              child:
-                                                                  fadeTransition),
-                                                        );
-                                                      },
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  } else
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.tealAccent),
-                                        borderRadius: BorderRadius.circular(
-                                            widget.size * 20),
-                                      ),
-                                      child: Padding(
-                                        padding:
-                                            EdgeInsets.all(widget.size * 8.0),
-                                        child: Text(
-                                          "No Subjects in this Regulation",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                    );
-                                }
-                            }
-                          }),
-
-                      //Lab Subjects
-
-                      StreamBuilder<List<LabSubjectsConvertor>>(
-                        stream: readLabSubjects(widget.branch),
-                        builder: (context, snapshot) {
-                          final Subjects = snapshot.data;
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting:
-                              return const Center(
-                                  child: CircularProgressIndicator(
-                                strokeWidth: 0.3,
-                                color: Colors.cyan,
-                              ));
-                            default:
-                              if (snapshot.hasError) {
-                                return Text("Error with fireBase");
-                              } else {
-                                List<LabSubjectsConvertor> filteredItems =
-                                    Subjects!
-                                        .where((item) => item.regulation
-                                            .toString()
-                                            .startsWith(widget.reg))
-                                        .toList();
-                                if (Subjects.length > 0)
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: widget.size * 10,
-                                        horizontal: widget.size * 10),
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.all(widget.size * 8.0),
-                                          child: Text(
-                                            "Experiments",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: widget.size * 30,
-                                                fontWeight:
-                                                    FontWeight.w500),
-                                          ),
-                                        ),
-                                        GridView.builder(
-
-                                          shrinkWrap: true,
-                                          gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisSpacing:
-                                            widget.size * 15,
-                                            childAspectRatio: 15 / 11,
-                                            crossAxisCount:
-                                            Width(context) > 800 ? 5 : 3,
-                                          ),
-                                          itemCount: filteredItems.length,
-                                          itemBuilder: (context, int index) {
-                                            final SubjectsData =
-                                                filteredItems[index];
-
-                                            return InkWell(
-                                              child:  Container(
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                    BorderRadius
-                                                        .circular(
-                                                        widget.size *
-                                                            50),
-                                                    border: Border.all(color: Colors.white30),
-                                                    color:
-                                                    Colors.black),
-                                                child: Padding(
-                                                  padding: EdgeInsets
-                                                      .symmetric(
-                                                      vertical:
-                                                      widget.size *
-                                                          5,
-                                                      horizontal:
-                                                      widget.size *
-                                                          10),
-                                                  child: Center(
-                                                    child: Text(
-                                                      SubjectsData
-                                                          .heading,
-                                                      style: TextStyle(
-                                                          color: Colors
-                                                              .tealAccent,
-                                                          fontSize:
-                                                          widget.size *
-                                                              30,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .w600),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  PageRouteBuilder(
-                                                    transitionDuration:
-                                                        const Duration(
-                                                            milliseconds: 300),
-                                                    pageBuilder: (context,
-                                                            animation,
-                                                            secondaryAnimation) =>
-                                                        subjectUnitsData(
-                                                      reg: SubjectsData
-                                                          .regulation,
-                                                      size: widget.size,
-                                                      branch: widget.branch,
-                                                      ID: SubjectsData.id,
-                                                      mode: "LabSubjects",
-                                                      name:
-                                                          SubjectsData.heading,
-                                                      fullName: SubjectsData
-                                                          .description,
-                                                      photoUrl:
-                                                          SubjectsData.PhotoUrl,
-                                                    ),
-                                                    transitionsBuilder:
-                                                        (context,
-                                                            animation,
-                                                            secondaryAnimation,
-                                                            child) {
-                                                      final fadeTransition =
-                                                          FadeTransition(
-                                                        opacity: animation,
-                                                        child: child,
-                                                      );
-
-                                                      return Container(
-                                                        color: Colors.black
-                                                            .withOpacity(
-                                                                animation
-                                                                    .value),
-                                                        child: AnimatedOpacity(
-                                                            duration: Duration(
-                                                                milliseconds:
-                                                                    300),
-                                                            opacity: animation
-                                                                .value
-                                                                .clamp(
-                                                                    0.3, 1.0),
-                                                            child:
-                                                                fadeTransition),
-                                                      );
-                                                    },
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                else
-                                  return Text(
-                                      "No Lab Subjects For Your Regulation");
-                              }
-                          }
-                        },
-                      ),
-                      SizedBox(
-                        height: widget.size * 150,
-                      )
-                    ],
+                          ),
+                        ),
+                        InkWell(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white24,
+                                borderRadius:
+                                    BorderRadius.circular(widget.size * 40)),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: widget.size * 6,
+                                  horizontal: widget.size * 20),
+                              child: Text(
+                                "Exam Notification",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: widget.size * 30),
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            ExternalLaunchUrl(
+                                "http://www.srkrexams.in/Login.aspx");
+                          },
+                        ),
+                        SizedBox(
+                          height: widget.size * 150,
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                favorites(
-                  width: widget.size,
-                  height: widget.size,
-                  size: widget.size,
-                  branch: widget.branch,
-                ),
-                allBooks(
-                  size: widget.size,
-                  branch: widget.branch,
-                ),
-                NewsPage(
-                  size: widget.size,
-                  branch: widget.branch,
-                ),
-                updatesPage(
-                  size: widget.size,
-                  branch: widget.branch,
-                ),
-              ],
+                  allBooks(
+                    size: widget.size,
+                    branch: widget.branch,
+                  ),
+                  NewsPage(
+                    size: widget.size,
+                    branch: widget.branch,
+                  ),
+                  updatesPage(
+                    size: widget.size,
+                    branch: widget.branch,
+                  ),
+                ],
+              ),
             ),
-          ),
-        )),
-      );
+          ],
+        ),
+      )),
+    );
+  }
 }
 
 Stream<List<UpdateConvertor>> readUpdate(String branch) =>
@@ -2041,7 +2536,7 @@ Future createHomeUpdate({
 class UpdateConvertor {
   String id;
   final String heading, photoUrl, link, description, branch;
-
+  List<String> likedBy,isViewed;
   UpdateConvertor({
     this.id = "",
     required this.heading,
@@ -2049,7 +2544,9 @@ class UpdateConvertor {
     required this.link,
     required this.branch,
     required this.description,
-  });
+    List<String>? likedBy,
+    List<String>? isViewed,
+  }): likedBy = likedBy ?? [], isViewed = isViewed ?? [];
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -2067,6 +2564,10 @@ class UpdateConvertor {
         link: json["link"],
         description: json["description"],
         branch: json["branch"],
+    likedBy:
+    json["likedBy"] != null ? List<String>.from(json["likedBy"]) : [],
+    isViewed:
+    json["isViewed"] != null ? List<String>.from(json["isViewed"]) : [],
       );
 }
 
@@ -2267,12 +2768,16 @@ Future createBranchNew(
 class BranchNewConvertor {
   String id;
   final String heading, photoUrl, description;
-
+  List<String> likedBy,isViewed;
   BranchNewConvertor(
       {this.id = "",
       required this.heading,
       required this.photoUrl,
-      required this.description});
+      required this.description,
+        List<String>? likedBy,
+        List<String>? isViewed,
+
+      }): likedBy = likedBy ?? [], isViewed = isViewed ?? [];
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -2287,6 +2792,10 @@ class BranchNewConvertor {
         heading: json["heading"],
         photoUrl: json["image"],
         description: json["description"],
+        likedBy:
+        json["likedBy"] != null ? List<String>.from(json["likedBy"]) : [],
+        isViewed:
+        json["isViewed"] != null ? List<String>.from(json["isViewed"]) : [],
       );
 }
 
@@ -2427,7 +2936,6 @@ Future createLabSubjects(
   final flash = LabSubjectsConvertor(
       id: getID(),
       heading: heading,
-      PhotoUrl: PhotoUrl,
       description: description,
       regulation: regulation);
   final json = flash.toJson();
@@ -2436,19 +2944,17 @@ Future createLabSubjects(
 
 class LabSubjectsConvertor {
   String id;
-  final String heading, PhotoUrl, description, regulation;
+  final String heading, description, regulation;
 
   LabSubjectsConvertor(
       {this.id = "",
       required this.heading,
-      required this.PhotoUrl,
       required this.description,
       required this.regulation});
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "heading": heading,
-        "image": PhotoUrl,
         "description": description,
         "regulation": regulation,
       };
@@ -2458,7 +2964,6 @@ class LabSubjectsConvertor {
           regulation: json["regulation"],
           id: json['id'],
           heading: json["heading"],
-          PhotoUrl: json["image"],
           description: json["description"]);
 }
 
@@ -2539,17 +3044,13 @@ class ImageZoom extends StatefulWidget {
   String url;
   File file;
   final double size;
-  final double height;
-  final double width;
 
-  ImageZoom(
-      {Key? key,
-      required this.url,
-      required this.file,
-      required this.width,
-      required this.size,
-      required this.height})
-      : super(key: key);
+  ImageZoom({
+    Key? key,
+    required this.url,
+    required this.file,
+    required this.size,
+  }) : super(key: key);
 
   @override
   State<ImageZoom> createState() => _ImageZoomState();

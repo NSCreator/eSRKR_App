@@ -1,12 +1,9 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:srkr_study_app/HomePage.dart';
 import 'package:srkr_study_app/TextField.dart';
-import 'package:srkr_study_app/settings.dart';
 import 'SubPages.dart';
 
 class MyAppq extends StatefulWidget {
@@ -103,22 +100,12 @@ class _MyAppqState extends State<MyAppq> {
                       var data = snapshots
                           .data!.docs[index]
                           .data() as Map<String, dynamic>;
-                if(data["image"].toString().isNotEmpty){
-                  final Uri uri =
-                  Uri.parse(data["image"]);
-                  final String fileName =
-                      uri.pathSegments.last;
-                  var filename =
-                      fileName.split("/").last;
-                   file = File(
-                      "${folderPath}/subjects/$filename");
-                }
+
                       if (name.isEmpty) {
                         return Padding(
-                          padding: EdgeInsets.only(
-                              left: widget.size * 15.0,
-                              right: widget.size * 10,
-                              top: widget.size * 5),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: widget.size * 10,
+                              vertical: widget.size * 1),
                           child: InkWell(
                             child: Container(
                               width: double.infinity,
@@ -130,89 +117,46 @@ class _MyAppqState extends State<MyAppq> {
                                           widget.size *
                                               20))),
                               child:
-                              SingleChildScrollView(
-                                physics:
-                                const BouncingScrollPhysics(),
-                                child: Row(
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 8),
+                                child: Column(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .start,
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment
+                                      .start,
                                   children: [
-                                    Container(
-                                      width:
-                                      widget.size *
-                                          80.0,
-                                      height:
-                                      widget.size *
-                                          50.0,
-                                      decoration:
-                                      BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(
-                                                widget.size *
-                                                    20)),
+                                    Text(
+                                      data['heading'],
+                                      style:
+                                      TextStyle(
+                                        fontSize:
+                                        widget.size *
+                                            20.0,
                                         color: Colors
-                                            .black
-                                            .withOpacity(
-                                            0.5),
-                                        image:
-                                        DecorationImage(
-                                          image:
-                                          FileImage(
-                                              file),
-                                          fit: BoxFit
-                                              .cover,
-                                        ),
+                                            .white,
+                                        fontWeight:
+                                        FontWeight
+                                            .w600,
                                       ),
                                     ),
                                     SizedBox(
-                                      width:
-                                      widget.size *
-                                          10,
+                                      height: widget
+                                          .size *
+                                          2,
                                     ),
-                                    Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .center,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment
-                                              .start,
-                                          children: [
-                                            Text(
-                                              data['heading'],
-                                              style:
-                                              TextStyle(
-                                                fontSize:
-                                                widget.size *
-                                                    20.0,
-                                                color: Colors
-                                                    .white,
-                                                fontWeight:
-                                                FontWeight
-                                                    .w600,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: widget
-                                                  .size *
-                                                  2,
-                                            ),
-                                            Text(
-                                              data[
-                                              'description'],
-                                              style:
-                                              TextStyle(
-                                                fontSize:
-                                                widget.size *
-                                                    13.0,
-                                                color: Color
-                                                    .fromRGBO(
-                                                    204,
-                                                    207,
-                                                    222,
-                                                    0.8),
-                                              ),
-                                            ),
-                                          ],
-                                        ))
+                                    Text(
+                                      data[
+                                      'description'],
+                                      style:
+                                      TextStyle(
+                                        fontSize:
+                                        widget.size *
+                                            13.0,
+                                        color: Colors.white60,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -236,10 +180,9 @@ class _MyAppqState extends State<MyAppq> {
                                             "Subjects",
                                             name: data[
                                             "heading"],
-                                            fullName: data[
+                                            description: data[
                                             'description'],
-                                            photoUrl: data[
-                                            'image'],
+
                                           )));
                             },
                           ),
@@ -259,10 +202,9 @@ class _MyAppqState extends State<MyAppq> {
                           .startsWith(
                           name.toLowerCase())) {
                         return Padding(
-                          padding: EdgeInsets.only(
-                              left: widget.size * 15.0,
-                              right: widget.size * 10,
-                              top: widget.size * 3),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: widget.size * 10,
+                              vertical: widget.size * 1),
                           child: InkWell(
                             child: Container(
                               width: double.infinity,
@@ -274,89 +216,46 @@ class _MyAppqState extends State<MyAppq> {
                                           widget.size *
                                               20))),
                               child:
-                              SingleChildScrollView(
-                                physics:
-                                const BouncingScrollPhysics(),
-                                child: Row(
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 8),
+                                child: Column(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .start,
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment
+                                      .start,
                                   children: [
-                                    Container(
-                                      width:
-                                      widget.size *
-                                          80.0,
-                                      height:
-                                      widget.size *
-                                          50.0,
-                                      decoration:
-                                      BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(
-                                                widget.size *
-                                                   20)),
+                                    Text(
+                                      data['heading'],
+                                      style:
+                                      TextStyle(
+                                        fontSize:
+                                        widget.size *
+                                            20.0,
                                         color: Colors
-                                            .black
-                                            .withOpacity(
-                                            0.5),
-                                        image:
-                                        DecorationImage(
-                                          image:
-                                          FileImage(
-                                              file),
-                                          fit: BoxFit
-                                              .cover,
-                                        ),
+                                            .white,
+                                        fontWeight:
+                                        FontWeight
+                                            .w600,
                                       ),
                                     ),
                                     SizedBox(
-                                      width:
-                                      widget.size *
-                                          10,
+                                      height: widget
+                                          .size *
+                                          2,
                                     ),
-                                    Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .center,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment
-                                              .start,
-                                          children: [
-                                            Text(
-                                              data['heading'],
-                                              style:
-                                              TextStyle(
-                                                fontSize:
-                                                widget.size *
-                                                    20.0,
-                                                color: Colors
-                                                    .white,
-                                                fontWeight:
-                                                FontWeight
-                                                    .w600,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: widget
-                                                  .size *
-                                                  2,
-                                            ),
-                                            Text(
-                                              data[
-                                              'description'],
-                                              style:
-                                              TextStyle(
-                                                fontSize:
-                                                widget.size *
-                                                    13.0,
-                                                color: Color
-                                                    .fromRGBO(
-                                                    204,
-                                                    207,
-                                                    222,
-                                                    0.8),
-                                              ),
-                                            ),
-                                          ],
-                                        ))
+                                    Text(
+                                      data[
+                                      'description'],
+                                      style:
+                                      TextStyle(
+                                        fontSize:
+                                        widget.size *
+                                            13.0,
+                                        color: Colors.white60,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -380,10 +279,9 @@ class _MyAppqState extends State<MyAppq> {
                                             "Subjects",
                                             name: data[
                                             "heading"],
-                                            fullName: data[
+                                            description: data[
                                             'description'],
-                                            photoUrl: data[
-                                            'image'],
+
                                           )));
                             },
                           ),
@@ -441,22 +339,12 @@ class _MyAppqState extends State<MyAppq> {
                       var data = snapshots
                           .data!.docs[index]
                           .data() as Map<String, dynamic>;
-                      if(data["image"].toString().isNotEmpty){
-                        final Uri uri =
-                        Uri.parse(data["image"]);
-                        final String fileName =
-                            uri.pathSegments.last;
-                        var filename =
-                            fileName.split("/").last;
-                         file = File(
-                            "${folderPath}/labsubjects/$filename");
-                      }
+
                       if (name.isEmpty) {
                         return Padding(
-                          padding: EdgeInsets.only(
-                              left: widget.size * 15.0,
-                              right: widget.size * 10,
-                              top: widget.size * 4),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: widget.size * 10,
+                              vertical: widget.size * 1),
                           child: InkWell(
                             child: Container(
                               width: double.infinity,
@@ -468,94 +356,46 @@ class _MyAppqState extends State<MyAppq> {
                                           widget.size *
                                               20))),
                               child:
-                              SingleChildScrollView(
-                                physics:
-                                const BouncingScrollPhysics(),
-                                child: Row(
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 8),
+                                child: Column(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .start,
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment
+                                      .start,
                                   children: [
-                                    Container(
-                                      width:
-                                      widget.size *
-                                          80.0,
-                                      height:
-                                      widget.size *
-                                          50.0,
-                                      decoration:
-                                      BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(
-                                                widget.size *
-                                                    20)),
+                                    Text(
+                                      data['heading'],
+                                      style:
+                                      TextStyle(
+                                        fontSize:
+                                        widget.size *
+                                            20.0,
                                         color: Colors
-                                            .black
-                                            .withOpacity(
-                                            0.5),
-                                        image:
-                                        DecorationImage(
-                                          image:
-                                          FileImage(
-                                              file),
-                                          fit: BoxFit
-                                              .cover,
-                                        ),
+                                            .white,
+                                        fontWeight:
+                                        FontWeight
+                                            .w600,
                                       ),
                                     ),
                                     SizedBox(
-                                      width:
-                                      widget.size *
-                                          10,
+                                      height: widget
+                                          .size *
+                                          2,
                                     ),
-                                    Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .center,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment
-                                              .start,
-                                          children: [
-                                            Text(
-                                              data['heading'],
-                                              style:
-                                              TextStyle(
-                                                fontSize:
-                                                widget.size *
-                                                    20.0,
-                                                color: Colors
-                                                    .white,
-                                                fontWeight:
-                                                FontWeight
-                                                    .w600,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: widget
-                                                  .size *
-                                                  2,
-                                            ),
-                                            Text(
-                                              data[
-                                              'description'],
-                                              style:
-                                              TextStyle(
-                                                fontSize:
-                                                widget.size *
-                                                    13.0,
-                                                color: Color
-                                                    .fromRGBO(
-                                                    204,
-                                                    207,
-                                                    222,
-                                                    0.8),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: widget
-                                                  .size *
-                                                  1,
-                                            ),
-                                          ],
-                                        ))
+                                    Text(
+                                      data[
+                                      'description'],
+                                      style:
+                                      TextStyle(
+                                        fontSize:
+                                        widget.size *
+                                            13.0,
+                                        color: Colors.white60,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -579,10 +419,9 @@ class _MyAppqState extends State<MyAppq> {
                                             "LabSubjects",
                                             name: data[
                                             "heading"],
-                                            fullName: data[
+                                            description: data[
                                             'description'],
-                                            photoUrl: data[
-                                            'image'],
+
                                           )));
                             },
                           ),
@@ -602,10 +441,9 @@ class _MyAppqState extends State<MyAppq> {
                           .startsWith(
                           name.toLowerCase())) {
                         return Padding(
-                          padding: EdgeInsets.only(
-                              left: widget.size * 15.0,
-                              right: widget.size * 10,
-                              top: widget.size * 3),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: widget.size * 10,
+                              vertical: widget.size * 1),
                           child: InkWell(
                             child: Container(
                               width: double.infinity,
@@ -615,91 +453,48 @@ class _MyAppqState extends State<MyAppq> {
                                   BorderRadius.all(
                                       Radius.circular(
                                           widget.size *
-                                              10))),
+                                              20))),
                               child:
-                              SingleChildScrollView(
-                                physics:
-                                const BouncingScrollPhysics(),
-                                child: Row(
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 8),
+                                child: Column(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .start,
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment
+                                      .start,
                                   children: [
-                                    Container(
-                                      width:
-                                      widget.size *
-                                          80.0,
-                                      height:
-                                      widget.size *
-                                          50.0,
-                                      decoration:
-                                      BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(
-                                                widget.size *
-                                                    8.0)),
+                                    Text(
+                                      data['heading'],
+                                      style:
+                                      TextStyle(
+                                        fontSize:
+                                        widget.size *
+                                            20.0,
                                         color: Colors
-                                            .black
-                                            .withOpacity(
-                                            0.5),
-                                        image:
-                                        DecorationImage(
-                                          image:
-                                          FileImage(
-                                              file),
-                                          fit: BoxFit
-                                              .cover,
-                                        ),
+                                            .white,
+                                        fontWeight:
+                                        FontWeight
+                                            .w600,
                                       ),
                                     ),
                                     SizedBox(
-                                      width:
-                                      widget.size *
-                                          10,
+                                      height: widget
+                                          .size *
+                                          2,
                                     ),
-                                    Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .center,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment
-                                              .start,
-                                          children: [
-                                            Text(
-                                              data['heading'],
-                                              style:
-                                              TextStyle(
-                                                fontSize:
-                                                widget.size *
-                                                    20.0,
-                                                color: Colors
-                                                    .white,
-                                                fontWeight:
-                                                FontWeight
-                                                    .w600,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: widget
-                                                  .size *
-                                                  2,
-                                            ),
-                                            Text(
-                                              data[
-                                              'description'],
-                                              style:
-                                              TextStyle(
-                                                fontSize:
-                                                widget.size *
-                                                    13.0,
-                                                color: Color
-                                                    .fromRGBO(
-                                                    204,
-                                                    207,
-                                                    222,
-                                                    0.8),
-                                              ),
-                                            )
-                                          ],
-                                        ))
+                                    Text(
+                                      data[
+                                      'description'],
+                                      style:
+                                      TextStyle(
+                                        fontSize:
+                                        widget.size *
+                                            13.0,
+                                        color: Colors.white60,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -725,10 +520,9 @@ class _MyAppqState extends State<MyAppq> {
                                             "LabSubjects",
                                             name: data[
                                             "heading"],
-                                            fullName: data[
+                                            description: data[
                                             'description'],
-                                            photoUrl: data[
-                                            'image'],
+
                                           )));
                             },
                           ),

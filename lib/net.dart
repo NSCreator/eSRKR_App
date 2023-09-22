@@ -1,4 +1,7 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srkr_study_app/ads.dart';
 import 'package:srkr_study_app/functins.dart';
@@ -10,12 +13,257 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import 'TextField.dart';
 import 'main.dart';
 
 
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
 
+class _MyHomePageState extends State<MyHomePage> {
+  FlutterTts flutterTts = FlutterTts();
+  TextEditingController textEditingController = TextEditingController();
+  // String textToSpeak = "";
+  bool isSpeaking = false;
+  double pitch = 0.5; // Initial pitch value (range: 0.0 - 1.0)
+  double speechRate = 0.5; // Initial speech rate value (range: 0.0 - 1.0)
+  String selectedLanguage = 'en-US'; // Initial language
+  List<DropdownMenuItem<String>> languageItems = []; // List of language items
 
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the FlutterTts instance
+    loadSavedSettings();
 
+    // Get the list of available languages
+    getAvailableLanguages();
+    // Load saved settings
+
+  }
+
+  // Initialize FlutterTts
+  Future<void> initTts() async {
+    await flutterTts.setLanguage(selectedLanguage);
+    await flutterTts.setPitch(pitch);
+    await flutterTts.setSpeechRate(speechRate);
+    await flutterTts.setVolume(1);
+  }
+
+  Future<void> speakText(String text) async {
+    await flutterTts.speak(text);
+    setState(() {
+      isSpeaking = true;
+    });
+  }
+
+  // Function to pause text-to-speech
+  Future<void> pauseSpeech() async {
+    await flutterTts.pause();
+    setState(() {
+      isSpeaking = false;
+    });
+  }
+
+  // Function to change language
+  Future<void> changeLanguage(String languageCode) async {
+    await flutterTts.setLanguage(languageCode);
+    setState(() {
+      selectedLanguage = languageCode;
+    });
+  }
+
+  // Function to get the list of available languages
+  Future<void> getAvailableLanguages() async {
+    List<dynamic> languages = await flutterTts.getLanguages;
+    setState(() {
+      languageItems = languages
+          .map((language) => DropdownMenuItem<String>(
+        value: language.toString(),
+        child: Text(language.toString()),
+      ))
+          .toList();
+    });
+  }
+
+  // Function to save settings
+  Future<void> saveSettings() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('pitch', pitch);
+    prefs.setDouble('speechRate', speechRate);
+    prefs.setString('selectedLanguage', selectedLanguage);
+    prefs.setString('textToSpeak', textEditingController.text);
+  }
+
+  // Function to load saved settings
+  Future<void> loadSavedSettings() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      pitch = prefs.getDouble('pitch') ?? 0.5;
+      speechRate = prefs.getDouble('speechRate') ?? 0.5;
+      selectedLanguage = prefs.getString('selectedLanguage') ?? 'en-US';
+      textEditingController.text = prefs.getString('textToSpeak') ?? '';
+    });
+    initTts();
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the FlutterTts instance and the controller when done
+    flutterTts.stop();
+    textEditingController.dispose();
+    // Save settings when the widget is disposed
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double Size = size(context);
+    return backGroundImage(
+
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            backButton(size: Size, child: SizedBox(width: 45,),text: "Reader",),
+            Expanded(
+              child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white12,
+                    borderRadius: BorderRadius.circular(30)
+
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: TextFormField(
+                      controller: textEditingController,
+                      textInputAction: TextInputAction.next,
+                      maxLines: null,
+                      style: TextStyle(color: Colors.white,fontSize: 20),
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Colors.white54),
+                        border: InputBorder.none,
+                        hintText: 'Write Here',
+                      ),
+                    ),
+                  )),
+            ),
+            SizedBox(height: 20),
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                valueIndicatorTextStyle: TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: [
+                      Text("Pitch: ${pitch.toStringAsFixed(2)}",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+
+                      Expanded(
+                        child: Slider(
+                          value: pitch,
+                          min: 0.0, // Adjusted minimum value
+                          max: 1.0,
+                          onChanged: (value) {
+                            setState(() {
+                              pitch = value;
+                              flutterTts.setPitch(pitch);
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),Row(
+                    children: [
+                      Text("Speech Rate: ${speechRate.toStringAsFixed(2)}",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+
+                      Expanded(
+                        child:    Slider(
+                          value: speechRate,
+                          min: 0.0, // Adjusted minimum value
+                          max: 1.0,
+                          onChanged: (value) {
+                            setState(() {
+                              speechRate = value;
+                              flutterTts.setSpeechRate(speechRate);
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+
+                ],
+              ),
+            ),
+            Row(
+              children: [
+                Text("Change Language : ",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+
+                Expanded(
+                  child: Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white70,
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: DropdownButton<String>(
+                          value: selectedLanguage,
+
+                          items: languageItems,
+                          onChanged: (value) {
+                            // Call the changeLanguage function when a language is selected
+                            changeLanguage(value!);
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                      saveSettings();
+                  },
+                  child: Text("Save Changes",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+
+              onPressed: () {
+                if (isSpeaking) {
+                  pauseSpeech();
+                } else {
+                  speakText(textEditingController.text);
+                  saveSettings();
+                }
+              },
+              child: Text(isSpeaking ? "Pause" : "Speak Text",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+            ),
+            SizedBox(height: 20),
+
+          ],
+        ),
+      ),
+    );
+  }
+}
 class ImageScreen extends StatefulWidget {
   final String branch;
   double size;
@@ -263,7 +511,7 @@ class _supportListState extends State<supportList> {
       if (data.isEmpty) {
         data = "owner : Thanks for helping";
       }
-      data = "${picText() + ":" + fullUserId()};$data";
+      data = "${picText("") + ":" + fullUserId()};$data";
     }
     FirebaseFirestore.instance
         .collection(widget.branch)
