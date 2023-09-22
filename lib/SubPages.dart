@@ -2363,50 +2363,53 @@ class _allBooksState extends State<allBooks> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          StreamBuilder<List<BooksConvertor>>(
-              stream: ReadBook(widget.branch),
-              builder: (context, snapshot) {
-                final Books = snapshot.data;
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      strokeWidth: 0.3,
-                      color: Colors.cyan,
-                    ));
-                  default:
-                    if (snapshot.hasError) {
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            StreamBuilder<List<BooksConvertor>>(
+                stream: ReadBook(widget.branch),
+                builder: (context, snapshot) {
+                  final Books = snapshot.data;
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
                       return const Center(
-                          child: Text(
-                              'Error with TextBooks Data or\n Check Internet Connection'));
-                    } else {
-                      return GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 16 / 36,
-                        ),
-                        itemCount: Books!.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return textBookSub(
-                            height: widget.size,
-                            width: widget.size,
-                            size: widget.size,
-                            data: Books[index],
-                            branch: widget.branch,
-                          );
-                        },
-                      );
-                    }
-                }
-              }),
-          SizedBox(
-            height: 150,
-          )
-        ],
+                          child: CircularProgressIndicator(
+                        strokeWidth: 0.3,
+                        color: Colors.cyan,
+                      ));
+                    default:
+                      if (snapshot.hasError) {
+                        return const Center(
+                            child: Text(
+                                'Error with TextBooks Data or\n Check Internet Connection'));
+                      } else {
+                        return GridView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            childAspectRatio: 16 / 36,
+                          ),
+                          itemCount: Books!.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return textBookSub(
+                              height: widget.size,
+                              width: widget.size,
+                              size: widget.size,
+                              data: Books[index],
+                              branch: widget.branch,
+                            );
+                          },
+                        );
+                      }
+                  }
+                }),
+            SizedBox(
+              height: 50,
+            )
+          ],
+        ),
       ),
     );
   }
@@ -2528,7 +2531,7 @@ class _textBookSubState extends State<textBookSub> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   AspectRatio(
-                    aspectRatio: 16 / 22,
+                    aspectRatio: 16 / 20,
                     child: file.existsSync() && widget.data.link.isNotEmpty
                         ? ClipRRect(
                             borderRadius:

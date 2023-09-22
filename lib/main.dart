@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:async';
 import 'HomePage.dart';
 import 'TextField.dart';
 import 'auth_page.dart';
+import 'firebase_options.dart';
 import 'functins.dart';
 import 'net.dart';
 import 'notification.dart';
@@ -27,74 +28,6 @@ Future<void> backgroundHandler(RemoteMessage message) async {
 
 Future<void> _handleMessageData(RemoteMessage message) async {
 
-  if (message.notification!.title.toString().split(";").first == "Update" ||
-      message.notification!.title.toString().split(";").first == "News") {
-    NotificationService().showNotification(
-        title: message.notification!.title.toString().split(";").first,
-        body: message.notification!.body);
-    WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp();
-    if (message.notification!.title.toString().split(";").first == "Update") {
-      FirebaseFirestore.instance
-          .collection("update")
-          .doc(message.notification!.title.toString().split(";").last)
-          .get()
-          .then((DocumentSnapshot snapshot) {
-        if (snapshot.exists) {
-          var data = snapshot.data();
-          if (data != null && data is Map<String, dynamic>) {
-            UpdateConvertor newUpdate = UpdateConvertor(
-              id: data["id"],
-              heading: data["heading"],
-              photoUrl: data["image"],
-              description: data["description"],
-              link: data["link"],
-              branch: data["branch"],
-            );
-            UpdateConvertorUtil.addUpdateConvertor(newUpdate);
-          }
-        } else {
-          print("Document does not exist.");
-        }
-      }).catchError((error) {
-        print("An error occurred while retrieving data: $error");
-      });
-    }
-    else {
-      FirebaseFirestore.instance
-          .collection("user")
-          .doc(fullUserId())
-          .get()
-          .then((DocumentSnapshot snapshot) {
-        if (snapshot.exists) {
-          var user = snapshot.data();
-          if (user != null && user is Map<String, dynamic>) {
-            FirebaseFirestore.instance
-                .collection(user["branch"]).doc(user["branch"]+"News").collection(user["branch"]+"News")
-                .doc(message.notification!.title.toString().split(";").last)
-                .get()
-                .then((DocumentSnapshot snapshot) {
-              if (snapshot.exists) {
-                var data = snapshot.data();
-                if (data != null && data is Map<String, dynamic>) {
-                  BranchNewConvertor newUpdate = BranchNewConvertor(id: data["id"],heading: data["heading"], photoUrl: data["image"], description: data["description"]);
-
-                  BranchNewConvertorUtil.addUpdateConvertor(newUpdate);
-                }
-              } else {
-                print("Document does not exist.");
-              }
-            });
-          }
-
-
-        } else {
-          print("Document does not exist.");
-        }
-      });
-    }
-
-  }
 }
 
 Future main() async {
@@ -104,11 +37,12 @@ Future main() async {
   );
   await NotificationService().initNotification();
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
-  MobileAds.instance.initialize();
+  // MobileAds.instance.initialize();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(MyApp());
   });
+  runApp(MaterialApp(home: Scaffold(),));
 }
 
 class MyApp extends StatefulWidget {
@@ -158,7 +92,7 @@ class _MyAppState extends State<MyApp> {
       builder: (context, child) {
         return MediaQuery(
             data: MediaQuery.of(context).copyWith(
-              textScaler: TextScaler.linear(0.85),
+              textScaleFactor: 0.85,
             ),
             child: child!);
       },

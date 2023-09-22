@@ -45,37 +45,40 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyCm8BPwoYXL9naD5dj0sgKlOBREmvBGy4M',
-    appId: '1:922256000367:web:24e2825759a72968d6949a',
+    appId: '1:922256000367:web:b161bb7aaafe5bfdd6949a',
     messagingSenderId: '922256000367',
     projectId: 'esrkr-app',
     authDomain: 'esrkr-app.firebaseapp.com',
+    databaseURL: 'https://esrkr-app-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'esrkr-app.appspot.com',
-    measurementId: 'G-G2D7G5LCM6',
+    measurementId: 'G-PTLKXFXF6F',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBDqW-2hA1dM5rOLl9kVE6Dhp5EsqUhNfE',
-    appId: '1:922256000367:android:0e7207af16b065c6d6949a',
+    appId: '1:922256000367:android:5d3aee3de0b5955bd6949a',
     messagingSenderId: '922256000367',
     projectId: 'esrkr-app',
+    databaseURL: 'https://esrkr-app-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'esrkr-app.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAVKhC-9Laj55wmlfZqc8fMeNrHWZj2wT4',
-    appId: '1:922256000367:ios:dc35cbefa75b43b4d6949a',
+    appId: '1:922256000367:ios:b81d57cc715193edd6949a',
     messagingSenderId: '922256000367',
     projectId: 'esrkr-app',
+    databaseURL: 'https://esrkr-app-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'esrkr-app.appspot.com',
-    iosClientId: '922256000367-u9kgisrv0d2c9buuo8al8u294qgljrf7.apps.googleusercontent.com',
-    iosBundleId: 'com.nimmalasujith.esrkr',
+    iosBundleId: 'com.nimmalasujith.srkrStudyApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAVKhC-9Laj55wmlfZqc8fMeNrHWZj2wT4',
-    appId: '1:922256000367:ios:8cbb5de2e8413c4bd6949a',
+    appId: '1:922256000367:ios:f8d0b214d85802b0d6949a',
     messagingSenderId: '922256000367',
     projectId: 'esrkr-app',
+    databaseURL: 'https://esrkr-app-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'esrkr-app.appspot.com',
     iosClientId: '922256000367-b0b4huch1imm0aa7nlvhdpmn5u8j1o9j.apps.googleusercontent.com',
     iosBundleId: 'com.nimmalasujith.srkrStudyApp.RunnerTests',

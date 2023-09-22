@@ -1,13 +1,14 @@
 {
   "project_info": {
     "project_number": "922256000367",
+    "firebase_url": "https://esrkr-app-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "esrkr-app",
     "storage_bucket": "esrkr-app.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:922256000367:android:0e7207af16b065c6d6949a",
+        "mobilesdk_app_id": "1:922256000367:android:5d3aee3de0b5955bd6949a",
         "android_client_info": {
           "package_name": "com.nimmalasujith.esrkr"
         }

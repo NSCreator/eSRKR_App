@@ -268,12 +268,14 @@ class timeTableSyllabusModalPaperCreator extends StatefulWidget {
 }
 
 class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusModalPaperCreator> {
+  FirebaseStorage storage = FirebaseStorage.instance;
 
   final HeadingController = TextEditingController();
 
   final LinkController = TextEditingController();
   final LinkController1 = TextEditingController();
-
+  final PhotoUrlController = TextEditingController();
+  bool _isImage = false;
   void AutoFill() async {
     HeadingController.text = widget.heading;
     if(widget.mode!="Time Table")HeadingController.text = widget.reg.substring(0,10);
@@ -353,7 +355,180 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                     ),
                   ),
                 )),
-
+            if (_isImage == true)
+              Padding(
+                padding: const EdgeInsets.only(left: 10, top: 20),
+                child: Row(
+                  children: [
+                    Container(
+                        height: 110,
+                        width: 180,
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(14),
+                            image: DecorationImage(
+                                image: NetworkImage(
+                                    PhotoUrlController.text.trim()),
+                                fit: BoxFit.fill))),
+                    InkWell(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 30, top: 10, bottom: 10, right: 10),
+                        child: Text(
+                          "Delete",
+                          style: TextStyle(
+                              fontSize: 30,
+                              color: CupertinoColors.destructiveRed),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (_isImage == false)
+              InkWell(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 20, bottom: 10),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.upload,
+                        size: 35,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "Upload Photo",
+                        style: TextStyle(fontSize: 30, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+                onTap: () async {
+                  final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+                  File file = File(pickedFile!.path);
+                  final Reference ref = storage.ref().child('timetable/${getID()}');
+                  final TaskSnapshot task = await ref.putFile(file);
+                  final String url = await task.ref.getDownloadURL();
+                  PhotoUrlController.text = url;
+                  bool _isLoading = false;
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        backgroundColor: Colors.black.withOpacity(0.1),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        elevation: 16,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.white.withOpacity(0.1)),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: ListView(
+                            physics: BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            children: <Widget>[
+                              const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Image",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.blue),
+                                  ),
+                                ),
+                              ),
+                              Stack(
+                                children: <Widget>[
+                                  Image.network(
+                                    url,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, progress) {
+                                      if (progress == null) {
+                                        _isLoading = false;
+                                      }
+                                      return progress == null
+                                          ? child
+                                          : Center(
+                                          child:
+                                          CircularProgressIndicator());
+                                    },
+                                  ),
+                                  if (_isLoading)
+                                    Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  InkWell(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(
+                                        "Cancel & Delete",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ),
+                                    onTap: () async {
+                                      final Uri uri = Uri.parse(url);
+                                      final String fileName =
+                                          uri.pathSegments.last;
+                                      final Reference ref =
+                                      storage.ref().child("/${fileName}");
+                                      try {
+                                        await ref.delete();
+                                        showToastText(
+                                            'Image deleted successfully');
+                                      } catch (e) {
+                                        showToastText(
+                                            'Error deleting image: $e');
+                                      }
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  InkWell(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(
+                                        "Okay",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        PhotoUrlController.text = url;
+                                        _isImage = true;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -386,9 +561,9 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                            .collection("regulationWithSem")
                            .doc(widget.reg)
                            .collection("timeTables")
-                           .doc(widget.id).update({"heading":HeadingController.text.trim(),"photoUrl":LinkController.text.trim()});
+                           .doc(widget.id).update({"heading":HeadingController.text.trim(),"photoUrl":PhotoUrlController.text.trim()});
                      } else {
-                       createTimeTable(branch: widget.branch, heading: HeadingController.text.trim(), photoUrl: LinkController.text.trim(), reg: widget.reg);
+                       createTimeTable(branch: widget.branch, heading: HeadingController.text.trim(), photoUrl: PhotoUrlController.text.trim(), reg: widget.reg);
                      }
                    }else{
                      if (widget.id.length > 3) {

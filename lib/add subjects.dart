@@ -209,9 +209,9 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                  
                 },
                     ),
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: CustomAdsBannerForPdfs()),
+              // Align(
+              //     alignment: Alignment.bottomCenter,
+                  // child: CustomAdsBannerForPdfs()),
               Positioned(
                 left: 0,
                 top: widget.size * 50,

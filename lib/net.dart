@@ -11,7 +11,7 @@ import 'HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'TextField.dart';
 import 'main.dart';
@@ -264,226 +264,226 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-class ImageScreen extends StatefulWidget {
-  final String branch;
-  double size;
+// class ImageScreen extends StatefulWidget {
+//   final String branch;
+//   double size;
+//
+//   ImageScreen({required this.branch,required this.size});
+//
+//   @override
+//   _ImageScreenState createState() => _ImageScreenState();
+// }
 
-  ImageScreen({required this.branch,required this.size});
-
-  @override
-  _ImageScreenState createState() => _ImageScreenState();
-}
-
-class _ImageScreenState extends State<ImageScreen> {
-  late final RewardedAd rewardedAd;
-
-
-  bool isAdLoaded = false;
-
-  void _loadRewardedAd() {
-    RewardedAd.load(
-      adUnitId: AdVideo.bannerAdUnitId,
-      request: const AdRequest(),
-      rewardedAdLoadCallback: RewardedAdLoadCallback(
-        onAdFailedToLoad: (LoadAdError error) {
-          print("Failed to load rewarded ad, Error: $error");
-        },
-        onAdLoaded: (RewardedAd ad) {
-          print("$ad loaded");
-          showToastText("Add loaded");
-          rewardedAd = ad;
-          setState(() {
-            isAdLoaded = true;
-          });
-          //set on full screen content call back
-          _setFullScreenContentCallback();
-        },
-      ),
-    );
-  }
-
-  //method to set show content call back
-  void _setFullScreenContentCallback() {
-    if (rewardedAd == null) {
-      return;
-    }
-    rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
-      //when ad  shows fullscreen
-      onAdShowedFullScreenContent: (RewardedAd ad) =>
-          print("$ad onAdShowedFullScreenContent"),
-      //when ad dismissed by user
-      onAdDismissedFullScreenContent: (RewardedAd ad) {
-        print("$ad onAdDismissedFullScreenContent");
-
-        //dispose the dismissed ad
-        ad.dispose();
-      },
-      //when ad fails to show
-      onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-        print("$ad  onAdFailedToShowFullScreenContent: $error ");
-        //dispose the failed ad
-        ad.dispose();
-      },
-
-      //when impression is detected
-      onAdImpression: (RewardedAd ad) => print("$ad Impression occured"),
-    );
-  }
-
-  Future<void> _showRewardedAd() async {
-    rewardedAd.show(
-        onUserEarnedReward: (AdWithoutView ad, RewardItem rewardItem) {
-      num amount = rewardItem.amount;
-      showToastText("You earned: $amount");
-
-    });
-    final imageRef = _firestore.collection("user").doc(fullUserId());
-
-    final documentSnapshot = await imageRef.get();
-    if (documentSnapshot.exists) {
-      final data = documentSnapshot.data() as Map<String, dynamic>;
-      if (data['adSeenCount']==null) {
-        _firestore.collection("user").doc(fullUserId()).update({"adSeenCount":0});
-      } else {
-        _firestore.collection("user").doc(fullUserId()).update({"adSeenCount":data['adSeenCount']+1});
-
-      }
-    }
-  }
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  bool _canOpenImage = true;
-  double remainingTime = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkImageOpenStatus();
-    _loadRewardedAd();
-  }
-
-  Future<void> _checkImageOpenStatus() async {
-    final user = _auth.currentUser;
-    if (user != null) {
-      final imageRef = _firestore.collection("user").doc(fullUserId());
-
-      final documentSnapshot = await imageRef.get();
-      if (documentSnapshot.exists) {
-        final data = documentSnapshot.data() as Map<String, dynamic>;
-        if (data['lastOpenAdTime'].toString().isEmpty) {
-          setState(() {
-            _canOpenImage = true; // 3600 seconds = 1 hour
-          });
-        } else {
-          final lastOpenTime = data['lastOpenAdTime'] as Timestamp;
-
-          final currentTime = Timestamp.now();
-          final difference = currentTime.seconds - lastOpenTime.seconds;
-
-          setState(() {
-            _canOpenImage = difference >= 3600; // 3600 seconds = 1 hour
-            remainingTime = (3600 - difference) / 60;
-          });
-        }
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding:  EdgeInsets.all(widget.size *20.0),
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(widget.size *15),
-            border: Border.all(color: Colors.white30)),
-        child: Padding(
-          padding:  EdgeInsets.symmetric(vertical:widget.size * 5, horizontal: widget.size *10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Support society => ",
-                    style: TextStyle(color: Colors.white, fontSize: widget.size *20),
-                  ),
-                  Text(
-                    "  for a small change",
-                    style: TextStyle(color: Colors.white54, fontSize: widget.size *15),
-                  ),
-                ],
-              ),
-              _canOpenImage
-                  ? isAdLoaded
-                  ? InkWell(
-                onTap: () async {
-                  if (_canOpenImage) {
-                    _showRewardedAd();
-
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => supportList(
-                              branch: widget.branch,
-                            )));
-                    final user = _auth.currentUser;
-                    if (user != null) {
-                      final imageRef = _firestore
-                          .collection('user')
-                          .doc(fullUserId());
-                      await imageRef.update({
-                        'lastOpenAdTime':
-                        FieldValue.serverTimestamp(),
-                      });
-                    }
-                    setState(() {
-                      _canOpenImage = false;
-                    });
-                  }
-                },
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.lightGreenAccent,
-                        borderRadius: BorderRadius.circular(widget.size *10)
-                    ),
-                    child: Padding(
-                      padding:  EdgeInsets.symmetric(vertical: widget.size *5,horizontal: widget.size *10),
-                      child: Text('Help',style: TextStyle(color: Colors.black,fontSize: widget.size *20,fontWeight: FontWeight.w700),),
-                    )),
-              )
-                  : Text(
-                'Wait for few secs',
-                style: TextStyle(fontSize:widget.size * 18, color: Colors.amber),
-              )
-                  : Text(
-                'Wait for ${remainingTime.round()} mins',
-                style: TextStyle(fontSize: widget.size *18, color: Colors.amber),
-              ),
-              if (!_canOpenImage)
-                InkWell(
-                  child: Icon(
-                    Icons.refresh,
-                    color: Colors.white,
-                    size:widget.size * 35,
-                  ),
-                  onTap: () {
-                    _checkImageOpenStatus();
-                  },
-                )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+// class _ImageScreenState extends State<ImageScreen> {
+//   late final RewardedAd rewardedAd;
+//
+//
+//   bool isAdLoaded = false;
+//
+//   void _loadRewardedAd() {
+//     RewardedAd.load(
+//       adUnitId: AdVideo.bannerAdUnitId,
+//       request: const AdRequest(),
+//       rewardedAdLoadCallback: RewardedAdLoadCallback(
+//         onAdFailedToLoad: (LoadAdError error) {
+//           print("Failed to load rewarded ad, Error: $error");
+//         },
+//         onAdLoaded: (RewardedAd ad) {
+//           print("$ad loaded");
+//           showToastText("Add loaded");
+//           rewardedAd = ad;
+//           setState(() {
+//             isAdLoaded = true;
+//           });
+//           //set on full screen content call back
+//           _setFullScreenContentCallback();
+//         },
+//       ),
+//     );
+//   }
+//
+//   //method to set show content call back
+//   void _setFullScreenContentCallback() {
+//     if (rewardedAd == null) {
+//       return;
+//     }
+//     rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
+//       //when ad  shows fullscreen
+//       onAdShowedFullScreenContent: (RewardedAd ad) =>
+//           print("$ad onAdShowedFullScreenContent"),
+//       //when ad dismissed by user
+//       onAdDismissedFullScreenContent: (RewardedAd ad) {
+//         print("$ad onAdDismissedFullScreenContent");
+//
+//         //dispose the dismissed ad
+//         ad.dispose();
+//       },
+//       //when ad fails to show
+//       onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
+//         print("$ad  onAdFailedToShowFullScreenContent: $error ");
+//         //dispose the failed ad
+//         ad.dispose();
+//       },
+//
+//       //when impression is detected
+//       onAdImpression: (RewardedAd ad) => print("$ad Impression occured"),
+//     );
+//   }
+//
+//   Future<void> _showRewardedAd() async {
+//     rewardedAd.show(
+//         onUserEarnedReward: (AdWithoutView ad, RewardItem rewardItem) {
+//       num amount = rewardItem.amount;
+//       showToastText("You earned: $amount");
+//
+//     });
+//     final imageRef = _firestore.collection("user").doc(fullUserId());
+//
+//     final documentSnapshot = await imageRef.get();
+//     if (documentSnapshot.exists) {
+//       final data = documentSnapshot.data() as Map<String, dynamic>;
+//       if (data['adSeenCount']==null) {
+//         _firestore.collection("user").doc(fullUserId()).update({"adSeenCount":0});
+//       } else {
+//         _firestore.collection("user").doc(fullUserId()).update({"adSeenCount":data['adSeenCount']+1});
+//
+//       }
+//     }
+//   }
+//
+//   final FirebaseAuth _auth = FirebaseAuth.instance;
+//   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+//
+//   bool _canOpenImage = true;
+//   double remainingTime = 0;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _checkImageOpenStatus();
+//     _loadRewardedAd();
+//   }
+//
+//   Future<void> _checkImageOpenStatus() async {
+//     final user = _auth.currentUser;
+//     if (user != null) {
+//       final imageRef = _firestore.collection("user").doc(fullUserId());
+//
+//       final documentSnapshot = await imageRef.get();
+//       if (documentSnapshot.exists) {
+//         final data = documentSnapshot.data() as Map<String, dynamic>;
+//         if (data['lastOpenAdTime'].toString().isEmpty) {
+//           setState(() {
+//             _canOpenImage = true; // 3600 seconds = 1 hour
+//           });
+//         } else {
+//           final lastOpenTime = data['lastOpenAdTime'] as Timestamp;
+//
+//           final currentTime = Timestamp.now();
+//           final difference = currentTime.seconds - lastOpenTime.seconds;
+//
+//           setState(() {
+//             _canOpenImage = difference >= 3600; // 3600 seconds = 1 hour
+//             remainingTime = (3600 - difference) / 60;
+//           });
+//         }
+//       }
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding:  EdgeInsets.all(widget.size *20.0),
+//       child: Container(
+//         decoration: BoxDecoration(
+//             color: Colors.black,
+//             borderRadius: BorderRadius.circular(widget.size *15),
+//             border: Border.all(color: Colors.white30)),
+//         child: Padding(
+//           padding:  EdgeInsets.symmetric(vertical:widget.size * 5, horizontal: widget.size *10),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Column(
+//                 mainAxisAlignment: MainAxisAlignment.start,
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     "Support society => ",
+//                     style: TextStyle(color: Colors.white, fontSize: widget.size *20),
+//                   ),
+//                   Text(
+//                     "  for a small change",
+//                     style: TextStyle(color: Colors.white54, fontSize: widget.size *15),
+//                   ),
+//                 ],
+//               ),
+//               _canOpenImage
+//                   ? isAdLoaded
+//                   ? InkWell(
+//                 onTap: () async {
+//                   if (_canOpenImage) {
+//                     _showRewardedAd();
+//
+//                     Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                             builder: (context) => supportList(
+//                               branch: widget.branch,
+//                             )));
+//                     final user = _auth.currentUser;
+//                     if (user != null) {
+//                       final imageRef = _firestore
+//                           .collection('user')
+//                           .doc(fullUserId());
+//                       await imageRef.update({
+//                         'lastOpenAdTime':
+//                         FieldValue.serverTimestamp(),
+//                       });
+//                     }
+//                     setState(() {
+//                       _canOpenImage = false;
+//                     });
+//                   }
+//                 },
+//                 child: Container(
+//                     decoration: BoxDecoration(
+//                         color: Colors.lightGreenAccent,
+//                         borderRadius: BorderRadius.circular(widget.size *10)
+//                     ),
+//                     child: Padding(
+//                       padding:  EdgeInsets.symmetric(vertical: widget.size *5,horizontal: widget.size *10),
+//                       child: Text('Help',style: TextStyle(color: Colors.black,fontSize: widget.size *20,fontWeight: FontWeight.w700),),
+//                     )),
+//               )
+//                   : Text(
+//                 'Wait for few secs',
+//                 style: TextStyle(fontSize:widget.size * 18, color: Colors.amber),
+//               )
+//                   : Text(
+//                 'Wait for ${remainingTime.round()} mins',
+//                 style: TextStyle(fontSize: widget.size *18, color: Colors.amber),
+//               ),
+//               if (!_canOpenImage)
+//                 InkWell(
+//                   child: Icon(
+//                     Icons.refresh,
+//                     color: Colors.white,
+//                     size:widget.size * 35,
+//                   ),
+//                   onTap: () {
+//                     _checkImageOpenStatus();
+//                   },
+//                 )
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class supportList extends StatefulWidget {
   final String branch;
