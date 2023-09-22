@@ -1128,6 +1128,8 @@ class _HomePageState extends State<HomePage>
                             builder: (context, snapshot) {
                               final Favourites = snapshot.data;
                               switch (snapshot.connectionState) {
+
+
                                 case ConnectionState.waiting:
                                   return const Center(
                                       child: CircularProgressIndicator(
