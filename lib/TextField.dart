@@ -29,7 +29,7 @@ TextStyle textFieldHintStyle(double size) {
 class TextFieldContainer extends StatefulWidget {
   Widget child;
   String heading;
-   TextFieldContainer({required this.child,this.heading =""});
+  TextFieldContainer({required this.child,this.heading =""});
 
   @override
   State<TextFieldContainer> createState() => _TextFieldContainerState();
@@ -55,9 +55,9 @@ class _TextFieldContainerState extends State<TextFieldContainer> {
               left: Size*10, right: Size*10, top: Size*5, bottom: Size*5),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white24,
-              border: Border.all(color: Colors.white54),
-              borderRadius: BorderRadius.circular(Size*14),
+              color: Colors.white.withOpacity(0.2),
+              // border: Border.all(color: Colors.white54),
+              borderRadius: BorderRadius.circular(Size*20),
             ),
             child: Padding(
               padding:  EdgeInsets.only(left: Size*10),
@@ -114,132 +114,132 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
   Widget build(BuildContext context) {
     return backGroundImage(
 
-    child: SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          backButton(size: widget.size,text: "Flash News Creator",child: SizedBox(width: 45,)),
-          TextFieldContainer(heading: "Heading",
-              child: Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: TextFormField(
-              controller: HeadingController,
-              textInputAction: TextInputAction.next,
-              maxLines: null,
-              style: TextStyle(color: Colors.white,fontSize: 20),
-              decoration: InputDecoration(
-                hintStyle: TextStyle(color: Colors.white54),
-                border: InputBorder.none,
-                hintText: 'Heading',
-              ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            backButton(size: widget.size,text: "Flash News Creator",child: SizedBox(width: 45,)),
+            TextFieldContainer(heading: "Heading",
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: TextFormField(
+                    controller: HeadingController,
+                    textInputAction: TextInputAction.next,
+                    maxLines: null,
+                    style: TextStyle(color: Colors.white,fontSize: 20),
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(color: Colors.white54),
+                      border: InputBorder.none,
+                      hintText: 'Heading',
+                    ),
+                  ),
+                )),
+
+            TextFieldContainer(heading: "Link",
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: TextFormField(
+                    //obscureText: true,
+                    controller: LinkController,
+                    textInputAction: TextInputAction.next,
+                    maxLines: null,
+                    style: TextStyle(color: Colors.white,fontSize: 20),
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Description or Full name',
+                        hintStyle: TextStyle(color: Colors.white54)
+                    ),
+                  ),
+                )),
+
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Back..."),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    if (widget.NewsId.length > 3) {
+                      // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
+                      FirebaseFirestore.instance
+                          .collection("srkrPage")
+                          .doc("flashNews").collection("flashNews").doc(widget.NewsId)
+                          .update({
+                        "heading": HeadingController.text.trim(),
+                        "link": LinkController.text.trim(),
+                      });
+                    } else {
+                      String id =  getID();
+                      FirebaseFirestore.instance
+                          .collection("srkrPage")
+                          .doc("flashNews").collection("flashNews").doc(id)
+                          .set({
+                        "id":id,
+                        "heading": HeadingController.text.trim(),
+                        "link": LinkController.text.trim(),
+                      });
+                      SendMessage("flashNews;$id",HeadingController.text.trim(),"None");
+
+                    }
+
+
+                    HeadingController.clear();
+                    LinkController.clear();
+
+                    Navigator.pop(context);
+                  },
+                  child: widget.NewsId.length < 3
+                      ? Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Create"),
+                    ),
+                  )
+                      : Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Update"),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+              ],
             ),
-          )),
-
-          TextFieldContainer(heading: "Link",
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: TextFormField(
-                  //obscureText: true,
-                  controller: LinkController,
-                  textInputAction: TextInputAction.next,
-                  maxLines: null,
-                  style: TextStyle(color: Colors.white,fontSize: 20),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Description or Full name',
-                    hintStyle: TextStyle(color: Colors.white54)
-                  ),
-                ),
-              )),
-
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[500],
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.white),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10, right: 10, top: 5, bottom: 5),
-                    child: Text("Back..."),
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  if (widget.NewsId.length > 3) {
-                    // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
-                    FirebaseFirestore.instance
-                        .collection("srkrPage")
-                        .doc("flashNews").collection("flashNews").doc(widget.NewsId)
-                        .update({
-                      "heading": HeadingController.text.trim(),
-                      "link": LinkController.text.trim(),
-                    });
-                  } else {
-                    String id =  getID();
-                    FirebaseFirestore.instance
-                        .collection("srkrPage")
-                        .doc("flashNews").collection("flashNews").doc(id)
-                        .set({
-                      "id":id,
-                      "heading": HeadingController.text.trim(),
-                      "link": LinkController.text.trim(),
-                    });
-                    SendMessage("flashNews;$id",HeadingController.text.trim(),"None");
-
-                  }
-
-
-                  HeadingController.clear();
-                  LinkController.clear();
-
-                  Navigator.pop(context);
-                },
-                child: widget.NewsId.length < 3
-                    ? Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[500],
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.white),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10, right: 10, top: 5, bottom: 5),
-                    child: Text("Create"),
-                  ),
-                )
-                    : Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[500],
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.white),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10, right: 10, top: 5, bottom: 5),
-                    child: Text("Update"),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 15,
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),);
+          ],
+        ),
+      ),);
   }
 }
 
@@ -553,37 +553,37 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                 ),
                 InkWell(
                   onTap: () {
-                   if(widget.mode=="Time Table"){
-                     if (widget.id.length > 3) {
-                       FirebaseFirestore.instance
-                           .collection(widget.branch)
-                           .doc("regulation")
-                           .collection("regulationWithSem")
-                           .doc(widget.reg)
-                           .collection("timeTables")
-                           .doc(widget.id).update({"heading":HeadingController.text.trim(),"photoUrl":PhotoUrlController.text.trim()});
-                     } else {
-                       createTimeTable(branch: widget.branch, heading: HeadingController.text.trim(), photoUrl: PhotoUrlController.text.trim(), reg: widget.reg);
-                     }
-                   }else{
-                     if (widget.id.length > 3) {
-                      if(widget.mode=="modalPaper"){
+                    if(widget.mode=="Time Table"){
+                      if (widget.id.length > 3) {
                         FirebaseFirestore.instance
                             .collection(widget.branch)
                             .doc("regulation")
-                            .collection("regulationWithYears")
-                            .doc(widget.id.substring(0, 10)).update({"modelPaper":LinkController1.text.trim(),});
-
-                      }else{
-                        FirebaseFirestore.instance
-                            .collection(widget.branch)
-                            .doc("regulation")
-                            .collection("regulationWithYears")
-                            .doc(widget.id.substring(0, 10)).update({"syllabus":LinkController.text.trim(),});
-
+                            .collection("regulationWithSem")
+                            .doc(widget.reg)
+                            .collection("timeTables")
+                            .doc(widget.id).update({"heading":HeadingController.text.trim(),"photoUrl":PhotoUrlController.text.trim()});
+                      } else {
+                        createTimeTable(branch: widget.branch, heading: HeadingController.text.trim(), photoUrl: PhotoUrlController.text.trim(), reg: widget.reg);
                       }
-                     }
-                   }
+                    }else{
+                      if (widget.id.length > 3) {
+                        if(widget.mode=="modalPaper"){
+                          FirebaseFirestore.instance
+                              .collection(widget.branch)
+                              .doc("regulation")
+                              .collection("regulationWithYears")
+                              .doc(widget.id.substring(0, 10)).update({"modelPaper":LinkController1.text.trim(),});
+
+                        }else{
+                          FirebaseFirestore.instance
+                              .collection(widget.branch)
+                              .doc("regulation")
+                              .collection("regulationWithYears")
+                              .doc(widget.id.substring(0, 10)).update({"syllabus":LinkController.text.trim(),});
+
+                        }
+                      }
+                    }
 
 
                     HeadingController.clear();
@@ -641,21 +641,21 @@ class updateCreator extends StatefulWidget {
 
   updateCreator(
       {this.NewsId = "",
-      this.link = '',
-      this.heading = "",
-      this.photoUrl = "",
-      this.subMessage = "",
-      required this.width,
-      required this.size,
-      required this.height,
-      required this.branch});
+        this.link = '',
+        this.heading = "",
+        this.photoUrl = "",
+        this.subMessage = "",
+        required this.width,
+        required this.size,
+        required this.height,
+        required this.branch});
 
   @override
   State<updateCreator> createState() => _updateCreatorState();
 }
 
 class _updateCreatorState extends State<updateCreator> {
-   FirebaseStorage storage = FirebaseStorage.instance;
+  FirebaseStorage storage = FirebaseStorage.instance;
   String Branch = "";
   bool isBranch = false;
   final MessageController = TextEditingController();
@@ -1098,10 +1098,10 @@ class NewsCreator extends StatefulWidget {
 
   NewsCreator(
       {this.NewsId = "",
-      this.description = '',
-      this.heading = "",
-      this.photoUrl = "",
-      required this.branch});
+        this.description = '',
+        this.heading = "",
+        this.photoUrl = "",
+        required this.branch});
 
   @override
   State<NewsCreator> createState() => _NewsCreatorState();
@@ -1348,8 +1348,8 @@ class _NewsCreatorState extends State<NewsCreator> {
                                       return progress == null
                                           ? child
                                           : Center(
-                                              child:
-                                                  CircularProgressIndicator());
+                                          child:
+                                          CircularProgressIndicator());
                                     },
                                   ),
                                   if (_isLoading)
@@ -1377,7 +1377,7 @@ class _NewsCreatorState extends State<NewsCreator> {
                                       final String fileName =
                                           uri.pathSegments.last;
                                       final Reference ref =
-                                          storage.ref().child("/${fileName}");
+                                      storage.ref().child("/${fileName}");
                                       try {
                                         await ref.delete();
                                         showToastText(
@@ -1478,29 +1478,29 @@ class _NewsCreatorState extends State<NewsCreator> {
                   },
                   child: widget.NewsId.length < 3
                       ? Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[500],
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.white),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                            child: Text("Create"),
-                          ),
-                        )
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Create"),
+                    ),
+                  )
                       : Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[500],
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.white),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                            child: Text("Update"),
-                          ),
-                        ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Update"),
+                    ),
+                  ),
                 ),
                 SizedBox(
                   width: 15,
@@ -1525,12 +1525,12 @@ class SubjectsCreator extends StatefulWidget {
 
   SubjectsCreator(
       {this.Id = "",
-      this.description = '',
-      this.heading = "",
-      this.reg = "",
-      this.photoUrl = "",
-      this.mode = "Subjects",
-      required this.branch});
+        this.description = '',
+        this.heading = "",
+        this.reg = "",
+        this.photoUrl = "",
+        this.mode = "Subjects",
+        required this.branch});
 
   @override
   State<SubjectsCreator> createState() => _SubjectsCreatorState();
@@ -1585,26 +1585,26 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
               textInputAction: TextInputAction.next,
               style: TextStyle(color: Colors.white,fontSize: 20),
               decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Heading',
-                hintStyle: TextStyle(color: Colors.white54)
+                  border: InputBorder.none,
+                  hintText: 'Heading',
+                  hintStyle: TextStyle(color: Colors.white54)
               ),
             ),heading: "Heading",),
 
 
-           TextFieldContainer(child: TextFormField(
-             //obscureText: true,
-             controller: DescriptionController,
-             textInputAction: TextInputAction.next,
-             style: TextStyle(color: Colors.white,fontSize: 20),
+            TextFieldContainer(child: TextFormField(
+              //obscureText: true,
+              controller: DescriptionController,
+              textInputAction: TextInputAction.next,
+              style: TextStyle(color: Colors.white,fontSize: 20),
 
-             decoration: InputDecoration(
-               border: InputBorder.none,
-               hintText: 'Description or Full name',
-                 hintStyle: TextStyle(color: Colors.white54)
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Description or Full name',
+                  hintStyle: TextStyle(color: Colors.white54)
 
-             ),
-           ),heading: "Description",),
+              ),
+            ),heading: "Description",),
             if (_isImage == true)
               Padding(
                 padding: const EdgeInsets.only(left: 10, top: 20),
@@ -2071,14 +2071,14 @@ class BooksCreator extends StatefulWidget {
 
   BooksCreator(
       {this.id = "",
-      this.description = '',
-      this.heading = "",
-      this.photoUrl = "",
-      this.Date = "",
-      this.Author = "",
-      this.Edition = "",
-      required this.branch,
-      this.Link = ""});
+        this.description = '',
+        this.heading = "",
+        this.photoUrl = "",
+        this.Date = "",
+        this.Author = "",
+        this.Edition = "",
+        required this.branch,
+        this.Link = ""});
 
   @override
   State<BooksCreator> createState() => _BooksCreatorState();
@@ -2172,7 +2172,7 @@ class _BooksCreatorState extends State<BooksCreator> {
             ),
             Padding(
               padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -2204,7 +2204,7 @@ class _BooksCreatorState extends State<BooksCreator> {
             ),
             Padding(
               padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -2237,7 +2237,7 @@ class _BooksCreatorState extends State<BooksCreator> {
             ),
             Padding(
               padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -2272,7 +2272,7 @@ class _BooksCreatorState extends State<BooksCreator> {
             ),
             Padding(
               padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -2305,7 +2305,7 @@ class _BooksCreatorState extends State<BooksCreator> {
             ),
             Padding(
               padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -2338,7 +2338,7 @@ class _BooksCreatorState extends State<BooksCreator> {
             ),
             Padding(
               padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+              const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -2386,7 +2386,7 @@ class _BooksCreatorState extends State<BooksCreator> {
                 ),
                 InkWell(
                   onTap: () {
-                    if (widget.id.length > 3) {
+                    if (widget.id.isNotEmpty) {
                       FirebaseFirestore.instance
                           .collection(widget.branch)
                           .doc("Books")
@@ -2414,29 +2414,29 @@ class _BooksCreatorState extends State<BooksCreator> {
                   },
                   child: widget.id.length < 3
                       ? Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[500],
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.white),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                            child: Text("Create"),
-                          ),
-                        )
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Create"),
+                    ),
+                  )
                       : Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[500],
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.white),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                            child: Text("Update"),
-                          ),
-                        ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      child: Text("Update"),
+                    ),
+                  ),
                 ),
                 SizedBox(
                   width: 20,
@@ -2466,17 +2466,17 @@ class UnitsCreator extends StatefulWidget {
 
   UnitsCreator(
       {required this.id,
-       required this.mode,
-      required this.branch,
-      required this.type,
-      this.edition = "",
-      this.photoUrl = "",
-      this.Description = "",
-      this.Heading = "",
-      this.questions = "",
-      this.author = "",
-      this.PDFUrl = "",
-      this.UnitId = ""});
+        required this.mode,
+        required this.branch,
+        required this.type,
+        this.edition = "",
+        this.photoUrl = "",
+        this.Description = "",
+        this.Heading = "",
+        this.questions = "",
+        this.author = "",
+        this.PDFUrl = "",
+        this.UnitId = ""});
 
   @override
   State<UnitsCreator> createState() => _UnitsCreatorState();
@@ -2660,542 +2660,542 @@ class _UnitsCreatorState extends State<UnitsCreator> {
   Widget build(BuildContext context) {
     return backGroundImage(
         child: Column(
-      children: [
-        backButton(size: size(context),text: "Create Unit",child: SizedBox(width: 45,)),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if(widget.type=="unit")Padding(
-                  padding: const EdgeInsets.only(left: 15, top: 8,bottom: 10),
-                  child: Text(
-                    "Type Selected : $unit",
-                    style: creatorHeadingTextStyle,
-                  ),
-                ),
-                if(widget.type=="unit")SizedBox(
-                  height: 30,
-                  child: ListView.separated(
-                      physics: const BouncingScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 6, // Display only top 5 items
-                      itemBuilder: (context, int index) {
-                        if(index==0) {
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 25),
-                            child: InkWell(
-                              child: Container(
-                              decoration: BoxDecoration(
+          children: [
+            backButton(size: size(context),text: "Create Unit",child: SizedBox(width: 45,)),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if(widget.type=="unit")Padding(
+                      padding: const EdgeInsets.only(left: 15, top: 8,bottom: 10),
+                      child: Text(
+                        "Type Selected : $unit",
+                        style: creatorHeadingTextStyle,
+                      ),
+                    ),
+                    if(widget.type=="unit")SizedBox(
+                      height: 30,
+                      child: ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 6, // Display only top 5 items
+                        itemBuilder: (context, int index) {
+                          if(index==0) {
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 25),
+                              child: InkWell(
+                                child: Container(
+                                    decoration: BoxDecoration(
 
-                                  color: unit=="Unknown"?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(10)
+                                        color: unit=="Unknown"?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(10)
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                      child: Text("Unknown",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
+                                    )),
+                                onTap: (){
+                                  setState(() {
+                                    unit = "Unknown";
+                                  });
+                                },
                               ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
-                                  child: Text("Unknown",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
-                                )),
+                            );
+                          } else{
+                            return InkWell(
+                              child: Container(
+                                  decoration: BoxDecoration(
+
+                                      color: unit=="Unit $index"?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
+                                    child: Text("Unit $index",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
+                                  )),
                               onTap: (){
                                 setState(() {
-                                  unit = "Unknown";
+                                  unit = "Unit $index";
                                 });
                               },
-                            ),
-                          );
-                        } else{
+                            );
+                          }
+                        },
+                        separatorBuilder: (context,index)=>SizedBox(width: 3,),),
+                    ),
+                    TextFieldContainer(
+                      child: TextFormField(
+                        controller: HeadingController,
+                        textInputAction: TextInputAction.next,
+                        style: textFieldStyle(size(context)),
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(color: Colors.white54),
+                          border: InputBorder.none,
+                          hintText: 'Heading',
+                        ),
+                      ),
+                      heading:"Heading" ,
+                    ),
+                    if(widget.type=="more")Padding(
+                      padding: const EdgeInsets.only(left: 15, top: 8,bottom: 10),
+                      child: Text(
+                        "Type Selected : $unit",
+                        style: creatorHeadingTextStyle,
+                      ),
+                    ),
+                    if(widget.type=="more")SizedBox(
+                      height: 30,
+                      child: ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: list.length, // Display only top 5 items
+                        itemBuilder: (context, int index) {
+
+
                           return InkWell(
                             child: Container(
                                 decoration: BoxDecoration(
 
-                                    color: unit=="Unit $index"?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
+                                    color: unit==list[index] ?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(10)
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
-                                  child: Text("Unit $index",style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
+                                  child: Text(list[index],style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
                                 )),
                             onTap: (){
                               setState(() {
-                                unit = "Unit $index";
+                                unit = list[index];
                               });
                             },
                           );
-                        }
-                      },
-                  separatorBuilder: (context,index)=>SizedBox(width: 3,),),
-                ),
-                TextFieldContainer(
-                  child: TextFormField(
-                    controller: HeadingController,
-                    textInputAction: TextInputAction.next,
-                    style: textFieldStyle(size(context)),
-                    decoration: InputDecoration(
-                      hintStyle: TextStyle(color: Colors.white54),
-                      border: InputBorder.none,
-                      hintText: 'Heading',
+
+                        },
+                        separatorBuilder: (context,index)=>SizedBox(width: 3,),),
                     ),
-                  ),
-                  heading:"Heading" ,
-                ),
-                if(widget.type=="more")Padding(
-                  padding: const EdgeInsets.only(left: 15, top: 8,bottom: 10),
-                  child: Text(
-                    "Type Selected : $unit",
-                    style: creatorHeadingTextStyle,
-                  ),
-                ),
-                if(widget.type=="more")SizedBox(
-                  height: 30,
-                  child: ListView.separated(
-                    physics: const BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: list.length, // Display only top 5 items
-                    itemBuilder: (context, int index) {
-
-
-                        return InkWell(
-                          child: Container(
-                              decoration: BoxDecoration(
-
-                                  color: unit==list[index] ?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 8),
-                                child: Text(list[index],style: TextStyle(color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),),
-                              )),
-                          onTap: (){
-                            setState(() {
-                              unit = list[index];
-                            });
+                    if(unit!="More")TextFieldContainer(
+                      child: TextFormField(
+                        controller: PDFUrlController,
+                        textInputAction: TextInputAction.next,
+                        style: textFieldStyle(size(context)),
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(color: Colors.white54),
+                          border: InputBorder.none,
+                          hintText: 'PDF Url',
+                        ),
+                      ),
+                      heading:"PDF Url" ,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15, top: 8),
+                      child: Text(
+                        "Description",
+                        style: creatorHeadingTextStyle,
+                      ),
+                    ),
+                    ListView.builder(
+                      itemCount: DescriptionList.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return Dismissible(
+                          key: Key(DescriptionList[index]),
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerRight,
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.black,
+                            ),
+                          ),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) {
+                            deleteDescription(index);
                           },
-                        );
+                          child: ListTile(
+                            title: Text(DescriptionList[index],style: TextStyle(color: Colors.white,fontSize: 20),),
+                            trailing: SingleChildScrollView(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(Icons.delete,color: Colors.redAccent,),
+                                    onPressed: () {
+                                      deleteDescription(index);
+                                    },
 
-                    },
-                    separatorBuilder: (context,index)=>SizedBox(width: 3,),),
-                ),
-                if(unit!="More")TextFieldContainer(
-                  child: TextFormField(
-                    controller: PDFUrlController,
-                    textInputAction: TextInputAction.next,
-                    style: textFieldStyle(size(context)),
-                    decoration: InputDecoration(
-                      hintStyle: TextStyle(color: Colors.white54),
-                      border: InputBorder.none,
-                      hintText: 'PDF Url',
-                    ),
-                  ),
-                  heading:"PDF Url" ,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 15, top: 8),
-                  child: Text(
-                    "Description",
-                    style: creatorHeadingTextStyle,
-                  ),
-                ),
-               ListView.builder(
-                  itemCount: DescriptionList.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Dismissible(
-                      key: Key(DescriptionList[index]),
-                      background: Container(
-                        color: Colors.red,
-                        alignment: Alignment.centerRight,
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.black,
-                        ),
-                      ),
-                      direction: DismissDirection.endToStart,
-                      onDismissed: (direction) {
-                        deleteDescription(index);
-                      },
-                      child: ListTile(
-                        title: Text(DescriptionList[index],style: TextStyle(color: Colors.white,fontSize: 20),),
-                        trailing: SingleChildScrollView(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              IconButton(
-                                icon: Icon(Icons.delete,color: Colors.redAccent,),
-                                onPressed: () {
-                                  deleteDescription(index);
-                                },
-
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.edit,color: Colors.greenAccent,),
-                                onPressed: () {
-                                  editDescription(index);
-                                  setState(() {
-                                    isEdit=true;
-                                  });
-                                },
-                              ),
-                              InkWell(
-                                child: Icon(Icons.move_up,size: 30,color: Colors.amber,),
-                                onTap: (){
-                                  moveDescriptionUp(index);
-                                },
-                                onDoubleTap: (){
-                                  moveDescriptionDown(index);
-                                },
-                              ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.edit,color: Colors.greenAccent,),
+                                    onPressed: () {
+                                      editDescription(index);
+                                      setState(() {
+                                        isEdit=true;
+                                      });
+                                    },
+                                  ),
+                                  InkWell(
+                                    child: Icon(Icons.move_up,size: 30,color: Colors.amber,),
+                                    onTap: (){
+                                      moveDescriptionUp(index);
+                                    },
+                                    onDoubleTap: (){
+                                      moveDescriptionDown(index);
+                                    },
+                                  ),
 
 
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          editDescription(index);
-                        },
-                      ),
-                    );
-                  },
-                ),
-                Row(
-                  children: [
-                    Flexible(
-                      child: Padding(
-                        padding:
-                        const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                        child:TextFieldContainer(child:TextFormField(
-                          controller: _DescriptionController,
-                          style: textFieldStyle(size(context)),
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Enter Description Here',
-                            hintStyle: TextStyle(color: Colors.white54),
-                          ),
-                        ) ,),
-                      ),
-                    ),
-                    InkWell(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white12,
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Icon(!isEdit?Icons.add:Icons.save,size: 45,color: Colors.white,),
-                      ),
-                      onTap: (){
-                        !isEdit?addDescription():saveDescription();
-                        setState(() {
-                          isEdit=false;
-                        });
-                      },
-                    )
-                  ],
-                ),
-                if(widget.type=="unit")Padding(
-                  padding: const EdgeInsets.only(left: 15, top: 8),
-                  child: Text(
-                    "Questions",
-                    style: creatorHeadingTextStyle,
-                  ),
-                ),
-                if(widget.type=="unit")ListView.builder(
-                  itemCount: QuestionsList.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Dismissible(
-                      key: Key(QuestionsList[index]),
-                      background: Container(
-                        color: Colors.red,
-                        alignment: Alignment.centerRight,
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.black,
-                        ),
-                      ),
-                      direction: DismissDirection.endToStart,
-                      onDismissed: (direction) {
-                        deleteQuestion(index);
-                      },
-                      child: ListTile(
-                        title: Text(QuestionsList[index],style: TextStyle(color: Colors.white,fontSize: 20),),
-                        trailing: SingleChildScrollView(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              IconButton(
-                                icon: Icon(Icons.delete,color: Colors.redAccent,),
-                                onPressed: () {
-                                  deleteQuestion(index);
-                                },
-
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.edit,color: Colors.greenAccent,),
-                                onPressed: () {
-                                  editQuestion(index);
-                                  setState(() {
-                                    isEdit=true;
-                                  });
-                                },
-                              ),
-                              InkWell(
-                                child: Icon(Icons.move_up,size: 30,color: Colors.amber,),
-                                onTap: (){
-                                  moveQuestionUp(index);
-                                },
-                                onDoubleTap: (){
-                                  moveQuestionDown(index);
-                                },
-                              ),
-
-
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          editQuestion(index);
-                        },
-                      ),
-                    );
-                  },
-                ),
-                if(widget.type=="unit")Row(
-                  children: [
-                    Flexible(
-                      child: Padding(
-                        padding:
-                        const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                        child:TextFieldContainer(child:TextFormField(
-                          controller: _QuestionsController,
-                          style: textFieldStyle(size(context)),
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Enter Images Here',
-                            hintStyle: TextStyle(color: Colors.white54),
-                          ),
-                        ) ,),
-                      ),
-                    ),
-                    InkWell(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white12,
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Icon(!isEdit?Icons.add:Icons.save,size: 45,color: Colors.white,),
-                      ),
-                      onTap: (){
-                        !isEdit?addQuestion():saveQuestion();
-                        setState(() {
-                          isEdit=false;
-                        });
-                      },
-                    )
-                  ],
-                ),
-                if(widget.type=="textbook")TextFieldContainer(
-                  child: TextFormField(
-                    controller: PhotoUrlController,
-                    textInputAction: TextInputAction.next,
-                    style: textFieldStyle(size(context)),
-                    decoration: InputDecoration(
-                      hintStyle: TextStyle(color: Colors.white54),
-                      border: InputBorder.none,
-                      hintText: 'Photo Url',
-                    ),
-                  ),
-                  heading:"Photo Url" ,
-                ),
-                if(widget.type=="textbook")TextFieldContainer(
-                  child: TextFormField(
-                    controller: AuthorController,
-                    textInputAction: TextInputAction.next,
-                    style: textFieldStyle(size(context)),
-                    decoration: InputDecoration(
-                      hintStyle: TextStyle(color: Colors.white54),
-                      border: InputBorder.none,
-                      hintText: 'Author',
-                    ),
-                  ),
-                  heading:"Author" ,
-                ),
-                if(widget.type=="textbook")TextFieldContainer(
-                  child: TextFormField(
-                    controller: EditionController,
-                    textInputAction: TextInputAction.next,
-                    style: textFieldStyle(size(context)),
-                    decoration: InputDecoration(
-                      hintStyle: TextStyle(color: Colors.white54),
-                      border: InputBorder.none,
-                      hintText: 'Edition',
-                    ),
-                  ),
-                  heading:"Edition" ,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Spacer(),
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.white.withOpacity(0.5),
-                          border: Border.all(color: Colors.white),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 10, right: 10, top: 5, bottom: 5),
-                          child: Text("Back"),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        if(widget.type=="unit"){
-                          if (widget.UnitId.length < 3) {
-
-                            createUnits(
-                              branch: widget.branch,
-                              description: DescriptionList.join(";"),
-                              questions: QuestionsList.join(";"),
-                              heading: unit+";"+HeadingController.text.trim(),
-                              PDFSize: "0",
-                              PDFLink: PDFUrlController.text.trim(),
-                              subjectsID: widget.id,
-                              mode: widget.mode,
-                            );
-                          }
-                          else {
-                            FirebaseFirestore.instance
-                                .collection(widget.branch)
-                                .doc(widget.mode)
-                                .collection(widget.mode)
-                                .doc(widget.UnitId)
-                                .collection("Units")
-                                .doc(widget.id)
-                                .update({
-                              "heading": unit+";"+HeadingController.text.trim(),
-                              "link": PDFUrlController.text.trim(),
-                              "description": DescriptionList.join(";"),
-                              "questions": QuestionsList.join(";")
-                            });
-                          }
-                        }
-                        else if(widget.type=="textbook"){
-                          if (widget.UnitId.length < 3) {
-
-                            createUnitsTextbooks(
-                              branch: widget.branch,
-                              description: DescriptionList.join(";"),
-                              heading: HeadingController.text.trim(),
-                              PDFLink: PDFUrlController.text.trim(),
-                              subjectsID: widget.id,
-                              mode: widget.mode,
-                              photoUrl: PhotoUrlController.text.trim(), author: AuthorController.text.trim(),
-                              edition: EditionController.text.trim(),
-                            );
-                          }
-                          else {
-                            FirebaseFirestore.instance
-                                .collection(widget.branch)
-                                .doc(widget.mode)
-                                .collection(widget.mode)
-                                .doc(widget.UnitId)
-                                .collection("TextBooks")
-                                .doc(widget.id)
-                                .update({
-                              "description": DescriptionList.join(";"),
-                              "heading": HeadingController.text.trim(),
-                              "author": AuthorController.text.trim(),
-                              "image": PhotoUrlController.text.trim(),
-                              "edition": EditionController.text.trim(),
-                              "link": PDFUrlController.text.trim(),
-                            });
-                          }
-                        }
-                        else{
-                          if (widget.UnitId.length < 3) {
-
-                            createUnitsMore(
-                              branch: widget.branch,
-                              subjectsID: widget.id,
-                              mode: widget.mode,
-                              heading: HeadingController.text.trim(),
-                              description: DescriptionList.join(";"),
-                              link: unit+";"+PDFUrlController.text,
-
-                            );
-                          }
-                          else {
-                            FirebaseFirestore.instance
-                                .collection(widget.branch)
-                                .doc(widget.mode)
-                                .collection(widget.mode)
-                                .doc(widget.UnitId)
-                                .collection("More")
-                                .doc(widget.id)
-                                .update({
-                              "description": DescriptionList.join(";"),
-                              "heading": HeadingController.text.trim(),
-                              "link": unit+";"+PDFUrlController.text.trim(),
-                            });
-                          }
-                        }
-                        Navigator.pop(context);
-                      },
-                      child: widget.UnitId.length < 3
-                          ? Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Colors.white.withOpacity(0.5),
-                                border: Border.all(color: Colors.white),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10, right: 10, top: 5, bottom: 5),
-                                child: Text("Create"),
-                              ),
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Colors.white.withOpacity(0.5),
-                                border: Border.all(color: Colors.white),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10, right: 10, top: 5, bottom: 5),
-                                child: Text("Update"),
+                                ],
                               ),
                             ),
+                            onTap: () {
+                              editDescription(index);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Padding(
+                            padding:
+                            const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                            child:TextFieldContainer(child:TextFormField(
+                              controller: _DescriptionController,
+                              style: textFieldStyle(size(context)),
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Enter Description Here',
+                                hintStyle: TextStyle(color: Colors.white54),
+                              ),
+                            ) ,),
+                          ),
+                        ),
+                        InkWell(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white12,
+                              border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Icon(!isEdit?Icons.add:Icons.save,size: 45,color: Colors.white,),
+                          ),
+                          onTap: (){
+                            !isEdit?addDescription():saveDescription();
+                            setState(() {
+                              isEdit=false;
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                    if(widget.type=="unit")Padding(
+                      padding: const EdgeInsets.only(left: 15, top: 8),
+                      child: Text(
+                        "Questions",
+                        style: creatorHeadingTextStyle,
+                      ),
+                    ),
+                    if(widget.type=="unit")ListView.builder(
+                      itemCount: QuestionsList.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return Dismissible(
+                          key: Key(QuestionsList[index]),
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerRight,
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.black,
+                            ),
+                          ),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) {
+                            deleteQuestion(index);
+                          },
+                          child: ListTile(
+                            title: Text(QuestionsList[index],style: TextStyle(color: Colors.white,fontSize: 20),),
+                            trailing: SingleChildScrollView(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(Icons.delete,color: Colors.redAccent,),
+                                    onPressed: () {
+                                      deleteQuestion(index);
+                                    },
+
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.edit,color: Colors.greenAccent,),
+                                    onPressed: () {
+                                      editQuestion(index);
+                                      setState(() {
+                                        isEdit=true;
+                                      });
+                                    },
+                                  ),
+                                  InkWell(
+                                    child: Icon(Icons.move_up,size: 30,color: Colors.amber,),
+                                    onTap: (){
+                                      moveQuestionUp(index);
+                                    },
+                                    onDoubleTap: (){
+                                      moveQuestionDown(index);
+                                    },
+                                  ),
+
+
+                                ],
+                              ),
+                            ),
+                            onTap: () {
+                              editQuestion(index);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    if(widget.type=="unit")Row(
+                      children: [
+                        Flexible(
+                          child: Padding(
+                            padding:
+                            const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                            child:TextFieldContainer(child:TextFormField(
+                              controller: _QuestionsController,
+                              style: textFieldStyle(size(context)),
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Enter Images Here',
+                                hintStyle: TextStyle(color: Colors.white54),
+                              ),
+                            ) ,),
+                          ),
+                        ),
+                        InkWell(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white12,
+                              border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Icon(!isEdit?Icons.add:Icons.save,size: 45,color: Colors.white,),
+                          ),
+                          onTap: (){
+                            !isEdit?addQuestion():saveQuestion();
+                            setState(() {
+                              isEdit=false;
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                    if(widget.type=="textbook")TextFieldContainer(
+                      child: TextFormField(
+                        controller: PhotoUrlController,
+                        textInputAction: TextInputAction.next,
+                        style: textFieldStyle(size(context)),
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(color: Colors.white54),
+                          border: InputBorder.none,
+                          hintText: 'Photo Url',
+                        ),
+                      ),
+                      heading:"Photo Url" ,
+                    ),
+                    if(widget.type=="textbook")TextFieldContainer(
+                      child: TextFormField(
+                        controller: AuthorController,
+                        textInputAction: TextInputAction.next,
+                        style: textFieldStyle(size(context)),
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(color: Colors.white54),
+                          border: InputBorder.none,
+                          hintText: 'Author',
+                        ),
+                      ),
+                      heading:"Author" ,
+                    ),
+                    if(widget.type=="textbook")TextFieldContainer(
+                      child: TextFormField(
+                        controller: EditionController,
+                        textInputAction: TextInputAction.next,
+                        style: textFieldStyle(size(context)),
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(color: Colors.white54),
+                          border: InputBorder.none,
+                          hintText: 'Edition',
+                        ),
+                      ),
+                      heading:"Edition" ,
                     ),
                     SizedBox(
-                      width: 20,
+                      height: 10,
                     ),
+                    Row(
+                      children: [
+                        Spacer(),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Colors.white.withOpacity(0.5),
+                              border: Border.all(color: Colors.white),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 10, top: 5, bottom: 5),
+                              child: Text("Back"),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            if(widget.type=="unit"){
+                              if (widget.UnitId.length < 3) {
+
+                                createUnits(
+                                  branch: widget.branch,
+                                  description: DescriptionList.join(";"),
+                                  questions: QuestionsList.join(";"),
+                                  heading: unit+";"+HeadingController.text.trim(),
+                                  PDFSize: "0",
+                                  PDFLink: PDFUrlController.text.trim(),
+                                  subjectsID: widget.id,
+                                  mode: widget.mode,
+                                );
+                              }
+                              else {
+                                FirebaseFirestore.instance
+                                    .collection(widget.branch)
+                                    .doc(widget.mode)
+                                    .collection(widget.mode)
+                                    .doc(widget.UnitId)
+                                    .collection("Units")
+                                    .doc(widget.id)
+                                    .update({
+                                  "heading": unit+";"+HeadingController.text.trim(),
+                                  "link": PDFUrlController.text.trim(),
+                                  "description": DescriptionList.join(";"),
+                                  "questions": QuestionsList.join(";")
+                                });
+                              }
+                            }
+                            else if(widget.type=="textbook"){
+                              if (widget.UnitId.length < 3) {
+
+                                createUnitsTextbooks(
+                                  branch: widget.branch,
+                                  description: DescriptionList.join(";"),
+                                  heading: HeadingController.text.trim(),
+                                  PDFLink: PDFUrlController.text.trim(),
+                                  subjectsID: widget.id,
+                                  mode: widget.mode,
+                                  photoUrl: PhotoUrlController.text.trim(), author: AuthorController.text.trim(),
+                                  edition: EditionController.text.trim(),
+                                );
+                              }
+                              else {
+                                FirebaseFirestore.instance
+                                    .collection(widget.branch)
+                                    .doc(widget.mode)
+                                    .collection(widget.mode)
+                                    .doc(widget.UnitId)
+                                    .collection("TextBooks")
+                                    .doc(widget.id)
+                                    .update({
+                                  "description": DescriptionList.join(";"),
+                                  "heading": HeadingController.text.trim(),
+                                  "author": AuthorController.text.trim(),
+                                  "image": PhotoUrlController.text.trim(),
+                                  "edition": EditionController.text.trim(),
+                                  "link": PDFUrlController.text.trim(),
+                                });
+                              }
+                            }
+                            else{
+                              if (widget.UnitId.length < 3) {
+
+                                createUnitsMore(
+                                  branch: widget.branch,
+                                  subjectsID: widget.id,
+                                  mode: widget.mode,
+                                  heading: HeadingController.text.trim(),
+                                  description: DescriptionList.join(";"),
+                                  link: unit+";"+PDFUrlController.text,
+
+                                );
+                              }
+                              else {
+                                FirebaseFirestore.instance
+                                    .collection(widget.branch)
+                                    .doc(widget.mode)
+                                    .collection(widget.mode)
+                                    .doc(widget.UnitId)
+                                    .collection("More")
+                                    .doc(widget.id)
+                                    .update({
+                                  "description": DescriptionList.join(";"),
+                                  "heading": HeadingController.text.trim(),
+                                  "link": unit+";"+PDFUrlController.text.trim(),
+                                });
+                              }
+                            }
+                            Navigator.pop(context);
+                          },
+                          child: widget.UnitId.length < 3
+                              ? Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Colors.white.withOpacity(0.5),
+                              border: Border.all(color: Colors.white),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 10, top: 5, bottom: 5),
+                              child: Text("Create"),
+                            ),
+                          )
+                              : Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Colors.white.withOpacity(0.5),
+                              border: Border.all(color: Colors.white),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 10, top: 5, bottom: 5),
+                              child: Text("Update"),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                      ],
+                    )
                   ],
-                )
-              ],
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
-    ));
+          ],
+        ));
   }
 }
 
@@ -3204,7 +3204,7 @@ Stream<List<RegulationConvertor>> readRegulation(String branch) =>
         .collection(branch)
         .doc("regulation")
         .collection("regulationWithSem")
-        .orderBy("id", descending: false)
+        .orderBy("id", descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
         .map((doc) => RegulationConvertor.fromJson(doc.data()))

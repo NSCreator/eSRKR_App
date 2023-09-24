@@ -79,14 +79,13 @@ class _notificationsState extends State<notifications>
             )),
         Container(
           color: Colors.transparent,
-          height: widget.size * 40,
+          height: widget.size * 30,
           child: Center(
             child: TabBar(
               dividerColor: Colors.transparent,
               indicator: BoxDecoration(
-                  border: Border.all(color: Colors.white12),
                   borderRadius: BorderRadius.circular(widget.size * 15),
-                  color: Color.fromRGBO(4, 11, 23, 1)),
+                  color: Colors.white24),
               controller: _tabController,
               isScrollable: true,
               labelPadding: EdgeInsets.symmetric(horizontal: widget.width * 35),
@@ -625,8 +624,7 @@ class _notificationsState extends State<notifications>
         ),
 
         searchBar(
-          width: widget.width,
-          height: widget.height,
+
           size: widget.size,
           branch: widget.branch,
           tabController: _tabController,
@@ -641,17 +639,15 @@ class searchBar extends StatefulWidget {
   final TextEditingController user;
   final String branch;
   final double size;
-  final double height;
-  final double width;
+
 
   const searchBar(
       {Key? key,
       required this.tabController,
       required this.user,
       required this.branch,
-      required this.width,
       required this.size,
-      required this.height})
+      })
       : super(key: key);
 
   @override
@@ -708,7 +704,7 @@ class _searchBarState extends State<searchBar> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white10,
-                      border: Border.all(color: Colors.white24),
+                      // border: Border.all(color: Colors.white24),
                       borderRadius: BorderRadius.circular(widget.size *50),
                     ),
                     child: Padding(
@@ -743,8 +739,8 @@ class _searchBarState extends State<searchBar> {
                   padding: EdgeInsets.only(left: widget.size *5, right: widget.size *5, top: widget.size *5, bottom: widget.size *5),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white10,
-                      border: Border.all(color: Colors.white24),
+                      color: Colors.white12,
+                      // border: Border.all(color: Colors.white24),
                       borderRadius: BorderRadius.circular(widget.size *50),
                     ),
                     child: Padding(

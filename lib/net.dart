@@ -1,20 +1,22 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srkr_study_app/ads.dart';
 import 'package:srkr_study_app/functins.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'HomePage.dart';
 
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'TextField.dart';
 import 'main.dart';
+
 
 
 class MyHomePage extends StatefulWidget {
@@ -25,16 +27,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   FlutterTts flutterTts = FlutterTts();
   TextEditingController textEditingController = TextEditingController();
-  // String textToSpeak = "";
   bool isSpeaking = false;
-  double pitch = 0.5; // Initial pitch value (range: 0.0 - 1.0)
+  double pitch = 1; // Initial pitch value (range: 0.0 - 1.0)
   double speechRate = 0.5; // Initial speech rate value (range: 0.0 - 1.0)
   String selectedLanguage = 'en-US'; // Initial language
   List<DropdownMenuItem<String>> languageItems = []; // List of language items
-
+  String _currentWord = "";
   @override
   void initState() {
     super.initState();
+
+    flutterTts.setProgressHandler((String text, int startOffset, int endOffset, String word) {
+      setState(() {
+        _currentWord = word;
+        showToastText("$startOffset $endOffset");
+      });
+    });
     // Initialize the FlutterTts instance
     loadSavedSettings();
 
@@ -151,6 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   )),
             ),
+            Text(_currentWord,style: TextStyle(color: Colors.white,fontSize: 20),),
             SizedBox(height: 20),
             SliderTheme(
               data: SliderTheme.of(context).copyWith(

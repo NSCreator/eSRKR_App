@@ -13,7 +13,7 @@ dependencies:
   url_launcher: ^6.1.12
   http: ^0.13.0
   fluttertoast: ^8.2.2
-#  google_mobile_ads: ^3.0.0
+  #  google_mobile_ads: ^3.0.0
   carousel_slider: ^4.2.1
   firebase_core: ^2.16.0
   cloud_firestore: ^4.9.2
@@ -33,7 +33,7 @@ dependencies:
   mailer: ^6.0.1
   open_file: ^3.3.2
   flutter_tts: ^3.8.3
-  visibility_detector: ^0.3.3
+  visibility_detector: ^0.4.0+2
   objectbox_flutter_libs: ^2.3.0
 
 

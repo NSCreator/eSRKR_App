@@ -267,7 +267,7 @@ class _createNewUserState extends State<createNewUser> {
   bool isTrue = false;
   bool isSend = false;
   String otp = "";
-  List branches = ["ECE", "CIVIL", "CSE", "EEE", "IT", "MECH"];
+  List branches = ["ECE", "CIVIL", "CSE", "EEE", "IT", "MECH","AIDS","CSBS","AIML","CSD","CSIT"];
   String branch = "";
   final emailController = TextEditingController();
   final otpController = TextEditingController();
@@ -339,8 +339,8 @@ class _createNewUserState extends State<createNewUser> {
                 child: InkWell(
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.amber,
-                        borderRadius: BorderRadius.circular(10)),
+                        color: Colors.blueGrey,
+                        borderRadius: BorderRadius.circular(20)),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 5, horizontal: 10),
@@ -414,6 +414,10 @@ class _createNewUserState extends State<createNewUser> {
                           branch = 'IT';
                         } else if (str == '03') {
                           branch = 'MECH';
+                        } else if (str == '57') {
+                          branch = 'CSBS';
+                        } else if (str == '54') {
+                          branch = 'AIDS';
                         } else {
                           Navigator.pop(context);
                           showToastText("Your Branch Is Not Registered");
@@ -626,8 +630,7 @@ class _createNewUserState extends State<createNewUser> {
                                 lastNameController.text,
                             "gmail": gmailController.text,
                             "branch": branch,
-                            "index": 0,
-                            "reg": ""
+                            "reg": "None"
                           });
                           await FirebaseAuth.instance
                               .createUserWithEmailAndPassword(

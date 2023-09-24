@@ -32,178 +32,191 @@ class _TimeTablesState extends State<TimeTables> {
   Widget build(BuildContext context) {
     return backGroundImage(
         child: SingleChildScrollView(
-      child: Column(
-        children: [
-          backButton(
-              size: widget.size,
-              text: "Time Tables",
-              child: isUser()
-                  ? InkWell(
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 40,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    timeTableSyllabusModalPaperCreator(
-                                      size: widget.size,
-                                      mode: 'Time Table',
-                                      reg: widget.reg,
-                                      branch: widget.branch,
-                                    )));
-                      },
-                    )
-                  : SizedBox(
-                      width: 45,
-                    )),
-          StreamBuilder<List<TimeTableConvertor>>(
-              stream: readTimeTable(branch: widget.branch, reg: widget.reg),
-              builder: (context, snapshot) {
-                final BranchNews = snapshot.data;
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      strokeWidth: 0.3,
-                      color: Colors.cyan,
-                    ));
-                  default:
-                    if (snapshot.hasError) {
-                      return const Center(
-                          child: Text(
-                              'Error with Time Table Data or\n Check Internet Connection'));
-                    } else {
-                      if (BranchNews!.length == 0) {
-                        return Center(
-                            child: Text(
-                          "No Time Tables",
-                          style: TextStyle(color: Colors.amber),
-                        ));
-                      } else
-                        return ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: BranchNews.length,
-                          itemBuilder: (context, int index) {
-                            var data = BranchNews[index];
-
+          child: Column(
+            children: [
+              backButton(
+                  size: widget.size,
+                  text: "Time Tables",
+                  child: isUser()
+                      ? InkWell(
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  timeTableSyllabusModalPaperCreator(
+                                    size: widget.size,
+                                    mode: 'Time Table',
+                                    reg: widget.reg,
+                                    branch: widget.branch,
+                                  )));
+                    },
+                  )
+                      : SizedBox(
+                    width: 45,
+                  )),
+              StreamBuilder<List<TimeTableConvertor>>(
+                  stream: readTimeTable(branch: widget.branch, reg: widget.reg),
+                  builder: (context, snapshot) {
+                    final BranchNews = snapshot.data;
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 0.3,
+                              color: Colors.cyan,
+                            ));
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text(
+                                  'Error with Time Table Data or\n Check Internet Connection'));
+                        } else {
+                          if (BranchNews!.length == 0) {
+                            return Center(
+                                child: Text(
+                                  "No Time Tables",
+                                  style: TextStyle(color: Colors.amber),
+                                ));
+                          } else
                             return Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: widget.size * 5,
-                                  vertical: widget.size * 5),
-                              child: InkWell(
-                                child: AspectRatio(
-                                  aspectRatio: 16 / 9,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image: NetworkImage(data.photoUrl),
-                                            fit: BoxFit.cover),
-                                        borderRadius: BorderRadius.circular(
-                                            widget.size * 20),
-                                        border:
-                                            Border.all(color: Colors.white12)),
-                                    child: Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: Padding(
-                                        padding:
-                                            EdgeInsets.all(widget.size * 8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: BranchNews.length,
+                                itemBuilder: (context, int index) {
+                                  var data = BranchNews[index];
+
+                                  return Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: widget.size * 5,
+                                        vertical: widget.size * 5),
+                                    child: InkWell(
+                                      child: AspectRatio(
+                                        aspectRatio: 16 / 9,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: NetworkImage(data.photoUrl),
+                                                  fit: BoxFit.cover),
+                                              borderRadius: BorderRadius.circular(
+                                                  widget.size * 20),
+                                              border:
+                                              Border.all(color: Colors.white12)),
+                                          child: Align(
+                                            alignment: Alignment.bottomRight,
+                                            child: Row(
+                                              mainAxisAlignment:
                                               MainAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              data.heading.toUpperCase(),
-                                              style: TextStyle(
-                                                  color: Colors.amber,
-                                                  fontSize: widget.size * 30),
-                                            ),
-                                            if (isUser())
-                                              PopupMenuButton(
-                                                icon: Icon(
-                                                  Icons.more_vert,
-                                                  color: Colors.white,
-                                                  size: widget.size * 25,
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.all(widget.size * 8.0),
+                                                  padding:EdgeInsets.all(widget.size * 5.0) ,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.black.withOpacity(0.8),
+                                                      borderRadius: BorderRadius.circular(20)
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                    children: [
+                                                      Text(
+                                                        "   ${data.heading.toUpperCase()}",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: widget.size * 22,fontWeight: FontWeight.w600),
+                                                      ),
+                                                      if (isUser())
+                                                        PopupMenuButton(
+                                                          icon: Icon(
+                                                            Icons.more_vert,
+                                                            color: Colors.white,
+                                                            size: widget.size * 20,
+                                                          ),
+                                                          // Callback that sets the selected popup menu item.
+                                                          onSelected: (item) {
+                                                            if (item == "edit") {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          timeTableSyllabusModalPaperCreator(
+                                                                            size: widget
+                                                                                .size,
+                                                                            mode:
+                                                                            'Time Table',
+                                                                            reg: widget
+                                                                                .reg,
+                                                                            branch: widget
+                                                                                .branch,
+                                                                            id: data.id,
+                                                                            heading: data
+                                                                                .heading,
+                                                                            link: data
+                                                                                .photoUrl,
+                                                                          )));
+                                                            } else if (item == "delete") {
+                                                              FirebaseFirestore.instance
+                                                                  .collection(
+                                                                  widget.branch)
+                                                                  .doc("regulation")
+                                                                  .collection(
+                                                                  "regulationWithSem")
+                                                                  .doc(widget.reg)
+                                                                  .collection(
+                                                                  "timeTables")
+                                                                  .doc(data.id)
+                                                                  .delete();
+                                                            }
+                                                          },
+                                                          itemBuilder:
+                                                              (BuildContext context) =>
+                                                          <PopupMenuEntry>[
+                                                            const PopupMenuItem(
+                                                              value: "edit",
+                                                              child: Text('Edit'),
+                                                            ),
+                                                            const PopupMenuItem(
+                                                              value: "delete",
+                                                              child: Text('Delete'),
+                                                            ),
+                                                          ],
+                                                        )
+                                                    ],
+                                                  ),
                                                 ),
-                                                // Callback that sets the selected popup menu item.
-                                                onSelected: (item) {
-                                                  if (item == "edit") {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                timeTableSyllabusModalPaperCreator(
-                                                                  size: widget
-                                                                      .size,
-                                                                  mode:
-                                                                      'Time Table',
-                                                                  reg: widget
-                                                                      .reg,
-                                                                  branch: widget
-                                                                      .branch,
-                                                                  id: data.id,
-                                                                  heading: data
-                                                                      .heading,
-                                                                  link: data
-                                                                      .photoUrl,
-                                                                )));
-                                                  } else if (item == "delete") {
-                                                    FirebaseFirestore.instance
-                                                        .collection(
-                                                            widget.branch)
-                                                        .doc("regulation")
-                                                        .collection(
-                                                            "regulationWithSem")
-                                                        .doc(widget.reg)
-                                                        .collection(
-                                                            "timeTables")
-                                                        .doc(data.id)
-                                                        .delete();
-                                                  }
-                                                },
-                                                itemBuilder:
-                                                    (BuildContext context) =>
-                                                        <PopupMenuEntry>[
-                                                  const PopupMenuItem(
-                                                    value: "edit",
-                                                    child: Text('Edit'),
-                                                  ),
-                                                  const PopupMenuItem(
-                                                    value: "delete",
-                                                    child: Text('Delete'),
-                                                  ),
-                                                ],
-                                              )
-                                          ],
+                                              ],
+                                            ),
+                                          ),
                                         ),
                                       ),
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => ImageZoom(
+                                                  size: widget.size,
+                                                  url: data.photoUrl,
+                                                  file: file,
+                                                )));
+                                      },
                                     ),
-                                  ),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ImageZoom(
-                                                size: widget.size,
-                                                url: data.photoUrl,
-                                                file: file,
-                                              )));
+                                  );
                                 },
                               ),
                             );
-                          },
-                        );
+                        }
                     }
-                }
-              }),
-        ],
-      ),
-    ));
+                  }),
+            ],
+          ),
+        ));
   }
 }
 
@@ -280,361 +293,361 @@ class _syllabusPageState extends State<syllabusPage> {
   Widget build(BuildContext context) {
     return backGroundImage(
         child: SingleChildScrollView(
-      child: Column(
-        children: [
-          backButton(
-              size: widget.size,
-              text: "Syllabus",
-              child: SizedBox(
-                width: 45,
-              )),
-          StreamBuilder<List<syllabusConvertor>>(
-              stream: readsyllabus(branch: widget.branch),
-              builder: (context, snapshot) {
-                final BranchNews = snapshot.data;
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      strokeWidth: 0.3,
-                      color: Colors.cyan,
-                    ));
-                  default:
-                    if (snapshot.hasError) {
-                      return const Center(
-                          child: Text(
-                              'Error with Syllabus Data or\n Check Internet Connection'));
-                    } else {
-                      if (BranchNews!.length == 0) {
-                        return Center(
-                            child: Text(
-                          "No Syllabus",
-                          style: TextStyle(color: Colors.lightBlueAccent),
-                        ));
-                      } else
-                        return ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: BranchNews.length,
-                          itemBuilder: (context, int index) {
-                            var data = BranchNews[index];
-                            if (data.syllabus.isNotEmpty)
-                              file = File(
-                                  "${folderPath}/pdfs/${getFileName(data.syllabus)}");
+          child: Column(
+            children: [
+              backButton(
+                  size: widget.size,
+                  text: "Syllabus",
+                  child: SizedBox(
+                    width: 45,
+                  )),
+              StreamBuilder<List<syllabusConvertor>>(
+                  stream: readsyllabus(branch: widget.branch),
+                  builder: (context, snapshot) {
+                    final BranchNews = snapshot.data;
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 0.3,
+                              color: Colors.cyan,
+                            ));
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text(
+                                  'Error with Syllabus Data or\n Check Internet Connection'));
+                        } else {
+                          if (BranchNews!.length == 0) {
+                            return Center(
+                                child: Text(
+                                  "No Syllabus",
+                                  style: TextStyle(color: Colors.lightBlueAccent),
+                                ));
+                          } else
+                            return ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: BranchNews.length,
+                              itemBuilder: (context, int index) {
+                                var data = BranchNews[index];
+                                if (data.syllabus.isNotEmpty)
+                                  file = File(
+                                      "${folderPath}/pdfs/${getFileName(data.syllabus)}");
 
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                  left: widget.size * 15.0,
-                                  right: widget.size * 10,
-                                  top: widget.size * 4),
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                    color: Colors.black38,
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(widget.size * 20))),
-                                child: SingleChildScrollView(
-                                  physics: const BouncingScrollPhysics(),
-                                  child: Row(
-                                    children: [
-                                      if (data.syllabus.length > 3)
-                                        file.existsSync() &&
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      left: widget.size * 15.0,
+                                      right: widget.size * 10,
+                                      top: widget.size * 4),
+                                  child: Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        color: Colors.black38,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(widget.size * 20))),
+                                    child: SingleChildScrollView(
+                                      physics: const BouncingScrollPhysics(),
+                                      child: Row(
+                                        children: [
+                                          if (data.syllabus.length > 3)
+                                            file.existsSync() &&
                                                 data.syllabus.isNotEmpty
-                                            ? ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        widget.size * 25),
-                                                child: SizedBox(
-                                                    height: widget.size * 160,
-                                                    width: widget.size * 120,
-                                                    child: isLoading
-                                                        ? PDFView(
-                                                            filePath:
-                                                                "${folderPath}/pdfs/${getFileName(data.syllabus)}",
-                                                          )
-                                                        : Container()),
-                                              )
-                                            : SizedBox(
+                                                ? ClipRRect(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  widget.size * 25),
+                                              child: SizedBox(
+                                                  height: widget.size * 160,
+                                                  width: widget.size * 120,
+                                                  child: isLoading
+                                                      ? PDFView(
+                                                    filePath:
+                                                    "${folderPath}/pdfs/${getFileName(data.syllabus)}",
+                                                  )
+                                                      : Container()),
+                                            )
+                                                : SizedBox(
                                                 height: widget.size * 98,
                                                 child: Image.asset(
                                                     "assets/pdf_icon.png")),
-                                      SizedBox(
-                                        width: widget.size * 15,
-                                      ),
-                                      Expanded(
-                                          child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                data.id.toUpperCase(),
-                                                style: TextStyle(
-                                                  fontSize: widget.size * 20.0,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                              if (data.syllabus.isEmpty)
-                                                Text(
-                                                  "No Data",
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        widget.size * 20.0,
-                                                    color: Colors.amber,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              if (isUser())
-                                                PopupMenuButton(
-                                                  icon: Icon(
-                                                    Icons.more_vert,
-                                                    color: Colors.white,
-                                                    size: widget.size * 25,
-                                                  ),
-                                                  // Callback that sets the selected popup menu item.
-                                                  onSelected: (item) {
-                                                    if (item == "edit") {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  timeTableSyllabusModalPaperCreator(
-                                                                    size: widget
-                                                                        .size,
-                                                                    mode:
-                                                                        'syllabus',
-                                                                    reg: widget
-                                                                        .reg,
-                                                                    branch: widget
-                                                                        .branch,
-                                                                    id: data.id,
-                                                                    heading:
-                                                                        data.id,
-                                                                    link: data
-                                                                        .syllabus,
-                                                                  )));
-                                                    } else if (item ==
-                                                        "delete") {
-                                                      FirebaseFirestore.instance
-                                                          .collection(
-                                                              widget.branch)
-                                                          .doc("regulation")
-                                                          .collection(
-                                                              "regulationWithYears")
-                                                          .doc(data.id
-                                                              .substring(0, 10))
-                                                          .update(
-                                                              {"syllabus": ""});
-                                                    }
-                                                  },
-                                                  itemBuilder:
-                                                      (BuildContext context) =>
-                                                          <PopupMenuEntry>[
-                                                    const PopupMenuItem(
-                                                      value: "edit",
-                                                      child: Text('Edit'),
-                                                    ),
-                                                    const PopupMenuItem(
-                                                      value: "delete",
-                                                      child: Text('Delete'),
-                                                    ),
-                                                  ],
-                                                ),
-                                            ],
-                                          ),
                                           SizedBox(
-                                            height: widget.size * 2,
+                                            width: widget.size * 15,
                                           ),
-                                          if (data.syllabus.isNotEmpty)
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: widget.size * 10),
-                                              child: Row(
+                                          Expanded(
+                                              child: Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
+                                                MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                                 children: [
                                                   Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.spaceBetween,
                                                     children: [
-                                                      InkWell(
-                                                          child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          widget.size *
-                                                                              8),
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      2,
-                                                                      82,
-                                                                      87,
-                                                                      1),
-                                                              border: Border.all(
-                                                                  color: file
-                                                                          .existsSync()
-                                                                      ? Colors
-                                                                          .green
-                                                                      : Colors
-                                                                          .white),
-                                                            ),
-                                                            child: Padding(
-                                                              padding: EdgeInsets.only(
-                                                                  left: widget
-                                                                          .size *
-                                                                      3,
-                                                                  right: widget
-                                                                          .size *
-                                                                      3),
-                                                              child: Row(
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        left: widget.size *
-                                                                            5,
-                                                                        right:
-                                                                            widget.size *
-                                                                                5,
-                                                                        top: widget.size *
-                                                                            3,
-                                                                        bottom:
-                                                                            widget.size *
-                                                                                3),
-                                                                    child: Text(
-                                                                      file.existsSync()
-                                                                          ? "Read Now"
-                                                                          : "Download",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          fontSize:
-                                                                              widget.size * 20),
-                                                                    ),
-                                                                  ),
-                                                                  Icon(
-                                                                    file.existsSync()
-                                                                        ? Icons
-                                                                            .open_in_new
-                                                                        : Icons
-                                                                            .download_for_offline_outlined,
-                                                                    color: Colors
-                                                                        .greenAccent,
-                                                                    size: widget
-                                                                            .size *
-                                                                        20,
-                                                                  )
-                                                                ],
-                                                              ),
-                                                            ),
+                                                      Text(
+                                                        data.id.toUpperCase(),
+                                                        style: TextStyle(
+                                                          fontSize: widget.size * 20.0,
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                      if (data.syllabus.isEmpty)
+                                                        Text(
+                                                          "No Data",
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                            widget.size * 20.0,
+                                                            color: Colors.amber,
+                                                            fontWeight: FontWeight.w600,
                                                           ),
-                                                          onTap: () async {
-                                                            File isFile = File(
-                                                                "${folderPath}/pdfs/${getFileName(data.syllabus)}");
-                                                            if (isFile
-                                                                .existsSync()) {
+                                                        ),
+                                                      if (isUser())
+                                                        PopupMenuButton(
+                                                          icon: Icon(
+                                                            Icons.more_vert,
+                                                            color: Colors.white,
+                                                            size: widget.size * 25,
+                                                          ),
+                                                          // Callback that sets the selected popup menu item.
+                                                          onSelected: (item) {
+                                                            if (item == "edit") {
                                                               Navigator.push(
                                                                   context,
                                                                   MaterialPageRoute(
-                                                                      builder: (context) => PdfViewerPage(
-                                                                          size: widget
-                                                                              .size,
-                                                                          pdfUrl:
-                                                                              "${folderPath}/pdfs/${getFileName(data.syllabus)}")));
-                                                            } else {
-                                                              setState(() {
-                                                                isDownloaded =
-                                                                    true;
-                                                              });
-                                                              await download(
-                                                                  data.syllabus,
-                                                                  "pdfs");
+                                                                      builder: (context) =>
+                                                                          timeTableSyllabusModalPaperCreator(
+                                                                            size: widget
+                                                                                .size,
+                                                                            mode:
+                                                                            'syllabus',
+                                                                            reg: widget
+                                                                                .reg,
+                                                                            branch: widget
+                                                                                .branch,
+                                                                            id: data.id,
+                                                                            heading:
+                                                                            data.id,
+                                                                            link: data
+                                                                                .syllabus,
+                                                                          )));
+                                                            } else if (item ==
+                                                                "delete") {
+                                                              FirebaseFirestore.instance
+                                                                  .collection(
+                                                                  widget.branch)
+                                                                  .doc("regulation")
+                                                                  .collection(
+                                                                  "regulationWithYears")
+                                                                  .doc(data.id
+                                                                  .substring(0, 10))
+                                                                  .update(
+                                                                  {"syllabus": ""});
                                                             }
-                                                          }),
-                                                      if (file.existsSync())
-                                                        Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left:
-                                                                  widget.size *
-                                                                      5,
-                                                              right:
-                                                                  widget.size *
-                                                                      5,
-                                                              top: widget.size *
-                                                                  1,
-                                                              bottom:
-                                                                  widget.size *
-                                                                      1),
-                                                          child: InkWell(
-                                                            child: Icon(
-                                                              Icons.delete,
-                                                              color: Colors
-                                                                  .redAccent,
-                                                              size:
-                                                                  widget.size *
-                                                                      25,
+                                                          },
+                                                          itemBuilder:
+                                                              (BuildContext context) =>
+                                                          <PopupMenuEntry>[
+                                                            const PopupMenuItem(
+                                                              value: "edit",
+                                                              child: Text('Edit'),
                                                             ),
-                                                            onLongPress:
-                                                                () async {
-                                                              if (file
-                                                                  .existsSync()) {
-                                                                await file
-                                                                    .delete();
-                                                              }
-                                                              setState(() {});
-                                                              showToastText(
-                                                                  "File has been deleted");
-                                                            },
-                                                            onTap: () {
-                                                              showToastText(
-                                                                  "Long Press To Delete");
-                                                            },
-                                                          ),
-                                                        )
+                                                            const PopupMenuItem(
+                                                              value: "delete",
+                                                              child: Text('Delete'),
+                                                            ),
+                                                          ],
+                                                        ),
                                                     ],
                                                   ),
+                                                  SizedBox(
+                                                    height: widget.size * 2,
+                                                  ),
+                                                  if (data.syllabus.isNotEmpty)
+                                                    Padding(
+                                                      padding: EdgeInsets.symmetric(
+                                                          vertical: widget.size * 10),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              InkWell(
+                                                                  child: Container(
+                                                                    decoration:
+                                                                    BoxDecoration(
+                                                                      borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                          widget.size *
+                                                                              8),
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                          2,
+                                                                          82,
+                                                                          87,
+                                                                          1),
+                                                                      border: Border.all(
+                                                                          color: file
+                                                                              .existsSync()
+                                                                              ? Colors
+                                                                              .green
+                                                                              : Colors
+                                                                              .white),
+                                                                    ),
+                                                                    child: Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          left: widget
+                                                                              .size *
+                                                                              3,
+                                                                          right: widget
+                                                                              .size *
+                                                                              3),
+                                                                      child: Row(
+                                                                        children: [
+                                                                          Padding(
+                                                                            padding: EdgeInsets.only(
+                                                                                left: widget.size *
+                                                                                    5,
+                                                                                right:
+                                                                                widget.size *
+                                                                                    5,
+                                                                                top: widget.size *
+                                                                                    3,
+                                                                                bottom:
+                                                                                widget.size *
+                                                                                    3),
+                                                                            child: Text(
+                                                                              file.existsSync()
+                                                                                  ? "Read Now"
+                                                                                  : "Download",
+                                                                              style: TextStyle(
+                                                                                  color: Colors
+                                                                                      .white,
+                                                                                  fontSize:
+                                                                                  widget.size * 20),
+                                                                            ),
+                                                                          ),
+                                                                          Icon(
+                                                                            file.existsSync()
+                                                                                ? Icons
+                                                                                .open_in_new
+                                                                                : Icons
+                                                                                .download_for_offline_outlined,
+                                                                            color: Colors
+                                                                                .greenAccent,
+                                                                            size: widget
+                                                                                .size *
+                                                                                20,
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  onTap: () async {
+                                                                    File isFile = File(
+                                                                        "${folderPath}/pdfs/${getFileName(data.syllabus)}");
+                                                                    if (isFile
+                                                                        .existsSync()) {
+                                                                      Navigator.push(
+                                                                          context,
+                                                                          MaterialPageRoute(
+                                                                              builder: (context) => PdfViewerPage(
+                                                                                  size: widget
+                                                                                      .size,
+                                                                                  pdfUrl:
+                                                                                  "${folderPath}/pdfs/${getFileName(data.syllabus)}")));
+                                                                    } else {
+                                                                      setState(() {
+                                                                        isDownloaded =
+                                                                        true;
+                                                                      });
+                                                                      await download(
+                                                                          data.syllabus,
+                                                                          "pdfs");
+                                                                    }
+                                                                  }),
+                                                              if (file.existsSync())
+                                                                Padding(
+                                                                  padding: EdgeInsets.only(
+                                                                      left:
+                                                                      widget.size *
+                                                                          5,
+                                                                      right:
+                                                                      widget.size *
+                                                                          5,
+                                                                      top: widget.size *
+                                                                          1,
+                                                                      bottom:
+                                                                      widget.size *
+                                                                          1),
+                                                                  child: InkWell(
+                                                                    child: Icon(
+                                                                      Icons.delete,
+                                                                      color: Colors
+                                                                          .redAccent,
+                                                                      size:
+                                                                      widget.size *
+                                                                          25,
+                                                                    ),
+                                                                    onLongPress:
+                                                                        () async {
+                                                                      if (file
+                                                                          .existsSync()) {
+                                                                        await file
+                                                                            .delete();
+                                                                      }
+                                                                      setState(() {});
+                                                                      showToastText(
+                                                                          "File has been deleted");
+                                                                    },
+                                                                    onTap: () {
+                                                                      showToastText(
+                                                                          "Long Press To Delete");
+                                                                    },
+                                                                  ),
+                                                                )
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  if (isDownloaded)
+                                                    LinearProgressIndicator(
+                                                      color: Colors.amber,
+                                                    ),
+                                                  if (data.syllabus.isNotEmpty)
+                                                    InkWell(
+                                                      onTap: () {
+                                                        ExternalLaunchUrl(
+                                                            data.syllabus);
+                                                      },
+                                                      child: Text(
+                                                        "Link (open)",
+                                                        style: TextStyle(
+                                                          fontSize: widget.size * 18.0,
+                                                          color: Colors.amber,
+                                                        ),
+                                                      ),
+                                                    ),
                                                 ],
-                                              ),
-                                            ),
-                                          if (isDownloaded)
-                                            LinearProgressIndicator(
-                                              color: Colors.amber,
-                                            ),
-                                          if (data.syllabus.isNotEmpty)
-                                            InkWell(
-                                              onTap: () {
-                                                ExternalLaunchUrl(
-                                                    data.syllabus);
-                                              },
-                                              child: Text(
-                                                "Link (open)",
-                                                style: TextStyle(
-                                                  fontSize: widget.size * 18.0,
-                                                  color: Colors.amber,
-                                                ),
-                                              ),
-                                            ),
+                                              ))
                                         ],
-                                      ))
-                                    ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                );
+                              },
                             );
-                          },
-                        );
+                        }
                     }
-                }
-              }),
-        ],
-      ),
-    ));
+                  }),
+            ],
+          ),
+        ));
   }
 }
 
@@ -711,362 +724,362 @@ class _ModalPapersPageState extends State<ModalPapersPage> {
   Widget build(BuildContext context) {
     return backGroundImage(
         child: SingleChildScrollView(
-      child: Column(
-        children: [
-          backButton(
-              size: widget.size,
-              text: "Model Papers",
-              child: SizedBox(
-                width: 45,
-              )),
-          StreamBuilder<List<modelPaperConvertor>>(
-              stream: readmodelPaper(branch: widget.branch),
-              builder: (context, snapshot) {
-                final BranchNews = snapshot.data;
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      strokeWidth: 0.3,
-                      color: Colors.cyan,
-                    ));
-                  default:
-                    if (snapshot.hasError) {
-                      return const Center(
-                          child: Text(
-                              'Error with Model Papers Data or\n Check Internet Connection'));
-                    } else {
-                      if (BranchNews!.length == 0) {
-                        return Center(
-                            child: Text(
-                          "No Model Papers",
-                          style: TextStyle(color: Colors.lightBlueAccent),
-                        ));
-                      } else
-                        return ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: BranchNews.length,
-                          itemBuilder: (context, int index) {
-                            var data = BranchNews[index];
-                            if (data.modelPaper.isNotEmpty)
-                              file = File(
-                                  "${folderPath}/pdfs/${getFileName(data.modelPaper)}");
+          child: Column(
+            children: [
+              backButton(
+                  size: widget.size,
+                  text: "Model Papers",
+                  child: SizedBox(
+                    width: 45,
+                  )),
+              StreamBuilder<List<modelPaperConvertor>>(
+                  stream: readmodelPaper(branch: widget.branch),
+                  builder: (context, snapshot) {
+                    final BranchNews = snapshot.data;
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 0.3,
+                              color: Colors.cyan,
+                            ));
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text(
+                                  'Error with Model Papers Data or\n Check Internet Connection'));
+                        } else {
+                          if (BranchNews!.length == 0) {
+                            return Center(
+                                child: Text(
+                                  "No Model Papers",
+                                  style: TextStyle(color: Colors.lightBlueAccent),
+                                ));
+                          } else
+                            return ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: BranchNews.length,
+                              itemBuilder: (context, int index) {
+                                var data = BranchNews[index];
+                                if (data.modelPaper.isNotEmpty)
+                                  file = File(
+                                      "${folderPath}/pdfs/${getFileName(data.modelPaper)}");
 
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                  left: widget.size * 15.0,
-                                  right: widget.size * 10,
-                                  top: widget.size * 4),
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                    color: Colors.black38,
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(widget.size * 20))),
-                                child: SingleChildScrollView(
-                                  physics: const BouncingScrollPhysics(),
-                                  child: Row(
-                                    children: [
-                                      if (data.modelPaper.length > 3)
-                                        file.existsSync() &&
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      left: widget.size * 15.0,
+                                      right: widget.size * 10,
+                                      top: widget.size * 4),
+                                  child: Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        color: Colors.black38,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(widget.size * 20))),
+                                    child: SingleChildScrollView(
+                                      physics: const BouncingScrollPhysics(),
+                                      child: Row(
+                                        children: [
+                                          if (data.modelPaper.length > 3)
+                                            file.existsSync() &&
                                                 data.modelPaper.isNotEmpty
-                                            ? ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        widget.size * 25),
-                                                child: SizedBox(
-                                                    height: widget.size * 160,
-                                                    width: widget.size * 120,
-                                                    child: isLoading
-                                                        ? PDFView(
-                                                            filePath:
-                                                                "${folderPath}/pdfs/${getFileName(data.modelPaper)}",
-                                                          )
-                                                        : Container()),
-                                              )
-                                            : SizedBox(
+                                                ? ClipRRect(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  widget.size * 25),
+                                              child: SizedBox(
+                                                  height: widget.size * 160,
+                                                  width: widget.size * 120,
+                                                  child: isLoading
+                                                      ? PDFView(
+                                                    filePath:
+                                                    "${folderPath}/pdfs/${getFileName(data.modelPaper)}",
+                                                  )
+                                                      : Container()),
+                                            )
+                                                : SizedBox(
                                                 height: widget.size * 98,
                                                 child: Image.asset(
                                                     "assets/pdf_icon.png")),
-                                      SizedBox(
-                                        width: widget.size * 15,
-                                      ),
-                                      Expanded(
-                                          child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                data.id.toUpperCase(),
-                                                style: TextStyle(
-                                                  fontSize: widget.size * 20.0,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                              if (data.modelPaper.isEmpty)
-                                                Text(
-                                                  "No Data",
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        widget.size * 20.0,
-                                                    color: Colors.amber,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              if (isUser())
-                                                PopupMenuButton(
-                                                  icon: Icon(
-                                                    Icons.more_vert,
-                                                    color: Colors.white,
-                                                    size: widget.size * 25,
-                                                  ),
-                                                  // Callback that sets the selected popup menu item.
-                                                  onSelected: (item) {
-                                                    if (item == "edit") {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  timeTableSyllabusModalPaperCreator(
-                                                                    size: widget
-                                                                        .size,
-                                                                    mode:
-                                                                        'modalPaper',
-                                                                    reg: widget
-                                                                        .reg,
-                                                                    branch: widget
-                                                                        .branch,
-                                                                    id: data.id,
-                                                                    heading:
-                                                                        data.id,
-                                                                    link1: data
-                                                                        .modelPaper,
-                                                                  )));
-                                                    } else if (item ==
-                                                        "delete") {
-                                                      FirebaseFirestore.instance
-                                                          .collection(
-                                                              widget.branch)
-                                                          .doc("regulation")
-                                                          .collection(
-                                                              "regulationWithYears")
-                                                          .doc(data.id
-                                                              .substring(0, 10))
-                                                          .update({
-                                                        "modelPaper": ""
-                                                      });
-                                                    }
-                                                  },
-                                                  itemBuilder:
-                                                      (BuildContext context) =>
-                                                          <PopupMenuEntry>[
-                                                    const PopupMenuItem(
-                                                      value: "edit",
-                                                      child: Text('Edit'),
-                                                    ),
-                                                    const PopupMenuItem(
-                                                      value: "delete",
-                                                      child: Text('Delete'),
-                                                    ),
-                                                  ],
-                                                ),
-                                            ],
-                                          ),
                                           SizedBox(
-                                            height: widget.size * 2,
+                                            width: widget.size * 15,
                                           ),
-                                          if (data.modelPaper.isNotEmpty)
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: widget.size * 10),
-                                              child: Row(
+                                          Expanded(
+                                              child: Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
+                                                MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                                 children: [
                                                   Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.spaceBetween,
                                                     children: [
-                                                      InkWell(
-                                                          child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          widget.size *
-                                                                              8),
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      2,
-                                                                      82,
-                                                                      87,
-                                                                      1),
-                                                              border: Border.all(
-                                                                  color: file
-                                                                          .existsSync()
-                                                                      ? Colors
-                                                                          .green
-                                                                      : Colors
-                                                                          .white),
-                                                            ),
-                                                            child: Padding(
-                                                              padding: EdgeInsets.only(
-                                                                  left: widget
-                                                                          .size *
-                                                                      3,
-                                                                  right: widget
-                                                                          .size *
-                                                                      3),
-                                                              child: Row(
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        left: widget.size *
-                                                                            5,
-                                                                        right:
-                                                                            widget.size *
-                                                                                5,
-                                                                        top: widget.size *
-                                                                            3,
-                                                                        bottom:
-                                                                            widget.size *
-                                                                                3),
-                                                                    child: Text(
-                                                                      file.existsSync()
-                                                                          ? "Read Now"
-                                                                          : "Download",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          fontSize:
-                                                                              widget.size * 20),
-                                                                    ),
-                                                                  ),
-                                                                  Icon(
-                                                                    file.existsSync()
-                                                                        ? Icons
-                                                                            .open_in_new
-                                                                        : Icons
-                                                                            .download_for_offline_outlined,
-                                                                    color: Colors
-                                                                        .greenAccent,
-                                                                    size: widget
-                                                                            .size *
-                                                                        20,
-                                                                  )
-                                                                ],
-                                                              ),
-                                                            ),
+                                                      Text(
+                                                        data.id.toUpperCase(),
+                                                        style: TextStyle(
+                                                          fontSize: widget.size * 20.0,
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                      if (data.modelPaper.isEmpty)
+                                                        Text(
+                                                          "No Data",
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                            widget.size * 20.0,
+                                                            color: Colors.amber,
+                                                            fontWeight: FontWeight.w600,
                                                           ),
-                                                          onTap: () async {
-                                                            File isFile = File(
-                                                                "${folderPath}/pdfs/${getFileName(data.modelPaper)}");
-                                                            if (isFile
-                                                                .existsSync()) {
+                                                        ),
+                                                      if (isUser())
+                                                        PopupMenuButton(
+                                                          icon: Icon(
+                                                            Icons.more_vert,
+                                                            color: Colors.white,
+                                                            size: widget.size * 25,
+                                                          ),
+                                                          // Callback that sets the selected popup menu item.
+                                                          onSelected: (item) {
+                                                            if (item == "edit") {
                                                               Navigator.push(
                                                                   context,
                                                                   MaterialPageRoute(
-                                                                      builder: (context) => PdfViewerPage(
-                                                                          size: widget
-                                                                              .size,
-                                                                          pdfUrl:
-                                                                              "${folderPath}/pdfs/${getFileName(data.modelPaper)}")));
-                                                            } else {
-                                                              setState(() {
-                                                                isDownloaded =
-                                                                    true;
+                                                                      builder: (context) =>
+                                                                          timeTableSyllabusModalPaperCreator(
+                                                                            size: widget
+                                                                                .size,
+                                                                            mode:
+                                                                            'modalPaper',
+                                                                            reg: widget
+                                                                                .reg,
+                                                                            branch: widget
+                                                                                .branch,
+                                                                            id: data.id,
+                                                                            heading:
+                                                                            data.id,
+                                                                            link1: data
+                                                                                .modelPaper,
+                                                                          )));
+                                                            } else if (item ==
+                                                                "delete") {
+                                                              FirebaseFirestore.instance
+                                                                  .collection(
+                                                                  widget.branch)
+                                                                  .doc("regulation")
+                                                                  .collection(
+                                                                  "regulationWithYears")
+                                                                  .doc(data.id
+                                                                  .substring(0, 10))
+                                                                  .update({
+                                                                "modelPaper": ""
                                                               });
-                                                              await download(
-                                                                  data.modelPaper,
-                                                                  "pdfs");
                                                             }
-                                                          }),
-                                                      if (file.existsSync())
-                                                        Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left:
-                                                                  widget.size *
-                                                                      5,
-                                                              right:
-                                                                  widget.size *
-                                                                      5,
-                                                              top: widget.size *
-                                                                  1,
-                                                              bottom:
-                                                                  widget.size *
-                                                                      1),
-                                                          child: InkWell(
-                                                            child: Icon(
-                                                              Icons.delete,
-                                                              color: Colors
-                                                                  .redAccent,
-                                                              size:
-                                                                  widget.size *
-                                                                      25,
+                                                          },
+                                                          itemBuilder:
+                                                              (BuildContext context) =>
+                                                          <PopupMenuEntry>[
+                                                            const PopupMenuItem(
+                                                              value: "edit",
+                                                              child: Text('Edit'),
                                                             ),
-                                                            onLongPress:
-                                                                () async {
-                                                              if (file
-                                                                  .existsSync()) {
-                                                                await file
-                                                                    .delete();
-                                                              }
-                                                              setState(() {});
-                                                              showToastText(
-                                                                  "File has been deleted");
-                                                            },
-                                                            onTap: () {
-                                                              showToastText(
-                                                                  "Long Press To Delete");
-                                                            },
-                                                          ),
-                                                        )
+                                                            const PopupMenuItem(
+                                                              value: "delete",
+                                                              child: Text('Delete'),
+                                                            ),
+                                                          ],
+                                                        ),
                                                     ],
                                                   ),
+                                                  SizedBox(
+                                                    height: widget.size * 2,
+                                                  ),
+                                                  if (data.modelPaper.isNotEmpty)
+                                                    Padding(
+                                                      padding: EdgeInsets.symmetric(
+                                                          vertical: widget.size * 10),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              InkWell(
+                                                                  child: Container(
+                                                                    decoration:
+                                                                    BoxDecoration(
+                                                                      borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                          widget.size *
+                                                                              8),
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                          2,
+                                                                          82,
+                                                                          87,
+                                                                          1),
+                                                                      border: Border.all(
+                                                                          color: file
+                                                                              .existsSync()
+                                                                              ? Colors
+                                                                              .green
+                                                                              : Colors
+                                                                              .white),
+                                                                    ),
+                                                                    child: Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          left: widget
+                                                                              .size *
+                                                                              3,
+                                                                          right: widget
+                                                                              .size *
+                                                                              3),
+                                                                      child: Row(
+                                                                        children: [
+                                                                          Padding(
+                                                                            padding: EdgeInsets.only(
+                                                                                left: widget.size *
+                                                                                    5,
+                                                                                right:
+                                                                                widget.size *
+                                                                                    5,
+                                                                                top: widget.size *
+                                                                                    3,
+                                                                                bottom:
+                                                                                widget.size *
+                                                                                    3),
+                                                                            child: Text(
+                                                                              file.existsSync()
+                                                                                  ? "Read Now"
+                                                                                  : "Download",
+                                                                              style: TextStyle(
+                                                                                  color: Colors
+                                                                                      .white,
+                                                                                  fontSize:
+                                                                                  widget.size * 20),
+                                                                            ),
+                                                                          ),
+                                                                          Icon(
+                                                                            file.existsSync()
+                                                                                ? Icons
+                                                                                .open_in_new
+                                                                                : Icons
+                                                                                .download_for_offline_outlined,
+                                                                            color: Colors
+                                                                                .greenAccent,
+                                                                            size: widget
+                                                                                .size *
+                                                                                20,
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  onTap: () async {
+                                                                    File isFile = File(
+                                                                        "${folderPath}/pdfs/${getFileName(data.modelPaper)}");
+                                                                    if (isFile
+                                                                        .existsSync()) {
+                                                                      Navigator.push(
+                                                                          context,
+                                                                          MaterialPageRoute(
+                                                                              builder: (context) => PdfViewerPage(
+                                                                                  size: widget
+                                                                                      .size,
+                                                                                  pdfUrl:
+                                                                                  "${folderPath}/pdfs/${getFileName(data.modelPaper)}")));
+                                                                    } else {
+                                                                      setState(() {
+                                                                        isDownloaded =
+                                                                        true;
+                                                                      });
+                                                                      await download(
+                                                                          data.modelPaper,
+                                                                          "pdfs");
+                                                                    }
+                                                                  }),
+                                                              if (file.existsSync())
+                                                                Padding(
+                                                                  padding: EdgeInsets.only(
+                                                                      left:
+                                                                      widget.size *
+                                                                          5,
+                                                                      right:
+                                                                      widget.size *
+                                                                          5,
+                                                                      top: widget.size *
+                                                                          1,
+                                                                      bottom:
+                                                                      widget.size *
+                                                                          1),
+                                                                  child: InkWell(
+                                                                    child: Icon(
+                                                                      Icons.delete,
+                                                                      color: Colors
+                                                                          .redAccent,
+                                                                      size:
+                                                                      widget.size *
+                                                                          25,
+                                                                    ),
+                                                                    onLongPress:
+                                                                        () async {
+                                                                      if (file
+                                                                          .existsSync()) {
+                                                                        await file
+                                                                            .delete();
+                                                                      }
+                                                                      setState(() {});
+                                                                      showToastText(
+                                                                          "File has been deleted");
+                                                                    },
+                                                                    onTap: () {
+                                                                      showToastText(
+                                                                          "Long Press To Delete");
+                                                                    },
+                                                                  ),
+                                                                )
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  if (isDownloaded)
+                                                    LinearProgressIndicator(
+                                                      color: Colors.amber,
+                                                    ),
+                                                  if (data.modelPaper.isNotEmpty)
+                                                    InkWell(
+                                                      onTap: () {
+                                                        ExternalLaunchUrl(
+                                                            data.modelPaper);
+                                                      },
+                                                      child: Text(
+                                                        "Link (open)",
+                                                        style: TextStyle(
+                                                          fontSize: widget.size * 18.0,
+                                                          color: Colors.amber,
+                                                        ),
+                                                      ),
+                                                    ),
                                                 ],
-                                              ),
-                                            ),
-                                          if (isDownloaded)
-                                            LinearProgressIndicator(
-                                              color: Colors.amber,
-                                            ),
-                                          if (data.modelPaper.isNotEmpty)
-                                            InkWell(
-                                              onTap: () {
-                                                ExternalLaunchUrl(
-                                                    data.modelPaper);
-                                              },
-                                              child: Text(
-                                                "Link (open)",
-                                                style: TextStyle(
-                                                  fontSize: widget.size * 18.0,
-                                                  color: Colors.amber,
-                                                ),
-                                              ),
-                                            ),
+                                              ))
                                         ],
-                                      ))
-                                    ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                );
+                              },
                             );
-                          },
-                        );
+                        }
                     }
-                }
-              }),
-        ],
-      ),
-    ));
+                  }),
+            ],
+          ),
+        ));
   }
 }
 
@@ -1114,9 +1127,9 @@ class _NewsPageState extends State<NewsPage> {
                   case ConnectionState.waiting:
                     return const Center(
                         child: CircularProgressIndicator(
-                      strokeWidth: 0.3,
-                      color: Colors.cyan,
-                    ));
+                          strokeWidth: 0.3,
+                          color: Colors.cyan,
+                        ));
                   default:
                     if (snapshot.hasError) {
                       return const Center(
@@ -1142,8 +1155,7 @@ class _NewsPageState extends State<NewsPage> {
                               children: [
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: widget.size * 8,
-                                      vertical: widget.size * 5),
+                                      horizontal: widget.size * 5),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
@@ -1158,25 +1170,20 @@ class _NewsPageState extends State<NewsPage> {
                                               fit: BoxFit.cover),
                                         ),
                                       ),
-                                      if (BranchNew.heading.isNotEmpty)
-                                        Text(" ${BranchNew.heading}",
+
+                                        Text(BranchNew.heading.isNotEmpty?" ${BranchNew.heading}":" ${widget.branch} (SRKR)",
                                             style: TextStyle(
                                                 color: Colors.white,
-                                                fontSize: widget.size * 20,
-                                                fontWeight: FontWeight.w600))
-                                      else
-                                        Text(" ${widget.branch} (SRKR)",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: widget.size * 20,
-                                                fontWeight: FontWeight.w400)),
+                                                fontSize: widget.size * 16,
+                                                fontWeight: FontWeight.w600)),
+
                                       Spacer(),
                                       if (isUser())
                                         PopupMenuButton(
                                           icon: Icon(
                                             Icons.more_vert,
                                             color: Colors.white,
-                                            size: widget.size * 22,
+                                            size: widget.size * 16,
                                           ),
                                           // Callback that sets the selected popup menu item.
                                           onSelected: (item) async {
@@ -1187,14 +1194,14 @@ class _NewsPageState extends State<NewsPage> {
                                                       builder: (context) =>
                                                           NewsCreator(
                                                               branch:
-                                                                  widget.branch,
+                                                              widget.branch,
                                                               NewsId:
-                                                                  BranchNew.id,
+                                                              BranchNew.id,
                                                               heading: BranchNew
                                                                   .heading,
                                                               description:
-                                                                  BranchNew
-                                                                      .description,
+                                                              BranchNew
+                                                                  .description,
                                                               photoUrl: BranchNew
                                                                   .photoUrl)));
                                             } else if (item == "delete") {
@@ -1220,7 +1227,7 @@ class _NewsPageState extends State<NewsPage> {
                                                   .collection(widget.branch)
                                                   .doc("${widget.branch}News")
                                                   .collection(
-                                                      "${widget.branch}News")
+                                                  "${widget.branch}News")
                                                   .doc(BranchNew.id)
                                                   .delete();
                                               pushNotificationsSpecificPerson(
@@ -1230,7 +1237,7 @@ class _NewsPageState extends State<NewsPage> {
                                             }
                                           },
                                           itemBuilder: (BuildContext context) =>
-                                              <PopupMenuEntry>[
+                                          <PopupMenuEntry>[
                                             const PopupMenuItem(
                                               value: "edit",
                                               child: Text('Edit'),
@@ -1245,7 +1252,12 @@ class _NewsPageState extends State<NewsPage> {
                                   ),
                                 ),
                                 if (BranchNew.photoUrl.isNotEmpty)
-                                  Image.file(file),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.file(file)),
+                                  ),
                                 if (BranchNew.description.isNotEmpty)
                                   Padding(
                                     padding: EdgeInsets.all(
@@ -1253,7 +1265,7 @@ class _NewsPageState extends State<NewsPage> {
                                     ),
                                     child: StyledTextWidget(
                                       text: BranchNew.description,
-                                      fontSize: widget.size * 20,
+                                      fontSize: widget.size * 14,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -1268,7 +1280,7 @@ class _NewsPageState extends State<NewsPage> {
                                         : "No Date",
                                     style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: widget.size * 13,
+                                        fontSize: widget.size * 10,
                                         fontWeight: FontWeight.w500),
                                   ),
                                 ),
@@ -1282,10 +1294,10 @@ class _NewsPageState extends State<NewsPage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => ImageZoom(
-                                            size: widget.size,
-                                            url: "",
-                                            file: file,
-                                          )));
+                                        size: widget.size,
+                                        url: "",
+                                        file: file,
+                                      )));
                             },
                           );
                         },
@@ -1311,11 +1323,11 @@ class Subjects extends StatefulWidget {
 
   Subjects(
       {Key? key,
-      required this.branch,
-      required this.reg,
-      required this.width,
-      required this.size,
-      required this.height})
+        required this.branch,
+        required this.reg,
+        required this.width,
+        required this.size,
+        required this.height})
       : super(key: key);
 
   @override
@@ -1323,35 +1335,20 @@ class Subjects extends StatefulWidget {
 }
 
 class _SubjectsState extends State<Subjects> {
-  String folderPath = "";
-String subjectFilter="None";
-  Future<void> getPath() async {
-    final directory = await getApplicationDocumentsDirectory();
-    setState(() {
-      folderPath = '${directory.path}';
-    });
-  }
+  String subjectFilter="None";
 
-  @override
-  void initState() {
-    // TODO: implement initState
-
-    getPath();
-
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return backGroundImage(
         child: SingleChildScrollView(
-      child: Column(
-        children: [
-          backButton(
-              size: widget.size,
-              text: "Subjects",
-              child: isUser()
-                  ? Row(
+          child: Column(
+            children: [
+              backButton(
+                  size: widget.size,
+                  text: "Subjects",
+                  child: isUser()
+                      ? Row(
                     children: [
                       PopupMenuButton(
                         icon: Icon(
@@ -1378,197 +1375,197 @@ String subjectFilter="None";
                         ],
                       ),
                       InkWell(
-                          child: Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SubjectsCreator(
-                                          branch: widget.branch,
-                                        )));
-                          },
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 40,
                         ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SubjectsCreator(
+                                    branch: widget.branch,
+                                  )));
+                        },
+                      ),
                     ],
                   )
-                  : SizedBox(
-                      width: 45,
-                    )),
+                      : SizedBox(
+                    width: 45,
+                  )),
 
-          StreamBuilder<List<FlashConvertor>>(
-              stream: readFlashNews(widget.branch),
-              builder: (context, snapshot) {
-                final user = snapshot.data;
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      strokeWidth: 0.3,
-                      color: Colors.cyan,
-                    ));
-                  default:
-                    if (snapshot.hasError) {
-                      return const Center(
-                          child: Text(
-                              'Error with TextBooks Data or\n Check Internet Connection'));
-                    } else {
-                      List<FlashConvertor> filteredItems = user!
-                          .where((item) => item.regulation
+              StreamBuilder<List<FlashConvertor>>(
+                  stream: readFlashNews(widget.branch),
+                  builder: (context, snapshot) {
+                    final user = snapshot.data;
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 0.3,
+                              color: Colors.cyan,
+                            ));
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text(
+                                  'Error with TextBooks Data or\n Check Internet Connection'));
+                        } else {
+                          List<FlashConvertor> filteredItems = user!
+                              .where((item) => item.regulation
                               .toString()
                               .toLowerCase()
                               .startsWith(widget.reg.substring(0, 2)))
-                          .toList();
-                      return Column(
-                        children: [
-                          if (filteredItems.isNotEmpty &&subjectFilter=="Regulation")
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "Based On Your Regulation",
-                                style:
+                              .toList();
+                          return Column(
+                            children: [
+                              if (filteredItems.isNotEmpty &&subjectFilter=="Regulation")
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Based On Your Regulation",
+                                    style:
                                     TextStyle(color: Colors.white, fontSize: 25,fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          if (filteredItems.isNotEmpty&&subjectFilter=="Regulation")
-                            ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: filteredItems.length,
-                              itemBuilder: (context, int index) {
-                                final SubjectsData = filteredItems[index];
-
-                                return Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: widget.width * 10,
-                                      vertical: widget.height * 1),
-                                  child: InkWell(
-                                    child:subjectsContainer(data: SubjectsData,branch: widget.branch,),
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        PageRouteBuilder(
-                                          transitionDuration:
-                                              const Duration(milliseconds: 300),
-                                          pageBuilder: (context, animation,
-                                                  secondaryAnimation) =>
-                                              subjectUnitsData(
-                                            reg: SubjectsData.regulation,
-                                            size: widget.size,
-                                            branch: widget.branch,
-                                            ID: SubjectsData.id,
-                                            mode: "Subjects",
-                                            name: SubjectsData.heading,
-                                                description: SubjectsData.description,
-                                          ),
-                                          transitionsBuilder: (context,
-                                              animation,
-                                              secondaryAnimation,
-                                              child) {
-                                            final fadeTransition =
-                                                FadeTransition(
-                                              opacity: animation,
-                                              child: child,
-                                            );
-
-                                            return Container(
-                                              color: Colors.black
-                                                  .withOpacity(animation.value),
-                                              child: AnimatedOpacity(
-                                                  duration: Duration(
-                                                      milliseconds: 300),
-                                                  opacity: animation.value
-                                                      .clamp(0.3, 1.0),
-                                                  child: fadeTransition),
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    },
                                   ),
-                                );
-                              },
-                            ),
-                          if (filteredItems.isNotEmpty&&subjectFilter=="Regulation")
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Text(
-                                "All Subjects",
-                                style: TextStyle(
-                                    color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: user.length,
-                            itemBuilder: (context, int index) {
-                              final SubjectsData = user[index];
-                              return Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: widget.width * 5,
-                                    vertical: widget.height * 2),
-                                child: InkWell(
-                                  child: subjectsContainer(data: SubjectsData,branch: widget.branch,),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        transitionDuration:
-                                            const Duration(milliseconds: 300),
-                                        pageBuilder: (context, animation,
-                                                secondaryAnimation) =>
-                                            subjectUnitsData(
-                                          reg: SubjectsData.regulation,
-                                          size: widget.size,
-                                          branch: widget.branch,
-                                          ID: SubjectsData.id,
-                                          mode: "Subjects",
-                                          name: SubjectsData.heading,
-                                              description: SubjectsData.description,
-                                        ),
-                                        transitionsBuilder: (context, animation,
-                                            secondaryAnimation, child) {
-                                          final fadeTransition = FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          );
+                                ),
+                              if (filteredItems.isNotEmpty&&subjectFilter=="Regulation")
+                                ListView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: filteredItems.length,
+                                  itemBuilder: (context, int index) {
+                                    final SubjectsData = filteredItems[index];
 
-                                          return Container(
-                                            color: Colors.black
-                                                .withOpacity(animation.value),
-                                            child: AnimatedOpacity(
-                                                duration:
-                                                    Duration(milliseconds: 300),
-                                                opacity: animation.value
-                                                    .clamp(0.3, 1.0),
-                                                child: fadeTransition),
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: widget.width * 10,
+                                          vertical: widget.height * 1),
+                                      child: InkWell(
+                                        child:subjectsContainer(data: SubjectsData,branch: widget.branch,),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            PageRouteBuilder(
+                                              transitionDuration:
+                                              const Duration(milliseconds: 300),
+                                              pageBuilder: (context, animation,
+                                                  secondaryAnimation) =>
+                                                  subjectUnitsData(
+                                                    reg: SubjectsData.regulation,
+                                                    size: widget.size,
+                                                    branch: widget.branch,
+                                                    ID: SubjectsData.id,
+                                                    mode: "Subjects",
+                                                    name: SubjectsData.heading,
+                                                    description: SubjectsData.description,
+                                                  ),
+                                              transitionsBuilder: (context,
+                                                  animation,
+                                                  secondaryAnimation,
+                                                  child) {
+                                                final fadeTransition =
+                                                FadeTransition(
+                                                  opacity: animation,
+                                                  child: child,
+                                                );
+
+                                                return Container(
+                                                  color: Colors.black
+                                                      .withOpacity(animation.value),
+                                                  child: AnimatedOpacity(
+                                                      duration: Duration(
+                                                          milliseconds: 300),
+                                                      opacity: animation.value
+                                                          .clamp(0.3, 1.0),
+                                                      child: fadeTransition),
+                                                );
+                                              },
+                                            ),
                                           );
                                         },
                                       ),
                                     );
                                   },
                                 ),
-                              );
-                            },
-                          ),
-                        ],
-                      );
+                              if (filteredItems.isNotEmpty&&subjectFilter=="Regulation")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  child: Text(
+                                    "All Subjects",
+                                    style: TextStyle(
+                                        color: Colors.white,fontSize: 25,fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: user.length,
+                                itemBuilder: (context, int index) {
+                                  final SubjectsData = user[index];
+                                  return Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: widget.width * 5,
+                                        vertical: widget.height * 2),
+                                    child: InkWell(
+                                      child: subjectsContainer(data: SubjectsData,branch: widget.branch,),
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageRouteBuilder(
+                                            transitionDuration:
+                                            const Duration(milliseconds: 300),
+                                            pageBuilder: (context, animation,
+                                                secondaryAnimation) =>
+                                                subjectUnitsData(
+                                                  reg: SubjectsData.regulation,
+                                                  size: widget.size,
+                                                  branch: widget.branch,
+                                                  ID: SubjectsData.id,
+                                                  mode: "Subjects",
+                                                  name: SubjectsData.heading,
+                                                  description: SubjectsData.description,
+                                                ),
+                                            transitionsBuilder: (context, animation,
+                                                secondaryAnimation, child) {
+                                              final fadeTransition = FadeTransition(
+                                                opacity: animation,
+                                                child: child,
+                                              );
+
+                                              return Container(
+                                                color: Colors.black
+                                                    .withOpacity(animation.value),
+                                                child: AnimatedOpacity(
+                                                    duration:
+                                                    Duration(milliseconds: 300),
+                                                    opacity: animation.value
+                                                        .clamp(0.3, 1.0),
+                                                    child: fadeTransition),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        }
                     }
-                }
-              }),
-          SizedBox(height: 150,)
-        ],
-      ),
-    ));
+                  }),
+              SizedBox(height: 150,)
+            ],
+          ),
+        ));
   }
 }
 class subjectsContainer extends StatefulWidget {
   FlashConvertor data;
   String branch;
-   subjectsContainer({required this.data,required this.branch});
+  subjectsContainer({required this.data,required this.branch});
 
 
   @override
@@ -1583,7 +1580,7 @@ class _subjectsContainerState extends State<subjectsContainer> {
     return AnimatedContainer(
       width: double.infinity,
       decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.08),
+          color: Color(0xFF1F2323),
           borderRadius: BorderRadius.all(
               Radius.circular(
                   Size * 20))),
@@ -1635,10 +1632,10 @@ class _subjectsContainerState extends State<subjectsContainer> {
                     height: 35,
                     width: 35,
                     decoration: BoxDecoration(
-                        color: Colors.black,
+                        color:Color(0xFF7F8F90),
                         borderRadius: BorderRadius.circular(18)
                     ),
-                    child: Icon(isExp?Icons.arrow_drop_up:Icons.arrow_drop_down,color: Colors.white,),
+                    child: Icon(isExp?Icons.arrow_drop_up:Icons.arrow_drop_down,color: Colors.black,),
                   ),
                   onTap: (){
                     setState(() {
@@ -1686,266 +1683,266 @@ class _subjectsContainerState extends State<subjectsContainer> {
                       ),
                     ),
                   ),
-          Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    color: Colors.white12,
-                    borderRadius:
-                    BorderRadius.circular(Size * 20)),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      if (true)
-                        InkWell(
-                          child: StreamBuilder<DocumentSnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('user')
-                                .doc(fullUserId())
-                                .collection("FavouriteSubject")
-                                .doc(widget.data.id)
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data!.exists) {
-                                  return Icon(
-                                      Icons.bookmark_added_rounded,
-                                      size: Size * 20,
-                                      color: Colors.cyanAccent);
-                                } else {
-                                  return Icon(
-                                    Icons.bookmark_border,
-                                    size: Size * 20,
-                                    color: Colors.cyanAccent,
-                                  );
-                                }
-                              } else {
-                                return Container();
-                              }
-                            },
-                          ),
-                          onTap: () async {
-                            try {
-                              await FirebaseFirestore.instance
-                                  .collection('user')
-                                  .doc(fullUserId())
-                                  .collection("FavouriteSubject")
-                                  .doc(widget.data.id)
-                                  .get()
-                                  .then((docSnapshot) {
-                                if (docSnapshot.exists) {
-                                  FirebaseFirestore.instance
+                Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white12,
+                          borderRadius:
+                          BorderRadius.circular(Size * 20)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            if (true)
+                              InkWell(
+                                child: StreamBuilder<DocumentSnapshot>(
+                                  stream: FirebaseFirestore.instance
                                       .collection('user')
                                       .doc(fullUserId())
                                       .collection("FavouriteSubject")
                                       .doc(widget.data.id)
-                                      .delete();
-                                  showToastText(
-                                      "Removed from saved list");
-                                } else {
-                                  FavouriteSubjects(
-                                    branch: widget.branch,
-                                    SubjectId: widget.data.id,
-                                    name: widget.data.heading,
-                                    description: widget.data.description,
-                                  );
-                                  showToastText(
-                                      "${widget.data.heading} in favorites");
-                                }
-                              });
-                            } catch (e) {
-                              print(e);
-                            }
-                          },
-                        )
-                      // else
-                      //   InkWell(
-                      //     child: StreamBuilder<DocumentSnapshot>(
-                      //       stream: FirebaseFirestore.instance
-                      //           .collection('user')
-                      //           .doc(fullUserId())
-                      //           .collection("FavouriteLabSubjects")
-                      //           .doc(widget.ID)
-                      //           .snapshots(),
-                      //       builder: (context, snapshot) {
-                      //         if (snapshot.hasData) {
-                      //           if (snapshot.data!.exists) {
-                      //             return Row(
-                      //               children: [
-                      //                 Icon(Icons.library_add_check,
-                      //                     size: widget.size * 23,
-                      //                     color: Colors.cyanAccent),
-                      //                 Text(
-                      //                   " Saved",
-                      //                   style: TextStyle(
-                      //                       color: Colors.white,
-                      //                       fontSize: widget.size * 20),
-                      //                 )
-                      //               ],
-                      //             );
-                      //           } else {
-                      //             return Row(
-                      //               children: [
-                      //                 Icon(
-                      //                   Icons.library_add_outlined,
-                      //                   size: widget.size * 23,
-                      //                   color: Colors.cyanAccent,
-                      //                 ),
-                      //                 Text(
-                      //                   " Save",
-                      //                   style: TextStyle(
-                      //                       color: Colors.white,
-                      //                       fontSize: widget.size * 20),
-                      //                 )
-                      //               ],
-                      //             );
-                      //           }
-                      //         } else {
-                      //           return Container();
-                      //         }
-                      //       },
-                      //     ),
-                      //     onTap: () async {
-                      //       try {
-                      //         await FirebaseFirestore.instance
-                      //             .collection('user')
-                      //             .doc(fullUserId())
-                      //             .collection("FavouriteLabSubjects")
-                      //             .doc(widget.ID)
-                      //             .get()
-                      //             .then((docSnapshot) {
-                      //           if (docSnapshot.exists) {
-                      //             FirebaseFirestore.instance
-                      //                 .collection('user')
-                      //                 .doc(fullUserId())
-                      //                 .collection(
-                      //                 "FavouriteLabSubjects")
-                      //                 .doc(widget.ID)
-                      //                 .delete();
-                      //             showToastText(
-                      //                 "Removed from saved list");
-                      //           } else {
-                      //             FavouriteLabSubjectsSubjects(
-                      //               branch: widget.branch,
-                      //               SubjectId: widget.ID,
-                      //               name: widget.name,
-                      //               description: widget.description,
-                      //             );
-                      //             showToastText(
-                      //                 "${widget.name} in favorites");
-                      //           }
-                      //         });
-                      //       } catch (e) {
-                      //         print(e);
-                      //       }
-                      //     },
-                      //   )
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: Size * 10,
-              ),
-              downloadAllPdfs(
-                branch: widget.branch,
-                SubjectID: widget.data.id,
-                mode: "Subjects",
-                size: Size*0.65,
-              ),
-              if (isUser())
-                PopupMenuButton(
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: Colors.white,
-                    size: Size * 25,
-                  ),
-                  // Callback that sets the selected popup menu item.
-                  onSelected: (item) {
-                    if (item == "edit") {
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          transitionDuration:
-                          const Duration(
-                              milliseconds:
-                              300),
-                          pageBuilder: (context,
-                              animation,
-                              secondaryAnimation) =>
-                              SubjectsCreator(
-                                reg: widget.data.regulation,
-                                branch: widget.branch,
-                                Id: widget.data.id,
-                                heading: widget.data
-                                    .heading,
-                                description:
-                                widget.data
-                                    .description,
-                                photoUrl: widget.data
-                                    .PhotoUrl,
-                                mode: "Subjects",
-                              ),
-                          transitionsBuilder:
-                              (context,
-                              animation,
-                              secondaryAnimation,
-                              child) {
-                            final fadeTransition =
-                            FadeTransition(
-                              opacity: animation,
-                              child: child,
-                            );
-
-                            return Container(
-                              color: Colors.black
-                                  .withOpacity(
-                                  animation
-                                      .value),
-                              child: AnimatedOpacity(
-                                  duration: Duration(
-                                      milliseconds:
-                                      300),
-                                  opacity:
-                                  animation
-                                      .value
-                                      .clamp(
-                                      0.3,
-                                      1.0),
-                                  child:
-                                  fadeTransition),
-                            );
-                          },
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      if (snapshot.data!.exists) {
+                                        return Icon(
+                                            Icons.bookmark_added_rounded,
+                                            size: Size * 20,
+                                            color: Colors.cyanAccent);
+                                      } else {
+                                        return Icon(
+                                          Icons.bookmark_border,
+                                          size: Size * 20,
+                                          color: Colors.cyanAccent,
+                                        );
+                                      }
+                                    } else {
+                                      return Container();
+                                    }
+                                  },
+                                ),
+                                onTap: () async {
+                                  try {
+                                    await FirebaseFirestore.instance
+                                        .collection('user')
+                                        .doc(fullUserId())
+                                        .collection("FavouriteSubject")
+                                        .doc(widget.data.id)
+                                        .get()
+                                        .then((docSnapshot) {
+                                      if (docSnapshot.exists) {
+                                        FirebaseFirestore.instance
+                                            .collection('user')
+                                            .doc(fullUserId())
+                                            .collection("FavouriteSubject")
+                                            .doc(widget.data.id)
+                                            .delete();
+                                        showToastText(
+                                            "Removed from saved list");
+                                      } else {
+                                        FavouriteSubjects(
+                                          branch: widget.branch,
+                                          SubjectId: widget.data.id,
+                                          name: widget.data.heading,
+                                          description: widget.data.description,
+                                        );
+                                        showToastText(
+                                            "${widget.data.heading} in favorites");
+                                      }
+                                    });
+                                  } catch (e) {
+                                    print(e);
+                                  }
+                                },
+                              )
+                            // else
+                            //   InkWell(
+                            //     child: StreamBuilder<DocumentSnapshot>(
+                            //       stream: FirebaseFirestore.instance
+                            //           .collection('user')
+                            //           .doc(fullUserId())
+                            //           .collection("FavouriteLabSubjects")
+                            //           .doc(widget.ID)
+                            //           .snapshots(),
+                            //       builder: (context, snapshot) {
+                            //         if (snapshot.hasData) {
+                            //           if (snapshot.data!.exists) {
+                            //             return Row(
+                            //               children: [
+                            //                 Icon(Icons.library_add_check,
+                            //                     size: widget.size * 23,
+                            //                     color: Colors.cyanAccent),
+                            //                 Text(
+                            //                   " Saved",
+                            //                   style: TextStyle(
+                            //                       color: Colors.white,
+                            //                       fontSize: widget.size * 20),
+                            //                 )
+                            //               ],
+                            //             );
+                            //           } else {
+                            //             return Row(
+                            //               children: [
+                            //                 Icon(
+                            //                   Icons.library_add_outlined,
+                            //                   size: widget.size * 23,
+                            //                   color: Colors.cyanAccent,
+                            //                 ),
+                            //                 Text(
+                            //                   " Save",
+                            //                   style: TextStyle(
+                            //                       color: Colors.white,
+                            //                       fontSize: widget.size * 20),
+                            //                 )
+                            //               ],
+                            //             );
+                            //           }
+                            //         } else {
+                            //           return Container();
+                            //         }
+                            //       },
+                            //     ),
+                            //     onTap: () async {
+                            //       try {
+                            //         await FirebaseFirestore.instance
+                            //             .collection('user')
+                            //             .doc(fullUserId())
+                            //             .collection("FavouriteLabSubjects")
+                            //             .doc(widget.ID)
+                            //             .get()
+                            //             .then((docSnapshot) {
+                            //           if (docSnapshot.exists) {
+                            //             FirebaseFirestore.instance
+                            //                 .collection('user')
+                            //                 .doc(fullUserId())
+                            //                 .collection(
+                            //                 "FavouriteLabSubjects")
+                            //                 .doc(widget.ID)
+                            //                 .delete();
+                            //             showToastText(
+                            //                 "Removed from saved list");
+                            //           } else {
+                            //             FavouriteLabSubjectsSubjects(
+                            //               branch: widget.branch,
+                            //               SubjectId: widget.ID,
+                            //               name: widget.name,
+                            //               description: widget.description,
+                            //             );
+                            //             showToastText(
+                            //                 "${widget.name} in favorites");
+                            //           }
+                            //         });
+                            //       } catch (e) {
+                            //         print(e);
+                            //       }
+                            //     },
+                            //   )
+                          ],
                         ),
-                      );
-                    } else if (item == "delete") {
-                      FirebaseFirestore.instance
-                          .collection(
-                          widget.branch)
-                          .doc("Subjects")
-                          .collection("Subjects")
-                          .doc(widget.data.id)
-                          .delete();
-                    }
-                  },
-                  itemBuilder:
-                      (BuildContext context) =>
-                  <PopupMenuEntry>[
-                    const PopupMenuItem(
-                      value: "edit",
-                      child: Text('Edit'),
+                      ),
                     ),
-                    const PopupMenuItem(
-                      value: "delete",
-                      child: Text('Delete'),
+                    SizedBox(
+                      width: Size * 10,
                     ),
+                    downloadAllPdfs(
+                      branch: widget.branch,
+                      SubjectID: widget.data.id,
+                      mode: "Subjects",
+                      size: Size*0.65,
+                    ),
+                    if (isUser())
+                      PopupMenuButton(
+                        icon: Icon(
+                          Icons.more_vert,
+                          color: Colors.white,
+                          size: Size * 25,
+                        ),
+                        // Callback that sets the selected popup menu item.
+                        onSelected: (item) {
+                          if (item == "edit") {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration:
+                                const Duration(
+                                    milliseconds:
+                                    300),
+                                pageBuilder: (context,
+                                    animation,
+                                    secondaryAnimation) =>
+                                    SubjectsCreator(
+                                      reg: widget.data.regulation,
+                                      branch: widget.branch,
+                                      Id: widget.data.id,
+                                      heading: widget.data
+                                          .heading,
+                                      description:
+                                      widget.data
+                                          .description,
+                                      photoUrl: widget.data
+                                          .PhotoUrl,
+                                      mode: "Subjects",
+                                    ),
+                                transitionsBuilder:
+                                    (context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child) {
+                                  final fadeTransition =
+                                  FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+
+                                  return Container(
+                                    color: Colors.black
+                                        .withOpacity(
+                                        animation
+                                            .value),
+                                    child: AnimatedOpacity(
+                                        duration: Duration(
+                                            milliseconds:
+                                            300),
+                                        opacity:
+                                        animation
+                                            .value
+                                            .clamp(
+                                            0.3,
+                                            1.0),
+                                        child:
+                                        fadeTransition),
+                                  );
+                                },
+                              ),
+                            );
+                          } else if (item == "delete") {
+                            FirebaseFirestore.instance
+                                .collection(
+                                widget.branch)
+                                .doc("Subjects")
+                                .collection("Subjects")
+                                .doc(widget.data.id)
+                                .delete();
+                          }
+                        },
+                        itemBuilder:
+                            (BuildContext context) =>
+                        <PopupMenuEntry>[
+                          const PopupMenuItem(
+                            value: "edit",
+                            child: Text('Edit'),
+                          ),
+                          const PopupMenuItem(
+                            value: "delete",
+                            child: Text('Delete'),
+                          ),
+                        ],
+                      )
                   ],
                 )
-            ],
-          )
               ],
             ),
           ],
@@ -1964,11 +1961,11 @@ class LabSubjects extends StatefulWidget {
 
   LabSubjects(
       {Key? key,
-      required this.branch,
-      required this.reg,
-      required this.width,
-      required this.size,
-      required this.height})
+        required this.branch,
+        required this.reg,
+        required this.width,
+        required this.size,
+        required this.height})
       : super(key: key);
 
   @override
@@ -1998,334 +1995,334 @@ class _LabSubjectsState extends State<LabSubjects> {
   Widget build(BuildContext context) {
     return backGroundImage(
         child: SingleChildScrollView(
-      child: Column(
-        children: [
-          backButton(
-              size: widget.size,
-              text: "${widget.branch} Lab Subjects",
-              child: isUser()
-                  ? InkWell(
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 40,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SubjectsCreator(
-                                      branch: widget.branch,
-                                    )));
-                      },
-                    )
-                  : SizedBox(
-                      width: 45,
-                    )),
-          StreamBuilder<List<LabSubjectsConvertor>>(
-              stream: readLabSubjects(widget.branch),
-              builder: (context, snapshot) {
-                final LabSubjects = snapshot.data;
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      strokeWidth: 0.3,
-                      color: Colors.cyan,
-                    ));
-                  default:
-                    if (snapshot.hasError) {
-                      return const Center(
-                          child: Text(
-                              'Error with TextBooks Data or\n Check Internet Connection'));
-                    } else {
-                      return ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: LabSubjects!.length,
-                        itemBuilder: (context, int index) {
-                          final LabSubjectsData = LabSubjects[index];
+          child: Column(
+            children: [
+              backButton(
+                  size: widget.size,
+                  text: "${widget.branch} Lab Subjects",
+                  child: isUser()
+                      ? InkWell(
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SubjectsCreator(
+                                branch: widget.branch,
+                              )));
+                    },
+                  )
+                      : SizedBox(
+                    width: 45,
+                  )),
+              StreamBuilder<List<LabSubjectsConvertor>>(
+                  stream: readLabSubjects(widget.branch),
+                  builder: (context, snapshot) {
+                    final LabSubjects = snapshot.data;
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 0.3,
+                              color: Colors.cyan,
+                            ));
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text(
+                                  'Error with TextBooks Data or\n Check Internet Connection'));
+                        } else {
+                          return ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: LabSubjects!.length,
+                            itemBuilder: (context, int index) {
+                              final LabSubjectsData = LabSubjects[index];
 
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: widget.height * 1,
-                                horizontal: widget.width * 10),
-                            child: InkWell(
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                    color: Colors.black38,
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(widget.size * 20))),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 5),
-                                  child: Row(
-                                    mainAxisAlignment:
+                              return Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: widget.height * 1,
+                                    horizontal: widget.width * 10),
+                                child: InkWell(
+                                  child: Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        color: Colors.black38,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(widget.size * 20))),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 5),
+                                      child: Row(
+                                        mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
                                               mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
                                                   MainAxisAlignment
                                                       .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  LabSubjectsData.heading,
-                                                  style: TextStyle(
-                                                    fontSize:
+                                                  children: [
+                                                    Text(
+                                                      LabSubjectsData.heading,
+                                                      style: TextStyle(
+                                                        fontSize:
                                                         widget.size * 22.0,
-                                                    color: Colors.amber,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                                InkWell(
-                                                  child: StreamBuilder<
-                                                      DocumentSnapshot>(
-                                                    stream: FirebaseFirestore
-                                                        .instance
-                                                        .collection('user')
-                                                        .doc(fullUserId())
-                                                        .collection(
+                                                        color: Colors.amber,
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                    InkWell(
+                                                      child: StreamBuilder<
+                                                          DocumentSnapshot>(
+                                                        stream: FirebaseFirestore
+                                                            .instance
+                                                            .collection('user')
+                                                            .doc(fullUserId())
+                                                            .collection(
                                                             "FavouriteLabSubjects")
-                                                        .doc(LabSubjectsData.id)
-                                                        .snapshots(),
-                                                    builder:
-                                                        (context, snapshot) {
-                                                      if (snapshot.hasData) {
-                                                        if (snapshot
-                                                            .data!.exists) {
-                                                          return Icon(
-                                                              Icons
-                                                                  .library_add_check,
-                                                              size:
+                                                            .doc(LabSubjectsData.id)
+                                                            .snapshots(),
+                                                        builder:
+                                                            (context, snapshot) {
+                                                          if (snapshot.hasData) {
+                                                            if (snapshot
+                                                                .data!.exists) {
+                                                              return Icon(
+                                                                  Icons
+                                                                      .library_add_check,
+                                                                  size:
                                                                   widget.size *
                                                                       26,
-                                                              color: Colors
-                                                                  .cyanAccent);
-                                                        } else {
-                                                          return Icon(
-                                                            Icons
-                                                                .library_add_outlined,
-                                                            size: widget.size *
-                                                                26,
-                                                            color: Colors
-                                                                .cyanAccent,
-                                                          );
-                                                        }
-                                                      } else {
-                                                        return Container();
-                                                      }
-                                                    },
-                                                  ),
-                                                  onTap: () async {
-                                                    try {
-                                                      await FirebaseFirestore
-                                                          .instance
-                                                          .collection('user')
-                                                          .doc(fullUserId())
-                                                          .collection(
-                                                              "FavouriteLabSubjects")
-                                                          .doc(LabSubjectsData
-                                                              .id)
-                                                          .get()
-                                                          .then((docSnapshot) {
-                                                        if (docSnapshot
-                                                            .exists) {
-                                                          FirebaseFirestore
+                                                                  color: Colors
+                                                                      .cyanAccent);
+                                                            } else {
+                                                              return Icon(
+                                                                Icons
+                                                                    .library_add_outlined,
+                                                                size: widget.size *
+                                                                    26,
+                                                                color: Colors
+                                                                    .cyanAccent,
+                                                              );
+                                                            }
+                                                          } else {
+                                                            return Container();
+                                                          }
+                                                        },
+                                                      ),
+                                                      onTap: () async {
+                                                        try {
+                                                          await FirebaseFirestore
                                                               .instance
-                                                              .collection(
-                                                                  'user')
+                                                              .collection('user')
                                                               .doc(fullUserId())
                                                               .collection(
+                                                              "FavouriteLabSubjects")
+                                                              .doc(LabSubjectsData
+                                                              .id)
+                                                              .get()
+                                                              .then((docSnapshot) {
+                                                            if (docSnapshot
+                                                                .exists) {
+                                                              FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                  'user')
+                                                                  .doc(fullUserId())
+                                                                  .collection(
                                                                   "FavouriteLabSubjects")
-                                                              .doc(
+                                                                  .doc(
                                                                   LabSubjectsData
                                                                       .id)
-                                                              .delete();
-                                                          showToastText(
-                                                              "Removed from saved list");
-                                                        } else {
-                                                          FavouriteLabSubjectsSubjects(
-                                                            branch:
+                                                                  .delete();
+                                                              showToastText(
+                                                                  "Removed from saved list");
+                                                            } else {
+                                                              FavouriteLabSubjectsSubjects(
+                                                                branch:
                                                                 widget.branch,
-                                                            SubjectId:
+                                                                SubjectId:
                                                                 LabSubjectsData
                                                                     .id,
-                                                            name:
+                                                                name:
                                                                 LabSubjectsData
                                                                     .heading,
-                                                            description:
+                                                                description:
                                                                 LabSubjectsData
                                                                     .description,
-                                                          );
-                                                          showToastText(
-                                                              "${LabSubjectsData.heading} in favorites");
+                                                              );
+                                                              showToastText(
+                                                                  "${LabSubjectsData.heading} in favorites");
+                                                            }
+                                                          });
+                                                        } catch (e) {
+                                                          print(e);
                                                         }
-                                                      });
-                                                    } catch (e) {
-                                                      print(e);
-                                                    }
-                                                  },
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: widget.height * 2,
+                                                ),
+                                                Text(
+                                                  LabSubjectsData.description,
+                                                  style: TextStyle(
+                                                    fontSize: widget.size * 13.0,
+                                                    color: Colors.white70,
+                                                  ),
                                                 ),
                                               ],
                                             ),
-                                            SizedBox(
-                                              height: widget.height * 2,
-                                            ),
-                                            Text(
-                                              LabSubjectsData.description,
-                                              style: TextStyle(
-                                                fontSize: widget.size * 13.0,
-                                                color: Colors.white70,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      if (isUser())
-                                        PopupMenuButton(
-                                          icon: Icon(
-                                            Icons.more_vert,
-                                            color: Colors.white,
-                                            size: widget.size * 25,
                                           ),
-                                          // Callback that sets the selected popup menu item.
-                                          onSelected: (item) {
-                                            if (item == "edit") {
-                                              Navigator.push(
-                                                context,
-                                                PageRouteBuilder(
-                                                  transitionDuration:
+                                          if (isUser())
+                                            PopupMenuButton(
+                                              icon: Icon(
+                                                Icons.more_vert,
+                                                color: Colors.white,
+                                                size: widget.size * 25,
+                                              ),
+                                              // Callback that sets the selected popup menu item.
+                                              onSelected: (item) {
+                                                if (item == "edit") {
+                                                  Navigator.push(
+                                                    context,
+                                                    PageRouteBuilder(
+                                                      transitionDuration:
                                                       const Duration(
                                                           milliseconds: 300),
-                                                  pageBuilder: (context,
+                                                      pageBuilder: (context,
                                                           animation,
                                                           secondaryAnimation) =>
-                                                      SubjectsCreator(
-                                                    reg: widget.reg,
-                                                    branch: widget.branch,
-                                                    Id: LabSubjectsData.id,
-                                                    heading:
-                                                        LabSubjectsData.heading,
-                                                    description: LabSubjectsData
-                                                        .description,
-                                                    mode: "LabSubjects",
-                                                  ),
-                                                  transitionsBuilder: (context,
-                                                      animation,
-                                                      secondaryAnimation,
-                                                      child) {
-                                                    final fadeTransition =
+                                                          SubjectsCreator(
+                                                            reg: widget.reg,
+                                                            branch: widget.branch,
+                                                            Id: LabSubjectsData.id,
+                                                            heading:
+                                                            LabSubjectsData.heading,
+                                                            description: LabSubjectsData
+                                                                .description,
+                                                            mode: "LabSubjects",
+                                                          ),
+                                                      transitionsBuilder: (context,
+                                                          animation,
+                                                          secondaryAnimation,
+                                                          child) {
+                                                        final fadeTransition =
                                                         FadeTransition(
-                                                      opacity: animation,
-                                                      child: child,
-                                                    );
+                                                          opacity: animation,
+                                                          child: child,
+                                                        );
 
-                                                    return Container(
-                                                      color: Colors.black
-                                                          .withOpacity(
+                                                        return Container(
+                                                          color: Colors.black
+                                                              .withOpacity(
                                                               animation.value),
-                                                      child: AnimatedOpacity(
-                                                          duration: Duration(
-                                                              milliseconds:
+                                                          child: AnimatedOpacity(
+                                                              duration: Duration(
+                                                                  milliseconds:
                                                                   300),
-                                                          opacity: animation
-                                                              .value
-                                                              .clamp(0.3, 1.0),
-                                                          child:
+                                                              opacity: animation
+                                                                  .value
+                                                                  .clamp(0.3, 1.0),
+                                                              child:
                                                               fadeTransition),
-                                                    );
-                                                  },
-                                                ),
-                                              );
-                                            } else if (item == "delete") {
-                                              FirebaseFirestore.instance
-                                                  .collection(widget.branch)
-                                                  .doc("LabSubjects")
-                                                  .collection("LabSubjects")
-                                                  .doc(LabSubjectsData.id)
-                                                  .delete();
-                                            }
-                                          },
-                                          itemBuilder: (BuildContext context) =>
+                                                        );
+                                                      },
+                                                    ),
+                                                  );
+                                                } else if (item == "delete") {
+                                                  FirebaseFirestore.instance
+                                                      .collection(widget.branch)
+                                                      .doc("LabSubjects")
+                                                      .collection("LabSubjects")
+                                                      .doc(LabSubjectsData.id)
+                                                      .delete();
+                                                }
+                                              },
+                                              itemBuilder: (BuildContext context) =>
                                               <PopupMenuEntry>[
-                                            const PopupMenuItem(
-                                              value: "edit",
-                                              child: Text('Edit'),
+                                                const PopupMenuItem(
+                                                  value: "edit",
+                                                  child: Text('Edit'),
+                                                ),
+                                                const PopupMenuItem(
+                                                  value: "delete",
+                                                  child: Text('Delete'),
+                                                ),
+                                              ],
                                             ),
-                                            const PopupMenuItem(
-                                              value: "delete",
-                                              child: Text('Delete'),
-                                            ),
-                                          ],
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    transitionDuration:
-                                        const Duration(milliseconds: 300),
-                                    pageBuilder: (context, animation,
-                                            secondaryAnimation) =>
-                                        subjectUnitsData(
-                                      reg: LabSubjectsData.regulation,
-                                      size: widget.size,
-                                      branch: widget.branch,
-                                      ID: LabSubjectsData.id,
-                                      mode: "LabSubjects",
-                                      name: LabSubjectsData.heading,
-                                          description: LabSubjectsData.description,
+                                        ],
+                                      ),
                                     ),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      final fadeTransition = FadeTransition(
-                                        opacity: animation,
-                                        child: child,
-                                      );
-
-                                      return Container(
-                                        color: Colors.black
-                                            .withOpacity(animation.value),
-                                        child: AnimatedOpacity(
-                                            duration:
-                                                Duration(milliseconds: 300),
-                                            opacity:
-                                                animation.value.clamp(0.3, 1.0),
-                                            child: fadeTransition),
-                                      );
-                                    },
                                   ),
-                                );
-                              },
-                              onLongPress: () {
-                                FavouriteLabSubjectsSubjects(
-                                  branch: widget.branch,
-                                  SubjectId: LabSubjectsData.id,
-                                  name: LabSubjectsData.heading,
-                                  description: LabSubjectsData.description,
-                                );
-                              },
-                            ),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        transitionDuration:
+                                        const Duration(milliseconds: 300),
+                                        pageBuilder: (context, animation,
+                                            secondaryAnimation) =>
+                                            subjectUnitsData(
+                                              reg: LabSubjectsData.regulation,
+                                              size: widget.size,
+                                              branch: widget.branch,
+                                              ID: LabSubjectsData.id,
+                                              mode: "LabSubjects",
+                                              name: LabSubjectsData.heading,
+                                              description: LabSubjectsData.description,
+                                            ),
+                                        transitionsBuilder: (context, animation,
+                                            secondaryAnimation, child) {
+                                          final fadeTransition = FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          );
+
+                                          return Container(
+                                            color: Colors.black
+                                                .withOpacity(animation.value),
+                                            child: AnimatedOpacity(
+                                                duration:
+                                                Duration(milliseconds: 300),
+                                                opacity:
+                                                animation.value.clamp(0.3, 1.0),
+                                                child: fadeTransition),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  onLongPress: () {
+                                    FavouriteLabSubjectsSubjects(
+                                      branch: widget.branch,
+                                      SubjectId: LabSubjectsData.id,
+                                      name: LabSubjectsData.heading,
+                                      description: LabSubjectsData.description,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
                           );
-                        },
-                      );
+                        }
                     }
-                }
-              }),
-        ],
-      ),
-    ));
+                  }),
+            ],
+          ),
+        ));
   }
 }
 
@@ -2375,9 +2372,9 @@ class _allBooksState extends State<allBooks> {
                     case ConnectionState.waiting:
                       return const Center(
                           child: CircularProgressIndicator(
-                        strokeWidth: 0.3,
-                        color: Colors.cyan,
-                      ));
+                            strokeWidth: 0.3,
+                            color: Colors.cyan,
+                          ));
                     default:
                       if (snapshot.hasError) {
                         return const Center(
@@ -2394,8 +2391,7 @@ class _allBooksState extends State<allBooks> {
                           itemCount: Books!.length,
                           itemBuilder: (BuildContext context, int index) {
                             return textBookSub(
-                              height: widget.size,
-                              width: widget.size,
+
                               size: widget.size,
                               data: Books[index],
                               branch: widget.branch,
@@ -2419,19 +2415,17 @@ class textBookSub extends StatefulWidget {
   String branch;
   String id;
   BooksConvertor data;
-  double width;
-  double height;
+
   double size;
   bool isUnit;
 
   textBookSub(
-      {required this.height,
-      required this.size,
-      this.id = "",
-      required this.width,
-      required this.data,
-      this.isUnit = false,
-      required this.branch});
+      {
+        required this.size,
+        this.id = "",
+        required this.data,
+        this.isUnit = false,
+        required this.branch});
 
   @override
   State<textBookSub> createState() => _textBookSubState();
@@ -2531,161 +2525,161 @@ class _textBookSubState extends State<textBookSub> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   AspectRatio(
-                    aspectRatio: 16 / 20,
+                    aspectRatio: (widget.size * 16) / (widget.size * 20),
                     child: file.existsSync() && widget.data.link.isNotEmpty
                         ? ClipRRect(
-                            borderRadius:
-                                BorderRadius.circular(widget.size * 15),
-                            child: Stack(
-                              children: [
-                                isLoading
-                                    ? PDFView(
-                                        defaultPage: index,
-                                        filePath:
-                                            "${folderPath}/pdfs/${getFileName(widget.data.link)}",
-                                        onRender: (_pages) {
-                                          setState(() {
-                                            pages = _pages!;
-                                          });
-                                        },
-                                      )
-                                    : Container(),
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        right: widget.size * 15,
-                                        top: widget.size * 8),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                            widget.size * 25),
-                                        color: Colors.black.withOpacity(0.8),
-                                        border: Border.all(
-                                            color:
-                                                Colors.white.withOpacity(0.5)),
-                                      ),
-                                      child: Padding(
-                                        padding:
-                                            EdgeInsets.all(widget.size * 4.0),
-                                        child: Text(
-                                          "P: $pages",
-                                          style: TextStyle(
-                                              fontSize: widget.size * 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
+                      borderRadius:
+                      BorderRadius.circular(widget.size * 15),
+                      child: Stack(
+                        children: [
+                          isLoading
+                              ? PDFView(
+                            defaultPage: index,
+                            filePath:
+                            "${folderPath}/pdfs/${getFileName(widget.data.link)}",
+                            onRender: (_pages) {
+                              setState(() {
+                                pages = _pages!;
+                              });
+                            },
+                          )
+                              : Container(),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  right: widget.size * 15,
+                                  top: widget.size * 8),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                      widget.size * 25),
+                                  color: Colors.black.withOpacity(0.8),
+                                  border: Border.all(
+                                      color:
+                                      Colors.white.withOpacity(0.5)),
+                                ),
+                                child: Padding(
+                                  padding:
+                                  EdgeInsets.all(widget.size * 4.0),
+                                  child: Text(
+                                    "P: $pages",
+                                    style: TextStyle(
+                                        fontSize: widget.size * 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white),
                                   ),
                                 ),
-                                Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(widget.size * 8.0),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        InkWell(
-                                          child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        widget.size * 25),
-                                                color: Colors.black
-                                                    .withOpacity(0.8),
-                                                border: Border.all(
-                                                    color: Colors.white
-                                                        .withOpacity(0.5)),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: widget.size * 3,
-                                                    horizontal:
-                                                        widget.size * 10),
-                                                child: Text(
-                                                  "-",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize:
-                                                          widget.size * 25,
-                                                      fontWeight:
-                                                          FontWeight.w800),
-                                                ),
-                                              )),
-                                          onTap: () {
-                                            setState(() {
-                                              if (index > 0) index--;
-                                            });
-                                            _reloadPage();
-                                            // _reloadPage
-                                          },
-                                        ),
-                                        SizedBox(
-                                          width: widget.size * 5,
-                                        ),
-                                        InkWell(
-                                          child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        widget.size * 25),
-                                                color: Colors.black
-                                                    .withOpacity(0.8),
-                                                border: Border.all(
-                                                    color: Colors.white
-                                                        .withOpacity(0.5)),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: widget.size * 3,
-                                                    horizontal:
-                                                        widget.size * 8),
-                                                child: Text(
-                                                  "+",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize:
-                                                          widget.size * 25,
-                                                      fontWeight:
-                                                          FontWeight.w800),
-                                                ),
-                                              )),
-                                          onTap: () {
-                                            setState(() {
-                                              index++;
-                                            });
-                                            _reloadPage();
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        : ClipRRect(
-                            borderRadius:
-                                BorderRadius.circular(widget.size * 15),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  image: widget.data.photoUrl.isNotEmpty &&
-                                          File("${folderPath}/books/${getFileName(widget.data.photoUrl)}")
-                                              .existsSync()
-                                      ? DecorationImage(
-                                          image: FileImage(
-                                            File(
-                                                "${folderPath}/books/${getFileName(widget.data.photoUrl)}"),
-                                          ),
-                                          fit: BoxFit.cover,
-                                        )
-                                      : ImageNotFoundForTextBooks),
+                              ),
                             ),
                           ),
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: EdgeInsets.all(widget.size * 8.0),
+                              child: Row(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              widget.size * 25),
+                                          color: Colors.black
+                                              .withOpacity(0.8),
+                                          border: Border.all(
+                                              color: Colors.white
+                                                  .withOpacity(0.5)),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: widget.size * 3,
+                                              horizontal:
+                                              widget.size * 10),
+                                          child: Text(
+                                            "-",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize:
+                                                widget.size * 25,
+                                                fontWeight:
+                                                FontWeight.w800),
+                                          ),
+                                        )),
+                                    onTap: () {
+                                      setState(() {
+                                        if (index > 0) index--;
+                                      });
+                                      _reloadPage();
+                                      // _reloadPage
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: widget.size * 5,
+                                  ),
+                                  InkWell(
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              widget.size * 25),
+                                          color: Colors.black
+                                              .withOpacity(0.8),
+                                          border: Border.all(
+                                              color: Colors.white
+                                                  .withOpacity(0.5)),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: widget.size * 3,
+                                              horizontal:
+                                              widget.size * 8),
+                                          child: Text(
+                                            "+",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize:
+                                                widget.size * 25,
+                                                fontWeight:
+                                                FontWeight.w800),
+                                          ),
+                                        )),
+                                    onTap: () {
+                                      setState(() {
+                                        index++;
+                                      });
+                                      _reloadPage();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                        : ClipRRect(
+                      borderRadius:
+                      BorderRadius.circular(widget.size * 15),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            image: widget.data.photoUrl.isNotEmpty &&
+                                File("${folderPath}/books/${getFileName(widget.data.photoUrl)}")
+                                    .existsSync()
+                                ? DecorationImage(
+                              image: FileImage(
+                                File(
+                                    "${folderPath}/books/${getFileName(widget.data.photoUrl)}"),
+                              ),
+                              fit: BoxFit.cover,
+                            )
+                                : ImageNotFoundForTextBooks),
+                      ),
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: widget.size * 2.0),
@@ -2711,12 +2705,12 @@ class _textBookSubState extends State<textBookSub> {
                                 icon: Icon(
                                   Icons.more_vert,
                                   color: Colors.white,
-                                  size: widget.size * 25,
+                                  size: widget.size * 20,
                                 ),
                                 // Callback that sets the selected popup menu item.
                                 onSelected: (item) async {
                                   if (item == "edit") {
-                                    if (widget.isUnit)
+                                    // if (widget.isUnit)
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -2725,63 +2719,49 @@ class _textBookSubState extends State<textBookSub> {
                                                     branch: widget.branch,
                                                     id: widget.data.id,
                                                     heading:
-                                                        widget.data.heading,
+                                                    widget.data.heading,
                                                     description:
-                                                        widget.data.description,
+                                                    widget.data.description,
                                                     Edition:
-                                                        widget.data.edition,
+                                                    widget.data.edition,
                                                     Link: widget.data.link,
                                                     Author: widget.data.Author,
                                                     photoUrl:
-                                                        widget.data.photoUrl,
+                                                    widget.data.photoUrl,
                                                   )));
-                                    else {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  UnitsCreator(
-                                                    type: "textbook",
-                                                    branch: widget.branch,
-                                                    mode: "Subjects",
-                                                    UnitId: widget.id,
-                                                    Description:
-                                                        widget.data.description,
-                                                    id: widget.data.id,
-                                                    photoUrl:
-                                                        widget.data.photoUrl,
-                                                    edition:
-                                                        widget.data.edition,
-                                                    Heading:
-                                                        widget.data.heading,
-                                                    author: widget.data.Author,
-                                                    PDFUrl: widget.data.link,
-                                                  )));
-                                    }
+                                    // else {
+                                    //   Navigator.push(
+                                    //       context,
+                                    //       MaterialPageRoute(
+                                    //           builder: (context) =>
+                                    //               UnitsCreator(
+                                    //                 type: "textbook",
+                                    //                 branch: widget.branch,
+                                    //                 mode: "Subjects",
+                                    //                 UnitId: widget.id,
+                                    //                 Description:
+                                    //                 widget.data.description,
+                                    //                 id: widget.data.id,
+                                    //                 photoUrl:
+                                    //                 widget.data.photoUrl,
+                                    //                 edition:
+                                    //                 widget.data.edition,
+                                    //                 Heading:
+                                    //                 widget.data.heading,
+                                    //                 author: widget.data.Author,
+                                    //                 PDFUrl: widget.data.link,
+                                    //               )));
+                                    // }
                                     ;
                                   } else if (item == "delete") {
-                                    if (widget.isUnit)
+
                                       FirebaseFirestore.instance
                                           .collection(widget.branch)
                                           .doc("Books")
                                           .collection("CoreBooks")
                                           .doc(widget.data.id)
                                           .delete();
-                                    else {
-                                      final deleteFlashNews = FirebaseFirestore
-                                          .instance
-                                          .collection(widget.branch)
-                                          .doc("Subjects")
-                                          .collection("Subjects")
-                                          .doc(widget.id)
-                                          .collection("TextBooks")
-                                          .doc(widget.data.id);
-                                      deleteFlashNews.delete();
-                                      pushNotificationsSpecificPerson(
-                                          "sujithnimmala03@gmail.com",
-                                          "${widget.data.id} Unit is deleted from Subjects}",
-                                          "");
-                                    }
+
                                     ;
                                     pushNotificationsSpecificPerson(
                                         fullUserId(),
@@ -2790,7 +2770,7 @@ class _textBookSubState extends State<textBookSub> {
                                   }
                                 },
                                 itemBuilder: (BuildContext context) =>
-                                    <PopupMenuEntry>[
+                                <PopupMenuEntry>[
                                   const PopupMenuItem(
                                     value: "edit",
                                     child: Text('Edit'),
@@ -2827,7 +2807,7 @@ class _textBookSubState extends State<textBookSub> {
                             children: [
                               InkWell(
                                   child: Padding(
-                                    padding: EdgeInsets.all(widget.width * 3),
+                                    padding: EdgeInsets.all(widget.size * 3),
                                     child: Row(
                                       children: [
                                         if (!file.existsSync())
@@ -2835,16 +2815,16 @@ class _textBookSubState extends State<textBookSub> {
                                             "Download ",
                                             style: TextStyle(
                                                 color: Colors.white,
-                                                fontSize: widget.size * 16,
+                                                fontSize: widget.size * 15,
                                                 fontWeight: FontWeight.w800),
                                           ),
                                         Icon(
                                           file.existsSync()
                                               ? Icons.open_in_new
                                               : Icons
-                                                  .download_for_offline_outlined,
+                                              .download_for_offline_outlined,
                                           color: Colors.greenAccent,
-                                          size: widget.size * 35,
+                                          size: widget.size * 25,
                                         ),
                                       ],
                                     ),
@@ -2859,7 +2839,7 @@ class _textBookSubState extends State<textBookSub> {
                                               builder: (context) => PdfViewerPage(
                                                   size: widget.size,
                                                   pdfUrl:
-                                                      "${folderPath}/pdfs/${getFileName(widget.data.link)}")));
+                                                  "${folderPath}/pdfs/${getFileName(widget.data.link)}")));
                                     } else {
                                       setState(() {
                                         isDownloaded = true;
@@ -2870,10 +2850,10 @@ class _textBookSubState extends State<textBookSub> {
                               if (file.existsSync())
                                 Padding(
                                   padding: EdgeInsets.only(
-                                      left: widget.width * 5,
-                                      right: widget.width * 5,
-                                      top: widget.height * 1,
-                                      bottom: widget.height * 1),
+                                      left: widget.size * 5,
+                                      right: widget.size * 5,
+                                      top: widget.size * 1,
+                                      bottom: widget.size* 1),
                                   child: InkWell(
                                     child: Icon(
                                       Icons.delete,
@@ -2907,7 +2887,7 @@ class _textBookSubState extends State<textBookSub> {
           ),
           onTap: () async {
             File isFile =
-                File("${folderPath}/pdfs/${getFileName(widget.data.link)}");
+            File("${folderPath}/pdfs/${getFileName(widget.data.link)}");
             if (isFile.existsSync()) {
               Navigator.push(
                   context,
@@ -2915,7 +2895,7 @@ class _textBookSubState extends State<textBookSub> {
                       builder: (context) => PdfViewerPage(
                           size: widget.size,
                           pdfUrl:
-                              "${folderPath}/pdfs/${getFileName(widget.data.link)}")));
+                          "${folderPath}/pdfs/${getFileName(widget.data.link)}")));
             } else {
               showToastText("Download Book");
             }
@@ -2935,12 +2915,12 @@ class textBookUnit extends StatefulWidget {
 
   textBookUnit(
       {required this.height,
-      required this.size,
-      this.id = "",
-      required this.width,
-      required this.data,
-      this.isUnit = false,
-      required this.branch});
+        required this.size,
+        this.id = "",
+        required this.width,
+        required this.data,
+        this.isUnit = false,
+        required this.branch});
 
   @override
   State<textBookUnit> createState() => _textBookUnitState();
@@ -3031,83 +3011,83 @@ class _textBookUnitState extends State<textBookUnit> {
                     children: [
                       file.existsSync() && widget.data.link.isNotEmpty
                           ? Padding(
-                              padding: EdgeInsets.only(top: 3),
-                              child: SizedBox(
-                                height: 140,
-                                width: 118,
-                                child: ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.circular(widget.size * 20),
-                                  child: Stack(
-                                    children: [
-                                      isLoading
-                                          ? PDFView(
-                                              defaultPage: index,
-                                              filePath:
-                                                  "${folderPath}/pdfs/${getFileName(widget.data.link)}",
-                                              onRender: (_pages) {
-                                                setState(() {
-                                                  pages = _pages!;
-                                                });
-                                              },
-                                            )
-                                          : Container(),
-                                      Align(
-                                        alignment: Alignment.topRight,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              right: widget.size * 15,
-                                              top: widget.size * 8),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      widget.size * 25),
-                                              color:
-                                                  Colors.black.withOpacity(0.8),
-                                              border: Border.all(
-                                                  color: Colors.white
-                                                      .withOpacity(0.5)),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.all(
-                                                  widget.size * 4.0),
-                                              child: Text(
-                                                "P: $pages",
-                                                style: TextStyle(
-                                                    fontSize: widget.size * 15,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white),
-                                              ),
-                                            ),
-                                          ),
+                        padding: EdgeInsets.only(top: 3),
+                        child: SizedBox(
+                          height: 140,
+                          width: 118,
+                          child: ClipRRect(
+                            borderRadius:
+                            BorderRadius.circular(widget.size * 20),
+                            child: Stack(
+                              children: [
+                                isLoading
+                                    ? PDFView(
+                                  defaultPage: index,
+                                  filePath:
+                                  "${folderPath}/pdfs/${getFileName(widget.data.link)}",
+                                  onRender: (_pages) {
+                                    setState(() {
+                                      pages = _pages!;
+                                    });
+                                  },
+                                )
+                                    : Container(),
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        right: widget.size * 15,
+                                        top: widget.size * 8),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(
+                                            widget.size * 25),
+                                        color:
+                                        Colors.black.withOpacity(0.8),
+                                        border: Border.all(
+                                            color: Colors.white
+                                                .withOpacity(0.5)),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(
+                                            widget.size * 4.0),
+                                        child: Text(
+                                          "P: $pages",
+                                          style: TextStyle(
+                                              fontSize: widget.size * 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
-                          : ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(widget.size * 15),
-                              child: Container(
-                                height: 140,
-                                width: 118,
-                                decoration: BoxDecoration(
-                                    image: widget.data.photoUrl.isNotEmpty &&
-                                            File("${folderPath}/books/${getFileName(widget.data.photoUrl)}")
-                                                .existsSync()
-                                        ? DecorationImage(
-                                            image: FileImage(
-                                              File(
-                                                  "${folderPath}/books/${getFileName(widget.data.photoUrl)}"),
-                                            ),
-                                            fit: BoxFit.cover,
-                                          )
-                                        : ImageNotFoundForTextBooks),
-                              ),
+                              ],
                             ),
+                          ),
+                        ),
+                      )
+                          : ClipRRect(
+                        borderRadius:
+                        BorderRadius.circular(widget.size * 15),
+                        child: Container(
+                          height: 140,
+                          width: 118,
+                          decoration: BoxDecoration(
+                              image: widget.data.photoUrl.isNotEmpty &&
+                                  File("${folderPath}/books/${getFileName(widget.data.photoUrl)}")
+                                      .existsSync()
+                                  ? DecorationImage(
+                                image: FileImage(
+                                  File(
+                                      "${folderPath}/books/${getFileName(widget.data.photoUrl)}"),
+                                ),
+                                fit: BoxFit.cover,
+                              )
+                                  : ImageNotFoundForTextBooks),
+                        ),
+                      ),
                       Visibility(
                         visible: isExp, // Control the visibility based on isExp
                         child: FutureBuilder(
@@ -3119,9 +3099,9 @@ class _textBookUnitState extends State<textBookUnit> {
                                 child: SingleChildScrollView(
                                   child: Column(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    CrossAxisAlignment.center,
                                     children: [
                                       if (widget.data.Author.isNotEmpty)
                                         Text(
@@ -3146,9 +3126,9 @@ class _textBookUnitState extends State<textBookUnit> {
                                       if (widget.data.link.isNotEmpty)
                                         Row(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                          CrossAxisAlignment.center,
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
                                           children: [
                                             if (file.existsSync())
                                               Column(
@@ -3160,20 +3140,20 @@ class _textBookUnitState extends State<textBookUnit> {
                                                     child: InkWell(
                                                       child: Container(
                                                         decoration:
-                                                            BoxDecoration(
+                                                        BoxDecoration(
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
+                                                          BorderRadius
+                                                              .circular(15),
                                                           color: Colors.white
                                                               .withOpacity(0.8),
                                                         ),
                                                         child: Padding(
                                                           padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical: 3,
-                                                                  horizontal:
-                                                                      5),
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                              vertical: 3,
+                                                              horizontal:
+                                                              5),
                                                           child: Row(
                                                             children: [
                                                               Icon(
@@ -3181,7 +3161,7 @@ class _textBookUnitState extends State<textBookUnit> {
                                                                 color: Colors
                                                                     .deepOrange,
                                                                 size: widget
-                                                                        .size *
+                                                                    .size *
                                                                     25,
                                                               ),
                                                               Text(
@@ -3190,10 +3170,10 @@ class _textBookUnitState extends State<textBookUnit> {
                                                                     color: Colors
                                                                         .black,
                                                                     fontSize:
-                                                                        20,
+                                                                    20,
                                                                     fontWeight:
-                                                                        FontWeight
-                                                                            .w600),
+                                                                    FontWeight
+                                                                        .w600),
                                                               )
                                                             ],
                                                           ),
@@ -3222,20 +3202,20 @@ class _textBookUnitState extends State<textBookUnit> {
                                                           left: 10, bottom: 5),
                                                       child: Container(
                                                         decoration:
-                                                            BoxDecoration(
+                                                        BoxDecoration(
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
+                                                          BorderRadius
+                                                              .circular(15),
                                                           color: Colors.white
                                                               .withOpacity(0.8),
                                                         ),
                                                         child: Padding(
                                                           padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical: 3,
-                                                                  horizontal:
-                                                                      5),
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                              vertical: 3,
+                                                              horizontal:
+                                                              5),
                                                           child: Row(
                                                             children: [
                                                               Text(
@@ -3244,10 +3224,10 @@ class _textBookUnitState extends State<textBookUnit> {
                                                                     color: Colors
                                                                         .black,
                                                                     fontSize:
-                                                                        20,
+                                                                    20,
                                                                     fontWeight:
-                                                                        FontWeight
-                                                                            .w600),
+                                                                    FontWeight
+                                                                        .w600),
                                                               ),
                                                               Icon(
                                                                 Icons
@@ -3255,7 +3235,7 @@ class _textBookUnitState extends State<textBookUnit> {
                                                                 color: Colors
                                                                     .purpleAccent,
                                                                 size: widget
-                                                                        .size *
+                                                                    .size *
                                                                     25,
                                                               ),
                                                             ],
@@ -3275,7 +3255,7 @@ class _textBookUnitState extends State<textBookUnit> {
                                                                         size: widget
                                                                             .size,
                                                                         pdfUrl:
-                                                                            "${folderPath}/pdfs/${getFileName(widget.data.link)}")));
+                                                                        "${folderPath}/pdfs/${getFileName(widget.data.link)}")));
                                                       } else {
                                                         showToastText(
                                                             "Download Book");
@@ -3292,17 +3272,17 @@ class _textBookUnitState extends State<textBookUnit> {
                                                     child: Container(
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(15),
+                                                        BorderRadius
+                                                            .circular(15),
                                                         color: Colors.white
                                                             .withOpacity(0.8),
                                                       ),
                                                       child: Padding(
                                                         padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 3,
-                                                                horizontal: 5),
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                            vertical: 3,
+                                                            horizontal: 5),
                                                         child: Row(
                                                           children: [
                                                             Text(
@@ -3312,8 +3292,8 @@ class _textBookUnitState extends State<textBookUnit> {
                                                                       .black,
                                                                   fontSize: 20,
                                                                   fontWeight:
-                                                                      FontWeight
-                                                                          .w600),
+                                                                  FontWeight
+                                                                      .w600),
                                                             ),
                                                             Icon(
                                                               Icons
@@ -3321,8 +3301,8 @@ class _textBookUnitState extends State<textBookUnit> {
                                                               color: Colors
                                                                   .purpleAccent,
                                                               size:
-                                                                  widget.size *
-                                                                      25,
+                                                              widget.size *
+                                                                  25,
                                                             ),
                                                           ],
                                                         ),
@@ -3407,36 +3387,36 @@ class _textBookUnitState extends State<textBookUnit> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => BooksCreator(
-                                                  branch: widget.branch,
-                                                  id: widget.data.id,
-                                                  heading: widget.data.heading,
-                                                  description:
-                                                      widget.data.description,
-                                                  Edition: widget.data.edition,
-                                                  Link: widget.data.link,
-                                                  Author: widget.data.Author,
-                                                  photoUrl:
-                                                      widget.data.photoUrl,
-                                                )));
+                                              branch: widget.branch,
+                                              id: widget.data.id,
+                                              heading: widget.data.heading,
+                                              description:
+                                              widget.data.description,
+                                              Edition: widget.data.edition,
+                                              Link: widget.data.link,
+                                              Author: widget.data.Author,
+                                              photoUrl:
+                                              widget.data.photoUrl,
+                                            )));
                                   else {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => UnitsCreator(
-                                                  type: "textbook",
-                                                  branch: widget.branch,
-                                                  mode: "Subjects",
-                                                  UnitId: widget.id,
-                                                  Description:
-                                                      widget.data.description,
-                                                  id: widget.data.id,
-                                                  photoUrl:
-                                                      widget.data.photoUrl,
-                                                  edition: widget.data.edition,
-                                                  Heading: widget.data.heading,
-                                                  author: widget.data.Author,
-                                                  PDFUrl: widget.data.link,
-                                                )));
+                                              type: "textbook",
+                                              branch: widget.branch,
+                                              mode: "Subjects",
+                                              UnitId: widget.id,
+                                              Description:
+                                              widget.data.description,
+                                              id: widget.data.id,
+                                              photoUrl:
+                                              widget.data.photoUrl,
+                                              edition: widget.data.edition,
+                                              Heading: widget.data.heading,
+                                              author: widget.data.Author,
+                                              PDFUrl: widget.data.link,
+                                            )));
                                   }
                                   ;
                                 } else if (item == "delete") {
@@ -3470,7 +3450,7 @@ class _textBookUnitState extends State<textBookUnit> {
                                 }
                               },
                               itemBuilder: (BuildContext context) =>
-                                  <PopupMenuEntry>[
+                              <PopupMenuEntry>[
                                 const PopupMenuItem(
                                   value: "edit",
                                   child: Text('Edit'),
@@ -3495,7 +3475,7 @@ class _textBookUnitState extends State<textBookUnit> {
             },
             onLongPress: () async {
               File isFile =
-                  File("${folderPath}/pdfs/${getFileName(widget.data.link)}");
+              File("${folderPath}/pdfs/${getFileName(widget.data.link)}");
               if (isFile.existsSync()) {
                 Navigator.push(
                     context,
@@ -3503,7 +3483,7 @@ class _textBookUnitState extends State<textBookUnit> {
                         builder: (context) => PdfViewerPage(
                             size: widget.size,
                             pdfUrl:
-                                "${folderPath}/pdfs/${getFileName(widget.data.link)}")));
+                            "${folderPath}/pdfs/${getFileName(widget.data.link)}")));
               } else {
                 showToastText("Download Book");
               }
@@ -3565,74 +3545,74 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
 
   @override
   Widget build(BuildContext context) => backGroundImage(
-          child: SingleChildScrollView(
+      child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             backButton(
-                size: widget.size,
-                text: widget.name,
+                size: widget.size*0.9,
+                text: widget.name.split(";").first,
                 child: isUser()
                     ? PopupMenuButton(
-                        icon: Icon(
-                          Icons.more_vert,
-                          color: Colors.white,
-                          size: widget.size * 25,
-                        ),
-                        // Callback that sets the selected popup menu item.
-                        onSelected: (item) {
-                          if (item == "addUnit") {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => UnitsCreator(
-                                          type: "unit",
-                                          branch: widget.branch,
-                                          id: widget.ID,
-                                          mode: widget.mode,
-                                        )));
-                          } else if (item == "addTextBook") {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => UnitsCreator(
-                                          type: "textbook",
-                                          branch: widget.branch,
-                                          id: widget.ID,
-                                          mode: widget.mode,
-                                        )));
-                          } else if (item == "addMore") {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => UnitsCreator(
-                                          type: "more",
-                                          branch: widget.branch,
-                                          id: widget.ID,
-                                          mode: widget.mode,
-                                        )));
-                          }
-                        },
-                        itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                          const PopupMenuItem(
-                            value: "addUnit",
-                            child: Text('Add Unit'),
-                          ),
-                          if (widget.mode == "Subjects")
-                            PopupMenuItem(
-                              value: "addTextBook",
-                              child: Text('Add TextBook'),
-                            ),
-                          const PopupMenuItem(
-                            value: "addMore",
-                            child: Text('Add More'),
-                          ),
-                        ],
-                      )
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Colors.white,
+                    size: widget.size * 25,
+                  ),
+                  // Callback that sets the selected popup menu item.
+                  onSelected: (item) {
+                    if (item == "addUnit") {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UnitsCreator(
+                                type: "unit",
+                                branch: widget.branch,
+                                id: widget.ID,
+                                mode: widget.mode,
+                              )));
+                    } else if (item == "addTextBook") {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UnitsCreator(
+                                type: "textbook",
+                                branch: widget.branch,
+                                id: widget.ID,
+                                mode: widget.mode,
+                              )));
+                    } else if (item == "addMore") {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UnitsCreator(
+                                type: "more",
+                                branch: widget.branch,
+                                id: widget.ID,
+                                mode: widget.mode,
+                              )));
+                    }
+                  },
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                    const PopupMenuItem(
+                      value: "addUnit",
+                      child: Text('Add Unit'),
+                    ),
+                    if (widget.mode == "Subjects")
+                      PopupMenuItem(
+                        value: "addTextBook",
+                        child: Text('Add TextBook'),
+                      ),
+                    const PopupMenuItem(
+                      value: "addMore",
+                      child: Text('Add More'),
+                    ),
+                  ],
+                )
                     : SizedBox(
-                        width: 45,
-                      )),
+                  width: 45,
+                )),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
@@ -3669,7 +3649,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                           Container(
                             decoration: BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.circular(widget.size * 5),
+                                BorderRadius.circular(widget.size * 5),
                                 border: Border.all(color: Colors.white30)),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -3707,7 +3687,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                         decoration: BoxDecoration(
                             color: Colors.white12,
                             borderRadius:
-                                BorderRadius.circular(widget.size * 20)),
+                            BorderRadius.circular(widget.size * 20)),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -3837,7 +3817,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                               .collection('user')
                                               .doc(fullUserId())
                                               .collection(
-                                                  "FavouriteLabSubjects")
+                                              "FavouriteLabSubjects")
                                               .doc(widget.ID)
                                               .delete();
                                           showToastText(
@@ -3914,7 +3894,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w500,
-                                  fontSize: 35),
+                                  fontSize: 25),
                             ),
                             Row(
                               children: [
@@ -3923,7 +3903,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                     icon: Icon(
                                       Icons.filter_list,
                                       color: Colors.white,
-                                      size: 30,
+                                      size: 25,
                                     ),
                                     // Callback that sets the selected popup menu item.
                                     onSelected: (item) {
@@ -3932,7 +3912,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                       });
                                     },
                                     itemBuilder: (BuildContext context) =>
-                                        <PopupMenuEntry>[
+                                    <PopupMenuEntry>[
                                       PopupMenuItem(
                                         value: "all",
                                         child: Text('All'),
@@ -3967,7 +3947,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                     isUnits ? "Hide" : "View",
                                     style: TextStyle(
                                         color: Colors.purpleAccent,
-                                        fontSize: 20,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w600),
                                   ),
                                   onTap: () {
@@ -3986,55 +3966,55 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                           padding: EdgeInsets.all(widget.size * 5.0),
                           child: unitFilter == "all"
                               ? ListView.separated(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: units!.length,
-                                  itemBuilder: (context, int index) {
-                                    final unit = units[index];
-                                    return subUnit(
-                                      size: widget.size,
-                                      ID: widget.ID,
-                                      branch: widget.branch,
-                                      unit: unit,
-                                      mode: widget.mode,
-                                    );
-                                  },
-                                  separatorBuilder: (context, index) =>
-                                      SizedBox(
-                                    height: widget.size * 5,
-                                  ),
-                                )
-                              : ListView.separated(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: units!
-                                      .where((unit) => unit.heading
-                                          .split(";")
-                                          .first
-                                          .contains(unitFilter))
-                                      .toList()
-                                      .length,
-                                  itemBuilder: (context, int index) {
-                                    final filteredUnits = units
-                                        .where((unit) => unit.heading
-                                            .split(";")
-                                            .first
-                                            .contains(unitFilter))
-                                        .toList();
-                                    final unit = filteredUnits[index];
-                                    return subUnit(
-                                      size: widget.size,
-                                      ID: widget.ID,
-                                      branch: widget.branch,
-                                      unit: unit,
-                                      mode: widget.mode,
-                                    );
-                                  },
-                                  separatorBuilder: (context, index) =>
-                                      SizedBox(
-                                    height: widget.size * 5,
-                                  ),
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: units!.length,
+                            itemBuilder: (context, int index) {
+                              final unit = units[index];
+                              return subUnit(
+                                size: widget.size,
+                                ID: widget.ID,
+                                branch: widget.branch,
+                                unit: unit,
+                                mode: widget.mode,
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                SizedBox(
+                                  height: widget.size * 5,
                                 ),
+                          )
+                              : ListView.separated(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: units!
+                                .where((unit) => unit.heading
+                                .split(";")
+                                .first
+                                .contains(unitFilter))
+                                .toList()
+                                .length,
+                            itemBuilder: (context, int index) {
+                              final filteredUnits = units
+                                  .where((unit) => unit.heading
+                                  .split(";")
+                                  .first
+                                  .contains(unitFilter))
+                                  .toList();
+                              final unit = filteredUnits[index];
+                              return subUnit(
+                                size: widget.size,
+                                ID: widget.ID,
+                                branch: widget.branch,
+                                unit: unit,
+                                mode: widget.mode,
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                SizedBox(
+                                  height: widget.size * 5,
+                                ),
+                          ),
                         ),
                     ],
                   );
@@ -4073,14 +4053,14 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
-                                    fontSize: 35),
+                                    fontSize: 25),
                               ),
                               InkWell(
                                 child: Text(
                                   isTextbooks ? "Hide" : "View",
                                   style: TextStyle(
                                       color: Colors.purpleAccent,
-                                      fontSize: 20,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w600),
                                 ),
                                 onTap: () {
@@ -4151,7 +4131,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w500,
-                                  fontSize: 35),
+                                  fontSize: 25),
                             ),
                             Row(
                               children: [
@@ -4160,7 +4140,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                     icon: Icon(
                                       Icons.filter_list,
                                       color: Colors.white,
-                                      size: 30,
+                                      size: 25,
                                     ),
                                     // Callback that sets the selected popup menu item.
                                     onSelected: (item) {
@@ -4169,7 +4149,7 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                                       });
                                     },
                                     itemBuilder: (BuildContext context) =>
-                                        <PopupMenuEntry>[
+                                    <PopupMenuEntry>[
                                       PopupMenuItem(
                                         value: "all",
                                         child: Text('All'),
@@ -4204,51 +4184,51 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
                       moreFilter == "all"
                           ? ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: units!.length,
-                              itemBuilder: (context, int index) {
-                                final unit = units[index];
+                        shrinkWrap: true,
+                        itemCount: units!.length,
+                        itemBuilder: (context, int index) {
+                          final unit = units[index];
 
-                                return subMore(
-                                  width: widget.size,
-                                  height: widget.size,
-                                  size: widget.size,
-                                  ID: widget.ID,
-                                  branch: widget.branch,
-                                  unit: unit,
-                                  mode: widget.mode,
-                                );
-                              },
-                            )
+                          return subMore(
+                            width: widget.size,
+                            height: widget.size,
+                            size: widget.size,
+                            ID: widget.ID,
+                            branch: widget.branch,
+                            unit: unit,
+                            mode: widget.mode,
+                          );
+                        },
+                      )
                           : ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: units!
-                                  .where((unit) => unit.link
-                                      .split(";")
-                                      .first
-                                      .startsWith(moreFilter))
-                                  .toList()
-                                  .length,
-                              itemBuilder: (context, int index) {
-                                final filteredUnits = units
-                                    .where((unit) => unit.link
-                                        .split(";")
-                                        .first
-                                        .startsWith(moreFilter))
-                                    .toList();
-                                final unit = filteredUnits[index];
-                                return subMore(
-                                  width: widget.size,
-                                  height: widget.size,
-                                  size: widget.size,
-                                  ID: widget.ID,
-                                  branch: widget.branch,
-                                  unit: unit,
-                                  mode: widget.mode,
-                                );
-                              },
-                            ),
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: units!
+                            .where((unit) => unit.link
+                            .split(";")
+                            .first
+                            .startsWith(moreFilter))
+                            .toList()
+                            .length,
+                        itemBuilder: (context, int index) {
+                          final filteredUnits = units
+                              .where((unit) => unit.link
+                              .split(";")
+                              .first
+                              .startsWith(moreFilter))
+                              .toList();
+                          final unit = filteredUnits[index];
+                          return subMore(
+                            width: widget.size,
+                            height: widget.size,
+                            size: widget.size,
+                            ID: widget.ID,
+                            branch: widget.branch,
+                            unit: unit,
+                            mode: widget.mode,
+                          );
+                        },
+                      ),
                     ],
                   );
                 }
@@ -4269,11 +4249,11 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
           .orderBy("heading", descending: false)
           .snapshots()
           .map((snapshot) => snapshot.docs
-              .map((doc) => UnitsConvertor.fromJson(doc.data()))
-              .toList());
+          .map((doc) => UnitsConvertor.fromJson(doc.data()))
+          .toList());
 
   Stream<List<BooksConvertor>> readTextBooks(
-          String subjectsID, String branch) =>
+      String subjectsID, String branch) =>
       FirebaseFirestore.instance
           .collection(branch)
           .doc(widget.mode)
@@ -4283,8 +4263,8 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
           .orderBy("heading", descending: false)
           .snapshots()
           .map((snapshot) => snapshot.docs
-              .map((doc) => BooksConvertor.fromJson(doc.data()))
-              .toList());
+          .map((doc) => BooksConvertor.fromJson(doc.data()))
+          .toList());
 
   Stream<List<UnitsMoreConvertor>> readMore(String subjectsID, String branch) =>
       FirebaseFirestore.instance
@@ -4296,19 +4276,19 @@ class _subjectUnitsDataState extends State<subjectUnitsData>
           .orderBy("heading", descending: false)
           .snapshots()
           .map((snapshot) => snapshot.docs
-              .map((doc) => UnitsMoreConvertor.fromJson(doc.data()))
-              .toList());
+          .map((doc) => UnitsMoreConvertor.fromJson(doc.data()))
+          .toList());
 }
 
 Future createUnits(
     {required String mode,
-    required String branch,
-    required String heading,
-    required String description,
-    required String PDFSize,
-    required String questions,
-    required String PDFLink,
-    required String subjectsID}) async {
+      required String branch,
+      required String heading,
+      required String description,
+      required String PDFSize,
+      required String questions,
+      required String PDFLink,
+      required String subjectsID}) async {
   final docflash = FirebaseFirestore.instance
       .collection(branch)
       .doc(mode)
@@ -4341,22 +4321,22 @@ class UnitsConvertor {
   });
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "heading": heading,
-        "questions": questions,
-        "description": description,
-        "size": size,
-        "link": link,
-      };
+    "id": id,
+    "heading": heading,
+    "questions": questions,
+    "description": description,
+    "size": size,
+    "link": link,
+  };
 
   static UnitsConvertor fromJson(Map<String, dynamic> json) => UnitsConvertor(
-        link: json["link"],
-        id: json['id'],
-        heading: json["heading"],
-        questions: json["questions"],
-        description: json["description"],
-        size: json["size"],
-      );
+    link: json["link"],
+    id: json['id'],
+    heading: json["heading"],
+    questions: json["questions"],
+    description: json["description"],
+    size: json["size"],
+  );
 }
 
 Future createUnitsTextbooks({
@@ -4423,11 +4403,11 @@ class UnitsMoreConvertor {
   });
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "heading": heading,
-        "description": description,
-        "link": link,
-      };
+    "id": id,
+    "heading": heading,
+    "description": description,
+    "link": link,
+  };
 
   static UnitsMoreConvertor fromJson(Map<String, dynamic> json) =>
       UnitsMoreConvertor(
@@ -4554,35 +4534,34 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
     return InkWell(
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(
-              pdfFile.existsSync() ? widget.size * 40 : widget.size * 30),
+          borderRadius: BorderRadius.circular(widget.size * 20 ),
           color: Colors.white.withOpacity(0.1),
         ),
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (pdfFile.existsSync())
                   SizedBox(
-                    width: widget.size * 100,
-                    height: widget.size * 100,
+                    width: widget.size * 60,
+                    height: widget.size * 80,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(40),
+                      borderRadius: BorderRadius.circular(20),
                       child: Stack(
                         children: [
                           isLoading
                               ? PDFView(
-                                  defaultPage: 0,
-                                  filePath:
-                                      "${folderPath}/pdfs/${getFileName(widget.unit.link)}",
-                                  onRender: (_pages) {
-                                    setState(() {
-                                      pages = _pages!;
-                                    });
-                                  },
-                                )
+                            defaultPage: 0,
+                            filePath:
+                            "${folderPath}/pdfs/${getFileName(widget.unit.link)}",
+                            onRender: (_pages) {
+                              setState(() {
+                                pages = _pages!;
+                              });
+                            },
+                          )
                               : Container(),
                           Align(
                             alignment: Alignment.bottomRight,
@@ -4593,7 +4572,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius:
-                                      BorderRadius.circular(widget.size * 25),
+                                  BorderRadius.circular(widget.size * 25),
                                   color: Colors.black.withOpacity(0.8),
                                   border: Border.all(
                                       color: Colors.white.withOpacity(0.5)),
@@ -4617,192 +4596,142 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                   ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: widget.size * 10),
+                    padding: EdgeInsets.only(left: widget.size * 5),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                "${widget.unit.heading.split(";").last}",
-                                style: TextStyle(
-                                  fontSize: widget.size * 18.0,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: isExp ? 6 : 1,
-                              ),
-                            ),
-                            if (isUser())
-                              PopupMenuButton(
-                                icon: Icon(
-                                  Icons.more_vert,
-                                  color: Colors.white,
-                                  size: widget.size * 18,
-                                ),
-                                // Callback that sets the selected popup menu item.
-                                onSelected: (item) {
-                                  if (item == "edit") {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => UnitsCreator(
-                                                  type: "unit",
-                                                  branch: widget.branch,
-                                                  mode: widget.mode,
-                                                  UnitId: widget.ID,
-                                                  id: widget.unit.id,
-                                                  Heading: widget.unit.heading,
-                                                  Description:
-                                                      widget.unit.description,
-                                                  questions:
-                                                      widget.unit.questions,
-                                                  PDFUrl: widget.unit.link,
-                                                )));
-                                  } else if (item == "delete") {
-                                    final deleteFlashNews = FirebaseFirestore
-                                        .instance
-                                        .collection(widget.branch)
-                                        .doc(widget.mode)
-                                        .collection(widget.mode)
-                                        .doc(widget.ID)
-                                        .collection("Units")
-                                        .doc(widget.unit.id);
-                                    deleteFlashNews.delete();
-                                    pushNotificationsSpecificPerson(
-                                        fullUserId(),
-                                        "${widget.unit.heading} Unit is deleted from ${widget.mode}",
-                                        "");
-                                  }
-                                },
-                                itemBuilder: (BuildContext context) =>
-                                    <PopupMenuEntry>[
-                                  const PopupMenuItem(
-                                    value: "edit",
-                                    child: Text('Edit'),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 3),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "${widget.unit.heading.split(";").last}",
+                                  style: TextStyle(
+                                    fontSize: widget.size * 16.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                  const PopupMenuItem(
-                                    value: "delete",
-                                    child: Text('Delete'),
-                                  ),
-                                ],
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: isExp ? 6 : 1,
+                                ),
                               ),
-                          ],
+
+                            ],
+                          ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             widget.unit.link.isNotEmpty
                                 ? Row(
-                                    children: [
-                                      if (pdfFile.existsSync())
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            right: widget.size * 5,
+                              children: [
+                                if (pdfFile.existsSync())
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      right: widget.size * 5,
+                                    ),
+                                    child: InkWell(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(15),
+                                          color: Colors.white
+                                              .withOpacity(0.8),
+                                        ),
+                                        child: Padding(
+                                          padding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 3,
+                                              horizontal: 5),
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.delete,
+                                                color: Colors.deepOrange,
+                                                size: widget.size * 25,
+                                              ),
+                                              Text(
+                                                "Delete ",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                    FontWeight.w600),
+                                              )
+                                            ],
                                           ),
-                                          child: InkWell(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                color: Colors.white
-                                                    .withOpacity(0.8),
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 3,
-                                                        horizontal: 5),
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.delete,
-                                                      color: Colors.deepOrange,
-                                                      size: widget.size * 25,
-                                                    ),
-                                                    Text(
-                                                      "Delete ",
-                                                      style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            onLongPress: () async {
-                                              if (pdfFile.existsSync()) {
-                                                await pdfFile.delete();
-                                              }
-                                              setState(() {});
-                                              showToastText(
-                                                  "File has been deleted");
-                                            },
-                                            onTap: () {
-                                              showToastText(
-                                                  "Long Press To Delete");
-                                            },
-                                          ),
-                                        )
-                                      else
-                                        InkWell(
-                                            child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 10, bottom: 5),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  color: Colors.white
-                                                      .withOpacity(0.8),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 3,
-                                                      horizontal: 5),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        "Download",
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
-                                                      ),
-                                                      Icon(
-                                                        Icons
-                                                            .file_download_outlined,
-                                                        color:
-                                                            Colors.purpleAccent,
-                                                        size: widget.size * 25,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            onTap: () async {
-                                              setState(() {
-                                                isDownloaded = true;
-                                              });
-                                              await download(widget.unit.link);
-                                              setState(() {});
-                                            }),
-                                    ],
+                                        ),
+                                      ),
+                                      onLongPress: () async {
+                                        if (pdfFile.existsSync()) {
+                                          await pdfFile.delete();
+                                        }
+                                        setState(() {});
+                                        showToastText(
+                                            "File has been deleted");
+                                      },
+                                      onTap: () {
+                                        showToastText(
+                                            "Long Press To Delete");
+                                      },
+                                    ),
                                   )
+                                else
+                                  InkWell(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 10, bottom: 5),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(15),
+                                            color: Colors.white
+                                                .withOpacity(0.8),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets
+                                                .symmetric(
+                                                vertical: 3,
+                                                horizontal: 5),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  "Download",
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .w600),
+                                                ),
+                                                Icon(
+                                                  Icons
+                                                      .file_download_outlined,
+                                                  color:
+                                                  Colors.purpleAccent,
+                                                  size: widget.size * 25,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      onTap: () async {
+                                        setState(() {
+                                          isDownloaded = true;
+                                        });
+                                        await download(widget.unit.link);
+                                        setState(() {});
+                                      }),
+                              ],
+                            )
                                 : Container(),
                             Container(
                                 decoration: BoxDecoration(
                                     borderRadius:
-                                        BorderRadius.circular(widget.size * 10),
+                                    BorderRadius.circular(widget.size * 10),
                                     border: Border.all(color: Colors.white24)),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
@@ -4810,7 +4739,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                       horizontal: widget.size * 5),
                                   child: Row(
                                     children: [
-                                      Text(
+                                     if(widget.unit.heading.split(";").first!="Unknown") Text(
                                         widget.unit.heading.split(";").first,
                                         style: TextStyle(
                                             color: Colors.white,
@@ -4819,7 +4748,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       Text(
-                                        "  ~ ${widget.unit.size}",
+                                        "~ ${widget.unit.size}",
                                         style: TextStyle(
                                             color: Colors.lightBlueAccent,
                                             fontSize: widget.size * 14),
@@ -4830,19 +4759,19 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                 )),
                             !widget.unit.description.isNotEmpty
                                 ? InkWell(
-                                    child: Icon(
-                                      isExp
-                                          ? Icons.arrow_drop_up
-                                          : Icons.arrow_drop_down,
-                                      color: Colors.white,
-                                      size: 30,
-                                    ),
-                                    onTap: () {
-                                      setState(() {
-                                        isExp = !isExp;
-                                      });
-                                    },
-                                  )
+                              child: Icon(
+                                isExp
+                                    ? Icons.arrow_drop_up
+                                    : Icons.arrow_drop_down,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  isExp = !isExp;
+                                });
+                              },
+                            )
                                 : Container(),
                           ],
                         ),
@@ -4856,6 +4785,61 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
+                if (isUser())
+                  PopupMenuButton(
+                    padding: EdgeInsets.zero,
+                    icon: Icon(
+                      Icons.more_vert,
+                      color: Colors.white,
+                      size: widget.size * 18,
+                    ),
+                    // Callback that sets the selected popup menu item.
+                    onSelected: (item) {
+                      if (item == "edit") {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UnitsCreator(
+                                  type: "unit",
+                                  branch: widget.branch,
+                                  mode: widget.mode,
+                                  UnitId: widget.ID,
+                                  id: widget.unit.id,
+                                  Heading: widget.unit.heading,
+                                  Description:
+                                  widget.unit.description,
+                                  questions:
+                                  widget.unit.questions,
+                                  PDFUrl: widget.unit.link,
+                                )));
+                      } else if (item == "delete") {
+                        final deleteFlashNews = FirebaseFirestore
+                            .instance
+                            .collection(widget.branch)
+                            .doc(widget.mode)
+                            .collection(widget.mode)
+                            .doc(widget.ID)
+                            .collection("Units")
+                            .doc(widget.unit.id);
+                        deleteFlashNews.delete();
+                        pushNotificationsSpecificPerson(
+                            fullUserId(),
+                            "${widget.unit.heading} Unit is deleted from ${widget.mode}",
+                            "");
+                      }
+                    },
+                    itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry>[
+                      const PopupMenuItem(
+                        value: "edit",
+                        child: Text('Edit'),
+                      ),
+                      const PopupMenuItem(
+                        value: "delete",
+                        child: Text('Delete'),
+                      ),
+                    ],
+                  ),
               ],
             ),
             if (isExp)
@@ -4913,11 +4897,11 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => PdfViewerPage(
-                                                  size: widget.size,
-                                                  pdfUrl:
-                                                      "${folderPath}/pdfs/${getFileName(widget.unit.link)}",
-                                                  defaultPage: indexNumber - 1,
-                                                )));
+                                              size: widget.size,
+                                              pdfUrl:
+                                              "${folderPath}/pdfs/${getFileName(widget.unit.link)}",
+                                              defaultPage: indexNumber - 1,
+                                            )));
                                   } else {
                                     showToastText("Download PDF");
                                   }
@@ -4965,8 +4949,8 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                         isUser()
                                             ? newQuestionsList[index]
                                             : newQuestionsList[index]
-                                                .split("@")
-                                                .first,
+                                            .split("@")
+                                            .first,
                                         style: TextStyle(
                                             color: Colors.white70,
                                             fontSize: widget.size * 15),
@@ -4990,11 +4974,11 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => PdfViewerPage(
-                                                  size: widget.size,
-                                                  pdfUrl:
-                                                      "${folderPath}/pdfs/${getFileName(widget.unit.link)}",
-                                                  defaultPage: indexNumber - 1,
-                                                )));
+                                              size: widget.size,
+                                              pdfUrl:
+                                              "${folderPath}/pdfs/${getFileName(widget.unit.link)}",
+                                              defaultPage: indexNumber - 1,
+                                            )));
                                   } else {
                                     showToastText("Download PDF");
                                   }
@@ -5007,7 +4991,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                                 decoration: BoxDecoration(
                                     color: Colors.white.withOpacity(0.5),
                                     borderRadius:
-                                        BorderRadius.circular(widget.size * 8)),
+                                    BorderRadius.circular(widget.size * 8)),
                                 child: Padding(
                                   padding: EdgeInsets.all(widget.size * 8.0),
                                   child: Text(
@@ -5036,7 +5020,7 @@ class _subUnitState extends State<subUnit> with TickerProviderStateMixin {
                   builder: (context) => PdfViewerPage(
                       size: widget.size,
                       pdfUrl:
-                          "${folderPath}/pdfs/${getFileName(widget.unit.link)}")));
+                      "${folderPath}/pdfs/${getFileName(widget.unit.link)}")));
         }
       },
     );
@@ -5054,13 +5038,13 @@ class subMore extends StatefulWidget {
 
   const subMore(
       {Key? key,
-      required this.unit,
-      required this.mode,
-      required this.branch,
-      required this.ID,
-      required this.width,
-      required this.size,
-      required this.height})
+        required this.unit,
+        required this.mode,
+        required this.branch,
+        required this.ID,
+        required this.width,
+        required this.size,
+        required this.height})
       : super(key: key);
 
   @override
@@ -5263,15 +5247,15 @@ class _subMoreState extends State<subMore> with TickerProviderStateMixin {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => UnitsCreator(
-                                              type: "more",
-                                              branch: widget.branch,
-                                              mode: widget.mode,
-                                              UnitId: widget.ID,
-                                              id: widget.unit.id,
-                                              Heading: widget.unit.heading,
-                                              Description: widget.unit.description,
-                                              PDFUrl: widget.unit.link,
-                                            )));
+                                          type: "more",
+                                          branch: widget.branch,
+                                          mode: widget.mode,
+                                          UnitId: widget.ID,
+                                          id: widget.unit.id,
+                                          Heading: widget.unit.heading,
+                                          Description: widget.unit.description,
+                                          PDFUrl: widget.unit.link,
+                                        )));
                               } else if (item == "delete") {
                                 final deleteFlashNews = FirebaseFirestore.instance
                                     .collection(widget.branch)
@@ -5300,9 +5284,9 @@ class _subMoreState extends State<subMore> with TickerProviderStateMixin {
                           ),
                       ],
                     ),
-                   widget.unit.link.split(";").last.isNotEmpty&&widget.unit.link.split(";").first == "PDF"
+                    widget.unit.link.split(";").last.isNotEmpty&&widget.unit.link.split(";").first == "PDF"
 
-    ? Row(
+                        ? Row(
                       children: [
                         if (file.existsSync())
                           Padding(
@@ -5460,15 +5444,15 @@ class _subMoreState extends State<subMore> with TickerProviderStateMixin {
       ),
       onTap: () {
 
-          if (file.existsSync()) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PdfViewerPage(
-                        size: widget.size,
-                        pdfUrl:
-                        "${folderPath}/pdfs/${getFileName(widget.unit.link)}")));
-          }
+        if (file.existsSync()) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PdfViewerPage(
+                      size: widget.size,
+                      pdfUrl:
+                      "${folderPath}/pdfs/${getFileName(widget.unit.link)}")));
+        }
 
         else if(widget.unit.link.split(";").first == "Image" ){
           Navigator.push(
@@ -5534,9 +5518,9 @@ class _updatesPageState extends State<updatesPage> {
                   case ConnectionState.waiting:
                     return const Center(
                         child: CircularProgressIndicator(
-                      strokeWidth: 0.3,
-                      color: Colors.cyan,
-                    ));
+                          strokeWidth: 0.3,
+                          color: Colors.cyan,
+                        ));
                   default:
                     if (snapshot.hasError) {
                       return const Center(
@@ -5546,9 +5530,9 @@ class _updatesPageState extends State<updatesPage> {
                       if (BranchNews!.length == 0) {
                         return Center(
                             child: Text(
-                          "No Updates",
-                          style: TextStyle(color: Colors.lightBlueAccent),
-                        ));
+                              "No Updates",
+                              style: TextStyle(color: Colors.lightBlueAccent),
+                            ));
                       } else
                         return ListView.builder(
                           physics: const BouncingScrollPhysics(),
@@ -5575,19 +5559,19 @@ class _updatesPageState extends State<updatesPage> {
                                     Row(
                                       children: [
                                         Container(
-                                          width: widget.size * 30,
-                                          height: widget.size * 30,
+                                          width: widget.size * 35,
+                                          height: widget.size * 35,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(
-                                                widget.size * 15),
+                                                widget.size * 18),
                                             image:
-                                                BranchNew.photoUrl.isNotEmpty &&
-                                                        file.existsSync()
-                                                    ? DecorationImage(
-                                                        image: FileImage(file),
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                    : noImageFound,
+                                            BranchNew.photoUrl.isNotEmpty &&
+                                                file.existsSync()
+                                                ? DecorationImage(
+                                              image: FileImage(file),
+                                              fit: BoxFit.cover,
+                                            )
+                                                : noImageFound,
                                           ),
                                         ),
                                         Expanded(
@@ -5596,23 +5580,23 @@ class _updatesPageState extends State<updatesPage> {
                                                 horizontal: widget.size * 5),
                                             child: Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                   BranchNew.heading,
                                                   style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize:
-                                                          widget.size * 20,
+                                                      widget.size * 18,
                                                       fontWeight:
-                                                          FontWeight.w600),
+                                                      FontWeight.w600),
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                                   children: [
                                                     if (BranchNew
                                                         .branch.isNotEmpty)
@@ -5620,10 +5604,10 @@ class _updatesPageState extends State<updatesPage> {
                                                         "from ${BranchNew.branch}",
                                                         style: TextStyle(
                                                             color:
-                                                                Colors.white70,
+                                                            Colors.white70,
                                                             fontSize:
-                                                                widget.size *
-                                                                    15),
+                                                            widget.size *
+                                                                14),
                                                       ),
                                                     Padding(
                                                       padding: EdgeInsets.only(
@@ -5634,8 +5618,8 @@ class _updatesPageState extends State<updatesPage> {
                                                         style: TextStyle(
                                                             color: Colors.white,
                                                             fontSize:
-                                                                widget.size *
-                                                                    10),
+                                                            widget.size *
+                                                                10),
                                                       ),
                                                     )
                                                   ],
@@ -5649,7 +5633,7 @@ class _updatesPageState extends State<updatesPage> {
                                             icon: Icon(
                                               Icons.more_vert,
                                               color: Colors.white,
-                                              size: widget.size * 22,
+                                              size: widget.size * 18,
                                             ),
                                             // Callback that sets the selected popup menu item.
                                             onSelected: (item) async {
@@ -5660,22 +5644,22 @@ class _updatesPageState extends State<updatesPage> {
                                                         builder: (context) =>
                                                             updateCreator(
                                                               NewsId:
-                                                                  BranchNew.id,
+                                                              BranchNew.id,
                                                               link: BranchNew
                                                                   .link,
                                                               heading: BranchNew
                                                                   .heading,
                                                               photoUrl:
-                                                                  BranchNew
-                                                                      .photoUrl,
+                                                              BranchNew
+                                                                  .photoUrl,
                                                               subMessage: BranchNew
                                                                   .description,
                                                               branch:
-                                                                  widget.branch,
+                                                              widget.branch,
                                                               width:
-                                                                  widget.size,
+                                                              widget.size,
                                                               height:
-                                                                  widget.size,
+                                                              widget.size,
                                                               size: widget.size,
                                                             )));
                                               } else if (item == "delete") {
@@ -5691,7 +5675,7 @@ class _updatesPageState extends State<updatesPage> {
                                             },
                                             itemBuilder:
                                                 (BuildContext context) =>
-                                                    <PopupMenuEntry>[
+                                            <PopupMenuEntry>[
                                               const PopupMenuItem(
                                                 value: "edit",
                                                 child: Text('Edit'),
@@ -5706,20 +5690,19 @@ class _updatesPageState extends State<updatesPage> {
                                     ),
                                     Padding(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: widget.size * 10.0,
-                                          vertical: widget.size * 5),
+                                          horizontal: widget.size * 10),
                                       child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                        MainAxisAlignment.start,
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             BranchNew.description,
                                             style: TextStyle(
                                                 color: Colors.white
                                                     .withOpacity(0.9),
-                                                fontSize: widget.size * 20,
+                                                fontSize: widget.size * 14,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           if (BranchNew.link.isNotEmpty)
@@ -5728,8 +5711,8 @@ class _updatesPageState extends State<updatesPage> {
                                                 "Open (Link)",
                                                 style: TextStyle(
                                                     color:
-                                                        Colors.lightBlueAccent,
-                                                    fontSize: widget.size * 18),
+                                                    Colors.lightBlueAccent,
+                                                    fontSize: widget.size * 14),
                                               ),
                                               onTap: () {
                                                 ExternalLaunchUrl(
@@ -5739,7 +5722,6 @@ class _updatesPageState extends State<updatesPage> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: widget.size * 25)
                                   ],
                                 ),
                               ),
@@ -5748,10 +5730,10 @@ class _updatesPageState extends State<updatesPage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => ImageZoom(
-                                              size: widget.size,
-                                              url: BranchNew.photoUrl,
-                                              file: file,
-                                            )));
+                                          size: widget.size,
+                                          url: BranchNew.photoUrl,
+                                          file: file,
+                                        )));
                               },
                             );
                           },

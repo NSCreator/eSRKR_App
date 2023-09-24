@@ -42,7 +42,7 @@ Future main() async {
       .then((_) {
     runApp(MyApp());
   });
-  runApp(MaterialApp(home: Scaffold(),));
+
 }
 
 class MyApp extends StatefulWidget {
@@ -88,7 +88,9 @@ class _MyAppState extends State<MyApp> {
         highlightColor: Colors.transparent,
         splashColor: Colors.transparent,
         splashFactory: NoSplash.splashFactory,
+        scaffoldBackgroundColor: Color(0xFF060504),
       ),
+
       builder: (context, child) {
         return MediaQuery(
             data: MediaQuery.of(context).copyWith(
@@ -115,96 +117,15 @@ class _MyAppState extends State<MyApp> {
                         ));
                       default:
                         {
-                          bool isTheir = false;
-                          try {
-                            if (mainsnapshot.data!.exists &&
-                                mainsnapshot.data!['reg']
-                                    .toString()
-                                    .isNotEmpty &&
-                                mainsnapshot.data!['branch']
-                                    .toString()
-                                    .isNotEmpty &&
-                                mainsnapshot.data!['index']
-                                    .toString()
-                                    .isNotEmpty) {
-                              isTheir = true;
-                            }
-                          } catch (Exception) {
-                            isTheir = false;
-                          }
-                          if (isTheir) {
-                            downloadAllImages(
-                                context,
-                                mainsnapshot.data!["branch"].toString(),
-                                mainsnapshot.data!['reg'].toString());
-                            return HomePage(
-                              branch: mainsnapshot.data!["branch"].toString(),
-                              reg: mainsnapshot.data!['reg'].toString(),
-                              index: mainsnapshot.data!['index'],
-                              size: size(context),
-                            );
-                          } else {
-
-                            return Scaffold(
-                              backgroundColor: Color.fromRGBO(4, 48, 46, 1),
-                              body: SafeArea(
-                                  child:  StreamBuilder<List<RegulationConvertor>>(
-                                      stream: readRegulation(mainsnapshot.data!['branch'].toString()),
-                                      builder: (context, snapshot) {
-                                        final user = snapshot.data;
-                                        switch (snapshot.connectionState) {
-                                          case ConnectionState.waiting:
-                                            return const Center(
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 0.3,
-                                                  color: Colors.cyan,
-                                                ));
-                                          default:
-                                            if (snapshot.hasError) {
-                                              return const Center(
-                                                  child: Text(
-                                                      'Error with TextBooks Data or\n Check Internet Connection'));
-                                            } else {
-                                              return Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 20),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: ListView.builder(
-                                                    physics: const BouncingScrollPhysics(),
-                                                    shrinkWrap: true,
-                                                    itemCount: user!.length,
-                                                    itemBuilder: (context, int index) {
-                                                      final SubjectsData = user[index];
-                                                      return Center(
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(3.0),
-                                                          child: InkWell(
-                                                            child: Text(
-                                                              SubjectsData.id.toUpperCase(),
-                                                              style: TextStyle(
-                                                                  color: Colors.amber,
-                                                                  fontSize: 30),
-                                                            ),
-                                                            onTap: () {
-                                                              FirebaseFirestore.instance
-                                                                  .collection("user")
-                                                                  .doc(fullUserId())
-                                                                  .update({"reg": SubjectsData.id});
-                                                           
-
-                                                            },
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                        }
-                                      })),
-                            );
-                          }
+                          downloadAllImages(
+                              context,
+                              mainsnapshot.data!["branch"].toString(),
+                              mainsnapshot.data!['reg'].toString());
+                          return HomePage(
+                            branch: mainsnapshot.data!["branch"].toString(),
+                            reg: mainsnapshot.data!['reg'].toString(),
+                            size: size(context),
+                          );
                         }
                     }
                   });
