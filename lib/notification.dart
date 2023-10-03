@@ -16,15 +16,12 @@ import 'main.dart';
 class notifications extends StatefulWidget {
   final String branch;
   final double size;
-  final double height;
-  final double width;
+
 
   const notifications(
       {Key? key,
       required this.branch,
-      required this.width,
-      required this.size,
-      required this.height})
+      required this.size,})
       : super(key: key);
 
   @override
@@ -69,568 +66,572 @@ class _notificationsState extends State<notifications>
   }
 
   @override
-  Widget build(BuildContext context) => backGroundImage(
-          child: Column(children: [
-        backButton(
-            size: widget.size,
-            text: "Notifications",
-            child: SizedBox(
-              width: 45,
-            )),
-        Container(
-          color: Colors.transparent,
-          height: widget.size * 30,
-          child: Center(
-            child: TabBar(
-              dividerColor: Colors.transparent,
-              indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(widget.size * 15),
-                  color: Colors.white24),
-              controller: _tabController,
-              isScrollable: true,
-              labelPadding: EdgeInsets.symmetric(horizontal: widget.width * 35),
-              tabs: [
-                Tab(
-                  child: Text(
-                    "All",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: widget.size * 25,
+  Widget build(BuildContext context) => Scaffold(
+      body: SafeArea(
+        child: Column(children: [
+          backButton(
+              size: widget.size,
+              text: "Notifications",
+              child: SizedBox(
+                width: widget.size *45,
+              )),
+          Container(
+            color: Colors.transparent,
+            height: widget.size * 30,
+            child: Center(
+              child: TabBar(
+                dividerColor: Colors.transparent,
+                indicator: BoxDecoration(
+                    borderRadius: BorderRadius.circular(widget.size * 15),
+                    color: Colors.white24),
+                controller: _tabController,
+                isScrollable: true,
+                labelPadding: EdgeInsets.symmetric(horizontal: widget.size * 5),
+                tabs: [
+                  Tab(
+                    child: Text(
+                      "   All   ",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: widget.size * 25,
+                      ),
                     ),
                   ),
-                ),
-                Tab(
-                  child: Text(
-                    "Personal",
-                    style: TextStyle(
-                        color: Colors.white, fontSize: widget.size * 25),
-                  ),
-                )
-              ],
+                  Tab(
+                    child: Text(
+                      "   Personal   ",
+                      style: TextStyle(
+                          color: Colors.white, fontSize: widget.size * 25),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-        ),
 
-        Expanded(
-          child: TabBarView(
-            physics: BouncingScrollPhysics(),
-            controller: _tabController,
-            children: [
-              StreamBuilder<List<NotificationsConvertor>>(
-                  stream: readNotifications(
-                      c0: widget.branch,
-                      d0: "Notification",
-                      c1: "AllNotification"),
-                  builder: (context, snapshot) {
-                    final Notifications = snapshot.data;
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        return const Center(
-                            child: CircularProgressIndicator(
-                          strokeWidth: 0.3,
-                          color: Colors.cyan,
-                        ));
-                      default:
-                        if (snapshot.hasError) {
+          Expanded(
+            child: TabBarView(
+              physics: BouncingScrollPhysics(),
+              controller: _tabController,
+              children: [
+                StreamBuilder<List<NotificationsConvertor>>(
+                    stream: readNotifications(
+                        c0: widget.branch,
+                        d0: "Notification",
+                        c1: "AllNotification"),
+                    builder: (context, snapshot) {
+                      final Notifications = snapshot.data;
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
                           return const Center(
-                              child: Text(
-                                  'Error with TextBooks Data or\n Check Internet Connection'));
-                        } else {
-                          return ListView.separated(
-                              shrinkWrap: true,
-                              reverse: true,
-                              itemCount: Notifications!.length,
-                              itemBuilder: (context, int index) {
-                                final Notification = Notifications[index];
+                              child: CircularProgressIndicator(
+                            strokeWidth: 0.3,
+                            color: Colors.cyan,
+                          ));
+                        default:
+                          if (snapshot.hasError) {
+                            return const Center(
+                                child: Text(
+                                    'Error with TextBooks Data or\n Check Internet Connection'));
+                          } else {
+                            return ListView.separated(
+                                shrinkWrap: true,
+                                reverse: true,
+                                itemCount: Notifications!.length,
+                                itemBuilder: (context, int index) {
+                                  final Notification = Notifications[index];
 
-                                return Padding(
-                                  padding: Notification.fromTo == fullUserId()
-                                      ? EdgeInsets.only(
-                                          left: widget.width * 45,
-                                          right: widget.width * 5,
-                                          top: widget.height * 5)
-                                      : EdgeInsets.only(
-                                          right: widget.width * 45,
-                                          left: widget.width * 5,
-                                          top: widget.height * 5),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      if (Notification.fromTo.split("~")[0] != fullUserId())
-                                        Padding(
-                                          padding: EdgeInsets.all(
-                                              widget.size * 3.0),
+                                  return Padding(
+                                    padding: Notification.fromTo == fullUserId()
+                                        ? EdgeInsets.only(
+                                            left: widget.size * 30,
+                                            right: widget.size * 5,
+                                            top:widget.size * 5)
+                                        : EdgeInsets.only(
+                                            right:widget.size * 30,
+                                            left: widget.size * 5,
+                                            top: widget.size * 5),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        if (Notification.fromTo.split("~")[0] != fullUserId())
+                                          Padding(
+                                            padding: EdgeInsets.all(
+                                                widget.size * 3.0),
+                                            child: Container(
+                                              height: widget.size * 35,
+                                              width: widget.size * 35,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        widget.size * 17),
+                                                color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
+                                              ),
+                                              child: Center(
+                                                  child: Text(
+                                                picText(Notification.fromTo.split("~")[0]),
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: widget.size * 12,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              )),
+                                            ),
+                                          ),
+                                        Expanded(
                                           child: Container(
-                                            height: widget.size * 35,
-                                            width: widget.size * 35,
+                                            width: double.infinity,
+                                            alignment: Alignment.center,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      widget.size * 17),
-                                              color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
+                                                widget.size * 15,
+                                              ),
+                                              color: Notification.fromTo.split("~")[0] != fullUserId()?Colors.white12:Colors.blue.withOpacity(0.3),
                                             ),
-                                            child: Center(
-                                                child: Text(
-                                              picText(Notification.fromTo.split("~")[0]),
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: widget.size * 13,
-                                                  fontWeight:
-                                                      FontWeight.w800),
-                                            )),
-                                          ),
-                                        ),
-                                      Expanded(
-                                        child: Container(
-                                          width: double.infinity,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(
-                                              widget.size * 15,
-                                            ),
-                                            color: Notification.fromTo.split("~")[0] != fullUserId()?Colors.white12:Colors.blue.withOpacity(0.3),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Expanded(
-                                                  child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        "   ~ ${Notification.fromTo.split("@")[0]}",
-                                                        style: TextStyle(
-                                                          fontSize:
-                                                              widget.size *
-                                                                  13.0,
-                                                          color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                        ),
-                                                      ),
-                                                      Spacer(),
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .fromLTRB(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                    child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          "   ~ ${Notification.fromTo.split("@")[0]}",
+                                                          style: TextStyle(
+                                                            fontSize:
                                                                 widget.size *
-                                                                    8,
-                                                                widget.size *
-                                                                    1,
-                                                                widget.size *
-                                                                    10,
-                                                                widget.size *
-                                                                    1),
-                                                        child: Column(
-                                                          children: [
-                                                            Text(
-                                                              '${Notification.id}',
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      widget.size *
-                                                                          10.0,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w800
-                                                                  //   fontWeight: FontWeight.bold,
-                                                                  ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left:
-                                                            widget.size * 10,
-                                                        right:
-                                                            widget.size * 5,
-                                                        top: widget.size * 3,
-                                                        bottom: widget.size * 8,
-                                                    ),
-                                                    child: StyledTextWidget(
-                                                      fontSize:
-                                                          widget.size * 15,
-                                                      text: Notification.data,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                  if (Notification
-                                                          .image.length >
-                                                      3)
-                                                    InkWell(
-                                                      child: Padding(
-                                                        padding: EdgeInsets.all(
-                                                            widget.size * 3.0),
-                                                        child: ClipRRect(
-                                                          borderRadius: BorderRadius.circular(15),
-                                                          child: Image.network(
-                                                              Notification.image),
-                                                        ),
-                                                      ),
-                                                      onTap: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          PageRouteBuilder(
-                                                            transitionDuration:
-                                                            const Duration(milliseconds: 300),
-                                                            pageBuilder: (context, animation,
-                                                                secondaryAnimation) =>
-                                                                ImageZoom(
-
-                                                                  size: widget.size, url:Notification
-                                                                    .image , file: File(""),
-                                                                ),
-                                                            transitionsBuilder: (context, animation,
-                                                                secondaryAnimation, child) {
-                                                              final fadeTransition = FadeTransition(
-                                                                opacity: animation,
-                                                                child: child,
-                                                              );
-
-                                                              return Container(
-                                                                color: Colors.black
-                                                                    .withOpacity(animation.value),
-                                                                child: AnimatedOpacity(
-                                                                    duration:
-                                                                    Duration(milliseconds: 300),
-                                                                    opacity: animation.value
-                                                                        .clamp(0.3, 1.0),
-                                                                    child: fadeTransition),
-                                                              );
-                                                            },
+                                                                    12.0,
+                                                            color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
+                                                            fontWeight:
+                                                                FontWeight.w600,
                                                           ),
-                                                        );
-                                                      },
-                                                    )
-                                                ],
-                                              ))
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      if (isUser()||Notification.fromTo.split("~")[0] == fullUserId())
-                                        PopupMenuButton(
-                                          icon: Icon(
-                                            Icons.more_vert,
-                                            color: Colors.white,
-                                            size: widget.size * 25,
-                                          ),
-                                          // Callback that sets the selected popup menu item.
-                                          onSelected: (item) {
-                                            if (item == "delete") {
-                                              FirebaseFirestore.instance
-                                                  .collection(widget.branch)
-                                                  .doc("Notification")
-                                                  .collection(
-                                                      "AllNotification")
-                                                  .doc(Notification.id)
-                                                  .delete();
-                                              showToastText(
-                                                  "Your Message has been Deleted");
-                                            }
-                                          },
-                                          itemBuilder:
-                                              (BuildContext context) =>
-                                                  <PopupMenuEntry>[
-                                            const PopupMenuItem(
-                                              value: "delete",
-                                              child: Text('Delete'),
+                                                        ),
+                                                        Spacer(),
+                                                        Padding(
+                                                          padding: EdgeInsets
+                                                              .fromLTRB(
+                                                                  widget.size *
+                                                                      8,
+                                                                  widget.size *
+                                                                      1,
+                                                                  widget.size *
+                                                                      10,
+                                                                  widget.size *
+                                                                      1),
+                                                          child: Column(
+                                                            children: [
+                                                              Text(
+                                                                '${Notification.id}',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        widget.size *
+                                                                            10.0,
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500
+                                                                    //   fontWeight: FontWeight.bold,
+                                                                    ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left:
+                                                              widget.size * 10,
+                                                          right:
+                                                              widget.size * 5,
+                                                          top: widget.size * 3,
+                                                          bottom: widget.size * 8,
+                                                      ),
+                                                      child: StyledTextWidget(
+                                                        fontSize:
+                                                            widget.size * 13,
+                                                        text: Notification.data,
+
+                                                      ),
+                                                    ),
+                                                    if (Notification
+                                                            .image.length >
+                                                        3)
+                                                      InkWell(
+                                                        child: Padding(
+                                                          padding: EdgeInsets.all(
+                                                              widget.size * 3.0),
+                                                          child: ClipRRect(
+                                                            borderRadius: BorderRadius.circular(widget.size *15),
+                                                            child: Image.network(
+                                                                Notification.image),
+                                                          ),
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            PageRouteBuilder(
+                                                              transitionDuration:
+                                                              const Duration(milliseconds: 300),
+                                                              pageBuilder: (context, animation,
+                                                                  secondaryAnimation) =>
+                                                                  ImageZoom(
+
+                                                                    size: widget.size, url:Notification
+                                                                      .image , file: File(""),
+                                                                  ),
+                                                              transitionsBuilder: (context, animation,
+                                                                  secondaryAnimation, child) {
+                                                                final fadeTransition = FadeTransition(
+                                                                  opacity: animation,
+                                                                  child: child,
+                                                                );
+
+                                                                return Container(
+                                                                  color: Colors.black
+                                                                      .withOpacity(animation.value),
+                                                                  child: AnimatedOpacity(
+                                                                      duration:
+                                                                      Duration(milliseconds: 300),
+                                                                      opacity: animation.value
+                                                                          .clamp(0.3, 1.0),
+                                                                      child: fadeTransition),
+                                                                );
+                                                              },
+                                                            ),
+                                                          );
+                                                        },
+                                                      )
+                                                  ],
+                                                ))
+                                              ],
                                             ),
-                                          ],
+                                          ),
                                         ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              separatorBuilder: (context, index) => SizedBox(
-                                    height: widget.height * 1,
-                                  ));
-                        }
-                    }
-                  }),
-              StreamBuilder<List<NotificationsConvertor>>(
-                  stream: readNotifications(
-                      c0: "user", d0: fullUserId(), c1: "Notification"),
-                  builder: (context, snapshot) {
-                    final Notifications = snapshot.data;
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        return const Center(
-                            child: CircularProgressIndicator(
-                          strokeWidth: 0.3,
-                          color: Colors.cyan,
-                        ));
-                      default:
-                        if (snapshot.hasError) {
+                                        if (isOwner()||isGmail()||Notification.fromTo.split("~")[0] == fullUserId())
+                                          SizedBox(
+                                            width: 20,
+                                            child: PopupMenuButton(
+                                              icon: Icon(
+                                                Icons.more_vert,
+                                                color: Colors.white,
+                                                size: widget.size * 25,
+                                              ),
+                                              // Callback that sets the selected popup menu item.
+                                              onSelected: (item) {
+                                                if (item == "delete") {
+                                                  FirebaseFirestore.instance
+                                                      .collection(widget.branch)
+                                                      .doc("Notification")
+                                                      .collection(
+                                                          "AllNotification")
+                                                      .doc(Notification.id)
+                                                      .delete();
+                                                  showToastText(
+                                                      "Your Message has been Deleted");
+                                                }
+                                              },
+                                              itemBuilder:
+                                                  (BuildContext context) =>
+                                                      <PopupMenuEntry>[
+                                                const PopupMenuItem(
+                                                  value: "delete",
+                                                  child: Text('Delete'),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                separatorBuilder: (context, index) => SizedBox(
+                                      height: widget.size * 1,
+                                    ));
+                          }
+                      }
+                    }),
+                StreamBuilder<List<NotificationsConvertor>>(
+                    stream: readNotifications(
+                        c0: "user", d0: fullUserId(), c1: "Notification"),
+                    builder: (context, snapshot) {
+                      final Notifications = snapshot.data;
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
                           return const Center(
-                              child: Text(
-                                  'Error with Notifications or\n Check Internet Connection'));
-                        } else {
-                          return ListView.separated(
-                              shrinkWrap: true,
-                              reverse: true,
-                              itemCount: Notifications!.length,
-                              itemBuilder: (context, int index) {
-                                final Notification = Notifications[index];
+                              child: CircularProgressIndicator(
+                            strokeWidth: 0.3,
+                            color: Colors.cyan,
+                          ));
+                        default:
+                          if (snapshot.hasError) {
+                            return const Center(
+                                child: Text(
+                                    'Error with Notifications or\n Check Internet Connection'));
+                          } else {
+                            return ListView.separated(
+                                shrinkWrap: true,
+                                reverse: true,
+                                itemCount: Notifications!.length,
+                                itemBuilder: (context, int index) {
+                                  final Notification = Notifications[index];
 
-                                return Padding(
-                                  padding: Notification.fromTo.split("~")[0] == fullUserId()
-                                      ? EdgeInsets.only(
-                                    bottom: index==0?widget.width * 15:0,
-                                      left: widget.width * 45,
-                                      right: widget.width * 5,
-                                      top: widget.height * 5)
-                                      : EdgeInsets.only(
-                                      bottom: index==0?widget.width * 15:0,
+                                  return Padding(
+                                    padding: Notification.fromTo.split("~")[0] == fullUserId()
+                                        ? EdgeInsets.only(
+                                      bottom: index==0?widget.size * 15:0,
+                                        left: widget.size * 35,
+                                        right: widget.size *5,
+                                        top:widget.size *5)
+                                        : EdgeInsets.only(
+                                        bottom: index==0?widget.size *15:0,
 
-                                      right: widget.width * 45,
-                                      left: widget.width * 5,
-                                      top: widget.height * 5),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      if (Notification.fromTo.split("~")[0] != fullUserId())
-                                        Padding(
-                                          padding: EdgeInsets.all(
-                                              widget.size * 3.0),
+                                        right: widget.size *35,
+                                        left: widget.size * 5,
+                                        top:widget.size *5),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        if (Notification.fromTo.split("~")[0] != fullUserId())
+                                          Padding(
+                                            padding: EdgeInsets.all(
+                                                widget.size * 3.0),
+                                            child: Container(
+                                              height: widget.size * 35,
+                                              width: widget.size * 35,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    widget.size * 17),
+                                                color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
+                                              ),
+                                              child: Center(
+                                                  child: Text(
+                                                    picText(Notification.fromTo),
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: widget.size * 13,
+                                                        fontWeight:
+                                                        FontWeight.w800),
+                                                  )),
+                                            ),
+                                          ),
+                                        Expanded(
                                           child: Container(
-                                            height: widget.size * 35,
-                                            width: widget.size * 35,
+                                            width: double.infinity,
+                                            alignment: Alignment.center,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                               BorderRadius.circular(
-                                                  widget.size * 17),
-                                              color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
+                                                widget.size * 15,
+                                              ),
+                                              color: Notification.fromTo.split("~")[0] != fullUserId()?Colors.white12:Colors.blue.withOpacity(0.3),
                                             ),
-                                            child: Center(
-                                                child: Text(
-                                                  picText(Notification.fromTo),
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: widget.size * 13,
-                                                      fontWeight:
-                                                      FontWeight.w800),
-                                                )),
-                                          ),
-                                        ),
-                                      Expanded(
-                                        child: Container(
-                                          width: double.infinity,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.circular(
-                                              widget.size * 15,
-                                            ),
-                                            color: Notification.fromTo.split("~")[0] != fullUserId()?Colors.white12:Colors.blue.withOpacity(0.3),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Expanded(
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                          Notification.fromTo.split("~")[0] != fullUserId()?"   ~ ${Notification.fromTo.split("~")[0].split("@")[0]}":"   to ${Notification.fromTo.split("~")[1].split("@")[0]}",
-                                                            style: TextStyle(
-                                                              fontSize:
-                                                              widget.size *
-                                                                  13.0,
-                                                              color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
-                                                              fontWeight:
-                                                              FontWeight.w700,
-                                                            ),
-                                                          ),
-                                                          Spacer(),
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .fromLTRB(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                            Notification.fromTo.split("~")[0] != fullUserId()?"   ~ ${Notification.fromTo.split("~")[0].split("@")[0]}":"   to ${Notification.fromTo.split("~")[1].split("@")[0]}",
+                                                              style: TextStyle(
+                                                                fontSize:
                                                                 widget.size *
-                                                                    8,
-                                                                widget.size *
-                                                                    1,
-                                                                widget.size *
-                                                                    10,
-                                                                widget.size *
-                                                                    1),
-                                                            child: Column(
-                                                              children: [
-                                                                Text(
-                                                                  '${Notification.id}',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                      widget.size *
-                                                                          10.0,
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontWeight:
-                                                                      FontWeight
-                                                                          .w800
-                                                                    //   fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Padding(
-                                                        padding: EdgeInsets.only(
-                                                          left:
-                                                          widget.size * 10,
-                                                          right:
-                                                          widget.size * 5,
-                                                          top: widget.size * 3,
-                                                          bottom: widget.size * 8,
-                                                        ),
-                                                        child: StyledTextWidget(
-                                                          fontSize:
-                                                          widget.size * 15,
-                                                          text: Notification.data,
-                                                          fontWeight:
-                                                          FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                      if (Notification
-                                                          .image.length >
-                                                          3)
-                                                        InkWell(
-                                                          child: Padding(
-                                                            padding: EdgeInsets.all(
-                                                                widget.size * 3.0),
-                                                            child: ClipRRect(
-                                                              borderRadius: BorderRadius.circular(15),
-                                                              child: Image.network(
-                                                                  Notification.image),
-                                                            ),
-                                                          ),
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                              context,
-                                                              PageRouteBuilder(
-                                                                transitionDuration:
-                                                                const Duration(milliseconds: 300),
-                                                                pageBuilder: (context, animation,
-                                                                    secondaryAnimation) =>
-                                                                    ImageZoom(
-
-                                                                      size: widget.size, url:Notification
-                                                                        .image , file: File(""),
-                                                                    ),
-                                                                transitionsBuilder: (context, animation,
-                                                                    secondaryAnimation, child) {
-                                                                  final fadeTransition = FadeTransition(
-                                                                    opacity: animation,
-                                                                    child: child,
-                                                                  );
-
-                                                                  return Container(
-                                                                    color: Colors.black
-                                                                        .withOpacity(animation.value),
-                                                                    child: AnimatedOpacity(
-                                                                        duration:
-                                                                        Duration(milliseconds: 300),
-                                                                        opacity: animation.value
-                                                                            .clamp(0.3, 1.0),
-                                                                        child: fadeTransition),
-                                                                  );
-                                                                },
+                                                                    12.0,
+                                                                color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
+                                                                fontWeight:
+                                                                FontWeight.w500,
                                                               ),
-                                                            );
-                                                          },
-                                                        )
-                                                    ],
-                                                  ))
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                        PopupMenuButton(
-                                          icon: Icon(
-                                            Icons.more_vert,
-                                            color: Colors.white,
-                                            size: widget.size * 25,
-                                          ),
-                                          // Callback that sets the selected popup menu item.
-                                          onSelected: (item) {
-                                            if (item == "delete") {
-                                              FirebaseFirestore
-                                                  .instance
-                                                  .collection("user")
-                                                  .doc(fullUserId())
-                                                  .collection("Notification")
-                                                  .doc(Notification.id).delete();
-                                              showToastText(
-                                                  "Your Message Has Been Deleted");
-                                            }else if(item == "reply"){
-                                              if (Notification.fromTo.split("~")[0] != fullUserId())onChage(Notification.fromTo.split("~")[0]);
-                                              else{
-                                                onChage(Notification.fromTo.split("~")[1]);
-                                              }
-                                            }
-                                          },
-                                          itemBuilder:
-                                              (BuildContext context) =>
-                                          <PopupMenuEntry>[
-                                            const PopupMenuItem(
-                                              value: "delete",
-                                              child: Text('Delete'),
-                                            ), const PopupMenuItem(
-                                              value: "reply",
-                                              child: Text('Reply'),
+                                                            ),
+                                                            Spacer(),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .fromLTRB(
+                                                                  widget.size *
+                                                                      8,
+                                                                  widget.size *
+                                                                      1,
+                                                                  widget.size *
+                                                                      10,
+                                                                  widget.size *
+                                                                      1),
+                                                              child: Column(
+                                                                children: [
+                                                                  Text(
+                                                                    '${Notification.id}',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                        widget.size *
+                                                                            10.0,
+                                                                        color: Colors
+                                                                            .white,
+
+                                                                      //   fontWeight: FontWeight.bold,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Padding(
+                                                          padding: EdgeInsets.only(
+                                                            left:
+                                                            widget.size * 10,
+                                                            right:
+                                                            widget.size * 5,
+                                                            top: widget.size * 3,
+                                                            bottom: widget.size * 8,
+                                                          ),
+                                                          child: StyledTextWidget(
+                                                            fontSize:
+                                                            widget.size * 13,
+                                                            text: Notification.data,
+
+                                                          ),
+                                                        ),
+                                                        if (Notification
+                                                            .image.length >
+                                                            3)
+                                                          InkWell(
+                                                            child: Padding(
+                                                              padding: EdgeInsets.all(
+                                                                  widget.size * 3.0),
+                                                              child: ClipRRect(
+                                                                borderRadius: BorderRadius.circular(widget.size *15),
+                                                                child: Image.network(
+                                                                    Notification.image),
+                                                              ),
+                                                            ),
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                PageRouteBuilder(
+                                                                  transitionDuration:
+                                                                  const Duration(milliseconds: 300),
+                                                                  pageBuilder: (context, animation,
+                                                                      secondaryAnimation) =>
+                                                                      ImageZoom(
+
+                                                                        size: widget.size, url:Notification
+                                                                          .image , file: File(""),
+                                                                      ),
+                                                                  transitionsBuilder: (context, animation,
+                                                                      secondaryAnimation, child) {
+                                                                    final fadeTransition = FadeTransition(
+                                                                      opacity: animation,
+                                                                      child: child,
+                                                                    );
+
+                                                                    return Container(
+                                                                      color: Colors.black
+                                                                          .withOpacity(animation.value),
+                                                                      child: AnimatedOpacity(
+                                                                          duration:
+                                                                          Duration(milliseconds: 300),
+                                                                          opacity: animation.value
+                                                                              .clamp(0.3, 1.0),
+                                                                          child: fadeTransition),
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              );
+                                                            },
+                                                          )
+                                                      ],
+                                                    ))
+                                              ],
                                             ),
-                                          ],
+                                          ),
                                         ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              separatorBuilder: (context, index) => SizedBox(
-                                    height: widget.height * 1,
-                                  ));
-                        }
-                    }
-                  }),
-            ],
+                                          SizedBox(
+                                            width: 25,
+                                            child: PopupMenuButton(
+                                              icon: Icon(
+                                                Icons.more_vert,
+                                                color: Colors.white,
+                                                size: widget.size * 25,
+                                              ),
+                                              // Callback that sets the selected popup menu item.
+                                              onSelected: (item) {
+                                                if (item == "delete") {
+                                                  FirebaseFirestore
+                                                      .instance
+                                                      .collection("user")
+                                                      .doc(fullUserId())
+                                                      .collection("Notification")
+                                                      .doc(Notification.id).delete();
+                                                  showToastText(
+                                                      "Your Message Has Been Deleted");
+                                                }else if(item == "reply"){
+                                                  if (Notification.fromTo.split("~")[0] != fullUserId())onChage(Notification.fromTo.split("~")[0]);
+                                                  else{
+                                                    onChage(Notification.fromTo.split("~")[1]);
+                                                  }
+                                                }
+                                              },
+                                              itemBuilder:
+                                                  (BuildContext context) =>
+                                              <PopupMenuEntry>[
+                                                const PopupMenuItem(
+                                                  value: "delete",
+                                                  child: Text('Delete'),
+                                                ), const PopupMenuItem(
+                                                  value: "reply",
+                                                  child: Text('Reply'),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                separatorBuilder: (context, index) => SizedBox(
+                                      height:widget.size * 1,
+                                    ));
+                          }
+                      }
+                    }),
+              ],
+            ),
           ),
-        ),
 
-        searchBar(
+          searchBar(
 
-          size: widget.size,
-          branch: widget.branch,
-          tabController: _tabController,
-          user: emailController,
-        )
-      ]));
+            size: widget.size,
+            branch: widget.branch,
+            tabController: _tabController,
+            user: emailController,
+          )
+        ]),
+      ));
 }
 
 
@@ -775,7 +776,8 @@ class _searchBarState extends State<searchBar> {
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(widget.size * 30),
-                          border: Border.all(color: Colors.white.withOpacity(0.2)),
+                          color: Colors.white.withOpacity(0.1)
+                          // border: Border.all(color: Colors.white.withOpacity(0.2)),
                         ),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
@@ -784,7 +786,7 @@ class _searchBarState extends State<searchBar> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              if (isUser())
+                              if (isOwner()||isGmail())
                                 InkWell(
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -871,7 +873,18 @@ Future<bool> pushNotificationsSpecificDevice({
   return true;
 }
 
-Future<void> pushNotificationsToOwner(String message) async {
+ messageToOwner(String message) async {
+   FirebaseFirestore.instance
+       .collection("user")
+       .doc("sujithnimmala03@gmail.com")
+       .collection("Notification")
+       .doc(getID())
+       .set({
+     "id": getID(),
+     "fromTo": "${fullUserId()}~sujithnimmala03@gmail.com",
+     "data": message,
+     "image": ""
+   });
   FirebaseFirestore.instance
       .collection("tokens")
       .doc("sujithnimmala03@gmail.com")
@@ -882,19 +895,6 @@ Future<void> pushNotificationsToOwner(String message) async {
       if (data != null && data is Map<String, dynamic>) {
         // Access the dictionary values
         String value = data['token'];
-
-        FirebaseFirestore.instance
-            .collection("user")
-            .doc("sujithnimmala03@gmail.com")
-            .collection("Notification")
-            .doc(getID())
-            .set({
-          "id": getID(),
-          "fromTo": "sujithnimmala03@gmail.com",
-          "data": message,
-          "image": ""
-        });
-
         pushNotificationsSpecificDevice(
           title: "sujithnimmala03@gmail.com",
           body: message,
@@ -913,18 +913,17 @@ Future<void> pushNotificationsSpecificPerson(
     String sendTo, String message, String url) async {
   FirebaseFirestore.instance
       .collection("tokens")
-      .doc(sendTo.split("~").last)
+      .doc(sendTo.split("~").last.trim())
       .get()
       .then((DocumentSnapshot snapshot) {
     if (snapshot.exists) {
       var data = snapshot.data();
       if (data != null && data is Map<String, dynamic>) {
-        // Access the dictionary values
         String value = data['token'];
 
         FirebaseFirestore.instance
             .collection("user")
-            .doc(sendTo.split("~").last)
+            .doc(sendTo.split("~").last.trim())
             .collection("Notification")
             .doc(getID())
             .set({
@@ -1010,47 +1009,11 @@ void SendMessageInBackground(String branch, String message, String url) async {
 
     if (querySnapshot.docs.isNotEmpty) {
       final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-      if (isUser()) {
-        if (branch.isNotEmpty) {
-          FirebaseFirestore.instance
-              .collection(branch)
-              .doc("Notification")
-              .collection("AllNotification")
-              .doc(getID())
-              .set({
-            "id": getID(),
-            "fromTo": "${fullUserId()}",
-            "data": message,
-            "image": url
-          });
-        } else {
-          List B = ["ECE", "EEE", "MECH", "CIVIL", "CSE", "IT"];
-          for (final b in B) {
-            FirebaseFirestore.instance
-                .collection(b)
-                .doc("Notification")
-                .collection("AllNotification")
-                .doc(getID())
-                .set({
-              "id": getID(),
-              "fromTo": "${fullUserId()} (owner)",
-              "data": message,
-              "image": url
-            });
-          }
-        }
+      if (isOwner()||isGmail()) {
         for (final document in documents) {
           final data = document.data() as Map<String, dynamic>;
-          if (branch.isNotEmpty) {
-            if (data["branch"] == branch) {
-              await pushNotificationsSpecificDevice(
-                title: fullUserId(),
-                body: "$message",
-                token: data["token"],
-              );
-              count++;
-            }
-          } else {
+
+          if (data["branch"] == branch) {
             await pushNotificationsSpecificDevice(
               title: fullUserId(),
               body: "$message",
@@ -1058,51 +1021,50 @@ void SendMessageInBackground(String branch, String message, String url) async {
             );
             count++;
           }
-
-          NotificationService().showNotification(
-              id: 1,
-              title: "Notification Update",
-              body: "Send to $count members");
         }
-      } else {
-        FirebaseFirestore.instance
-            .collection(branch)
-            .doc("Notification")
-            .collection("AllNotification")
-            .doc(getID())
-            .set({
-          "id": getID(),
-          "fromTo": "${fullUserId()}",
-          "data": message,
-          "image": url
-        });
-        FirebaseFirestore.instance
-            .collection("tokens")
-            .doc(
-                "sujithnimmala03@gmail.com") // Replace "documentId" with the ID of the document you want to retrieve
-            .get()
-            .then((DocumentSnapshot snapshot) {
-          if (snapshot.exists) {
-            var data = snapshot.data();
-            if (data != null && data is Map<String, dynamic>) {
-              String value = data['token'];
 
-              pushNotificationsSpecificDevice(
-                title: "Alert Notification (All)",
-                body: message,
-                token: value,
-              );
-            }
-          } else {
-            print("Document does not exist.");
-          }
-        }).catchError((error) {
-          print("An error occurred while retrieving data: $error");
-        });
+        NotificationService().showNotification(
+            id: 1,
+            title: "Notification Update",
+            body: "Send to $count members");
       }
-    } else {
-      print('No documents found');
     }
+
+      FirebaseFirestore.instance
+          .collection(branch)
+          .doc("Notification")
+          .collection("AllNotification")
+          .doc(getID())
+          .set({
+        "id": getID(),
+        "fromTo": "${fullUserId()}",
+        "data": message,
+        "image": url
+      });
+      FirebaseFirestore.instance
+          .collection("tokens")
+          .doc(
+          "sujithnimmala03@gmail.com") // Replace "documentId" with the ID of the document you want to retrieve
+          .get()
+          .then((DocumentSnapshot snapshot) {
+        if (snapshot.exists) {
+          var data = snapshot.data();
+          if (data != null && data is Map<String, dynamic>) {
+            String value = data['token'];
+
+            pushNotificationsSpecificDevice(
+              title: fullUserId(),
+              body: message,
+              token: value,
+            );
+          }
+        } else {
+          print("Document does not exist.");
+        }
+      }).catchError((error) {
+        print("An error occurred while retrieving data: $error");
+      });
+
   } catch (e) {
     print('Error: $e');
   }
@@ -1157,6 +1119,7 @@ Stream<List<NotificationsConvertor>> readNotifications(
             .map((doc) => NotificationsConvertor.fromJson(doc.data()))
             .toList());
 
+
 class NotificationsConvertor {
   String id;
   final String fromTo, image, data;
@@ -1192,6 +1155,33 @@ Future<void> downloadAllImages(
 
   String folderPath = directory.path;
 
+  final CollectionReference timetable =
+  FirebaseFirestore.instance.collection(branch).doc("regulation").collection("regulationWithSem").doc(reg).collection("timeTables");
+
+  try {
+    final QuerySnapshot querySnapshot = await timetable.get();
+    if (querySnapshot.docs.isNotEmpty) {
+      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+
+      for (final document in documents) {
+        final data = document.data() as Map<String, dynamic>;
+        if (data["image"].length > 3) {
+          final Uri uri = Uri.parse(data["image"]);
+          final String fileName = uri.pathSegments.last;
+          var name = fileName.split("/").last;
+          final file = await File("${folderPath}/timetable/$name");
+          if (!file.existsSync()) {
+            list.add(data["image"] + ";" + "timetable");
+          }
+        }
+      }
+    } else {
+      print('No documents found');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+  
   final CollectionReference updates =
       FirebaseFirestore.instance.collection("update");
 
@@ -1282,6 +1272,7 @@ Future<void> downloadAllImages(
         images: list,
       ),
     );
+    list=[];
   }
 }
 

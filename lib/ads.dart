@@ -1,59 +1,62 @@
 import 'package:flutter/material.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:srkr_study_app/functins.dart';
 
 
 
-// class CustomAdsBannerForPdfs extends StatefulWidget {
-//   @override
-//   _CustomAdsBannerForPdfsState createState() => _CustomAdsBannerForPdfsState();
-// }
+class CustomAdsBannerForPdfs extends StatefulWidget {
+  double size;
+  CustomAdsBannerForPdfs({required this.size});
+  @override
+  _CustomAdsBannerForPdfsState createState() => _CustomAdsBannerForPdfsState();
+}
 
-// class _CustomAdsBannerForPdfsState extends State<CustomAdsBannerForPdfs> {
-//   late BannerAd _bannerAd;
-//   bool _isBannerAdLoaded = false;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     MobileAds.instance.initialize();
-//
-//     _bannerAd = BannerAd(
-//       adUnitId: AdHelper.bannerAdUnitId,
-//       size: AdSize.banner,
-//       request: AdRequest(),
-//       listener: BannerAdListener(
-//         onAdLoaded: (Ad ad) {
-//           print('Ad loaded.');
-//           setState(() {
-//             _isBannerAdLoaded = true;
-//           });
-//         },
-//         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-//           print('Ad failed to load: $error');
-//         },
-//       ),
-//     );
-//
-//     _bannerAd.load();
-//   }
-//
-//   @override
-//   void dispose() {
-//     _bannerAd.dispose();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: _isBannerAdLoaded ? _bannerAd.size.height.toDouble() : 50,
-//       child: AdWidget(ad: _bannerAd),
-//     );
-//   }
-// }
+class _CustomAdsBannerForPdfsState extends State<CustomAdsBannerForPdfs> {
+  late BannerAd _bannerAd;
+  bool _isBannerAdLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    MobileAds.instance.initialize();
+
+    _bannerAd = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          print('Ad loaded.');
+          setState(() {
+            _isBannerAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('Ad failed to load: $error');
+        },
+      ),
+    );
+
+    _bannerAd.load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: _isBannerAdLoaded ? _bannerAd.size.height.toDouble() :widget.size *  50,
+      child: AdWidget(ad: _bannerAd),
+    );
+  }
+}
 
 class AdHelper {
   static String get bannerAdUnitId {
@@ -117,6 +120,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double Size =size(context);
     return Scaffold(
       appBar: AppBar(title: Text('Download Example')),
       body: Center(
@@ -128,9 +132,9 @@ class _DownloadScreenState extends State<DownloadScreen> {
               value: _downloadProgress,
               color: Colors.red,
             ),
-            SizedBox(height: 20),
+            SizedBox(height:Size * 20),
             Text('${(_downloadProgress * 100).toStringAsFixed(2)}%'),
-            SizedBox(height: 20),
+            SizedBox(height: Size * 20),
             ElevatedButton(
               onPressed: _downloadAndWriteData,
               child: Text('Start Download'),

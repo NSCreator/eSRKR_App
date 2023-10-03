@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:async';
 import 'HomePage.dart';
 import 'TextField.dart';
@@ -19,6 +19,19 @@ fullUserId() {
   var user = FirebaseAuth.instance.currentUser!.email!;
   return user;
 }
+isGmail() {
+  var user = FirebaseAuth.instance.currentUser!.email!;
+
+    String numberString = user.substring(0,2);
+
+    int? number = int.tryParse(numberString);
+
+    if (number == null && user.split("@").last == "srkrec.ac.in") {
+      return true;
+    } else {
+      return false;
+    }
+}
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -27,17 +40,18 @@ Future<void> backgroundHandler(RemoteMessage message) async {
 }
 
 Future<void> _handleMessageData(RemoteMessage message) async {
-
+  NotificationService().showNotification(
+      title: message.notification!.title, body: message.notification!.body);
 }
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    // options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   await NotificationService().initNotification();
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
-  // MobileAds.instance.initialize();
+  MobileAds.instance.initialize();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(MyApp());
@@ -85,10 +99,12 @@ class _MyAppState extends State<MyApp> {
       navigatorKey: navigatorKey,
       title: 'eSRKR',
       theme: ThemeData(
+        useMaterial3: true,
         highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
+        splashColor: Colors
+            .transparent,
         splashFactory: NoSplash.splashFactory,
-        scaffoldBackgroundColor: Color(0xFF060504),
+        scaffoldBackgroundColor: Color(0xFF060D0E),
       ),
 
       builder: (context, child) {
@@ -121,7 +137,7 @@ class _MyAppState extends State<MyApp> {
                               context,
                               mainsnapshot.data!["branch"].toString(),
                               mainsnapshot.data!['reg'].toString());
-                          return HomePage(
+                          return HomePage(name: mainsnapshot.data!['name']??"None",
                             branch: mainsnapshot.data!["branch"].toString(),
                             reg: mainsnapshot.data!['reg'].toString(),
                             size: size(context),
@@ -138,98 +154,6 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class years extends StatefulWidget {
-  final String branch;
-  final double size;
 
-  const years({Key? key, required this.branch,required this.size}) : super(key: key);
 
-  @override
-  State<years> createState() => _yearsState();
-}
 
-class _yearsState extends State<years> {
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<List<RegulationConvertor>>(
-        stream: readRegulation(widget.branch),
-        builder: (context, snapshot) {
-          final user = snapshot.data;
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              return const Center(
-                  child: CircularProgressIndicator(
-                strokeWidth: 0.3,
-                color: Colors.cyan,
-              ));
-            default:
-              if (snapshot.hasError) {
-                return const Center(
-                    child: Text(
-                        'Error with Regulation Data or\n Check Internet Connection'));
-              } else {
-                return Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: widget.size*20),
-                  child: Padding(
-                    padding:  EdgeInsets.all(widget.size*8.0),
-                    child: ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: user!.length,
-                      itemBuilder: (context, int index) {
-                        final SubjectsData = user[index];
-                        return Center(
-                          child: Padding(
-                            padding:  EdgeInsets.all(widget.size*3.0),
-                            child: InkWell(
-                              child: Text(
-                                SubjectsData.id.toUpperCase(),
-                                style: TextStyle(
-                                    color: Colors.amber,
-                                    fontSize: widget.size*30),
-                              ),
-                              onTap: () {
-                                FirebaseFirestore.instance
-                                    .collection("user")
-                                    .doc(fullUserId())
-                                    .update({"reg": SubjectsData.id});
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              }
-          }
-        });
-  }
-}
-
-Stream<List<branchesConvertor>> readbranches() => FirebaseFirestore.instance
-    .collection('branches')
-    .orderBy("id", descending: false)
-    .snapshots()
-    .map((snapshot) => snapshot.docs
-        .map((doc) => branchesConvertor.fromJson(doc.data()))
-        .toList());
-
-class branchesConvertor {
-  String id;
-
-  branchesConvertor({
-    this.id = "",
-  });
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-      };
-
-  static branchesConvertor fromJson(Map<String, dynamic> json) =>
-      branchesConvertor(
-        id: json['id'],
-      );
-}

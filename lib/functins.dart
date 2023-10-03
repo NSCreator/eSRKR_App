@@ -73,8 +73,8 @@ picText(String id) {
   return user[0].substring(user[0].length - 3).toUpperCase();
 }
 
-isUser() {
-  return FirebaseAuth.instance.currentUser!.email! == "sujithnimmala03@gmail.com";
+isOwner() {
+  return FirebaseAuth.instance.currentUser!.email!.split("@").last == "gmail.com";
 }
 
 
@@ -109,7 +109,8 @@ class _backButtonState extends State<backButton> {
     return  Padding(
       padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           InkWell(
             child: Padding(
@@ -121,19 +122,14 @@ class _backButtonState extends State<backButton> {
             },
           ),
          if(widget.text.isNotEmpty) Expanded(
-           child: Center(
-             child: Padding(
-                padding: EdgeInsets.only(bottom: widget.size * 10),
-                child: Text(
-                  widget.text,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: widget.size * 30,
-                      fontWeight: FontWeight.w600),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+           child: Text(
+             widget.text,
+             style: TextStyle(
+                 color: Colors.white,
+                 fontSize: widget.size * 30,
+                 fontWeight: FontWeight.w600),
+             maxLines: 1,
+             overflow: TextOverflow.ellipsis,
            ),
          ),
           widget.child
@@ -245,12 +241,15 @@ Future<void> LaunchUrl(String url) async {
     throw 'Could not launch $urlIn';
 }
 
-Future<void> updateToken() async {
+Future<void> updateToken(String branch) async {
   final token = await FirebaseMessaging.instance.getToken() ?? "";
-  await FirebaseFirestore.instance
+  branch.isNotEmpty?await FirebaseFirestore.instance
       .collection("tokens")
       .doc(fullUserId())
-      .set({"id": fullUserId(), "token": token, "branch": ""});
+      .set({"id": fullUserId(), "token": token, "branch": branch}):await FirebaseFirestore.instance
+      .collection("tokens")
+      .doc(fullUserId())
+      .update({"token": token});
   NotificationService()
       .showNotification(title: "Welcome back to eSRKR!",body: "Message Token is Updated");
 }

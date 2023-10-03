@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,45 +23,15 @@ import 'main.dart';
 import 'net.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-class backGroundImage extends StatefulWidget {
-  Widget child;
-
-  backGroundImage({required this.child});
-
-  @override
-  State<backGroundImage> createState() => _backGroundImageState();
-}
-
-class _backGroundImageState extends State<backGroundImage> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: double.infinity,
-      // color: Color(0xFF090B0B),
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage("assets/home.jpg"), fit: BoxFit.fill)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Scaffold(
-          backgroundColor: Colors.black.withOpacity(0.85),
-          body: SafeArea(
-            child: widget.child,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class HomePage extends StatefulWidget {
-  final String branch;
+  final String branch,name;
   final String reg;
   final double size;
 
   const HomePage({
     Key? key,
     required this.branch,
+    required this.name,
     required this.reg,
     required this.size,
   }) : super(key: key);
@@ -69,21 +40,28 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   List searchList = ["Search About", "Subjects", "Lab Subjects"];
   String modelPaper = "";
   String syllabus = "";
   late TabController _tabController;
+  String folderPath = "";
 
-
+  Future<void> getPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    setState(() {
+      folderPath = '${directory.path}';
+    });
+  }
 
   @override
   void initState() {
+    getPath();
     _tabController = new TabController(
       vsync: this,
       length: 4,
     );
+    // changeTab(3);
     super.initState();
   }
 
@@ -97,26 +75,23 @@ class _HomePageState extends State<HomePage>
     _tabController.animateTo(newIndex);
   }
 
-  reg() async {
-    List list = [];
-
-    final CollectionReference updates = FirebaseFirestore.instance
-        .collection(widget.branch)
-        .doc("Subjects")
-        .collection("Subjects");
-
-    try {
-      final QuerySnapshot querySnapshot = await updates.get();
-      if (querySnapshot.docs.isNotEmpty) {
-        final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-      } else {
-        print('No documents found');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
+  // reg() async {
+  //   List list = [];
+  //
+  //   final CollectionReference updates =
+  //       FirebaseFirestore.instance.collection(widget.branch).doc("Subjects").collection("Subjects");
+  //
+  //   try {
+  //     final QuerySnapshot querySnapshot = await updates.get();
+  //     if (querySnapshot.docs.isNotEmpty) {
+  //       final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
+  //     } else {
+  //       print('No documents found');
+  //     }
+  //   } catch (e) {
+  //     print('Error: $e');
+  //   }
+  // }
 
   // Function to save settings
   // Future<void> saveSettings() async {
@@ -126,18 +101,34 @@ class _HomePageState extends State<HomePage>
   //   prefs.setString('textToSpeak', textEditingController.text);
   // }
 
-  // Function to load saved settings
-  Future<void> loadSavedSettings() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      modelPaper = prefs.getString('modelPaper') ?? '';
-      syllabus = prefs.getString('syllabus') ?? '';
-    });
-  }
+  // // Function to load saved settings
+  // Future<void> loadSavedSettings() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     modelPaper = prefs.getString('modelPaper') ?? '';
+  //     syllabus = prefs.getString('syllabus') ?? '';
+  //   });
+  // }
+  ValueNotifier<bool> isDialOpen = ValueNotifier(false);
+
+  final InputController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     double Size = size(context);
+    DateTime now = DateTime.now();
+    int currentHour = now.hour;
+
+    String greeting = 'Hello'; // Default greeting
+
+    // Check the time and set the greeting accordingly
+    if (currentHour >= 18) {
+      greeting = 'Good Evening';
+    } else if (currentHour >= 12) {
+      greeting = 'Good Afternoon';
+    } else {
+      greeting = 'Good Morning';
+    }
     return WillPopScope(
       onWillPop: () async {
         final shouldPop = await showDialog(
@@ -145,8 +136,7 @@ class _HomePageState extends State<HomePage>
           builder: (context) {
             return Dialog(
               backgroundColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(widget.size * 20)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(widget.size * 20)),
               elevation: 16,
               child: Container(
                 decoration: BoxDecoration(
@@ -162,10 +152,7 @@ class _HomePageState extends State<HomePage>
                       padding: EdgeInsets.only(left: widget.size * 15),
                       child: Text(
                         "Press Yes to Exit",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: widget.size * 18),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: widget.size * 18),
                       ),
                     ),
                     SizedBox(
@@ -183,9 +170,7 @@ class _HomePageState extends State<HomePage>
                             child: Text(
                               'No',
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: widget.size * 20,
-                                  fontWeight: FontWeight.w600),
+                                  color: Colors.black, fontSize: widget.size * 20, fontWeight: FontWeight.w600),
                             ),
                           ),
                           InkWell(
@@ -195,9 +180,7 @@ class _HomePageState extends State<HomePage>
                             child: Text(
                               'Yes',
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: widget.size * 20,
-                                  fontWeight: FontWeight.w600),
+                                  color: Colors.black, fontSize: widget.size * 20, fontWeight: FontWeight.w600),
                             ),
                           ),
                         ],
@@ -219,181 +202,139 @@ class _HomePageState extends State<HomePage>
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverAppBar(
-                expandedHeight: widget.size * 58,
-                collapsedHeight: widget.size * 58,
-                toolbarHeight: widget.size * 58,
+                expandedHeight: widget.size * 125,
+                collapsedHeight: widget.size * 125,
+                toolbarHeight: widget.size * 125,
                 backgroundColor: Colors.transparent,
                 flexibleSpace: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: widget.size * 8.0),
+                      padding:  EdgeInsets.symmetric(horizontal:  widget.size* 10.0,vertical: widget.size*  5),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          InkWell(
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.settings,
-                                    color: Colors.white70,
-                                    size: widget.size * 30,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: widget.size * 5),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          picText(""),
-                                          style: TextStyle(
-                                              color: Colors.white70,
-                                              fontSize: widget.size * 12,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        Text(
-                                          widget.branch,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: widget.size * 14,
-                                              fontWeight: FontWeight.w800),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    transitionDuration:
-                                    const Duration(milliseconds: 300),
-                                    pageBuilder:
-                                        (context, animation, secondaryAnimation) =>
-                                        settings(
-                                          size: widget.size,
-                                          reg: widget.reg,
-                                          branch: widget.branch,
-                                        ),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      final fadeTransition = FadeTransition(
-                                        opacity: animation,
-                                        child: child,
-                                      );
-
-                                      return Container(
-                                        color: Colors.black
-                                            .withOpacity(animation.value),
-                                        child: AnimatedOpacity(
-                                            duration: Duration(milliseconds: 300),
-                                            opacity:
-                                            animation.value.clamp(0.3, 1.0),
-                                            child: fadeTransition),
-                                      );
-                                    },
-                                  ),
-                                );
-                              }),
-                          SizedBox(
-                            width: widget.size * 5,
-                          ),
                           Expanded(
+
                             child: InkWell(
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   PageRouteBuilder(
-                                    transitionDuration:
-                                    const Duration(milliseconds: 300),
-                                    pageBuilder:
-                                        (context, animation, secondaryAnimation) =>
-                                        MyAppq(
-                                            branch: widget.branch,
-                                            reg: widget.reg,
-                                            size: widget.size),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
+                                    transitionDuration: const Duration(milliseconds: 300),
+                                    pageBuilder: (context, animation, secondaryAnimation) =>
+                                        MyAppq(branch: widget.branch, reg: widget.reg, size: widget.size),
+                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                       final fadeTransition = FadeTransition(
                                         opacity: animation,
                                         child: child,
                                       );
 
                                       return Container(
-                                        color: Colors.black
-                                            .withOpacity(animation.value),
+                                        color: Colors.black.withOpacity(animation.value),
                                         child: AnimatedOpacity(
                                             duration: Duration(milliseconds: 300),
-                                            opacity:
-                                            animation.value.clamp(0.3, 1.0),
+                                            opacity: animation.value.clamp(0.3, 1.0),
                                             child: fadeTransition),
                                       );
                                     },
                                   ),
                                 );
                               },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: widget.size * 10),
-                                child: Container(
-                                  width: widget.size * 210,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white12,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: widget.size * 10),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.search,
-                                          color: Colors.white70,
-                                          size: widget.size * 25,
-                                        ),
-                                        SizedBox(width: widget.size * 3),
-                                        Flexible(
-                                          child: CarouselSlider(
-                                            items: List.generate(
-                                              searchList.length,
-                                                  (int index) {
-                                                return Center(
-                                                  child: Text(
-                                                    searchList[index],
-                                                    style: TextStyle(
-                                                      fontSize: widget.size * 20.0,
-                                                      color: Colors.white70,
-                                                      fontWeight: FontWeight.w700,
-                                                    ),
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white12,
+                                  borderRadius: BorderRadius.circular(Size*20),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: widget.size * 15,vertical:  widget.size *2),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.search,
+                                        color: Colors.white70,
+                                        size: widget.size * 25,
+                                      ),
+                                      SizedBox(width: widget.size * 3),
+                                      Flexible(
+                                        child: CarouselSlider(
+                                          items: List.generate(
+                                            searchList.length,
+                                                (int index) {
+                                              return Center(
+                                                child: Text(
+                                                  searchList[index],
+                                                  style: TextStyle(
+                                                    fontSize: widget.size * 20.0,
+                                                    color: Colors.white70,
+                                                    fontWeight: FontWeight.w700,
                                                   ),
-                                                );
-                                              },
-                                            ),
-                                            //Slider Container properties
-                                            options: CarouselOptions(
-                                              scrollDirection: Axis.vertical,
-                                              // Set the axis to vertical
-                                              viewportFraction: 0.95,
-                                              disableCenter: true,
-                                              enlargeCenterPage: true,
-                                              height: widget.size * 40,
-                                              autoPlayAnimationDuration:
-                                              const Duration(seconds: 3),
-                                              autoPlay: true,
-                                            ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          //Slider Container properties
+                                          options: CarouselOptions(
+                                            scrollDirection: Axis.vertical,
+                                            // Set the axis to vertical
+                                            viewportFraction: 0.95,
+                                            disableCenter: true,
+                                            enlargeCenterPage: true,
+                                            height: widget.size * 40,
+                                            autoPlayAnimationDuration: const Duration(seconds: 3),
+                                            autoPlay: true,
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          InkWell(
+                        SizedBox(width: 10,),
+                        InkWell(
+                          child: Icon(
+                            Icons.notifications_none,
+                            color: Colors.white60,
+                            size: widget.size * 30,
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration: const Duration(milliseconds: 300),
+                                pageBuilder: (context, animation, secondaryAnimation) => notifications(
+
+                                  size: widget.size,
+                                  branch: widget.branch,
+                                ),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  final fadeTransition = FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+
+                                  return Container(
+                                    color: Colors.black.withOpacity(animation.value),
+                                    child: AnimatedOpacity(
+                                        duration: Duration(milliseconds: 300),
+                                        opacity: animation.value.clamp(0.3, 1.0),
+                                        child: fadeTransition),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          width: widget.size * 10,
+                        ),
+                        InkWell(
                             child: Icon(
-                              Icons.notifications_active,
+                              Icons.settings,
                               color: Colors.white70,
                               size: widget.size * 30,
                             ),
@@ -401,26 +342,20 @@ class _HomePageState extends State<HomePage>
                               Navigator.push(
                                 context,
                                 PageRouteBuilder(
-                                  transitionDuration:
-                                  const Duration(milliseconds: 300),
-                                  pageBuilder:
-                                      (context, animation, secondaryAnimation) =>
-                                      notifications(
-                                        width: widget.size,
-                                        size: widget.size,
-                                        height: widget.size,
-                                        branch: widget.branch,
-                                      ),
-                                  transitionsBuilder: (context, animation,
-                                      secondaryAnimation, child) {
+                                  transitionDuration: const Duration(milliseconds: 300),
+                                  pageBuilder: (context, animation, secondaryAnimation) => settings(
+                                    size: widget.size,
+                                    reg: widget.reg,
+                                    branch: widget.branch, name: widget.name,
+                                  ),
+                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                     final fadeTransition = FadeTransition(
                                       opacity: animation,
                                       child: child,
                                     );
 
                                     return Container(
-                                      color:
-                                      Colors.black.withOpacity(animation.value),
+                                      color: Colors.black.withOpacity(animation.value),
                                       child: AnimatedOpacity(
                                           duration: Duration(milliseconds: 300),
                                           opacity: animation.value.clamp(0.3, 1.0),
@@ -429,17 +364,38 @@ class _HomePageState extends State<HomePage>
                                   },
                                 ),
                               );
-                            },
+                            }),
+                        SizedBox(
+                          width: widget.size * 10,
+                        ),
+                      ],),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: widget.size * 8.0,vertical: widget.size * 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            '$greeting',
+                            style: TextStyle(
+                              fontSize:  widget.size* 16.0,
+                              color: Colors.white
+                            ),
                           ),
-                          SizedBox(
-                            width: widget.size * 5,
-                          )
+                          Text(
+                            "${widget.name.replaceAll(";", " ").toUpperCase()}",
+                            style: TextStyle(
+                              fontSize:  widget.size* 22.0,
+                                color: Colors.white,
+                              fontWeight: FontWeight.bold,
+
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    Divider(
-                      color: Colors.white12,
-                    ),
+
                   ],
                 ),
                 floating: false,
@@ -458,81 +414,84 @@ class _HomePageState extends State<HomePage>
                         // changeTab(2);
                       },
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
+                        padding:  EdgeInsets.symmetric(horizontal:Size*20 ),
                         child: Text(
                           "eSRKR",
                           style: TextStyle(
-                              fontSize: widget.size * 30.0,
+                              fontSize: widget.size * 28.0,
                               color: Color.fromRGBO(192, 237, 252, 1),
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w800,
                               fontFamily: "test"),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: 20,
-                    ),
+
                     Expanded(
                         child: SizedBox(
-                          height: 30,
-                          child: TabBar(
-                            controller: _tabController,
-                            dividerColor: Colors.transparent,
-                            labelPadding: EdgeInsets.symmetric(horizontal: 5.0),
-                            // Adjust padding as needed
-                            indicator: BoxDecoration(
-                              borderRadius: BorderRadius.circular(widget.size * 15),
-                              color: Color.fromRGBO(50, 50, 50, 1),
+                      height: Size*30,
+                      child: TabBar(
+                        controller: _tabController,
+
+                        dividerColor: Colors.transparent,
+                        labelPadding: EdgeInsets.symmetric(horizontal: 5.0),
+                        // Adjust padding as needed
+                        indicator: BoxDecoration(
+                          borderRadius: BorderRadius.circular(widget.size * 15),
+                          gradient:
+                          LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                            Color(0xFF0e1c26),
+                            Color(0xFF2a454b),
+                            Color(0xFF243748),
+                            Color(0xFF0e1c26),
+
+                          ]),
+                        ),
+                        labelColor: Colors.white,
+                        unselectedLabelColor: Colors.white24,
+                        isScrollable: true,
+
+                        tabs: [
+                          Tab(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(widget.size * 15),
+                                // color:  _tabController. == 0?Color.fromRGBO(4, 11, 23, 1):Colors.white,
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: widget.size * 15.0),
+                              // Adjust padding as needed
+                              child: Text('Home'),
                             ),
-                            labelColor: Colors.white,
-                            unselectedLabelColor: Colors.white24,
-                            isScrollable: true,
-                            tabs: [
-                              Tab(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(widget.size * 15),
-                                    // color:  _tabController. == 0?Color.fromRGBO(4, 11, 23, 1):Colors.white,
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: widget.size * 15.0),
-                                  // Adjust padding as needed
-                                  child: Text('Home'),
-                                ),
-                              ),
-                              Tab(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: widget.size * 15.0),
-                                  // Adjust padding as needed
-
-                                  child: Text('Books'),
-                                ),
-                              ),
-                              Tab(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: widget.size * 15.0),
-                                  // Adjust padding as needed
-
-                                  child: Text('News'),
-                                ),
-                              ),
-                              Tab(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: widget.size * 15.0),
-                                  // Adjust padding as needed
-
-                                  child: Text('Updates'),
-                                ),
-                              ),
-                            ],
                           ),
-                        )),
+                          Tab(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: widget.size * 15.0),
+                              // Adjust padding as needed
+
+                              child: Text('Books'),
+                            ),
+                          ),
+                          Tab(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: widget.size * 15.0),
+                              // Adjust padding as needed
+
+                              child: Text('News'),
+                            ),
+                          ),
+                          Tab(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: widget.size * 15.0),
+                              // Adjust padding as needed
+
+                              child: Text('Updates'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
                   ],
                 ),
+
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
@@ -543,49 +502,54 @@ class _HomePageState extends State<HomePage>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding:  EdgeInsets.only(left:widget.size*10.0,top: widget.size*20.0),
-                              child: Text("Time Table",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+                              padding: EdgeInsets.only(left: widget.size * 10.0, top: widget.size * 20.0),
+                              child: Text(
+                                "Time Table",
+                                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800,fontFamily: "test"),
+                              ),
                             ),
                             Padding(
-                              padding:  EdgeInsets.symmetric(horizontal: Size * 10,vertical: Size * 5),
+                              padding: EdgeInsets.symmetric(horizontal: Size * 10, vertical: Size * 5),
                               child: StreamBuilder<List<TimeTableConvertor>>(
-                                  stream: readTimeTable(
-                                      branch: widget.branch, reg: widget.reg),
+                                  stream: readTimeTable(branch: widget.branch, reg: widget.reg),
                                   builder: (context, snapshot) {
                                     final BranchNews = snapshot.data;
                                     switch (snapshot.connectionState) {
                                       case ConnectionState.waiting:
                                         return const Center(
                                             child: CircularProgressIndicator(
-                                              strokeWidth: 0.3,
-                                              color: Colors.cyan,
-                                            ));
+                                          strokeWidth: 0.3,
+                                          color: Colors.cyan,
+                                        ));
                                       default:
                                         if (snapshot.hasError) {
                                           return const Center(
-                                              child: Text(
-                                                  'Error with Time Table Data or\n Check Internet Connection'));
+                                              child: Text('Error with Time Table Data or\n Check Internet Connection'));
                                         } else {
                                           if (BranchNews!.length == 0) {
                                             return Center(
                                                 child: Text(
-                                                  "No Time Tables",
-                                                  style: TextStyle(color: Colors.amber.withOpacity(0.5)),
-                                                ));
+                                              "No Time Tables",
+                                              style: TextStyle(color: Colors.amber.withOpacity(0.5)),
+                                            ));
                                           } else
                                             return SizedBox(
-                                              height: widget.size * 91,
+                                              height: widget.size * 95,
                                               child: ListView.builder(
-
                                                 itemCount: BranchNews.length,
                                                 scrollDirection: Axis.horizontal,
                                                 itemBuilder: (context, int index) {
-                                                  var data = BranchNews[index];
-
+                                                  var BranchNew = BranchNews[index];
+                                                  file = File("");
+                                                  if (BranchNew.photoUrl.isNotEmpty) {
+                                                    final Uri uri = Uri.parse(BranchNew.photoUrl);
+                                                    final String fileName = uri.pathSegments.last;
+                                                    var name = fileName.split("/").last;
+                                                    file = File("${folderPath}/timetable/$name");
+                                                  }
                                                   return Padding(
                                                     padding: EdgeInsets.symmetric(
-                                                        horizontal: widget.size * 5,
-                                                        vertical: widget.size * 5),
+                                                        horizontal: widget.size * 5, vertical: widget.size * 5),
                                                     child: InkWell(
                                                       child: Column(
                                                         children: [
@@ -594,35 +558,20 @@ class _HomePageState extends State<HomePage>
                                                             width: widget.size * 60,
                                                             decoration: BoxDecoration(
                                                                 image: DecorationImage(
-                                                                    image: NetworkImage(
-                                                                        data
-                                                                            .photoUrl),
-                                                                    fit: BoxFit
-                                                                        .cover),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    widget.size *
-                                                                        30),
-                                                                border: Border.all(
-                                                                    color: Colors
-                                                                        .white12)),
+                                                                    image: FileImage(file),
+                                                                    fit: BoxFit.cover),
+                                                                borderRadius: BorderRadius.circular(widget.size * 35),
+                                                                border: Border.all(color: Colors.white12)),
                                                           ),
                                                           Padding(
-                                                            padding: EdgeInsets.all(
-                                                                widget.size * 3.0),
+                                                            padding: EdgeInsets.all(widget.size * 3.0),
                                                             child: Text(
-                                                              data.heading
-                                                                  .toUpperCase(),
+                                                              BranchNew.heading.toUpperCase(),
                                                               style: TextStyle(
-                                                                  color:
-                                                                  Colors.white70,
-                                                                  fontSize:
-                                                                  widget.size *
-                                                                      14,
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
+                                                                  color: Colors.white,
+                                                                  fontSize: widget.size * 15,
+                                                                  fontWeight: FontWeight.w600,
+                                                              fontFamily: "test"),
                                                             ),
                                                           ),
                                                         ],
@@ -631,12 +580,9 @@ class _HomePageState extends State<HomePage>
                                                         Navigator.push(
                                                             context,
                                                             MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    ImageZoom(
-                                                                      size:
-                                                                      widget.size,
-                                                                      url: data
-                                                                          .photoUrl,
+                                                                builder: (context) => ImageZoom(
+                                                                      size: widget.size,
+                                                                      url: "",
                                                                       file: file,
                                                                     )));
                                                       },
@@ -655,182 +601,171 @@ class _HomePageState extends State<HomePage>
                                   flex: 4,
                                   child: Padding(
                                     padding: EdgeInsets.all(widget.size * 8.0),
-                                    child: StreamBuilder<List<FlashConvertor>>(
+                                    child: StreamBuilder<List<subjectsConvertor>>(
                                       stream: readFlashNews(widget.branch),
                                       builder: (context, flashSnapshot) {
-                                        final flashData =
-                                            flashSnapshot.data;
+                                        final subData = flashSnapshot.data;
 
-                                        return StreamBuilder<
-                                            List<LabSubjectsConvertor>>(
-                                          stream: readLabSubjects(
-                                              widget.branch),
+                                        return StreamBuilder<List<subjectsConvertor>>(
+                                          stream: readLabSubjects(widget.branch),
                                           builder: (context, labSnapshot) {
-                                            final labData =
-                                                labSnapshot.data;
+                                            final labData = labSnapshot.data;
 
-                                            final combinedData =
-                                            <dynamic>[];
-                                            if (flashData != null) {
-                                              combinedData
-                                                  .addAll(flashData);
+                                            final combinedData = <dynamic>[];
+                                            if (subData != null) {
+                                              combinedData.addAll(subData);
                                             }
                                             if (labData != null) {
                                               combinedData.addAll(labData);
                                             }
 
-                                            switch (labSnapshot
-                                                .connectionState) {
+                                            switch (labSnapshot.connectionState) {
                                               case ConnectionState.waiting:
                                                 return Center(
-                                                  child:
-                                                  CircularProgressIndicator(
+                                                  child: CircularProgressIndicator(
                                                     strokeWidth: 0.3,
                                                     color: Colors.cyan,
                                                   ),
                                                 );
                                               default:
                                                 if (labSnapshot.hasError) {
-                                                  return Center(
-                                                      child: Text("Error"));
+                                                  return Center(child: Text("Error"));
                                                 } else {
-                                                  List<dynamic>
-                                                  filteredItems =
-                                                  combinedData
-                                                      .where((item) => item
-                                                      .regulation
-                                                      .toString()
-                                                      .startsWith(
-                                                      widget.reg ??
-                                                          ""))
+                                                  List<dynamic> filteredItems = combinedData
+                                                      .where((item) =>
+                                                          item.regulation.toString().startsWith(widget.reg))
                                                       .toList();
                                                   return Container(
-                                                    height: filteredItems.length>8?widget.size *180:widget.size *125,
+                                                    height: filteredItems.length > 8
+                                                        ? widget.size * 180
+                                                        : widget.size * 125,
                                                     decoration: BoxDecoration(
+                                                        // color: filteredItems.isNotEmpty
+                                                        //     ? Color(0xFF363A3F)
+                                                        //     : Color(0xFF15161E),
 
-                                                        color: filteredItems
-                                                .isNotEmpty?Color(0xFF363A3F):Color(0xFF15161E),
-                                                        borderRadius: BorderRadius.circular(
-                                                            widget.size * 30)),
-                                                    child:
-                                                    Center(
+
+                                                          gradient:
+                                                          LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                                                            Color(0xFF0e1c26).withOpacity(0.5),
+                                                            Color(0xFF2a454b).withOpacity(0.3),
+                                                            Color(0xFF243748).withOpacity(0.1),
+
+                                                          ]),
+
+                                                        borderRadius: BorderRadius.circular(widget.size * 30)),
+                                                    child: Center(
                                                       child: Padding(
-                                                        padding:  EdgeInsets.all(widget.size * 5),
-                                                        child: filteredItems
-                                                            .isNotEmpty
-                                                            ? GridView
-                                                            .builder(
-                                                          physics: NeverScrollableScrollPhysics(),
-                                                          shrinkWrap:
-                                                          true,
-                                                          gridDelegate:
-                                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                                            crossAxisSpacing:
-                                                            widget.size *
-                                                                5,
-                                                            mainAxisSpacing:widget.size *
-                                                                5 ,
-                                                            childAspectRatio:
-                                                            ( widget.size * 5) / (widget.size *4),
-                                                            crossAxisCount:
-                                                            4,
-                                                          ),
-                                                          itemCount:
-                                                          filteredItems
-                                                              .length,
-                                                          itemBuilder:
-                                                              (context,
-                                                              int index) {
-                                                            final itemData =
-                                                            filteredItems[
-                                                            index];
-                                                            final isFlashConvertor =
-                                                            itemData
-                                                            is FlashConvertor;
-
-                                                            return InkWell(
-                                                              child:
-                                                              Container(
-                                                                decoration:
-                                                                BoxDecoration(
-                                                                  borderRadius:
-                                                                  BorderRadius.circular(widget.size * 25),
-
-                                                                  color: isFlashConvertor
-                                                                      ? Colors.white54
-                                                                      : Colors.white24, // Change the color here
+                                                        padding: EdgeInsets.all(widget.size * 5),
+                                                        child: filteredItems.isNotEmpty
+                                                            ? GridView.builder(
+                                                                physics: NeverScrollableScrollPhysics(),
+                                                                shrinkWrap: true,
+                                                                gridDelegate:
+                                                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                                                  crossAxisSpacing: widget.size * 5,
+                                                                  mainAxisSpacing: widget.size * 5,
+                                                                  childAspectRatio:
+                                                                      (widget.size * 5) / (widget.size * 4),
+                                                                  crossAxisCount: 4,
                                                                 ),
-                                                                child:
-                                                                Padding(
-                                                                  padding:
-                                                                  EdgeInsets.symmetric(
-                                                                    vertical: widget.size * 5,
-                                                                    horizontal: widget.size * 8,
-                                                                  ),
-                                                                  child:
-                                                                  Center(
-                                                                    child: Text(
-                                                                      itemData.heading.split(";").first,
-                                                                      style: TextStyle(
-                                                                        color: Colors.white,
-                                                                        // Change the text color here
-                                                                        fontSize: widget.size * 16,
-                                                                        fontWeight: FontWeight.w700,
+                                                                itemCount: filteredItems.length,
+                                                                itemBuilder: (context, int index) {
+                                                                  final itemData = filteredItems[index];
+                                                                  final isFlashConvertor = subData!.contains(itemData);
+
+                                                                  return InkWell(
+                                                                    child: Container(
+                                                                      decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.circular(
+                                                                            widget.size * 25),
+
+                                                                        color: isFlashConvertor
+                                                                            ? Colors.white54
+                                                                            : Colors
+                                                                                .white24, // Change the color here
+                                                                      ),
+                                                                      child: Padding(
+                                                                        padding: EdgeInsets.symmetric(
+                                                                          vertical: widget.size * 5,
+                                                                          horizontal: widget.size * 8,
+                                                                        ),
+                                                                        child: Center(
+                                                                          child: Text(
+                                                                            itemData.heading.split(";").first,
+                                                                            style: TextStyle(
+                                                                              color: Colors.white,
+                                                                              // Change the text color here
+                                                                              fontSize: widget.size * 16,
+                                                                              fontWeight: FontWeight.w700,
+                                                                            ),
+                                                                          ),
+                                                                        ),
                                                                       ),
                                                                     ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              onTap:
-                                                                  () {
-                                                                Navigator
-                                                                    .push(
-                                                                  context,
-                                                                  PageRouteBuilder(
-                                                                    transitionDuration: const Duration(milliseconds: 300),
-                                                                    pageBuilder: (context, animation, secondaryAnimation) => subjectUnitsData(
-                                                                      reg: itemData.regulation,
-                                                                      size: widget.size,
-                                                                      branch: widget.branch,
-                                                                      ID: itemData.id,
-                                                                      mode: isFlashConvertor ? "Subjects" : "LabSubjects",
-                                                                      name: itemData.heading,
-                                                                      description: itemData.description,
-                                                                    ),
-                                                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                                                      final fadeTransition = FadeTransition(
-                                                                        opacity: animation,
-                                                                        child: child,
-                                                                      );
+                                                                    onTap: () {
+                                                                      Navigator.push(
+                                                                        context,
+                                                                        PageRouteBuilder(
+                                                                          transitionDuration:
+                                                                              const Duration(milliseconds: 300),
+                                                                          pageBuilder: (context, animation,
+                                                                                  secondaryAnimation) =>
+                                                                              subjectUnitsData(
+                                                                                creator: itemData.creator,
+                                                                            reg: itemData.regulation,
+                                                                            size: widget.size,
+                                                                            branch: widget.branch,
+                                                                            ID: itemData.id,
+                                                                            mode: isFlashConvertor
+                                                                                ? "Subjects"
+                                                                                : "LabSubjects",
+                                                                            name: itemData.heading,
+                                                                            description: itemData.description,
+                                                                          ),
+                                                                          transitionsBuilder: (context, animation,
+                                                                              secondaryAnimation, child) {
+                                                                            final fadeTransition = FadeTransition(
+                                                                              opacity: animation,
+                                                                              child: child,
+                                                                            );
 
-                                                                      return Container(
-                                                                        color: Colors.black.withOpacity(animation.value),
-                                                                        child: AnimatedOpacity(
-                                                                          duration: Duration(milliseconds: 300),
-                                                                          opacity: animation.value.clamp(0.3, 1.0),
-                                                                          child: fadeTransition,
+                                                                            return Container(
+                                                                              color: Colors.black
+                                                                                  .withOpacity(animation.value),
+                                                                              child: AnimatedOpacity(
+                                                                                duration:
+                                                                                    Duration(milliseconds: 300),
+                                                                                opacity: animation.value
+                                                                                    .clamp(0.3, 1.0),
+                                                                                child: fadeTransition,
+                                                                              ),
+                                                                            );
+                                                                          },
                                                                         ),
                                                                       );
                                                                     },
+                                                                  );
+                                                                },
+                                                              )
+                                                            : Column(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons.library_books,
+                                                                    color: Colors.white,
                                                                   ),
-                                                                );
-                                                              },
-                                                            );
-                                                          },
-                                                        )
-                                                            : Column(mainAxisAlignment: MainAxisAlignment.center,
-                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                              children: [
-                                                                Icon(Icons.library_books,color: Colors.white,),
-                                                                SizedBox(height: 10,),
-                                                                Text(
-                                                                  "No Subjects",
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                      Colors.white,fontSize: 20),
-                                                                ),
-                                                              ],
-                                                            ),
+                                                                  SizedBox(
+                                                                    height: Size*10,
+                                                                  ),
+                                                                  Text(
+                                                                    "No Subjects",
+                                                                    style: TextStyle(
+                                                                        color: Colors.white, fontSize: Size*20),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                       ),
                                                     ),
                                                   );
@@ -845,7 +780,7 @@ class _HomePageState extends State<HomePage>
                                 Flexible(
                                     flex: 1,
                                     child: Padding(
-                                      padding:  EdgeInsets.only(right: widget.size*8.0),
+                                      padding: EdgeInsets.only(right: widget.size * 8.0),
                                       child: Column(
                                         children: [
                                           InkWell(
@@ -853,10 +788,8 @@ class _HomePageState extends State<HomePage>
                                               height: widget.size * 50,
                                               width: double.infinity,
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(
-                                                    widget.size * 20),
-                                                color:
-                                                Colors.white.withOpacity(0.2),
+                                                borderRadius: BorderRadius.circular(widget.size * 20),
+                                                color: Colors.white.withOpacity(0.2),
                                               ),
                                               child: Center(
                                                 child: Text(
@@ -873,37 +806,27 @@ class _HomePageState extends State<HomePage>
                                               Navigator.push(
                                                 context,
                                                 PageRouteBuilder(
-                                                  transitionDuration:
-                                                  const Duration(
-                                                      milliseconds: 300),
-                                                  pageBuilder: (context, animation,
-                                                      secondaryAnimation) =>
+                                                  transitionDuration: const Duration(milliseconds: 300),
+                                                  pageBuilder: (context, animation, secondaryAnimation) =>
                                                       Subjects(
-                                                        branch: widget.branch,
-                                                        reg: widget.reg,
-                                                        width: widget.size,
-                                                        height: widget.size,
-                                                        size: widget.size,
-                                                      ),
-                                                  transitionsBuilder: (context,
-                                                      animation,
-                                                      secondaryAnimation,
-                                                      child) {
-                                                    final fadeTransition =
-                                                    FadeTransition(
+                                                    branch: widget.branch,
+                                                    reg: widget.reg,
+                                                    width: widget.size,
+                                                    height: widget.size,
+                                                    size: widget.size,
+                                                  ),
+                                                  transitionsBuilder:
+                                                      (context, animation, secondaryAnimation, child) {
+                                                    final fadeTransition = FadeTransition(
                                                       opacity: animation,
                                                       child: child,
                                                     );
 
                                                     return Container(
-                                                      color: Colors.black
-                                                          .withOpacity(
-                                                          animation.value),
+                                                      color: Colors.black.withOpacity(animation.value),
                                                       child: AnimatedOpacity(
-                                                          duration: Duration(
-                                                              milliseconds: 300),
-                                                          opacity: animation.value
-                                                              .clamp(0.3, 1.0),
+                                                          duration: Duration(milliseconds: 300),
+                                                          opacity: animation.value.clamp(0.3, 1.0),
                                                           child: fadeTransition),
                                                     );
                                                   },
@@ -912,17 +835,15 @@ class _HomePageState extends State<HomePage>
                                             },
                                           ),
                                           SizedBox(
-                                            height: 10,
+                                            height: Size*10,
                                           ),
                                           InkWell(
                                             child: Container(
                                               height: widget.size * 50,
                                               width: double.infinity,
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(
-                                                    widget.size * 20),
-                                                color:
-                                                Colors.white.withOpacity(0.2),
+                                                borderRadius: BorderRadius.circular(widget.size * 20),
+                                                color: Colors.white.withOpacity(0.2),
                                               ),
                                               child: Center(
                                                 child: Text(
@@ -939,37 +860,26 @@ class _HomePageState extends State<HomePage>
                                               Navigator.push(
                                                 context,
                                                 PageRouteBuilder(
-                                                  transitionDuration:
-                                                  const Duration(
-                                                      milliseconds: 300),
-                                                  pageBuilder: (context, animation,
-                                                      secondaryAnimation) =>
+                                                  transitionDuration: const Duration(milliseconds: 300),
+                                                  pageBuilder: (context, animation, secondaryAnimation) =>
                                                       LabSubjects(
-                                                        branch: widget.branch,
-                                                        reg: widget.reg,
-                                                        width: widget.size,
-                                                        height: widget.size,
-                                                        size: widget.size,
-                                                      ),
-                                                  transitionsBuilder: (context,
-                                                      animation,
-                                                      secondaryAnimation,
-                                                      child) {
-                                                    final fadeTransition =
-                                                    FadeTransition(
+                                                    branch: widget.branch,
+                                                    reg: widget.reg,
+
+                                                    size: widget.size,
+                                                  ),
+                                                  transitionsBuilder:
+                                                      (context, animation, secondaryAnimation, child) {
+                                                    final fadeTransition = FadeTransition(
                                                       opacity: animation,
                                                       child: child,
                                                     );
 
                                                     return Container(
-                                                      color: Colors.black
-                                                          .withOpacity(
-                                                          animation.value),
+                                                      color: Colors.black.withOpacity(animation.value),
                                                       child: AnimatedOpacity(
-                                                          duration: Duration(
-                                                              milliseconds: 300),
-                                                          opacity: animation.value
-                                                              .clamp(0.3, 1.0),
+                                                          duration: Duration(milliseconds: 300),
+                                                          opacity: animation.value.clamp(0.3, 1.0),
                                                           child: fadeTransition),
                                                     );
                                                   },
@@ -983,19 +893,18 @@ class _HomePageState extends State<HomePage>
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: widget.size * 8,vertical: 20),
+                              padding: EdgeInsets.symmetric(horizontal: widget.size * 8, vertical: 20),
                               child: SizedBox(
-                                height: widget.size *50,
+                                height: widget.size * 50,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Flexible(
                                       child: InkWell(
                                         child: Container(
-                                          margin: EdgeInsets.symmetric(horizontal:widget.size *  3),
+                                          margin: EdgeInsets.symmetric(horizontal: widget.size * 3),
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 15),
+                                            borderRadius: BorderRadius.circular(widget.size * 15),
                                             color: Colors.white.withOpacity(0.2),
                                           ),
                                           child: Center(
@@ -1012,30 +921,24 @@ class _HomePageState extends State<HomePage>
                                           Navigator.push(
                                             context,
                                             PageRouteBuilder(
-                                              transitionDuration:
-                                              const Duration(milliseconds: 300),
-                                              pageBuilder: (context, animation,
-                                                  secondaryAnimation) =>
-                                                  TimeTables(
-                                                    reg: widget.reg,
-                                                    branch: widget.branch,
-                                                    size: widget.size,
-                                                  ),
-                                              transitionsBuilder: (context, animation,
-                                                  secondaryAnimation, child) {
+                                              transitionDuration: const Duration(milliseconds: 300),
+                                              pageBuilder: (context, animation, secondaryAnimation) => TimeTables(
+                                                reg: widget.reg,
+                                                branch: widget.branch,
+                                                size: widget.size,
+                                              ),
+                                              transitionsBuilder:
+                                                  (context, animation, secondaryAnimation, child) {
                                                 final fadeTransition = FadeTransition(
                                                   opacity: animation,
                                                   child: child,
                                                 );
 
                                                 return Container(
-                                                  color: Colors.black
-                                                      .withOpacity(animation.value),
+                                                  color: Colors.black.withOpacity(animation.value),
                                                   child: AnimatedOpacity(
-                                                      duration:
-                                                      Duration(milliseconds: 300),
-                                                      opacity: animation.value
-                                                          .clamp(0.3, 1.0),
+                                                      duration: Duration(milliseconds: 300),
+                                                      opacity: animation.value.clamp(0.3, 1.0),
                                                       child: fadeTransition),
                                                 );
                                               },
@@ -1047,10 +950,9 @@ class _HomePageState extends State<HomePage>
                                     Flexible(
                                       child: InkWell(
                                         child: Container(
-                                          margin: EdgeInsets.symmetric(horizontal:widget.size *  3),
+                                          margin: EdgeInsets.symmetric(horizontal: widget.size * 3),
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 15),
+                                            borderRadius: BorderRadius.circular(widget.size * 15),
                                             color: Colors.white.withOpacity(0.2),
                                           ),
                                           child: Center(
@@ -1067,30 +969,25 @@ class _HomePageState extends State<HomePage>
                                           Navigator.push(
                                             context,
                                             PageRouteBuilder(
-                                              transitionDuration:
-                                              const Duration(milliseconds: 300),
-                                              pageBuilder: (context, animation,
-                                                  secondaryAnimation) =>
+                                              transitionDuration: const Duration(milliseconds: 300),
+                                              pageBuilder: (context, animation, secondaryAnimation) =>
                                                   syllabusPage(
-                                                    branch: widget.branch,
-                                                    reg: widget.reg,
-                                                    size: widget.size,
-                                                  ),
-                                              transitionsBuilder: (context, animation,
-                                                  secondaryAnimation, child) {
+                                                branch: widget.branch,
+                                                reg: widget.reg,
+                                                size: widget.size,
+                                              ),
+                                              transitionsBuilder:
+                                                  (context, animation, secondaryAnimation, child) {
                                                 final fadeTransition = FadeTransition(
                                                   opacity: animation,
                                                   child: child,
                                                 );
 
                                                 return Container(
-                                                  color: Colors.black
-                                                      .withOpacity(animation.value),
+                                                  color: Colors.black.withOpacity(animation.value),
                                                   child: AnimatedOpacity(
-                                                      duration:
-                                                      Duration(milliseconds: 300),
-                                                      opacity: animation.value
-                                                          .clamp(0.3, 1.0),
+                                                      duration: Duration(milliseconds: 300),
+                                                      opacity: animation.value.clamp(0.3, 1.0),
                                                       child: fadeTransition),
                                                 );
                                               },
@@ -1102,10 +999,9 @@ class _HomePageState extends State<HomePage>
                                     Flexible(
                                       child: InkWell(
                                         child: Container(
-                                          margin: EdgeInsets.symmetric(horizontal:widget.size *  3),
+                                          margin: EdgeInsets.symmetric(horizontal: widget.size * 3),
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 15),
+                                            borderRadius: BorderRadius.circular(widget.size * 15),
                                             color: Colors.white.withOpacity(0.2),
                                           ),
                                           child: Center(
@@ -1122,30 +1018,25 @@ class _HomePageState extends State<HomePage>
                                           Navigator.push(
                                             context,
                                             PageRouteBuilder(
-                                              transitionDuration:
-                                              const Duration(milliseconds: 300),
-                                              pageBuilder: (context, animation,
-                                                  secondaryAnimation) =>
+                                              transitionDuration: const Duration(milliseconds: 300),
+                                              pageBuilder: (context, animation, secondaryAnimation) =>
                                                   ModalPapersPage(
-                                                    branch: widget.branch,
-                                                    reg: widget.reg,
-                                                    size: widget.size,
-                                                  ),
-                                              transitionsBuilder: (context, animation,
-                                                  secondaryAnimation, child) {
+                                                branch: widget.branch,
+                                                reg: widget.reg,
+                                                size: widget.size,
+                                              ),
+                                              transitionsBuilder:
+                                                  (context, animation, secondaryAnimation, child) {
                                                 final fadeTransition = FadeTransition(
                                                   opacity: animation,
                                                   child: child,
                                                 );
 
                                                 return Container(
-                                                  color: Colors.black
-                                                      .withOpacity(animation.value),
+                                                  color: Colors.black.withOpacity(animation.value),
                                                   child: AnimatedOpacity(
-                                                      duration:
-                                                      Duration(milliseconds: 300),
-                                                      opacity: animation.value
-                                                          .clamp(0.3, 1.0),
+                                                      duration: Duration(milliseconds: 300),
+                                                      opacity: animation.value.clamp(0.3, 1.0),
                                                       child: fadeTransition),
                                                 );
                                               },
@@ -1157,10 +1048,9 @@ class _HomePageState extends State<HomePage>
                                     Flexible(
                                       child: InkWell(
                                         child: Container(
-                                          margin: EdgeInsets.symmetric(horizontal:widget.size *  3),
+                                          margin: EdgeInsets.symmetric(horizontal: widget.size * 3),
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                widget.size * 15),
+                                            borderRadius: BorderRadius.circular(widget.size * 15),
                                             color: Colors.white.withOpacity(0.2),
                                           ),
                                           child: Center(
@@ -1182,56 +1072,39 @@ class _HomePageState extends State<HomePage>
                                 ),
                               ),
                             ),
-                            // if (modelPaper.isNotEmpty && syllabus.isNotEmpty)
-                            //   Row(
-                            //     children: [
-                            //       if (syllabus.isNotEmpty)
-                            //         Flexible(child: Container()),
-                            //       if (modelPaper.isNotEmpty)
-                            //         Flexible(child: Container())
-                            //     ],
-                            //   ),
                             Padding(
-                              padding:  EdgeInsets.symmetric(horizontal: Size * 10,vertical: Size * 20),
+                              padding: EdgeInsets.symmetric(horizontal: Size * 10, vertical: Size * 10),
                               child: Row(
                                 children: [
                                   Flexible(
                                     flex: 2,
                                     child: InkWell(
                                       child: Padding(
-                                        padding: const EdgeInsets.only(right: 10.0),
+                                        padding:  EdgeInsets.only(right:Size* 10.0),
                                         child: Container(
                                           decoration: BoxDecoration(
                                               color: Colors.white.withOpacity(0.05),
-                                              border:
-                                              Border.all(color: Colors.white10),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(Size * 15))),
+                                              border: Border.all(color: Colors.white10),
+                                              borderRadius: BorderRadius.all(Radius.circular(Size * 15))),
                                           child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding:  EdgeInsets.all(Size*8.0),
                                             child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 Text(
                                                   "Text To Speech",
                                                   style: TextStyle(
                                                       color: Colors.white70,
-                                                      fontSize: 25,
+                                                      fontSize: Size*25,
                                                       fontWeight: FontWeight.w600),
                                                 ),
                                                 Container(
-                                                  height: 25,
-                                                  width: 25,
+                                                  height: Size*25,
+                                                  width: Size*25,
                                                   decoration: BoxDecoration(
                                                       color: Colors.black,
-                                                      image: DecorationImage(
-                                                          image: AssetImage(
-                                                              "assets/img.png")),
-                                                      borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              Size * 20))),
+                                                      image: DecorationImage(image: AssetImage("assets/img.png")),
+                                                      borderRadius: BorderRadius.all(Radius.circular(Size * 20))),
                                                 )
                                               ],
                                             ),
@@ -1242,26 +1115,19 @@ class _HomePageState extends State<HomePage>
                                         Navigator.push(
                                           context,
                                           PageRouteBuilder(
-                                            transitionDuration:
-                                            const Duration(milliseconds: 300),
-                                            pageBuilder: (context, animation,
-                                                secondaryAnimation) =>
-                                                MyHomePage(),
-                                            transitionsBuilder: (context, animation,
-                                                secondaryAnimation, child) {
+                                            transitionDuration: const Duration(milliseconds: 300),
+                                            pageBuilder: (context, animation, secondaryAnimation) => MyHomePage(),
+                                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                               final fadeTransition = FadeTransition(
                                                 opacity: animation,
                                                 child: child,
                                               );
 
                                               return Container(
-                                                color: Colors.black
-                                                    .withOpacity(animation.value),
+                                                color: Colors.black.withOpacity(animation.value),
                                                 child: AnimatedOpacity(
-                                                    duration:
-                                                    Duration(milliseconds: 300),
-                                                    opacity: animation.value
-                                                        .clamp(0.3, 1.0),
+                                                    duration: Duration(milliseconds: 300),
+                                                    opacity: animation.value.clamp(0.3, 1.0),
                                                     child: fadeTransition),
                                               );
                                             },
@@ -1272,144 +1138,123 @@ class _HomePageState extends State<HomePage>
                                   ),
                                   Flexible(
                                       child: InkWell(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.white.withOpacity(0.01),
-                                              border: Border.all(color: Colors.white10),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(Size * 15))),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Text(
-                                                  "Ask",
-                                                  style: TextStyle(
-                                                      color: Colors.white70,
-                                                      fontSize: 25,
-                                                      fontWeight: FontWeight.w600),
-                                                ),
-                                                Container(
-                                                  height: 30,
-                                                  width: 30,
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      border: Border.all(
-                                                          color: Colors.white24),
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(Size * 15))),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(3.0),
-                                                    child: Text(
-                                                      "AI",
-                                                      style: TextStyle(
-                                                          fontSize: 22,
-                                                          fontWeight: FontWeight.bold),
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.01),
+                                          border: Border.all(color: Colors.white10),
+                                          borderRadius: BorderRadius.all(Radius.circular(Size * 15))),
+                                      child: Padding(
+                                        padding:  EdgeInsets.all(Size*5.0),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Text(
+                                              "Ask",
+                                              style: TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: Size*25,
+                                                  fontWeight: FontWeight.w600),
                                             ),
-                                          ),
+                                            Container(
+                                              height: Size*30,
+                                              width: Size*30,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(color: Colors.white24),
+                                                  borderRadius: BorderRadius.all(Radius.circular(Size * 15))),
+                                              child: Padding(
+                                                padding:  EdgeInsets.all(Size*3.0),
+                                                child: Text(
+                                                  "AI",
+                                                  style: TextStyle(fontSize: Size*22, fontWeight: FontWeight.bold),
+                                                ),
+                                              ),
+                                            )
+                                          ],
                                         ),
-                                        onTap: () {
-                                          showToastText("Coming Soon");
-                                        },
-                                      ))
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      showToastText("Coming Soon");
+                                    },
+                                  ))
                                 ],
                               ),
                             ),
+
+                            // if (modelPaper.isNotEmpty && syllabus.isNotEmpty)
+                            //   Row(
+                            //     children: [
+                            //       if (syllabus.isNotEmpty)
+                            //         Flexible(child: Container()),
+                            //       if (modelPaper.isNotEmpty)
+                            //         Flexible(child: Container())
+                            //     ],
+                            //   ),
+
                             StreamBuilder<List<FavouriteSubjectsConvertor>>(
                               stream: readFavouriteSubjects(),
                               builder: (context, snapshot1) {
                                 final favourites1 = snapshot1.data;
 
-                                return StreamBuilder<
-                                    List<FavouriteLabSubjectsConvertor>>(
+                                return StreamBuilder<List<FavouriteSubjectsConvertor>>(
                                   stream: readFavouriteLabSubjects(),
                                   builder: (context, snapshot2) {
                                     final favourites2 = snapshot2.data;
 
-                                    if (snapshot1.connectionState ==
-                                        ConnectionState.waiting ||
-                                        snapshot2.connectionState ==
-                                            ConnectionState.waiting) {
+                                    if (snapshot1.connectionState == ConnectionState.waiting ||
+                                        snapshot2.connectionState == ConnectionState.waiting) {
                                       return const Center(
                                         child: CircularProgressIndicator(
                                           strokeWidth: 0.3,
                                           color: Colors.cyan,
                                         ),
                                       );
-                                    } else if (snapshot1.hasError ||
-                                        snapshot2.hasError) {
+                                    } else if (snapshot1.hasError || snapshot2.hasError) {
                                       return Center(child: Text("Error"));
-                                    } else if ((favourites1 != null &&
-                                        favourites1.isNotEmpty) ||
-                                        (favourites2 != null &&
-                                            favourites2.isNotEmpty)) {
-                                      return Padding(
-                                        padding:  EdgeInsets.symmetric(vertical: Size * 10),                                    child: Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    } else if ((favourites1 != null && favourites1.isNotEmpty) ||
+                                        (favourites2 != null && favourites2.isNotEmpty)) {
+                                      return Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Padding(
-                                            padding:  EdgeInsets.only(left:widget.size*10.0,top: widget.size*20.0),
-                                            child: Text("Saved",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
+                                            padding:
+                                                EdgeInsets.only(left: widget.size * 10.0, top: widget.size * 20.0),
+                                            child: Text(
+                                              "Saved",
+                                              style: TextStyle(
+                                                  color: Colors.white, fontSize: Size*20, fontWeight: FontWeight.w500),
+                                            ),
                                           ),
-                                          if (favourites1 != null &&
-                                              favourites1.isNotEmpty)
+                                          if (favourites1 != null && favourites1.isNotEmpty)
                                             SizedBox(
                                               height: widget.size * 70,
                                               child: ListView.separated(
                                                   scrollDirection: Axis.horizontal,
                                                   itemCount: favourites1.length,
-                                                  itemBuilder:
-                                                      (context, int index) {
-                                                    final Favourite =
-                                                    favourites1[index];
+                                                  itemBuilder: (context, int index) {
+                                                    final Favourite = favourites1[index];
                                                     return InkWell(
                                                       child: Padding(
-                                                        padding: EdgeInsets.only(
-                                                            left: index == 0
-                                                                ? widget.size * 20
-                                                                : 0),
+                                                        padding:
+                                                            EdgeInsets.only(left: index == 0 ? widget.size * 20 : 0),
                                                         child: Stack(
                                                           children: [
                                                             Container(
-                                                              margin:
-                                                              EdgeInsets.only(
-                                                                  top: 10.0,
-                                                                  right: 9),
+                                                              margin: EdgeInsets.only(top: Size*10.0, right: Size*9),
                                                               decoration: BoxDecoration(
-                                                                  color: Colors
-                                                                      .white24,
+                                                                  color: Colors.white24,
                                                                   borderRadius: BorderRadius.all(
-                                                                      Radius.circular(
-                                                                          widget.size *
-                                                                              20))),
+                                                                      Radius.circular(widget.size * 20))),
                                                               child: Padding(
-                                                                padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                    10,
-                                                                    horizontal:
-                                                                    25),
+                                                                padding:  EdgeInsets.symmetric(
+                                                                    vertical: Size*10, horizontal: Size*25),
                                                                 child: Text(
-                                                                  Favourite.name
-                                                                      .split(";")
-                                                                      .first,
+                                                                  Favourite.name.split(";").first,
                                                                   style: TextStyle(
-                                                                    fontSize: widget
-                                                                        .size *
-                                                                        22.0,
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
+                                                                    fontSize: widget.size * 22.0,
+                                                                    color: Colors.white,
+                                                                    fontWeight: FontWeight.w500,
                                                                   ),
                                                                 ),
                                                               ),
@@ -1419,79 +1264,70 @@ class _HomePageState extends State<HomePage>
                                                               right: 0,
                                                               child: InkWell(
                                                                 child: Icon(
-                                                                  Icons
-                                                                      .highlight_remove_outlined,
-                                                                  color:
-                                                                  Colors.orange,
-                                                                  size:
-                                                                  widget.size *
-                                                                      25,
+                                                                  Icons.highlight_remove_outlined,
+                                                                  color: Colors.orange,
+                                                                  size: widget.size * 25,
                                                                 ),
                                                                 onTap: () {
                                                                   showDialog(
-                                                                    context:
-                                                                    context,
-                                                                    builder:
-                                                                        (context) {
+                                                                    context: context,
+                                                                    builder: (context) {
                                                                       return Dialog(
-                                                                        backgroundColor:
-                                                                        Colors
-                                                                            .transparent,
+                                                                        backgroundColor: Colors.transparent,
                                                                         shape: RoundedRectangleBorder(
-                                                                            borderRadius:
-                                                                            BorderRadius.circular(widget.size *
-                                                                                20)),
-                                                                        elevation:
-                                                                        16,
-                                                                        child:
-                                                                        Container(
-                                                                          decoration:
-                                                                          BoxDecoration(
-                                                                            border: Border.all(
-                                                                                color:
-                                                                                Colors.white54),
-                                                                            borderRadius:
-                                                                            BorderRadius.circular(widget.size *
-                                                                                20),
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                widget.size * 20)),
+                                                                        elevation: 16,
+                                                                        child: Container(
+                                                                          decoration: BoxDecoration(
+                                                                            border: Border.all(color: Colors.white54),
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                widget.size * 20),
                                                                           ),
-                                                                          child:
-                                                                          ListView(
-                                                                            shrinkWrap:
-                                                                            true,
+                                                                          child: ListView(
+                                                                            shrinkWrap: true,
                                                                             children: <Widget>[
-                                                                              SizedBox(
-                                                                                  height: widget.size * 10),
-                                                                              SizedBox(
-                                                                                  height: widget.size * 5),
+                                                                              SizedBox(height: widget.size * 10),
+                                                                              SizedBox(height: widget.size * 5),
                                                                               Padding(
-                                                                                padding:
-                                                                                EdgeInsets.only(left: widget.size * 15),
-                                                                                child:
-                                                                                Text(
+                                                                                padding: EdgeInsets.only(
+                                                                                    left: widget.size * 15),
+                                                                                child: Text(
                                                                                   "Do you want Remove from Favourites",
-                                                                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: widget.size * 20),
+                                                                                  style: TextStyle(
+                                                                                      color: Colors.white,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      fontSize: widget.size * 20),
                                                                                 ),
                                                                               ),
                                                                               SizedBox(
-                                                                                height:
-                                                                                widget.size * 5,
+                                                                                height: widget.size * 5,
                                                                               ),
                                                                               Center(
-                                                                                child:
-                                                                                Row(
-                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                child: Row(
+                                                                                  mainAxisAlignment:
+                                                                                      MainAxisAlignment.center,
+                                                                                  crossAxisAlignment:
+                                                                                      CrossAxisAlignment.center,
                                                                                   children: [
                                                                                     Spacer(),
                                                                                     InkWell(
                                                                                       child: Container(
                                                                                         decoration: BoxDecoration(
                                                                                           color: Colors.white24,
-                                                                                          border: Border.all(color: Colors.white10),
-                                                                                          borderRadius: BorderRadius.circular(widget.size * 25),
+                                                                                          border: Border.all(
+                                                                                              color: Colors.white10),
+                                                                                          borderRadius:
+                                                                                              BorderRadius.circular(
+                                                                                                  widget.size * 25),
                                                                                         ),
                                                                                         child: Padding(
-                                                                                          padding: EdgeInsets.only(left: widget.size * 15, right: widget.size * 15, top: widget.size * 5, bottom: widget.size * 5),
+                                                                                          padding: EdgeInsets.only(
+                                                                                              left: widget.size * 15,
+                                                                                              right: widget.size * 15,
+                                                                                              top: widget.size * 5,
+                                                                                              bottom:
+                                                                                                  widget.size * 5),
                                                                                           child: Text(
                                                                                             "Back",
                                                                                             style: TextStyle(
@@ -1511,21 +1347,38 @@ class _HomePageState extends State<HomePage>
                                                                                       child: Container(
                                                                                         decoration: BoxDecoration(
                                                                                           color: Colors.red,
-                                                                                          border: Border.all(color: Colors.black),
-                                                                                          borderRadius: BorderRadius.circular(widget.size * 25),
+                                                                                          border: Border.all(
+                                                                                              color: Colors.black),
+                                                                                          borderRadius:
+                                                                                              BorderRadius.circular(
+                                                                                                  widget.size * 25),
                                                                                         ),
                                                                                         child: Padding(
-                                                                                          padding: EdgeInsets.only(left: widget.size * 15, right: widget.size * 15, top: widget.size * 5, bottom: widget.size * 5),
+                                                                                          padding: EdgeInsets.only(
+                                                                                              left: widget.size * 15,
+                                                                                              right: widget.size * 15,
+                                                                                              top: widget.size * 5,
+                                                                                              bottom:
+                                                                                                  widget.size * 5),
                                                                                           child: Text(
                                                                                             "Delete",
-                                                                                            style: TextStyle(color: Colors.white),
+                                                                                            style: TextStyle(
+                                                                                                color: Colors.white),
                                                                                           ),
                                                                                         ),
                                                                                       ),
                                                                                       onTap: () {
-                                                                                        FirebaseFirestore.instance.collection('user').doc(FirebaseAuth.instance.currentUser!.email!).collection("FavouriteSubject").doc(Favourite.id).delete();
+                                                                                        FirebaseFirestore.instance
+                                                                                            .collection('user')
+                                                                                            .doc(FirebaseAuth.instance
+                                                                                                .currentUser!.email!)
+                                                                                            .collection(
+                                                                                                "FavouriteSubject")
+                                                                                            .doc(Favourite.id)
+                                                                                            .delete();
                                                                                         Navigator.pop(context);
-                                                                                        showToastText("${Favourite.name} as been removed");
+                                                                                        showToastText(
+                                                                                            "${Favourite.name} as been removed");
                                                                                       },
                                                                                     ),
                                                                                     SizedBox(
@@ -1535,8 +1388,7 @@ class _HomePageState extends State<HomePage>
                                                                                 ),
                                                                               ),
                                                                               SizedBox(
-                                                                                height:
-                                                                                widget.size * 10,
+                                                                                height: widget.size * 10,
                                                                               ),
                                                                             ],
                                                                           ),
@@ -1554,86 +1406,53 @@ class _HomePageState extends State<HomePage>
                                                         Navigator.push(
                                                             context,
                                                             MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    subjectUnitsData(
-                                                                      reg: Favourite
-                                                                          .name,
-                                                                      size: widget
-                                                                          .size,
-                                                                      branch:
-                                                                      Favourite
-                                                                          .branch,
-                                                                      ID: Favourite
-                                                                          .subjectId,
-                                                                      mode:
-                                                                      "Subjects",
-                                                                      name:
-                                                                      Favourite
-                                                                          .name,
-                                                                      description:
-                                                                      Favourite
-                                                                          .description,
+                                                                builder: (context) => subjectUnitsData(
+                                                                  creator: Favourite.creator,
+
+                                                                  reg: Favourite.regulation,
+                                                                      size: widget.size,
+                                                                      branch: Favourite.branch,
+                                                                      ID: Favourite.id,
+                                                                      mode: "Subjects",
+                                                                      name: Favourite.name,
+                                                                      description: Favourite.description,
                                                                     )));
                                                       },
                                                     );
                                                   },
-                                                  separatorBuilder:
-                                                      (context, index) => SizedBox(
-                                                    width: widget.size * 6,
-                                                  )),
+                                                  separatorBuilder: (context, index) => SizedBox(
+                                                        width: widget.size * 6,
+                                                      )),
                                             ),
-                                          if (favourites2 != null &&
-                                              favourites2.isNotEmpty)
+                                          if (favourites2 != null && favourites2.isNotEmpty)
                                             SizedBox(
                                               height: widget.size * 70,
                                               child: ListView.separated(
                                                   scrollDirection: Axis.horizontal,
                                                   itemCount: favourites2.length,
-                                                  itemBuilder:
-                                                      (context, int index) {
-                                                    final Favourite =
-                                                    favourites2[index];
+                                                  itemBuilder: (context, int index) {
+                                                    final Favourite = favourites2[index];
                                                     return InkWell(
                                                       child: Padding(
-                                                        padding: EdgeInsets.only(
-                                                            left: index == 0
-                                                                ? widget.size * 20
-                                                                : 0),
+                                                        padding:
+                                                            EdgeInsets.only(left: index == 0 ? widget.size * 20 : 0),
                                                         child: Stack(
                                                           children: [
                                                             Container(
-                                                              margin:
-                                                              EdgeInsets.only(
-                                                                  top: 10.0,
-                                                                  right: 9),
+                                                              margin: EdgeInsets.only(top: Size*10.0, right: Size*9),
                                                               decoration: BoxDecoration(
-                                                                  color: Colors
-                                                                      .white12,
+                                                                  color: Colors.white12,
                                                                   borderRadius: BorderRadius.all(
-                                                                      Radius.circular(
-                                                                          widget.size *
-                                                                              20))),
+                                                                      Radius.circular(widget.size * 20))),
                                                               child: Padding(
-                                                                padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                    10,
-                                                                    horizontal:
-                                                                    25),
+                                                                padding:  EdgeInsets.symmetric(
+                                                                    vertical: Size*10, horizontal: Size*25),
                                                                 child: Text(
-                                                                  Favourite.name
-                                                                      .split(";")
-                                                                      .first,
+                                                                  Favourite.name.split(";").first,
                                                                   style: TextStyle(
-                                                                    fontSize: widget
-                                                                        .size *
-                                                                        22.0,
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
+                                                                    fontSize: widget.size * 22.0,
+                                                                    color: Colors.white,
+                                                                    fontWeight: FontWeight.w700,
                                                                   ),
                                                                 ),
                                                               ),
@@ -1643,79 +1462,70 @@ class _HomePageState extends State<HomePage>
                                                               right: 0,
                                                               child: InkWell(
                                                                 child: Icon(
-                                                                  Icons
-                                                                      .highlight_remove_outlined,
-                                                                  color:
-                                                                  Colors.orange,
-                                                                  size:
-                                                                  widget.size *
-                                                                      25,
+                                                                  Icons.highlight_remove_outlined,
+                                                                  color: Colors.orange,
+                                                                  size: widget.size * 25,
                                                                 ),
                                                                 onTap: () {
                                                                   showDialog(
-                                                                    context:
-                                                                    context,
-                                                                    builder:
-                                                                        (context) {
+                                                                    context: context,
+                                                                    builder: (context) {
                                                                       return Dialog(
-                                                                        backgroundColor:
-                                                                        Colors
-                                                                            .transparent,
+                                                                        backgroundColor: Colors.transparent,
                                                                         shape: RoundedRectangleBorder(
-                                                                            borderRadius:
-                                                                            BorderRadius.circular(widget.size *
-                                                                                20)),
-                                                                        elevation:
-                                                                        16,
-                                                                        child:
-                                                                        Container(
-                                                                          decoration:
-                                                                          BoxDecoration(
-                                                                            border: Border.all(
-                                                                                color:
-                                                                                Colors.white54),
-                                                                            borderRadius:
-                                                                            BorderRadius.circular(widget.size *
-                                                                                20),
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                widget.size * 20)),
+                                                                        elevation: 16,
+                                                                        child: Container(
+                                                                          decoration: BoxDecoration(
+                                                                            border: Border.all(color: Colors.white54),
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                widget.size * 20),
                                                                           ),
-                                                                          child:
-                                                                          ListView(
-                                                                            shrinkWrap:
-                                                                            true,
+                                                                          child: ListView(
+                                                                            shrinkWrap: true,
                                                                             children: <Widget>[
-                                                                              SizedBox(
-                                                                                  height: widget.size * 10),
-                                                                              SizedBox(
-                                                                                  height: widget.size * 5),
+                                                                              SizedBox(height: widget.size * 10),
+                                                                              SizedBox(height: widget.size * 5),
                                                                               Padding(
-                                                                                padding:
-                                                                                EdgeInsets.only(left: widget.size * 15),
-                                                                                child:
-                                                                                Text(
+                                                                                padding: EdgeInsets.only(
+                                                                                    left: widget.size * 15),
+                                                                                child: Text(
                                                                                   "Do you want Remove from Favourites",
-                                                                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: widget.size * 20),
+                                                                                  style: TextStyle(
+                                                                                      color: Colors.white,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      fontSize: widget.size * 20),
                                                                                 ),
                                                                               ),
                                                                               SizedBox(
-                                                                                height:
-                                                                                widget.size * 5,
+                                                                                height: widget.size * 5,
                                                                               ),
                                                                               Center(
-                                                                                child:
-                                                                                Row(
-                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                child: Row(
+                                                                                  mainAxisAlignment:
+                                                                                      MainAxisAlignment.center,
+                                                                                  crossAxisAlignment:
+                                                                                      CrossAxisAlignment.center,
                                                                                   children: [
                                                                                     Spacer(),
                                                                                     InkWell(
                                                                                       child: Container(
                                                                                         decoration: BoxDecoration(
                                                                                           color: Colors.white24,
-                                                                                          border: Border.all(color: Colors.white10),
-                                                                                          borderRadius: BorderRadius.circular(widget.size * 25),
+                                                                                          border: Border.all(
+                                                                                              color: Colors.white10),
+                                                                                          borderRadius:
+                                                                                              BorderRadius.circular(
+                                                                                                  widget.size * 25),
                                                                                         ),
                                                                                         child: Padding(
-                                                                                          padding: EdgeInsets.only(left: widget.size * 15, right: widget.size * 15, top: widget.size * 5, bottom: widget.size * 5),
+                                                                                          padding: EdgeInsets.only(
+                                                                                              left: widget.size * 15,
+                                                                                              right: widget.size * 15,
+                                                                                              top: widget.size * 5,
+                                                                                              bottom:
+                                                                                                  widget.size * 5),
                                                                                           child: Text(
                                                                                             "Back",
                                                                                             style: TextStyle(
@@ -1735,21 +1545,38 @@ class _HomePageState extends State<HomePage>
                                                                                       child: Container(
                                                                                         decoration: BoxDecoration(
                                                                                           color: Colors.red,
-                                                                                          border: Border.all(color: Colors.black),
-                                                                                          borderRadius: BorderRadius.circular(widget.size * 25),
+                                                                                          border: Border.all(
+                                                                                              color: Colors.black),
+                                                                                          borderRadius:
+                                                                                              BorderRadius.circular(
+                                                                                                  widget.size * 25),
                                                                                         ),
                                                                                         child: Padding(
-                                                                                          padding: EdgeInsets.only(left: widget.size * 15, right: widget.size * 15, top: widget.size * 5, bottom: widget.size * 5),
+                                                                                          padding: EdgeInsets.only(
+                                                                                              left: widget.size * 15,
+                                                                                              right: widget.size * 15,
+                                                                                              top: widget.size * 5,
+                                                                                              bottom:
+                                                                                                  widget.size * 5),
                                                                                           child: Text(
                                                                                             "Delete",
-                                                                                            style: TextStyle(color: Colors.white),
+                                                                                            style: TextStyle(
+                                                                                                color: Colors.white),
                                                                                           ),
                                                                                         ),
                                                                                       ),
                                                                                       onTap: () {
-                                                                                        FirebaseFirestore.instance.collection('user').doc(FirebaseAuth.instance.currentUser!.email!).collection("FavouriteLabSubjects").doc(Favourite.id).delete();
+                                                                                        FirebaseFirestore.instance
+                                                                                            .collection('user')
+                                                                                            .doc(FirebaseAuth.instance
+                                                                                                .currentUser!.email!)
+                                                                                            .collection(
+                                                                                                "FavouriteLabSubjects")
+                                                                                            .doc(Favourite.id)
+                                                                                            .delete();
                                                                                         Navigator.pop(context);
-                                                                                        showToastText("${Favourite.name} as been removed");
+                                                                                        showToastText(
+                                                                                            "${Favourite.name} as been removed");
                                                                                       },
                                                                                     ),
                                                                                     SizedBox(
@@ -1759,8 +1586,7 @@ class _HomePageState extends State<HomePage>
                                                                                 ),
                                                                               ),
                                                                               SizedBox(
-                                                                                height:
-                                                                                widget.size * 10,
+                                                                                height: widget.size * 10,
                                                                               ),
                                                                             ],
                                                                           ),
@@ -1778,624 +1604,29 @@ class _HomePageState extends State<HomePage>
                                                         Navigator.push(
                                                             context,
                                                             MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    subjectUnitsData(
-                                                                      reg: Favourite
-                                                                          .name,
-                                                                      size: widget
-                                                                          .size,
-                                                                      branch:
-                                                                      Favourite
-                                                                          .branch,
-                                                                      ID: Favourite
-                                                                          .subjectId,
-                                                                      mode:
-                                                                      "LabSubjects",
-                                                                      name:
-                                                                      Favourite
-                                                                          .name,
-                                                                      description:
-                                                                      Favourite
-                                                                          .description,
+                                                                builder: (context) => subjectUnitsData(
+                                                                      reg: Favourite.name,
+                                                                      size: widget.size,
+                                                                      branch: Favourite.branch,
+                                                                      ID: Favourite.id,
+                                                                      mode: "LabSubjects",
+                                                                      name: Favourite.name,
+                                                                      description: Favourite.description, creator: Favourite.creator,
                                                                     )));
                                                       },
                                                     );
                                                   },
-                                                  separatorBuilder:
-                                                      (context, index) => SizedBox(
-                                                    width: widget.size * 6,
-                                                  )),
+                                                  separatorBuilder: (context, index) => SizedBox(
+                                                        width: widget.size * 6,
+                                                      )),
                                             ),
                                         ],
-                                      ),
                                       );
                                     } else {
                                       return Container(); // No data, don't show anything
                                     }
                                   },
                                 );
-                              },
-                            ),
-                            Padding(
-                              padding:  EdgeInsets.all(widget.size*10.0),
-                              child: Text("${widget.branch} News & Updates",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500),),
-                            ),
-                            StreamBuilder<List<BranchNewConvertor>>(
-                              stream: readBranchNew(widget.branch),
-                              builder: (context, snapshot) {
-                                final BranchNews = snapshot.data;
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.waiting:
-                                    return const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 0.3,
-                                        color: Colors.cyan,
-                                      ),
-                                    );
-                                  default:
-                                    if (snapshot.hasError) {
-                                      return const Center(
-                                        child: Text(
-                                            'Error with TextBooks Data or\n Check Internet Connection'),
-                                      );
-                                    } else {
-                                      final filteredNews =
-                                          BranchNews?.take(3).toList() ?? [];
-
-                                      if (filteredNews.isNotEmpty) {
-                                        return SizedBox(
-                                          height: 110,
-                                          child: ListView(
-                                            scrollDirection: Axis.horizontal,
-                                            children: filteredNews.map((BranchNew) {
-
-                                              return InkWell(
-                                                child: VisibilityDetector(
-                                                  key: Key("${widget.branch}News"),
-                                                  // Give a unique key to your widget
-                                                  onVisibilityChanged: (info) {
-                                                    if (info.visibleFraction ==
-                                                        1.0) {
-                                                      FirebaseFirestore.instance
-                                                          .collection(widget.branch)
-                                                          .doc(
-                                                          "${widget.branch}News")
-                                                          .collection(
-                                                          "${widget.branch}News")
-                                                          .doc(BranchNew.id)
-                                                          .update({
-                                                        "isViewed":
-                                                        FieldValue.arrayUnion(
-                                                            [fullUserId()])
-                                                      });
-                                                    }
-                                                    ;
-                                                  },
-                                                  child: Padding(
-                                                    padding:
-                                                    EdgeInsets.only(left: 10),
-                                                    child: Container(
-                                                      width: 320,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                          BorderRadius.circular(
-                                                              15),
-                                                          border: Border.all(
-                                                              color:
-                                                              Colors.white12)),
-                                                      child: Row(
-                                                        children: [
-                                                          Flexible(
-                                                            flex: 2,
-                                                            child:
-                                                            SingleChildScrollView(
-                                                              child: Column(
-                                                                children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      Expanded(
-                                                                          child: BranchNew
-                                                                              .heading
-                                                                              .isNotEmpty
-                                                                              ? Text(
-                                                                            " ${BranchNew.heading}",
-                                                                            style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 16,
-                                                                              fontWeight: FontWeight.w600,
-                                                                            ),
-                                                                          )
-                                                                              : Text(
-                                                                            " ${widget.branch} (SRKR)",
-                                                                            style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 16,
-                                                                              fontWeight: FontWeight.w400,
-                                                                            ),
-                                                                          )),
-                                                                      if (isUser())
-                                                                        PopupMenuButton(
-                                                                          icon:
-                                                                          Icon(
-                                                                            Icons
-                                                                                .more_vert,
-                                                                            color: Colors
-                                                                                .white,
-                                                                            size: widget.size *
-                                                                                16,
-                                                                          ),
-                                                                          // Callback that sets the selected popup menu item.
-                                                                          onSelected:
-                                                                              (item) async {
-                                                                            if (item ==
-                                                                                "edit") {
-                                                                              Navigator
-                                                                                  .push(
-                                                                                context,
-                                                                                MaterialPageRoute(
-                                                                                  builder: (context) => NewsCreator(
-                                                                                    branch: widget.branch,
-                                                                                    NewsId: BranchNew.id,
-                                                                                    heading: BranchNew.heading,
-                                                                                    description: BranchNew.description,
-                                                                                    photoUrl: BranchNew.photoUrl,
-                                                                                  ),
-                                                                                ),
-                                                                              );
-                                                                            } else if (item ==
-                                                                                "delete") {
-                                                                              if (BranchNew
-                                                                                  .photoUrl
-                                                                                  .isNotEmpty) {
-                                                                                final Uri
-                                                                                uri =
-                                                                                Uri.parse(BranchNew.photoUrl);
-                                                                                final String
-                                                                                fileName =
-                                                                                    uri.pathSegments.last;
-                                                                                final Reference
-                                                                                ref =
-                                                                                FirebaseStorage.instance.ref().child("/${fileName}");
-                                                                                try {
-                                                                                  await ref.delete();
-                                                                                  showToastText('Image deleted successfully');
-                                                                                } catch (e) {
-                                                                                  showToastText('Error deleting image: $e');
-                                                                                }
-                                                                              }
-                                                                              FirebaseFirestore
-                                                                                  .instance
-                                                                                  .collection(widget.branch)
-                                                                                  .doc("${widget.branch}News")
-                                                                                  .collection("${widget.branch}News")
-                                                                                  .doc(BranchNew.id)
-                                                                                  .delete();
-                                                                              pushNotificationsSpecificPerson(
-                                                                                fullUserId(),
-                                                                                " ${BranchNew.heading} Deleted from News",
-                                                                                "",
-                                                                              );
-                                                                            }
-                                                                          },
-                                                                          itemBuilder:
-                                                                              (BuildContext context) =>
-                                                                          <PopupMenuEntry>[
-                                                                            const PopupMenuItem(
-                                                                              value:
-                                                                              "edit",
-                                                                              child:
-                                                                              Text('Edit'),
-                                                                            ),
-                                                                            const PopupMenuItem(
-                                                                              value:
-                                                                              "delete",
-                                                                              child:
-                                                                              Text('Delete'),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                    ],
-                                                                  ),
-                                                                  if (BranchNew
-                                                                      .description
-                                                                      .isNotEmpty)
-                                                                    Padding(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                          widget.size *
-                                                                              8),
-                                                                      child:
-                                                                      StyledTextWidget(
-                                                                        text: BranchNew
-                                                                            .description,
-                                                                        fontSize:
-                                                                        widget.size *
-                                                                            12,
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                        color: Colors
-                                                                            .white
-                                                                            .withOpacity(
-                                                                            0.8),
-                                                                      ),
-                                                                    ),
-                                                                  Padding(
-                                                                    padding:
-                                                                    EdgeInsets
-                                                                        .only(
-                                                                      left: widget
-                                                                          .size *
-                                                                          8,
-                                                                      bottom: widget
-                                                                          .size *
-                                                                          8,
-                                                                    ),
-                                                                    child: Row(
-                                                                      mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                      children: [
-                                                                        Text(
-                                                                          BranchNew.id.split("-").first.length <
-                                                                              12
-                                                                              ? "~ ${BranchNew.id.split('-').first}"
-                                                                              : "No Date",
-                                                                          style:
-                                                                          TextStyle(
-                                                                            color: Colors
-                                                                                .white70,
-                                                                            fontSize:
-                                                                            widget.size *
-                                                                                10,
-                                                                            fontWeight:
-                                                                            FontWeight.w500,
-                                                                          ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets
-                                                                              .only(
-                                                                              right:
-                                                                              20),
-                                                                          child:
-                                                                          Icon(
-                                                                            BranchNew.isViewed.contains(fullUserId())
-                                                                                ? Icons.remove_red_eye
-                                                                                : Icons.remove_red_eye_outlined,
-                                                                            size:
-                                                                            14,
-                                                                            color: Colors
-                                                                                .white70,
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          if (BranchNew
-                                                              .photoUrl.isNotEmpty)
-                                                            Flexible(
-                                                              child:
-                                                              Image.file(file),
-                                                            ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                onTap: () async {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ImageZoom(
-                                                            size: widget.size,
-                                                            url: "",
-                                                            file: file,
-                                                          ),
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            }).toList(),
-                                          ),
-                                        );
-                                      } else {
-                                        return Container(); // No data, don't show anything
-                                      }
-                                    }
-                                }
-                              },
-                            ),
-                            SizedBox(height: 10,),
-                            StreamBuilder<List<UpdateConvertor>>(
-                              stream: readUpdate(widget.branch),
-                              builder: (context, snapshot) {
-                                final BranchNews = snapshot.data;
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.waiting:
-                                    return const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 0.3,
-                                        color: Colors.cyan,
-                                      ),
-                                    );
-                                  default:
-                                    if (snapshot.hasError) {
-                                      return const Center(
-                                        child: Text(
-                                            'Error with TextBooks Data or\n Check Internet Connection'),
-                                      );
-                                    } else {
-                                      final filteredNews =
-                                          BranchNews?.take(3).toList() ?? [];
-
-                                      if (filteredNews.isNotEmpty) {
-                                        return SizedBox(
-                                          height: 110,
-                                          child: ListView(
-                                            scrollDirection: Axis.horizontal,
-                                            children: filteredNews.map((BranchNew) {
-
-                                              return InkWell(
-                                                child: VisibilityDetector(
-                                                  key: Key("update"),
-                                                  // Give a unique key to your widget
-                                                  onVisibilityChanged: (info) {
-                                                    if (info.visibleFraction ==
-                                                        1.0) {
-                                                      FirebaseFirestore.instance
-                                                          .collection("update")
-                                                          .doc(BranchNew.id)
-                                                          .update({
-                                                        "isViewed":
-                                                        FieldValue.arrayUnion(
-                                                            [fullUserId()])
-                                                      });
-                                                    }
-                                                    ;
-                                                  },
-                                                  child: Padding(
-                                                    padding:
-                                                    EdgeInsets.only(left: 10),
-                                                    child: Container(
-                                                      width: 320,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                          BorderRadius.circular(
-                                                              15),
-                                                          border: Border.all(
-                                                              color:
-                                                              Colors.white12)),
-                                                      child: Row(
-                                                        children: [
-                                                          Flexible(
-                                                            flex: 2,
-                                                            child:
-                                                            SingleChildScrollView(
-                                                              child: Column(
-                                                                children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      Expanded(
-                                                                          child: BranchNew
-                                                                              .heading
-                                                                              .isNotEmpty
-                                                                              ? Text(
-                                                                            " ${BranchNew.heading}",
-                                                                            style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 16,
-                                                                              fontWeight: FontWeight.w600,
-                                                                            ),
-                                                                          )
-                                                                              : Text(
-                                                                            " ${widget.branch} (SRKR)",
-                                                                            style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: widget.size * 16,
-                                                                              fontWeight: FontWeight.w400,
-                                                                            ),
-                                                                          )),
-                                                                      if (isUser())
-                                                                        PopupMenuButton(
-                                                                          icon:
-                                                                          Icon(
-                                                                            Icons
-                                                                                .more_vert,
-                                                                            color: Colors
-                                                                                .white,
-                                                                            size: widget.size *
-                                                                                16,
-                                                                          ),
-                                                                          // Callback that sets the selected popup menu item.
-                                                                          onSelected:
-                                                                              (item) async {
-                                                                            if (item ==
-                                                                                "edit") {
-                                                                              Navigator
-                                                                                  .push(
-                                                                                context,
-                                                                                MaterialPageRoute(
-                                                                                  builder: (context) => NewsCreator(
-                                                                                    branch: widget.branch,
-                                                                                    NewsId: BranchNew.id,
-                                                                                    heading: BranchNew.heading,
-                                                                                    description: BranchNew.description,
-                                                                                    photoUrl: BranchNew.photoUrl,
-                                                                                  ),
-                                                                                ),
-                                                                              );
-                                                                            } else if (item ==
-                                                                                "delete") {
-                                                                              if (BranchNew
-                                                                                  .photoUrl
-                                                                                  .isNotEmpty) {
-                                                                                final Uri
-                                                                                uri =
-                                                                                Uri.parse(BranchNew.photoUrl);
-                                                                                final String
-                                                                                fileName =
-                                                                                    uri.pathSegments.last;
-                                                                                final Reference
-                                                                                ref =
-                                                                                FirebaseStorage.instance.ref().child("/${fileName}");
-                                                                                try {
-                                                                                  await ref.delete();
-                                                                                  showToastText('Image deleted successfully');
-                                                                                } catch (e) {
-                                                                                  showToastText('Error deleting image: $e');
-                                                                                }
-                                                                              }
-                                                                              FirebaseFirestore
-                                                                                  .instance
-                                                                                  .collection(widget.branch)
-                                                                                  .doc("${widget.branch}News")
-                                                                                  .collection("${widget.branch}News")
-                                                                                  .doc(BranchNew.id)
-                                                                                  .delete();
-                                                                              pushNotificationsSpecificPerson(
-                                                                                fullUserId(),
-                                                                                " ${BranchNew.heading} Deleted from News",
-                                                                                "",
-                                                                              );
-                                                                            }
-                                                                          },
-                                                                          itemBuilder:
-                                                                              (BuildContext context) =>
-                                                                          <PopupMenuEntry>[
-                                                                            const PopupMenuItem(
-                                                                              value:
-                                                                              "edit",
-                                                                              child:
-                                                                              Text('Edit'),
-                                                                            ),
-                                                                            const PopupMenuItem(
-                                                                              value:
-                                                                              "delete",
-                                                                              child:
-                                                                              Text('Delete'),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                    ],
-                                                                  ),
-                                                                  if (BranchNew
-                                                                      .description
-                                                                      .isNotEmpty)
-                                                                    Padding(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                          widget.size *
-                                                                              8),
-                                                                      child:
-                                                                      StyledTextWidget(
-                                                                        text: BranchNew
-                                                                            .description,
-                                                                        fontSize:
-                                                                        widget.size *
-                                                                            12,
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                        color: Colors
-                                                                            .white
-                                                                            .withOpacity(
-                                                                            0.8),
-                                                                      ),
-                                                                    ),
-                                                                  Padding(
-                                                                    padding:
-                                                                    EdgeInsets
-                                                                        .only(
-                                                                      left: widget
-                                                                          .size *
-                                                                          8,
-                                                                      bottom: widget
-                                                                          .size *
-                                                                          8,
-                                                                    ),
-                                                                    child: Row(
-                                                                      mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                      children: [
-                                                                        Text(
-                                                                          BranchNew.id.split("-").first.length <
-                                                                              12
-                                                                              ? "~ ${BranchNew.id.split('-').first}"
-                                                                              : "No Date",
-                                                                          style:
-                                                                          TextStyle(
-                                                                            color: Colors
-                                                                                .white70,
-                                                                            fontSize:
-                                                                            widget.size *
-                                                                                10,
-                                                                            fontWeight:
-                                                                            FontWeight.w500,
-                                                                          ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets
-                                                                              .only(
-                                                                              right:
-                                                                              20),
-                                                                          child:
-                                                                          Icon(
-                                                                            BranchNew.isViewed.contains(fullUserId())
-                                                                                ? Icons.remove_red_eye
-                                                                                : Icons.remove_red_eye_outlined,
-                                                                            size:
-                                                                            14,
-                                                                            color: Colors
-                                                                                .white70,
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          if (BranchNew
-                                                              .photoUrl.length >
-                                                              3)
-                                                            Flexible(
-                                                              child:
-                                                              Image.file(file),
-                                                            ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                onTap: () async {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ImageZoom(
-                                                            size: widget.size,
-                                                            url: "",
-                                                            file: file,
-                                                          ),
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            }).toList(),
-                                          ),
-                                        );
-                                      } else {
-                                        return Container(); // No data, don't show anything
-                                      }
-                                    }
-                                }
                               },
                             ),
                             StreamBuilder<List<FlashNewsConvertor>>(
@@ -2406,182 +1637,141 @@ class _HomePageState extends State<HomePage>
                                     case ConnectionState.waiting:
                                       return const Center(
                                           child: CircularProgressIndicator(
-                                            strokeWidth: 0.3,
-                                            color: Colors.cyan,
-                                          ));
+                                        strokeWidth: 0.3,
+                                        color: Colors.cyan,
+                                      ));
                                     default:
                                       if (snapshot.hasError) {
                                         return Center(child: Text("Error"));
                                       } else {
                                         return Favourites!.isNotEmpty
                                             ? Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.all(
-                                                  widget.size * 8.0),
-                                              child: Text(
-                                                "Flash News",
-                                                style: secondHeadingTextStyle(
-                                                    color: Colors.grey,
-                                                    size: widget.size),
-                                              ),
-                                            ),
-                                            CarouselSlider(
-                                                items: List.generate(
-                                                    Favourites!.length,
-                                                        (int index) {
-                                                      final BranchNew =
-                                                      Favourites[index];
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.all(widget.size * 8.0),
+                                                    child: Text(
+                                                      "Flash News",
+                                                      style:
+                                                          secondHeadingTextStyle(color: Colors.white, size: widget.size),
+                                                    ),
+                                                  ),
+                                                  CarouselSlider(
+                                                      items: List.generate(Favourites!.length, (int index) {
+                                                        final BranchNew = Favourites[index];
 
-                                                      return Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: InkWell(
-                                                              child: Padding(
-                                                                padding: EdgeInsets.only(
-                                                                    left: widget
-                                                                        .size *
-                                                                        20),
-                                                                child: Text(
-                                                                  BranchNew
-                                                                      .heading,
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                      fontFamily:
-                                                                      "test",
-                                                                      fontSize:
-                                                                      widget.size *
-                                                                          16),
-                                                                  maxLines: 3,
-                                                                  overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                                ),
-                                                              ),
-                                                              onTap: () {
-                                                                if (BranchNew.Url
-                                                                    .isNotEmpty) {
-                                                                  ExternalLaunchUrl(
-                                                                      BranchNew
-                                                                          .Url);
-                                                                } else {
-                                                                  showToastText(
-                                                                      "No Url Found");
-                                                                }
-                                                              },
-                                                            ),
-                                                          ),
-                                                          if (isUser())
-                                                            PopupMenuButton(
-                                                              icon: Icon(
-                                                                Icons.more_vert,
-                                                                color:
-                                                                Colors.white,
-                                                                size:
-                                                                widget.size *
-                                                                    25,
-                                                              ),
-                                                              // Callback that sets the selected popup menu item.
-                                                              onSelected: (item) {
-                                                                if (item ==
-                                                                    "edit") {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) =>
-                                                                              flashNewsCreator(
-                                                                                size: widget.size,
-                                                                                heading: BranchNew.heading,
-                                                                                link: BranchNew.Url,
-                                                                                NewsId: BranchNew.id,
-                                                                              )));
-                                                                } else if (item ==
-                                                                    "delete") {
-                                                                  FirebaseFirestore
-                                                                      .instance
-                                                                      .collection(
-                                                                      "srkrPage")
-                                                                      .doc(
-                                                                      "flashNews")
-                                                                      .collection(
-                                                                      "flashNews")
-                                                                      .doc(
-                                                                      BranchNew
-                                                                          .id)
-                                                                      .delete();
-                                                                }
-                                                              },
-                                                              itemBuilder: (BuildContext
-                                                              context) =>
-                                                              <PopupMenuEntry>[
-                                                                const PopupMenuItem(
-                                                                  value: "edit",
+                                                        return Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: InkWell(
+                                                                child: Padding(
+                                                                  padding: EdgeInsets.only(left: widget.size * 20),
                                                                   child: Text(
-                                                                      'Edit'),
+                                                                    BranchNew.heading,
+                                                                    style: TextStyle(
+                                                                        color: Colors.white,
+                                                                        fontWeight: FontWeight.w500,
+                                                                        fontFamily: "test",
+                                                                        fontSize: widget.size * 16),
+                                                                    maxLines: 3,
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                  ),
                                                                 ),
-                                                                const PopupMenuItem(
-                                                                  value: "delete",
-                                                                  child: Text(
-                                                                      'Delete'),
-                                                                ),
-                                                              ],
+                                                                onTap: () {
+                                                                  if (BranchNew.Url.isNotEmpty) {
+                                                                    ExternalLaunchUrl(BranchNew.Url);
+                                                                  } else {
+                                                                    showToastText("No Url Found");
+                                                                  }
+                                                                },
+                                                              ),
                                                             ),
-                                                        ],
-                                                      );
-                                                    }),
-                                                options: CarouselOptions(
-                                                  viewportFraction: 1,
-                                                  enlargeCenterPage: true,
-                                                  height: widget.size * 60,
-                                                  autoPlayAnimationDuration:
-                                                  Duration(
-                                                      milliseconds: 1800),
-                                                  autoPlay:
-                                                  Favourites.length > 1
-                                                      ? true
-                                                      : false,
-                                                )),
-                                          ],
-                                        )
+                                                            if (isGmail())
+                                                              PopupMenuButton(
+                                                                icon: Icon(
+                                                                  Icons.more_vert,
+                                                                  color: Colors.white,
+                                                                  size: widget.size * 25,
+                                                                ),
+                                                                // Callback that sets the selected popup menu item.
+                                                                onSelected: (item) {
+                                                                  if (item == "edit") {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => flashNewsCreator(
+                                                                              branch: widget.branch,
+                                                                                  size: widget.size,
+                                                                                  heading: BranchNew.heading,
+                                                                                  link: BranchNew.Url,
+                                                                                  NewsId: BranchNew.id,
+                                                                                )));
+                                                                  } else if (item == "delete") {
+                                                                    messageToOwner("Flash News is Deleted\nBy : '${fullUserId()}' \n   Heading : ${BranchNew.heading}\n   Link : ${BranchNew.Url}");
+
+                                                                    FirebaseFirestore.instance
+                                                                        .collection("srkrPage")
+                                                                        .doc("flashNews")
+                                                                        .collection("flashNews")
+                                                                        .doc(BranchNew.id)
+                                                                        .delete();
+                                                                  }
+                                                                },
+                                                                itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                                                                  const PopupMenuItem(
+                                                                    value: "edit",
+                                                                    child: Text('Edit'),
+                                                                  ),
+                                                                  const PopupMenuItem(
+                                                                    value: "delete",
+                                                                    child: Text('Delete'),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                          ],
+                                                        );
+                                                      }),
+                                                      options: CarouselOptions(
+                                                        viewportFraction: 1,
+                                                        enlargeCenterPage: true,
+                                                        height: widget.size * 60,
+                                                        autoPlayAnimationDuration: Duration(milliseconds: 1800),
+                                                        autoPlay: Favourites.length > 1 ? true : false,
+                                                      )),
+                                                ],
+                                              )
                                             : Container();
                                       }
                                   }
                                 }),
-                            Center(
-                              child: InkWell(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.white24,
-                                      borderRadius:
-                                      BorderRadius.circular(widget.size * 40)),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: widget.size * 6,
-                                        horizontal: widget.size * 20),
-                                    child: Text(
-                                      "Exam Notification",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: widget.size * 30),
+
+
+
+                            Padding(
+                              padding:  EdgeInsets.symmetric(vertical:Size* 10.0),
+                              child: Center(
+                                child: InkWell(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.white24, borderRadius: BorderRadius.circular(widget.size * 40)),
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: widget.size * 6, horizontal: widget.size * 20),
+                                      child: Text(
+                                        "Exam Notification",
+                                        style: TextStyle(color: Colors.white, fontSize: widget.size * 30),
+                                      ),
                                     ),
                                   ),
+                                  onTap: () {
+                                    ExternalLaunchUrl("http://www.srkrexams.in/Login.aspx");
+                                  },
                                 ),
-                                onTap: () {
-                                  ExternalLaunchUrl(
-                                      "http://www.srkrexams.in/Login.aspx");
-                                },
                               ),
                             ),
                             SizedBox(
-                              height: widget.size * 150,
+                              height: widget.size * 50,
                             )
                           ],
                         ),
@@ -2605,44 +1795,380 @@ class _HomePageState extends State<HomePage>
             ),
           ),
         ),
+        floatingActionButton: SizedBox(
+          height: Size*40,
+          width: Size*40,
+          child: Visibility(
+              visible: isGmail()||isOwner(),
+              child:SpeedDial(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                animatedIconTheme: IconThemeData(size: 50.0),
+
+                animatedIcon: AnimatedIcons.add_event,
+            openCloseDial: isDialOpen,
+            backgroundColor: Color.fromRGBO(101, 150, 161, 1),
+            overlayColor: Colors.black,
+            overlayOpacity: 0.5,
+            spacing:Size* 2,
+            spaceBetweenChildren: Size* 2,
+            // closeManually: true,
+            children: [
+              SpeedDialChild(
+                  child: Text("Book",style: TextStyle(fontSize: Size* 18),),
+                  label: 'Books',
+                  onTap: () {
+                     Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                BooksCreator(
+                                  branch: widget.branch,
+                                )));
+                  }
+              ),
+              SpeedDialChild(
+                  child: Text("Sub",style: TextStyle(fontSize: Size* 18),),
+                  label: 'Subject',
+                  onTap: (){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                SubjectsCreator(
+                                  size: widget.size,
+
+                                  branch: widget.branch,
+                                )));
+                  }
+              ),
+              SpeedDialChild(
+                  child: Text("News",style: TextStyle(fontSize: Size* 18),),
+                  label: 'Branch News',
+                  onTap: (){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                NewsCreator(
+                                  branch: widget.branch,
+                                )));
+                  }
+              ),
+              SpeedDialChild(
+                  child: Text("Updates",style: TextStyle(fontSize: Size* 12),),
+                  label: 'Updates',
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context) =>
+                            updateCreator(
+                              branch: widget.branch,
+
+                              size: widget.size,
+                            )));
+                  }
+              ),
+              SpeedDialChild(
+                  child: Text("A.R",style: TextStyle(fontSize: Size* 18),),
+                  label: 'Add Regulation',
+                  onTap: (){
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          backgroundColor:
+                          Colors.black.withOpacity(0.3),
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.circular(
+                                  widget.size * 20)),
+                          elevation: 16,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              border: Border.all(
+                                  color: Colors.white24),
+                              borderRadius:
+                              BorderRadius.circular(
+                                  widget.size * 20),
+                            ),
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: <Widget>[
+                                SizedBox(
+                                    height: widget.size * 15),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: widget.size * 15),
+                                  child: Text(
+                                    "Add Regulation by Entering r20",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight:
+                                        FontWeight.w600,
+                                        fontSize:
+                                        widget.size * 18),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: widget.size * 10),
+                                  child: TextFieldContainer(
+                                    child: TextField(
+                                      controller: InputController,
+                                      textInputAction: TextInputAction.next,
+                                      style: TextStyle(color: Colors.white,fontSize: widget.size * 20),
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: 'r2_ <= Enter Regulation Number',
+                                          hintStyle: TextStyle(
+                                              color: Colors.white70, fontSize: widget.size * 20)),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: widget.size * 5,
+                                ),
+                                Center(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .center,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment
+                                        .center,
+                                    children: [
+                                      Spacer(),
+                                      InkWell(
+                                        child: Container(
+                                          decoration:
+                                          BoxDecoration(
+                                            color:
+                                            Colors.black26,
+                                            border: Border.all(
+                                                color: Colors
+                                                    .white
+                                                    .withOpacity(
+                                                    0.3)),
+                                            borderRadius:
+                                            BorderRadius
+                                                .circular(
+                                                widget.size *
+                                                    25),
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: widget
+                                                    .size *
+                                                    15,
+
+                                                vertical: widget
+                                                    .size *
+                                                    5),
+                                            child: Text(
+                                              "Back",
+                                              style: TextStyle(
+                                                  color: Colors
+                                                      .white,fontSize: widget.size *14),
+                                            ),
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          Navigator.pop(
+                                              context);
+                                        },
+                                      ),
+                                      SizedBox(
+                                        width:
+                                        widget.size * 10,
+                                      ),
+                                      InkWell(
+                                        child: Container(
+                                          decoration:
+                                          BoxDecoration(
+                                            color: Colors.red,
+                                            border: Border.all(
+                                                color: Colors
+                                                    .black),
+                                            borderRadius:
+                                            BorderRadius
+                                                .circular(
+                                                widget.size *
+                                                    25),
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: widget
+                                                    .size *
+                                                    15,
+
+                                                vertical: widget
+                                                    .size *
+                                                    5),
+                                            child: Text(
+                                              "ADD + ",
+                                              style: TextStyle(
+                                                  color: Colors
+                                                      .white,fontSize: widget.size *14),
+                                            ),
+                                          ),
+                                        ),
+                                        onTap: () async {
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: false, // Prevents dismissing the dialog by tapping outside
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                content: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    CircularProgressIndicator(),
+                                                    SizedBox(height: 16),
+                                                    Text('Creating...'),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                          String reg = InputController.text;
+                                          for (int year = 1; year <= 4; year++) {
+                                            for (int sem = 1; sem <= 2; sem++) {
+
+                                              print("${reg.toLowerCase()} $year year $sem sem");
+                                              await FirebaseFirestore.instance
+                                                  .collection(widget.branch)
+                                                  .doc("regulation")
+                                                  .collection("regulationWithYears").doc("${reg.toLowerCase()} $year year $sem sem".substring(0, 10)).set(
+                                                  {
+                                                    "id":"${reg.toLowerCase()} $year year $sem sem".substring(0, 10),
+                                                    "syllabus":"",
+                                                    "modelPaper":"",
+                                                  }
+                                              );
+                                              await createRegulationSem(name: "${reg.toLowerCase()} $year year $sem sem", branch: widget.branch);
+                                            }
+                                          }
+                                          messageToOwner("Regulation is Created.\nBy '${fullUserId()}'\n   Regulation : $reg\n **${widget.branch}");
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      SizedBox(
+                                        width:
+                                        widget.size * 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: widget.size* 10,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+              ),
+              SpeedDialChild(
+                  child: Text("M.P",style: TextStyle(fontSize: Size* 14),),
+                  label: 'Model Paper',
+                  onTap: (){
+                    if(widget.reg.isNotEmpty&&widget.reg !="None")Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                timeTableSyllabusModalPaperCreator(
+                                  heading: widget.reg,
+                                  size: widget.size, mode: 'modalPaper', reg: widget.reg, branch: widget.branch,id: widget.reg,
+                                )));
+                    else{
+                      showToastText("Select Your Regulation");
+
+                    }
+                  }
+              ),
+              SpeedDialChild(
+                  child: Text("Sylla",style: TextStyle(fontSize: Size* 14),),
+                  label: 'Syllabus ',
+                  onTap: (){
+                    if(widget.reg.isNotEmpty&&widget.reg !="None")Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                timeTableSyllabusModalPaperCreator(
+                                  heading: widget.reg,
+
+                                  size: widget.size, mode: 'Syllabus', reg: widget.reg, branch: widget.branch,id: widget.reg,
+                                )));
+                    else{
+                      showToastText("Select Your Regulation");
+                    }
+                  }
+              ),
+              SpeedDialChild(
+                  child: Text("T.T",style: TextStyle(fontSize: Size* 18),),
+                  label: 'Time Table',
+                  onTap: (){
+                    if(widget.reg.isNotEmpty&&widget.reg !="None")Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                timeTableSyllabusModalPaperCreator(
+                                  size: widget.size, mode: 'Time Table', reg: widget.reg, branch: widget.branch,
+                                )));
+                    else{
+                    showToastText("Select Your Regulation");
+                    }
+                  }
+              ),SpeedDialChild(
+                  child: Text("F.N",style: TextStyle(fontSize: Size* 18),),
+                  label: 'Flash News',
+                  onTap: (){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                flashNewsCreator(
+                                  branch: widget.branch,
+                                  size: widget.size,
+                                )));
+                  }
+              ),
+            ],
+          )),
+        ),
       ),
     );
   }
 }
 
-Stream<List<UpdateConvertor>> readUpdate(String branch) =>
-    FirebaseFirestore.instance
-        .collection("update")
-        .orderBy("id", descending: false)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => UpdateConvertor.fromJson(doc.data()))
-        .toList());
+Stream<List<UpdateConvertor>> readUpdate(String branch) => FirebaseFirestore.instance
+    .collection("update")
+    .orderBy("id", descending: false)
+    .snapshots()
+    .map((snapshot) => snapshot.docs.map((doc) => UpdateConvertor.fromJson(doc.data())).toList());
 
 Future createHomeUpdate({
   required String id,
   required String heading,
   required String photoUrl,
+  required String creator,
   required link,
-  required String branch,
   required String description,
 }) async {
   final docflash = FirebaseFirestore.instance.collection("update").doc(id);
 
   final flash = UpdateConvertor(
-      id: id,
-      heading: heading,
-      branch: branch,
-      description: description,
-      photoUrl: photoUrl,
-      link: link);
+      id: id, heading: heading, description: description, photoUrl: photoUrl, link: link, creator: creator);
   final json = flash.toJson();
   await docflash.set(json);
 }
 
 class UpdateConvertor {
   String id;
-  final String heading, photoUrl, link, description, branch;
+  final String heading, photoUrl, link, description,creator;
   List<String> likedBy, isViewed;
 
   UpdateConvertor({
@@ -2650,7 +2176,7 @@ class UpdateConvertor {
     required this.heading,
     required this.photoUrl,
     required this.link,
-    required this.branch,
+    required this.creator,
     required this.description,
     List<String>? likedBy,
     List<String>? isViewed,
@@ -2658,90 +2184,64 @@ class UpdateConvertor {
         isViewed = isViewed ?? [];
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "heading": heading,
-    "image": photoUrl,
-    "link": link,
-    "description": description,
-    "branch": branch,
-  };
+        "id": id,
+        "heading": heading,
+        "image": photoUrl,
+        "link": link,
+        "description": description,
+        "creator": creator,
+      };
 
   static UpdateConvertor fromJson(Map<String, dynamic> json) => UpdateConvertor(
-    id: json['id'],
-    heading: json["heading"],
-    photoUrl: json["image"],
-    link: json["link"],
-    description: json["description"],
-    branch: json["branch"],
-    likedBy:
-    json["likedBy"] != null ? List<String>.from(json["likedBy"]) : [],
-    isViewed:
-    json["isViewed"] != null ? List<String>.from(json["isViewed"]) : [],
-  );
+        id: json['id'],
+        heading: json["heading"],
+    creator: json["creator"]??"",
+        photoUrl: json["image"],
+        link: json["link"],
+        description: json["description"],
+        likedBy: json["likedBy"] != null ? List<String>.from(json["likedBy"]) : [],
+        isViewed: json["isViewed"] != null ? List<String>.from(json["isViewed"]) : [],
+      );
 }
 
-Future createRegulationYear(
-    {required String name, required String branch}) async {
-  final docflash = FirebaseFirestore.instance
-      .collection(branch)
-      .doc("regulation")
-      .collection("regulationWithYears")
-      .doc(name);
+Future createRegulationSem({required String name, required String branch}) async {
+  final docflash =
+      FirebaseFirestore.instance.collection(branch).doc("regulation").collection("regulationWithSem").doc(name);
   final flash = RegulationConvertor(id: name);
   final json = flash.toJson();
   await docflash.set(json);
 }
 
-Future createRegulationSem(
-    {required String name, required String branch}) async {
-  final docflash = FirebaseFirestore.instance
-      .collection(branch)
-      .doc("regulation")
-      .collection("regulationWithSem")
-      .doc(name);
-  final flash = RegulationConvertor(id: name);
-  final json = flash.toJson();
-  await docflash.set(json);
-}
+Stream<List<syllabusConvertor>> readsyllabus({required String branch}) => FirebaseFirestore.instance
+    .collection(branch)
+    .doc("regulation")
+    .collection("regulationWithYears")
+    .orderBy("id", descending: true)
+    .snapshots()
+    .map((snapshot) => snapshot.docs.map((doc) => syllabusConvertor.fromJson(doc.data())).toList());
 
-Stream<List<syllabusConvertor>> readsyllabus({required String branch}) =>
-    FirebaseFirestore.instance
-        .collection(branch)
-        .doc("regulation")
-        .collection("regulationWithYears")
-        .orderBy("id", descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => syllabusConvertor.fromJson(doc.data()))
-        .toList());
-
-Stream<List<modelPaperConvertor>> readmodelPaper({required String branch}) =>
-    FirebaseFirestore.instance
-        .collection(branch)
-        .doc("regulation")
-        .collection("regulationWithYears")
-        .orderBy("id", descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => modelPaperConvertor.fromJson(doc.data()))
-        .toList());
+Stream<List<modelPaperConvertor>> readmodelPaper({required String branch}) => FirebaseFirestore.instance
+    .collection(branch)
+    .doc("regulation")
+    .collection("regulationWithYears")
+    .orderBy("id", descending: true)
+    .snapshots()
+    .map((snapshot) => snapshot.docs.map((doc) => modelPaperConvertor.fromJson(doc.data())).toList());
 
 class RegulationWithYearConvertor {
   String id;
   String modelPaper;
   String syllabus;
 
-  RegulationWithYearConvertor(
-      {this.id = "", required this.modelPaper, required this.syllabus});
+  RegulationWithYearConvertor({this.id = "", required this.modelPaper, required this.syllabus});
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "modelPaper": modelPaper,
-    "syllabus": syllabus,
-  };
+        "id": id,
+        "modelPaper": modelPaper,
+        "syllabus": syllabus,
+      };
 
-  static RegulationWithYearConvertor fromJson(Map<String, dynamic> json) =>
-      RegulationWithYearConvertor(
+  static RegulationWithYearConvertor fromJson(Map<String, dynamic> json) => RegulationWithYearConvertor(
         id: json['id'],
         modelPaper: json['modelPaper'],
         syllabus: json['syllabus'],
@@ -2755,8 +2255,7 @@ class RegulationConvertor {
 
   Map<String, dynamic> toJson() => {"id": id};
 
-  static RegulationConvertor fromJson(Map<String, dynamic> json) =>
-      RegulationConvertor(id: json['id']);
+  static RegulationConvertor fromJson(Map<String, dynamic> json) => RegulationConvertor(id: json['id']);
 }
 
 class syllabusConvertor {
@@ -2766,12 +2265,11 @@ class syllabusConvertor {
   syllabusConvertor({this.id = "", required this.syllabus});
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "syllabus": syllabus,
-  };
+        "id": id,
+        "syllabus": syllabus,
+      };
 
-  static syllabusConvertor fromJson(Map<String, dynamic> json) =>
-      syllabusConvertor(
+  static syllabusConvertor fromJson(Map<String, dynamic> json) => syllabusConvertor(
         id: json['id'],
         syllabus: json['syllabus'],
       );
@@ -2784,19 +2282,17 @@ class modelPaperConvertor {
   modelPaperConvertor({this.id = "", required this.modelPaper});
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "modelPaper": modelPaper,
-  };
+        "id": id,
+        "modelPaper": modelPaper,
+      };
 
-  static modelPaperConvertor fromJson(Map<String, dynamic> json) =>
-      modelPaperConvertor(
+  static modelPaperConvertor fromJson(Map<String, dynamic> json) => modelPaperConvertor(
         id: json['id'],
         modelPaper: json['modelPaper'],
       );
 }
 
-Stream<List<TimeTableConvertor>> readTimeTable(
-    {required String reg, required String branch}) =>
+Stream<List<TimeTableConvertor>> readTimeTable({required String reg, required String branch}) =>
     FirebaseFirestore.instance
         .collection(branch)
         .doc("regulation")
@@ -2805,15 +2301,10 @@ Stream<List<TimeTableConvertor>> readTimeTable(
         .collection("timeTables")
         .orderBy("heading", descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => TimeTableConvertor.fromJson(doc.data()))
-        .toList());
+        .map((snapshot) => snapshot.docs.map((doc) => TimeTableConvertor.fromJson(doc.data())).toList());
 
 Future createTimeTable(
-    {required String branch,
-      required String heading,
-      required String photoUrl,
-      required String reg}) async {
+    {required String branch, required String heading, required String photoUrl, required String reg}) async {
   String id = getID();
   final docflash = FirebaseFirestore.instance
       .collection(branch)
@@ -2822,8 +2313,7 @@ Future createTimeTable(
       .doc(reg)
       .collection("timeTables")
       .doc(id);
-  final flash =
-  TimeTableConvertor(id: id, heading: heading, photoUrl: photoUrl);
+  final flash = TimeTableConvertor(id: id, heading: heading, photoUrl: photoUrl);
   final json = flash.toJson();
   await docflash.set(json);
 }
@@ -2832,38 +2322,29 @@ class TimeTableConvertor {
   String id;
   final String heading, photoUrl;
 
-  TimeTableConvertor(
-      {this.id = "", required this.heading, required this.photoUrl});
+  TimeTableConvertor({this.id = "", required this.heading, required this.photoUrl});
 
-  Map<String, dynamic> toJson() =>
-      {"id": id, "heading": heading, "photoUrl": photoUrl};
+  Map<String, dynamic> toJson() => {"id": id, "heading": heading, "image": photoUrl};
 
   static TimeTableConvertor fromJson(Map<String, dynamic> json) =>
-      TimeTableConvertor(
-          id: json['id'], heading: json["heading"], photoUrl: json['photoUrl']);
+      TimeTableConvertor(id: json['id'], heading: json["heading"], photoUrl: json['image']);
 }
 
-Stream<List<BranchNewConvertor>> readBranchNew(String branch) =>
-    FirebaseFirestore.instance
-        .collection(branch)
-        .doc("${branch}News")
-        .collection("${branch}News")
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => BranchNewConvertor.fromJson(doc.data()))
-        .toList());
+Stream<List<BranchNewConvertor>> readBranchNew(String branch) => FirebaseFirestore.instance
+    .collection(branch)
+    .doc("${branch}News")
+    .collection("${branch}News")
+    .snapshots()
+    .map((snapshot) => snapshot.docs.map((doc) => BranchNewConvertor.fromJson(doc.data())).toList());
 
 Future createBranchNew(
     {required String id,
-      required String heading,
-      required String description,
-      required String branch,
-      required String photoUrl}) async {
-  final docflash = FirebaseFirestore.instance
-      .collection(branch)
-      .doc("${branch}News")
-      .collection("${branch}News")
-      .doc(id);
+    required String heading,
+    required String description,
+    required String branch,
+    required String photoUrl}) async {
+  final docflash =
+      FirebaseFirestore.instance.collection(branch).doc("${branch}News").collection("${branch}News").doc(id);
   final flash = BranchNewConvertor(
     id: id,
     heading: heading,
@@ -2890,71 +2371,38 @@ class BranchNewConvertor {
         isViewed = isViewed ?? [];
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "heading": heading,
-    "image": photoUrl,
-    "description": description,
-  };
+        "id": id,
+        "heading": heading,
+        "image": photoUrl,
+        "description": description,
+      };
 
-  static BranchNewConvertor fromJson(Map<String, dynamic> json) =>
-      BranchNewConvertor(
+  static BranchNewConvertor fromJson(Map<String, dynamic> json) => BranchNewConvertor(
         id: json['id'],
         heading: json["heading"],
         photoUrl: json["image"],
         description: json["description"],
-        likedBy:
-        json["likedBy"] != null ? List<String>.from(json["likedBy"]) : [],
-        isViewed:
-        json["isViewed"] != null ? List<String>.from(json["isViewed"]) : [],
+        likedBy: json["likedBy"] != null ? List<String>.from(json["likedBy"]) : [],
+        isViewed: json["isViewed"] != null ? List<String>.from(json["isViewed"]) : [],
       );
 }
 
-Stream<List<FlashNewsConvertor>> readSRKRFlashNews() =>
-    FirebaseFirestore.instance
-        .collection("srkrPage")
-        .doc("flashNews")
-        .collection("flashNews")
-        .orderBy("heading", descending: false)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => FlashNewsConvertor.fromJson(doc.data()))
-        .toList());
+Stream<List<FlashNewsConvertor>> readSRKRFlashNews() => FirebaseFirestore.instance
+    .collection("srkrPage")
+    .doc("flashNews")
+    .collection("flashNews")
+    .orderBy("heading", descending: false)
+    .snapshots()
+    .map((snapshot) => snapshot.docs.map((doc) => FlashNewsConvertor.fromJson(doc.data())).toList());
 
 Future createSubjects(
     {required String heading,
-      required String branch,
-      required String description,
-      required String PhotoUrl,
-      required String regulation}) async {
-  final docflash = FirebaseFirestore.instance
-      .collection(branch)
-      .doc("Subjects")
-      .collection("Subjects")
-      .doc(getID());
-  final flash = FlashConvertor(
-      id: getID(),
-      heading: heading,
-      PhotoUrl: PhotoUrl,
-      description: description,
-      regulation: regulation);
-  final json = flash.toJson();
-  await docflash.set(json);
-}
-
-Future createFlashNews({
-  required String heading,
-  required String link,
-}) async {
-  final docflash = FirebaseFirestore.instance
-      .collection("srkrPage")
-      .doc("flashNews")
-      .collection("flashNews")
-      .doc(getID());
-  final flash = FlashNewsConvertor(
-    id: getID(),
-    heading: heading,
-    Url: link,
-  );
+    required String branch,
+    required String description,
+    required String creator,
+    required String regulation}) async {
+  final docflash = FirebaseFirestore.instance.collection(branch).doc("Subjects").collection("Subjects").doc(getID());
+  final flash = subjectsConvertor(id: getID(), heading: heading, description: description, regulation: regulation, creator: creator);
   final json = flash.toJson();
   await docflash.set(json);
 }
@@ -2970,136 +2418,75 @@ class FlashNewsConvertor {
   });
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "heading": heading,
-    "link": Url,
-  };
+        "id": id,
+        "heading": heading,
+        "link": Url,
+      };
 
-  static FlashNewsConvertor fromJson(Map<String, dynamic> json) =>
-      FlashNewsConvertor(
+  static FlashNewsConvertor fromJson(Map<String, dynamic> json) => FlashNewsConvertor(
         id: json['id'],
         heading: json["heading"],
         Url: json["link"],
       );
 }
 
-Stream<List<FlashConvertor>> readFlashNews(String branch) =>
-    FirebaseFirestore.instance
-        .collection(branch)
-        .doc("Subjects")
-        .collection("Subjects")
-        .orderBy("heading", descending: false)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => FlashConvertor.fromJson(doc.data()))
-        .toList());
+Stream<List<subjectsConvertor>> readFlashNews(String branch) => FirebaseFirestore.instance
+    .collection(branch)
+    .doc("Subjects")
+    .collection("Subjects")
+    .orderBy("heading", descending: false)
+    .snapshots()
+    .map((snapshot) => snapshot.docs.map((doc) => subjectsConvertor.fromJson(doc.data())).toList());
 
-class FlashConvertor {
+class subjectsConvertor {
   String id;
-  final String heading, PhotoUrl, description, regulation;
+  final String heading, description, regulation,creator;
 
-  FlashConvertor(
-      {this.id = "",
-        required this.regulation,
-        required this.heading,
-        required this.PhotoUrl,
-        required this.description});
+  subjectsConvertor({this.id = "", required this.regulation, required this.heading, required this.description,required this.creator});
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "heading": heading,
-    "description": description,
-    "image": PhotoUrl,
-    "regulation": regulation
-  };
+  Map<String, dynamic> toJson() => {"id": id, "heading": heading, "description": description, "regulation": regulation,"creator":creator};
 
-  static FlashConvertor fromJson(Map<String, dynamic> json) => FlashConvertor(
-      id: json['id'],
-      regulation: json["regulation"],
-      heading: json["heading"],
-      PhotoUrl: json["image"],
-      description: json["description"]);
+  static subjectsConvertor fromJson(Map<String, dynamic> json) => subjectsConvertor(
+      id: json['id'], regulation: json["regulation"]??"", heading: json["heading"]??"", description: json["description"]??"", creator: json["creator"]??"");
 }
 
-Stream<List<LabSubjectsConvertor>> readLabSubjects(String branch) =>
-    FirebaseFirestore.instance
-        .collection(branch)
-        .doc("LabSubjects")
-        .collection("LabSubjects")
-        .orderBy("heading", descending: false)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => LabSubjectsConvertor.fromJson(doc.data()))
-        .toList());
+Stream<List<subjectsConvertor>> readLabSubjects(String branch) => FirebaseFirestore.instance
+    .collection(branch)
+    .doc("LabSubjects")
+    .collection("LabSubjects")
+    .orderBy("heading", descending: false)
+    .snapshots()
+    .map((snapshot) => snapshot.docs.map((doc) => subjectsConvertor.fromJson(doc.data())).toList());
 
 Future createLabSubjects(
     {required String branch,
-      required String heading,
-      required String description,
-      required String PhotoUrl,
-      required String regulation}) async {
-  final docflash = FirebaseFirestore.instance
-      .collection(branch)
-      .doc("LabSubjects")
-      .collection("LabSubjects")
-      .doc(getID());
-  final flash = LabSubjectsConvertor(
-      id: getID(),
-      heading: heading,
-      description: description,
-      regulation: regulation);
+    required String heading,
+    required String description,
+    required String creator,
+    required String regulation}) async {
+  final docflash =
+      FirebaseFirestore.instance.collection(branch).doc("LabSubjects").collection("LabSubjects").doc(getID());
+  final flash = subjectsConvertor(id: getID(), heading: heading, description: description, regulation: regulation, creator: creator);
   final json = flash.toJson();
   await docflash.set(json);
 }
 
-class LabSubjectsConvertor {
-  String id;
-  final String heading, description, regulation;
-
-  LabSubjectsConvertor(
-      {this.id = "",
-        required this.heading,
-        required this.description,
-        required this.regulation});
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "heading": heading,
-    "description": description,
-    "regulation": regulation,
-  };
-
-  static LabSubjectsConvertor fromJson(Map<String, dynamic> json) =>
-      LabSubjectsConvertor(
-          regulation: json["regulation"],
-          id: json['id'],
-          heading: json["heading"],
-          description: json["description"]);
-}
-
-Stream<List<BooksConvertor>> ReadBook(String branch) =>
-    FirebaseFirestore.instance
-        .collection(branch)
-        .doc("Books")
-        .collection("CoreBooks")
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => BooksConvertor.fromJson(doc.data()))
-        .toList());
+Stream<List<BooksConvertor>> ReadBook(String branch) => FirebaseFirestore.instance
+    .collection(branch)
+    .doc("Books")
+    .collection("CoreBooks")
+    .snapshots()
+    .map((snapshot) => snapshot.docs.map((doc) => BooksConvertor.fromJson(doc.data())).toList());
 
 Future createBook(
     {required String heading,
-      required String description,
-      required String link,
-      required String branch,
-      required String photoUrl,
-      required String edition,
-      required String Author}) async {
-  final docBook = FirebaseFirestore.instance
-      .collection(branch)
-      .doc("Books")
-      .collection("CoreBooks")
-      .doc(getID());
+    required String description,
+    required String link,
+    required String branch,
+    required String photoUrl,
+    required String edition,
+    required String Author}) async {
+  final docBook = FirebaseFirestore.instance.collection(branch).doc("Books").collection("CoreBooks").doc(getID());
   final Book = BooksConvertor(
     id: getID(),
     heading: heading,
@@ -3119,35 +2506,35 @@ class BooksConvertor {
 
   BooksConvertor(
       {this.id = "",
-        required this.heading,
-        required this.link,
-        required this.description,
-        required this.photoUrl,
-        required this.edition,
-        required this.Author,
-        this.size = ""});
+      required this.heading,
+      required this.link,
+      required this.description,
+      required this.photoUrl,
+      required this.edition,
+      required this.Author,
+      this.size = ""});
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "heading": heading,
-    "link": link,
-    "description": description,
-    "image": photoUrl,
-    "author": Author,
-    "size": Author,
-    "edition": edition,
-  };
+        "id": id,
+        "heading": heading,
+        "link": link,
+        "description": description,
+        "image": photoUrl,
+        "author": Author,
+        "size": Author,
+        "edition": edition,
+      };
 
   static BooksConvertor fromJson(Map<String, dynamic> json) => BooksConvertor(
-    id: json['id'],
-    heading: json["heading"],
-    link: json["link"],
-    description: json["description"],
-    photoUrl: json["image"],
-    Author: json["author"],
-    edition: json["edition"],
-    size: json["size"],
-  );
+        id: json['id'],
+        heading: json["heading"],
+        link: json["link"],
+        description: json["description"],
+        photoUrl: json["image"],
+        Author: json["author"],
+        edition: json["edition"],
+        size: json["size"],
+      );
 }
 
 class ImageZoom extends StatefulWidget {
@@ -3176,15 +2563,15 @@ class _ImageZoomState extends State<ImageZoom> {
             children: [
               widget.url.isEmpty
                   ? PhotoView(
-                imageProvider: FileImage(widget.file),
-              )
+                      imageProvider: FileImage(widget.file),
+                    )
                   : PhotoView(imageProvider: NetworkImage(widget.url)),
               Align(
                 alignment: Alignment.topLeft,
                 child: backButton(
                     size: widget.size,
                     child: SizedBox(
-                      width: 45,
+                      width: widget.size*45,
                     )),
               )
             ],

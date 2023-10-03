@@ -19,42 +19,45 @@ Stream<List<FavouriteSubjectsConvertor>> readFavouriteSubjects() =>
             .toList());
 
 Future FavouriteSubjects(
-    {
-      required SubjectId,
+    {required id,
+      required regulation,
     required name,
     required description,
+    required creator,
     required branch
     }) async {
   final docflash = FirebaseFirestore.instance
       .collection("user")
       .doc(FirebaseAuth.instance.currentUser!.email!)
       .collection("FavouriteSubject")
-      .doc(SubjectId);
+      .doc(id);
   final flash = FavouriteSubjectsConvertor(
-      id: SubjectId,
-      subjectId: SubjectId,
+      id: id,
+    regulation: regulation,
       name: name,
       description: description,
-      branch: branch,);
+      branch: branch, creator: creator,);
   final json = flash.toJson();
   await docflash.set(json);
 }
 
 class FavouriteSubjectsConvertor {
   String id;
-  final String subjectId, name, description, branch;
+  final String regulation, name, description, branch,creator;
 
   FavouriteSubjectsConvertor(
       {this.id = "",
-      required this.subjectId,
+      required this.regulation,
+      required this.creator,
       required this.name,
       required this.description,
       required this.branch});
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "subjectId": subjectId,
+        "regulation": regulation,
         "description": description,
+        "creator": creator,
         "name": name,
         "branch": branch
       };
@@ -62,13 +65,14 @@ class FavouriteSubjectsConvertor {
   static FavouriteSubjectsConvertor fromJson(Map<String, dynamic> json) =>
       FavouriteSubjectsConvertor(
           id: json['id'],
-          subjectId: json["subjectId"],
-          branch: json['branch'],
-          name: json["name"],
-          description: json["description"]);
+          regulation: json["regulation"]??"",
+          creator: json["creator"]??"",
+          branch: json['branch']??"",
+          name: json["name"]??"",
+          description: json["description"]??"");
 }
 
-Stream<List<FavouriteLabSubjectsConvertor>> readFavouriteLabSubjects() =>
+Stream<List<FavouriteSubjectsConvertor>> readFavouriteLabSubjects() =>
     FirebaseFirestore.instance
         .collection('user')
         .doc(FirebaseAuth.instance.currentUser!.email!)
@@ -76,55 +80,29 @@ Stream<List<FavouriteLabSubjectsConvertor>> readFavouriteLabSubjects() =>
         .orderBy("name", descending: false)
         .snapshots()
         .map((snapshot) => snapshot.docs
-            .map((doc) => FavouriteLabSubjectsConvertor.fromJson(doc.data()))
+            .map((doc) => FavouriteSubjectsConvertor.fromJson(doc.data()))
             .toList());
 
 Future FavouriteLabSubjectsSubjects(
-    {required SubjectId,
+    {required id,
+      required regulation,
     required name,
+    required creator,
     required description,
     required branch}) async {
   final docflash = FirebaseFirestore.instance
       .collection("user")
       .doc(FirebaseAuth.instance.currentUser!.email!)
       .collection("FavouriteLabSubjects")
-      .doc(SubjectId);
-  final flash = FavouriteLabSubjectsConvertor(
-      id: SubjectId,
-      subjectId: SubjectId,
+      .doc(id);
+  final flash = FavouriteSubjectsConvertor(
+      id: id,
+    regulation: regulation,
       name: name,
       description: description,
-      branch: branch,);
+      branch: branch, creator: creator,);
   final json = flash.toJson();
   await docflash.set(json);
-}
-
-class FavouriteLabSubjectsConvertor {
-  String id;
-  final String subjectId, name, description, branch;
-
-  FavouriteLabSubjectsConvertor(
-      {this.id = "",
-      required this.subjectId,
-      required this.name,
-      required this.description,
-      required this.branch});
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "subjectId": subjectId,
-        "description": description,
-        "name": name,
-        "branch": branch
-      };
-
-  static FavouriteLabSubjectsConvertor fromJson(Map<String, dynamic> json) =>
-      FavouriteLabSubjectsConvertor(
-          id: json['id'],
-          subjectId: json["subjectId"],
-          branch: json['branch'],
-          name: json["name"],
-          description: json["description"]);
 }
 
 
