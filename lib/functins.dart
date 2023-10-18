@@ -108,32 +108,32 @@ class _backButtonState extends State<backButton> {
   Widget build(BuildContext context) {
     return  Padding(
       padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          InkWell(
-            child: Padding(
+      child: InkWell(
+        onTap: (){
+          Navigator.pop(context);
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
               padding:  EdgeInsets.only(left:widget.size * 10,right: widget.size * 10),
-              child: Icon(Icons.arrow_back,color: widget.color,size:widget.size *  30,),
+              child: Icon(Icons.arrow_back,color: widget.color,size:widget.size *  20,),
             ),
-            onTap: (){
-              Navigator.pop(context);
-            },
-          ),
-         if(widget.text.isNotEmpty) Expanded(
-           child: Text(
-             widget.text,
-             style: TextStyle(
-                 color: Colors.white,
-                 fontSize: widget.size * 30,
-                 fontWeight: FontWeight.w600),
-             maxLines: 1,
-             overflow: TextOverflow.ellipsis,
+           if(widget.text.isNotEmpty) Expanded(
+             child: Text(
+               widget.text,
+               style: TextStyle(
+                   color: Colors.white,
+                   fontSize: widget.size * 20,
+                   fontWeight: FontWeight.w600),
+               maxLines: 1,
+               overflow: TextOverflow.ellipsis,
+             ),
            ),
-         ),
-          widget.child
-        ],
+            widget.child
+          ],
+        ),
       ),
     );
   }
@@ -166,8 +166,8 @@ class StyledTextWidget extends StatelessWidget {
               child: InkWell(
                 child: Text(
                   "${word.substring(0,35)}.... ",
-                  style: TextStyle(color: Colors.blueAccent,
-                      fontSize: fontSize-2,fontWeight: fontWeight),
+                  style: TextStyle(color: Colors.lightBlueAccent,
+                      fontSize: fontSize),
                 ),
                 onTap: () {
                   ExternalLaunchUrl(word);
@@ -213,7 +213,6 @@ class StyledTextWidget extends StatelessWidget {
           style: TextStyle(
 
             fontSize: fontSize, color: color,
-            fontWeight: FontWeight.bold,
           ),
         ));
 
@@ -228,7 +227,7 @@ class StyledTextWidget extends StatelessWidget {
           text: TextSpan(
               children: spans,
               style: TextStyle(
-                  fontSize: fontSize, color: color, fontWeight: fontWeight)),
+                  fontSize: fontSize, color: color)),
         ),
       ],
     );

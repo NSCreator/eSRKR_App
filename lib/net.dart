@@ -520,12 +520,12 @@ class _ImageScreenState extends State<ImageScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:  EdgeInsets.all(widget.size *20.0),
+      padding:  EdgeInsets.all(widget.size *15.0),
       child: Container(
         decoration: BoxDecoration(
             color: Colors.black,
-            borderRadius: BorderRadius.circular(widget.size *15),
-            border: Border.all(color: Colors.white30)),
+            borderRadius: BorderRadius.circular(widget.size *10),
+            border: Border.all(color: Colors.white54)),
         child: Padding(
           padding:  EdgeInsets.symmetric(vertical:widget.size * 5, horizontal: widget.size *10),
           child: Row(
@@ -537,12 +537,8 @@ class _ImageScreenState extends State<ImageScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Support society => ",
+                    "Support Us => ",
                     style: TextStyle(color: Colors.white, fontSize: widget.size *20),
-                  ),
-                  Text(
-                    "  for a small change",
-                    style: TextStyle(color: Colors.white54, fontSize: widget.size *15),
                   ),
                 ],
               ),
@@ -580,8 +576,8 @@ class _ImageScreenState extends State<ImageScreen> {
                         borderRadius: BorderRadius.circular(widget.size *10)
                     ),
                     child: Padding(
-                      padding:  EdgeInsets.symmetric(vertical: widget.size *5,horizontal: widget.size *10),
-                      child: Text('Help',style: TextStyle(color: Colors.black,fontSize: widget.size *20,fontWeight: FontWeight.w700),),
+                      padding:  EdgeInsets.symmetric(vertical: widget.size *3,horizontal: widget.size *10),
+                      child: Text('Help',style: TextStyle(color: Colors.black,fontSize: widget.size *20,fontWeight: FontWeight.w500),),
                     )),
               )
                   : Text(

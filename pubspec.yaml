@@ -36,6 +36,8 @@ dependencies:
   visibility_detector: ^0.3.3
   objectbox_flutter_libs: ^2.3.0
   flutter_speed_dial: ^7.0.0
+  youtube_player_flutter: ^8.1.2
+  youtube: ^1.0.1
 
 
 dev_dependencies:

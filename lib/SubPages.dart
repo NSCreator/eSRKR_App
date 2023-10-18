@@ -1,6 +1,7 @@
 // ignore_for_file: camel_case_types, non_constant_identifier_names, must_be_immutable
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -17,6 +18,352 @@ import 'package:http/http.dart' as http;
 
 import 'main.dart';
 import 'notification.dart';
+class favorites extends StatefulWidget {
+  double size;
+   favorites({required this.size});
+
+  @override
+  State<favorites> createState() => _favoritesState();
+}
+
+class _favoritesState extends State<favorites> {
+  @override
+  Widget build(BuildContext context) {
+    double Size = size(context);
+
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              backButton(size: Size,text: "Favorites", child: SizedBox()),
+              StreamBuilder<List<FavouriteSubjectsConvertor>>(
+                stream: readFavouriteSubjects(),
+                builder: (context, snapshot1) {
+                  final favourites1 = snapshot1.data;
+
+                  return StreamBuilder<
+                      List<FavouriteSubjectsConvertor>>(
+                    stream: readFavouriteLabSubjects(),
+                    builder: (context, snapshot2) {
+                      final favourites2 = snapshot2.data;
+
+                      if (snapshot1.connectionState ==
+                          ConnectionState.waiting ||
+                          snapshot2.connectionState ==
+                              ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 0.3,
+                            color: Colors.cyan,
+                          ),
+                        );
+                      } else if (snapshot1.hasError ||
+                          snapshot2.hasError) {
+                        return Center(child: Text("Error"));
+                      } else if ((favourites1 != null &&
+                          favourites1.isNotEmpty) ||
+                          (favourites2 != null &&
+                              favourites2.isNotEmpty)) {
+                        return Column(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                          children: [
+                            if (favourites1 != null &&
+                                favourites1.isNotEmpty)
+                              ListView.separated(
+                                  itemCount: favourites1.length,
+                                  shrinkWrap: true,
+                                  itemBuilder:
+                                      (context, int index) {
+                                    final Favourite =
+                                    favourites1[index];
+                                    return InkWell(
+                                      child: Container(
+                                        child:Column(
+                                          children: [
+                                            Text(Favourite.name.split(";").first,style: TextStyle(color: Colors.white),)
+                                          ],
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    subjectUnitsData(
+                                                      creator:
+                                                      Favourite
+                                                          .creator,
+                                                      reg: Favourite
+                                                          .regulation,
+                                                      size: widget
+                                                          .size,
+                                                      branch:
+                                                      Favourite
+                                                          .branch,
+                                                      ID: Favourite
+                                                          .id,
+                                                      mode:
+                                                      "Subjects",
+                                                      name:
+                                                      Favourite
+                                                          .name,
+                                                      description:
+                                                      Favourite
+                                                          .description,
+                                                    )));
+                                      },
+                                    );
+                                  },
+                                  separatorBuilder:
+                                      (context, index) => SizedBox(
+                                    height: widget.size * 6,
+                                  )),
+                            if (favourites2 != null &&
+                                favourites2.isNotEmpty)
+                              ListView.separated(
+                                  itemCount: favourites2.length,
+                                  shrinkWrap: true,
+                                  itemBuilder:
+                                      (context, int index) {
+                                    final Favourite =
+                                    favourites2[index];
+                                    return InkWell(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: index == 0
+                                                ? widget.size * 20
+                                                : 0),
+                                        child: Stack(
+                                          children: [
+                                            Container(
+                                              margin:
+                                              EdgeInsets.only(
+                                                  top: Size *
+                                                      10.0,
+                                                  right:
+                                                  Size * 9),
+                                              decoration: BoxDecoration(
+                                                  color: Colors
+                                                      .white12,
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(
+                                                          widget.size *
+                                                              20))),
+                                              child: Padding(
+                                                padding: EdgeInsets
+                                                    .symmetric(
+                                                    vertical:
+                                                    Size *
+                                                        10,
+                                                    horizontal:
+                                                    Size *
+                                                        25),
+                                                child: Text(
+                                                  Favourite.name
+                                                      .split(";")
+                                                      .first,
+                                                  style: TextStyle(
+                                                    fontSize: widget
+                                                        .size *
+                                                        22.0,
+                                                    color: Colors
+                                                        .white,
+                                                    fontWeight:
+                                                    FontWeight
+                                                        .w700,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Positioned(
+                                              top: 0,
+                                              right: 0,
+                                              child: InkWell(
+                                                child: Icon(
+                                                  Icons
+                                                      .highlight_remove_outlined,
+                                                  color:
+                                                  Colors.orange,
+                                                  size:
+                                                  widget.size *
+                                                      25,
+                                                ),
+                                                onTap: () {
+                                                  showDialog(
+                                                    context:
+                                                    context,
+                                                    builder:
+                                                        (context) {
+                                                      return Dialog(
+                                                        backgroundColor:
+                                                        Colors
+                                                            .transparent,
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                            BorderRadius.circular(widget.size *
+                                                                20)),
+                                                        elevation:
+                                                        16,
+                                                        child:
+                                                        Container(
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            border: Border.all(
+                                                                color:
+                                                                Colors.white54),
+                                                            borderRadius:
+                                                            BorderRadius.circular(widget.size *
+                                                                20),
+                                                          ),
+                                                          child:
+                                                          ListView(
+                                                            shrinkWrap:
+                                                            true,
+                                                            children: <Widget>[
+                                                              SizedBox(
+                                                                  height: widget.size * 10),
+                                                              SizedBox(
+                                                                  height: widget.size * 5),
+                                                              Padding(
+                                                                padding:
+                                                                EdgeInsets.only(left: widget.size * 15),
+                                                                child:
+                                                                Text(
+                                                                  "Do you want Remove from Favourites",
+                                                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: widget.size * 20),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height:
+                                                                widget.size * 5,
+                                                              ),
+                                                              Center(
+                                                                child:
+                                                                Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                  children: [
+                                                                    Spacer(),
+                                                                    InkWell(
+                                                                      child: Container(
+                                                                        decoration: BoxDecoration(
+                                                                          color: Colors.white24,
+                                                                          border: Border.all(color: Colors.white10),
+                                                                          borderRadius: BorderRadius.circular(widget.size * 25),
+                                                                        ),
+                                                                        child: Padding(
+                                                                          padding: EdgeInsets.only(left: widget.size * 15, right: widget.size * 15, top: widget.size * 5, bottom: widget.size * 5),
+                                                                          child: Text(
+                                                                            "Back",
+                                                                            style: TextStyle(
+                                                                              color: Colors.white,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      onTap: () {
+                                                                        Navigator.pop(context);
+                                                                      },
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: widget.size * 10,
+                                                                    ),
+                                                                    InkWell(
+                                                                      child: Container(
+                                                                        decoration: BoxDecoration(
+                                                                          color: Colors.red,
+                                                                          border: Border.all(color: Colors.black),
+                                                                          borderRadius: BorderRadius.circular(widget.size * 25),
+                                                                        ),
+                                                                        child: Padding(
+                                                                          padding: EdgeInsets.only(left: widget.size * 15, right: widget.size * 15, top: widget.size * 5, bottom: widget.size * 5),
+                                                                          child: Text(
+                                                                            "Delete",
+                                                                            style: TextStyle(color: Colors.white),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      onTap: () {
+                                                                        FirebaseFirestore.instance.collection('user').doc(FirebaseAuth.instance.currentUser!.email!).collection("FavouriteLabSubjects").doc(Favourite.id).delete();
+                                                                        Navigator.pop(context);
+                                                                        showToastText("${Favourite.name} as been removed");
+                                                                      },
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: widget.size * 20,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height:
+                                                                widget.size * 10,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    subjectUnitsData(
+                                                      reg: Favourite
+                                                          .name,
+                                                      size: widget
+                                                          .size,
+                                                      branch:
+                                                      Favourite
+                                                          .branch,
+                                                      ID: Favourite
+                                                          .id,
+                                                      mode:
+                                                      "LabSubjects",
+                                                      name:
+                                                      Favourite
+                                                          .name,
+                                                      description:
+                                                      Favourite
+                                                          .description,
+                                                      creator:
+                                                      Favourite
+                                                          .creator,
+                                                    )));
+                                      },
+                                    );
+                                  },
+                                  separatorBuilder:
+                                      (context, index) => SizedBox(
+                                    width: widget.size * 6,
+                                  )),
+                          ],
+                        );
+                      } else {
+                        return Container(); // No data, don't show anything
+                      }
+                    },
+                  );
+                },
+              ),
+
+          ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class TimeTables extends StatefulWidget {
   String branch;
@@ -919,211 +1266,6 @@ class _ModalPapersPageState extends State<ModalPapersPage> {
   }
 }
 
-class NewsPage extends StatefulWidget {
-  final String branch;
-  final double size;
-
-  const NewsPage({
-    Key? key,
-    required this.branch,
-    required this.size,
-  }) : super(key: key);
-
-  @override
-  State<NewsPage> createState() => _NewsPageState();
-}
-
-class _NewsPageState extends State<NewsPage> {
-  final FirebaseStorage storage = FirebaseStorage.instance;
-  String folderPath = "";
-
-  Future<void> getPath() async {
-    final directory = await getApplicationDocumentsDirectory();
-    setState(() {
-      folderPath = '${directory.path}';
-    });
-  }
-
-  @override
-  void initState() {
-    getPath();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          StreamBuilder<List<BranchNewConvertor>>(
-              stream: readBranchNew(widget.branch),
-              builder: (context, snapshot) {
-                final BranchNews = snapshot.data;
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      strokeWidth: 0.3,
-                      color: Colors.cyan,
-                    ));
-                  default:
-                    if (snapshot.hasError) {
-                      return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
-                    } else {
-                      return ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: BranchNews!.length,
-                        itemBuilder: (context, int index) {
-                          final BranchNew = BranchNews[index];
-                          if (BranchNew.photoUrl.isNotEmpty) {
-                            final Uri uri = Uri.parse(BranchNew.photoUrl);
-                            final String fileName = uri.pathSegments.last;
-                            var name = fileName.split("/").last;
-                            file = File("${folderPath}/news/$name");
-                          }
-                          return InkWell(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: widget.size * 5),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: widget.size * 25,
-                                        width: widget.size * 25,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(widget.size * 15),
-                                          image: DecorationImage(image: FileImage(file), fit: BoxFit.cover),
-                                        ),
-                                      ),
-                                      Text(
-                                          BranchNew.heading.isNotEmpty
-                                              ? " ${BranchNew.heading}"
-                                              : " ${widget.branch} (SRKR)",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: widget.size * 16,
-                                              fontWeight: FontWeight.w600)),
-                                      Spacer(),
-                                      if (isGmail()||isOwner())
-                                        PopupMenuButton(
-                                          icon: Icon(
-                                            Icons.more_vert,
-                                            color: Colors.white,
-                                            size: widget.size * 16,
-                                          ),
-                                          // Callback that sets the selected popup menu item.
-                                          onSelected: (item) async {
-                                            if (item == "edit") {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) => NewsCreator(
-                                                          branch: widget.branch,
-                                                          NewsId: BranchNew.id,
-                                                          heading: BranchNew.heading,
-                                                          description: BranchNew.description,
-                                                          photoUrl: BranchNew.photoUrl)));
-                                            } else if (item == "delete") {
-                                              if (BranchNew.photoUrl.isNotEmpty) {
-                                                final Uri uri = Uri.parse(BranchNew.photoUrl);
-                                                final String fileName = uri.pathSegments.last;
-                                                final Reference ref = storage.ref().child("/${fileName}");
-                                                try {
-                                                  await ref.delete();
-                                                  showToastText('Image deleted successfully');
-                                                } catch (e) {
-                                                  showToastText('Error deleting image: $e');
-                                                }
-                                              }
-                                              messageToOwner(
-                                                  "Branch News Updated.\nBy : '${fullUserId()}' \n    Heading : ${BranchNew.heading}\n    Description : ${BranchNew.description}\n    Image : ${BranchNew.photoUrl}\n **${widget.branch}");
-
-                                              FirebaseFirestore.instance
-                                                  .collection(widget.branch)
-                                                  .doc("${widget.branch}News")
-                                                  .collection("${widget.branch}News")
-                                                  .doc(BranchNew.id)
-                                                  .delete();
-                                            }
-                                          },
-                                          itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                                            const PopupMenuItem(
-                                              value: "edit",
-                                              child: Text('Edit'),
-                                            ),
-                                            const PopupMenuItem(
-                                              value: "delete",
-                                              child: Text('Delete'),
-                                            ),
-                                          ],
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                                if (BranchNew.photoUrl.isNotEmpty)
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: widget.size * 5.0),
-                                    child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(widget.size * 15), child: Image.file(file)),
-                                  ),
-                                if (BranchNew.description.isNotEmpty)
-                                  Padding(
-                                    padding: EdgeInsets.all(
-                                      widget.size * 8,
-                                    ),
-                                    child: StyledTextWidget(
-                                      text: BranchNew.description,
-                                      fontSize: widget.size * 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: widget.size * 8,
-                                    bottom: widget.size * 8,
-                                  ),
-                                  child: Text(
-                                    BranchNew.id.split("-").first.length < 12
-                                        ? "~ ${BranchNew.id.split('-').first}"
-                                        : "No Date",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: widget.size * 10, fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: widget.size * 25,
-                                )
-                              ],
-                            ),
-                            onTap: () async {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ImageZoom(
-                                            size: widget.size,
-                                            url: "",
-                                            file: file,
-                                          )));
-                            },
-                          );
-                        },
-                      );
-                    }
-                }
-              }),
-          SizedBox(
-            height: widget.size * 150,
-          )
-        ],
-      ),
-    );
-  }
-}
 
 class Subjects extends StatefulWidget {
   final String branch;
@@ -1155,56 +1297,84 @@ class _SubjectsState extends State<Subjects> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            backButton(
-                size: widget.size,
-                text: "Subjects",
-                child: isOwner()||isGmail()
-                    ? Row(
-                        children: [
-                          PopupMenuButton(
-                            icon: Icon(
-                              Icons.filter_list,
-                              color: Colors.white,
-                              size: widget.size * 30,
-                            ),
-                            // Callback that sets the selected popup menu item.
-                            onSelected: (item) {
-                              setState(() {
-                                subjectFilter = item as String;
-                              });
-                            },
-                            itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                              PopupMenuItem(
-                                value: "None",
-                                child: Text('None'),
-                              ),
-                              PopupMenuItem(
-                                value: "Regulation",
-                                child: Text('Regulation'),
-                              ),
-                            ],
-                          ),
-                          InkWell(
-                            child: Icon(
-                              Icons.add,
-                              color: Colors.white,
-                              size: widget.size * 40,
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SubjectsCreator(
-                                            size: widget.size,
-                                            branch: widget.branch,
-                                          )));
-                            },
-                          ),
-                        ],
-                      )
-                    : SizedBox(
-                        width: 45,
-                      )),
+            // backButton(
+            //     size: widget.size,
+            //     text: "Subjects",
+            //     child: isOwner()||isGmail()
+            //         ? Row(
+            //             children: [
+            //               PopupMenuButton(
+            //                 icon: Icon(
+            //                   Icons.filter_list,
+            //                   color: Colors.white,
+            //                   size: widget.size * 30,
+            //                 ),
+            //                 // Callback that sets the selected popup menu item.
+            //                 onSelected: (item) {
+            //                   setState(() {
+            //                     subjectFilter = item as String;
+            //                   });
+            //                 },
+            //                 itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+            //                   PopupMenuItem(
+            //                     value: "None",
+            //                     child: Text('None'),
+            //                   ),
+            //                   PopupMenuItem(
+            //                     value: "Regulation",
+            //                     child: Text('Regulation'),
+            //                   ),
+            //                 ],
+            //               ),
+            //               InkWell(
+            //                 child: Icon(
+            //                   Icons.add,
+            //                   color: Colors.white,
+            //                   size: widget.size * 40,
+            //                 ),
+            //                 onTap: () {
+            //                   Navigator.push(
+            //                       context,
+            //                       MaterialPageRoute(
+            //                           builder: (context) => SubjectsCreator(
+            //                                 size: widget.size,
+            //                                 branch: widget.branch,
+            //                               )));
+            //                 },
+            //               ),
+            //             ],
+            //           )
+            //         : SizedBox(
+            //             width: 45,
+            //           )),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                PopupMenuButton(
+                  icon: Icon(
+                    Icons.filter_list,
+                    color: Colors.white,
+                    size: widget.size * 30,
+                  ),
+                  // Callback that sets the selected popup menu item.
+                  onSelected: (item) {
+                    setState(() {
+                      subjectFilter = item as String;
+                    });
+                  },
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                    PopupMenuItem(
+                      value: "None",
+                      child: Text('None'),
+                    ),
+                    PopupMenuItem(
+                      value: "Regulation",
+                      child: Text('Regulation'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
             StreamBuilder<List<subjectsConvertor>>(
                 stream: readFlashNews(widget.branch),
                 builder: (context, snapshot) {
@@ -1785,29 +1955,7 @@ class _LabSubjectsState extends State<LabSubjects> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            backButton(
-                size: widget.size,
-                text: "Lab Subjects",
-                child: isOwner()||isGmail()
-                    ? InkWell(
-                        child: Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: widget.size * 40,
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SubjectsCreator(
-                                        size: widget.size,
-                                        branch: widget.branch,
-                                      )));
-                        },
-                      )
-                    : SizedBox(
-                        width: widget.size * 45,
-                      )),
+
             StreamBuilder<List<subjectsConvertor>>(
                 stream: readLabSubjects(widget.branch),
                 builder: (context, snapshot) {
@@ -5047,28 +5195,28 @@ class _updatesPageState extends State<updatesPage> {
       ),
     );
   }
-  String formatTimeDifference(DateTime postedTime) {
-    DateTime currentTime = DateTime.now();
-    Duration difference = currentTime.difference(postedTime);
 
-    int minutesDifference = difference.inMinutes;
-    int hoursDifference = difference.inHours;
-    int daysDifference = difference.inDays;
-    int monthsDifference = currentTime.month - postedTime.month + (currentTime.year - postedTime.year) * 12;
 
-    if (monthsDifference > 12) {
-      int yearsDifference = monthsDifference ~/ 12;
-      return '$yearsDifference years ago';
-    } else if (monthsDifference > 0) {
-      return '$monthsDifference months ago';
-    } else if (daysDifference > 0) {
-      return '$daysDifference days ago';
-    } else if (hoursDifference > 0) {
-      return '$hoursDifference hours ago';
-    } else {
-      return '$minutesDifference mins ago';
-    }
+}
+String formatTimeDifference(DateTime postedTime) {
+  DateTime currentTime = DateTime.now();
+  Duration difference = currentTime.difference(postedTime);
+
+  int minutesDifference = difference.inMinutes;
+  int hoursDifference = difference.inHours;
+  int daysDifference = difference.inDays;
+  int monthsDifference = currentTime.month - postedTime.month + (currentTime.year - postedTime.year) * 12;
+
+  if (monthsDifference > 12) {
+    int yearsDifference = monthsDifference ~/ 12;
+    return '$yearsDifference years ago';
+  } else if (monthsDifference > 0) {
+    return '$monthsDifference months ago';
+  } else if (daysDifference > 0) {
+    return '$daysDifference days ago';
+  } else if (hoursDifference > 0) {
+    return '$hoursDifference hours ago';
+  } else {
+    return '$minutesDifference mins ago';
   }
-
-
 }
