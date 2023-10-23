@@ -29,7 +29,7 @@ fullUserId() {
   return user;
 }
 
-isGmail() {
+bool isGmail() {
   var user = FirebaseAuth.instance.currentUser!.email!;
 
   String numberString = user.substring(0, 2);
@@ -93,7 +93,6 @@ class _MyAppState extends State<MyApp> {
       _handleMessageData(message);
     });
   }
-
 
   @override
   void dispose() {
@@ -178,86 +177,104 @@ class _bottomBarSelectionState extends State<bottomBarSelection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(),
-      child: SafeArea(
-        child: Scaffold(
-          extendBody: true, // Ensures the gradient covers the entire screen
-          backgroundColor: Colors.transparent, //
-          body: _buildPage(_currentIndex),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.orangeAccent.withOpacity(0.1),
 
-          bottomNavigationBar: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-              // Adjust blur intensity
+            Colors.blue.withOpacity(0.2),
+            Colors.deepPurpleAccent.withOpacity(0.12),
 
-              child: Container(
-                height: 53,
-                margin: const EdgeInsets.only(left: 8, right: 8, bottom: 3),
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.13),
-                    borderRadius: BorderRadius.circular(20)),
-                child: BottomNavigationBar(
-                  // elevation:16,
-                  currentIndex: _currentIndex,
-                  onTap: (int index) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
-                  },
+          ],
+        ),
+      ),
+      child: Scaffold(
+        extendBody: true,
+        backgroundColor: Colors.transparent,
+        body: SafeArea(child: _buildPage(_currentIndex)),
 
-                  backgroundColor: Colors.transparent,
-                  type: BottomNavigationBarType.fixed,
-                  // showSelectedLabels: false,
+        bottomNavigationBar: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            // Adjust blur intensity
 
-                  showUnselectedLabels: false,
-                  items: const <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.circle,
-                        color: Colors.white,
-                        size: 8,
-                      ),
-                      label: 'Home',
-                      backgroundColor: Colors.red,
+            child: Container(
+              height: 53,
+              // margin: const EdgeInsets.only(left: 8, right: 8, bottom: 3),
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withOpacity(0.1),
+                      Colors.black.withOpacity(0.2),
+                      Colors.black,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(20)),
+              child: BottomNavigationBar(
+                // elevation:16,
+                currentIndex: _currentIndex,
+                onTap: (int index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+
+                backgroundColor: Colors.transparent,
+                type: BottomNavigationBarType.fixed,
+                // showSelectedLabels: false,
+
+                showUnselectedLabels: false,
+                items:  <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.circle,
+                      color: Colors.white,
+                      size: 8,
                     ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.shop,
-                        color: Colors.white,
-                        size: 17,
-                      ),
-                      label: 'Events',
-                      backgroundColor: Colors.red,
+                    label: 'Home',
+                    backgroundColor: Colors.red,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.shop,
+                      color: Colors.white,
+                      size: 17,
                     ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 22,
-                      ),
-                      label: 'Add',
+                    label: 'Events',
+                    backgroundColor: Colors.red,
+                  ),
+                  BottomNavigationBarItem(
+                    icon:Icon(
+                      isGmail()|| isOwner()?Icons.add:Icons.extension,
+                      color: Colors.white,
+                      size: 22,
                     ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.newspaper,
-                        color: Colors.white,
-                        size: 17,
-                      ),
-                      label: 'News',
+                    label:isGmail()|| isOwner()? 'Add':'More',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.newspaper,
+                      color: Colors.white,
+                      size: 17,
                     ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.person,
-                        color: Colors.white,
-                        size: 17,
-                      ),
-                      label: 'Account',
+                    label: 'Updates',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 17,
                     ),
-                  ],
-                  selectedItemColor: Colors.white,
-                  // onTap:
-                ),
+                    label: 'You',
+                  ),
+                ],
+                selectedItemColor: Colors.white,
+                // onTap:
               ),
             ),
           ),
@@ -281,8 +298,13 @@ class _bottomBarSelectionState extends State<bottomBarSelection> {
         return eventsPage(
           branch: widget.branch,
           size: Size,
-        );case 2:
-        return CreatePage();
+        );
+      case 2:
+        return CreatePage(
+          size: Size,
+          branch: widget.branch,
+          reg: widget.reg,
+        );
       case 3:
         return newsUpadates(
           branch: widget.branch,
@@ -302,7 +324,10 @@ class _bottomBarSelectionState extends State<bottomBarSelection> {
 }
 
 class CreatePage extends StatefulWidget {
-  // const CreatePage({super.key});
+  double size;
+  String branch, reg;
+
+  CreatePage({required this.size, required this.reg, required this.branch});
 
   @override
   State<CreatePage> createState() => _CreatePageState();
@@ -311,6 +336,7 @@ class CreatePage extends StatefulWidget {
 class _CreatePageState extends State<CreatePage> {
   @override
   Widget build(BuildContext context) {
+    double Size=size(context);
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -327,6 +353,827 @@ class _CreatePageState extends State<CreatePage> {
                 );
               },
               child: Text("add")),
+          if (isGmail() || isOwner())
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          margin: EdgeInsets.only(bottom: 5, left: 2, top: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white12,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.add_box_outlined,
+                                    color: Colors.white70,
+                                    size: widget.size * 25,
+                                  ),
+                                  Text(
+                                    " Create Regulation by R2_",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 25),
+                                  ),
+                                ],
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                size: 25,
+                                color: Colors.white54,
+                              )
+                            ],
+                          ),
+                        ),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              var InputController;
+                              return Dialog(
+                                backgroundColor: Colors.black.withOpacity(0.3),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        widget.size * 20)),
+                                elevation: 16,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    border: Border.all(color: Colors.white24),
+                                    borderRadius:
+                                        BorderRadius.circular(widget.size * 20),
+                                  ),
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    children: <Widget>[
+                                      SizedBox(height: widget.size * 15),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: widget.size * 15),
+                                        child: Text(
+                                          "Add Regulation by Entering r20",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: widget.size * 18),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: widget.size * 10),
+                                        child: TextFieldContainer(
+                                          child: TextField(
+                                            controller: InputController,
+                                            textInputAction:
+                                                TextInputAction.next,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: widget.size * 20),
+                                            decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                hintText:
+                                                    'r2_ <= Enter Regulation Number',
+                                                hintStyle: TextStyle(
+                                                    color: Colors.white70,
+                                                    fontSize:
+                                                        widget.size * 20)),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: widget.size * 5,
+                                      ),
+                                      Center(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Spacer(),
+                                            InkWell(
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black26,
+                                                  border: Border.all(
+                                                      color: Colors.white
+                                                          .withOpacity(0.3)),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          widget.size * 25),
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal:
+                                                          widget.size * 15,
+                                                      vertical:
+                                                          widget.size * 5),
+                                                  child: Text(
+                                                    "Back",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize:
+                                                            widget.size * 14),
+                                                  ),
+                                                ),
+                                              ),
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                            SizedBox(
+                                              width: widget.size * 10,
+                                            ),
+                                            InkWell(
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red,
+                                                  border: Border.all(
+                                                      color: Colors.black),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          widget.size * 25),
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal:
+                                                          widget.size * 15,
+                                                      vertical:
+                                                          widget.size * 5),
+                                                  child: Text(
+                                                    "ADD + ",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize:
+                                                            widget.size * 14),
+                                                  ),
+                                                ),
+                                              ),
+                                              onTap: () async {
+                                                showDialog(
+                                                  context: context,
+                                                  barrierDismissible: false,
+                                                  // Prevents dismissing the dialog by tapping outside
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      content: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          CircularProgressIndicator(),
+                                                          SizedBox(height: 16),
+                                                          Text('Creating...'),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                                String reg =
+                                                    InputController.text;
+                                                for (int year = 1;
+                                                    year <= 4;
+                                                    year++) {
+                                                  for (int sem = 1;
+                                                      sem <= 2;
+                                                      sem++) {
+                                                    print(
+                                                        "${reg.toLowerCase()} $year year $sem sem");
+                                                    await FirebaseFirestore
+                                                        .instance
+                                                        .collection(
+                                                            widget.branch)
+                                                        .doc("regulation")
+                                                        .collection(
+                                                            "regulationWithYears")
+                                                        .doc(
+                                                            "${reg.toLowerCase()} $year year $sem sem"
+                                                                .substring(
+                                                                    0, 10))
+                                                        .set({
+                                                      "id":
+                                                          "${reg.toLowerCase()} $year year $sem sem"
+                                                              .substring(0, 10),
+                                                      "syllabus": "",
+                                                      "modelPaper": "",
+                                                    });
+                                                    await createRegulationSem(
+                                                        name:
+                                                            "${reg.toLowerCase()} $year year $sem sem",
+                                                        branch: widget.branch);
+                                                  }
+                                                }
+                                                messageToOwner(
+                                                    "Regulation is Created.\nBy '${fullUserId()}'\n   Regulation : $reg\n **${widget.branch}");
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                            SizedBox(
+                                              width: widget.size * 20,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: widget.size * 10,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      Text(
+                        "Create New",
+                        style: TextStyle(
+                            color: Colors.orangeAccent.withOpacity(0.8),
+                            fontSize: 22),
+                      ),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: InkWell(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                margin: EdgeInsets.only(
+                                    bottom: 5, right: 2, top: 10),
+                                decoration: BoxDecoration(
+                                    color: Colors.white12,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.add_box_outlined,
+                                          color: Colors.white70,
+                                          size: widget.size * 25,
+                                        ),
+                                        Text(
+                                          " Flash News",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 25),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      size: 25,
+                                      color: Colors.white54,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => flashNewsCreator(
+                                              branch: widget.branch,
+                                              size: widget.size,
+                                            )));
+                              },
+                            ),
+                          ),
+                          Flexible(
+                            child: InkWell(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                margin: EdgeInsets.only(
+                                    bottom: 5, left: 2, top: 10),
+                                decoration: BoxDecoration(
+                                    color: Colors.white12,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.add_box_outlined,
+                                          color: Colors.white70,
+                                          size: widget.size * 25,
+                                        ),
+                                        Text(
+                                          " News",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 25),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      size: 25,
+                                      color: Colors.white54,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => updateCreator(
+                                              branch: widget.branch,
+                                              size: widget.size,
+                                            )));
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Create Materials",
+                        style: TextStyle(
+                            color: Colors.orangeAccent.withOpacity(0.8),
+                            fontSize: 22),
+                      ),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: InkWell(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                margin: EdgeInsets.only(
+                                    bottom: 5, right: 2, top: 10),
+                                decoration: BoxDecoration(
+                                    color: Colors.white12,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.add_box_outlined,
+                                          color: Colors.white70,
+                                          size: widget.size * 25,
+                                        ),
+                                        Text(
+                                          " Subject",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 25),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      size: 25,
+                                      color: Colors.white54,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SubjectsCreator(
+                                              size: widget.size,
+                                              branch: widget.branch,
+                                            )));
+                              },
+                            ),
+                          ),
+                          Flexible(
+                            child: InkWell(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                margin: EdgeInsets.only(
+                                    bottom: 5, left: 2, top: 10),
+                                decoration: BoxDecoration(
+                                    color: Colors.white12,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.add_box_outlined,
+                                          color: Colors.white70,
+                                          size: widget.size * 25,
+                                        ),
+                                        Text(
+                                          " Lab Subject",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 25),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      size: 25,
+                                      color: Colors.white54,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SubjectsCreator(
+                                              size: widget.size,
+                                              branch: widget.branch,
+                                            )));
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: InkWell(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                margin: EdgeInsets.only(bottom: 5, right: 2),
+                                decoration: BoxDecoration(
+                                    color: Colors.white12,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.add_box_outlined,
+                                          color: Colors.white70,
+                                          size: widget.size * 25,
+                                        ),
+                                        Text(
+                                          " Books",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 25),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      size: 25,
+                                      color: Colors.white54,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => BooksCreator(
+                                              branch: widget.branch,
+                                            )));
+                              },
+                            ),
+                          ),
+                          Flexible(
+                            child: Container(),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: InkWell(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            margin:
+                                EdgeInsets.only(bottom: 5, right: 2, top: 10),
+                            decoration: BoxDecoration(
+                                color: Colors.white12,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.add_box_outlined,
+                                      color: Colors.white54,
+                                      size: widget.size * 25,
+                                    ),
+                                    Text(
+                                      " Time Table",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 25),
+                                    ),
+                                  ],
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  size: 25,
+                                  color: Colors.white54,
+                                )
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        timeTableSyllabusModalPaperCreator(
+                                          size: widget.size,
+                                          mode: 'Time Table',
+                                          reg: widget.reg,
+                                          branch: widget.branch,
+                                        )));
+                          },
+                        ),
+                      ),
+                      Flexible(
+                        child: Container(),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: InkWell(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            margin:
+                                EdgeInsets.only(bottom: 5, right: 2, top: 10),
+                            decoration: BoxDecoration(
+                                color: Colors.white12,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.add_box_outlined,
+                                      color: Colors.white54,
+                                      size: widget.size * 25,
+                                    ),
+                                    Text(
+                                      " Syllabus",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 25),
+                                    ),
+                                  ],
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  size: 25,
+                                  color: Colors.white54,
+                                )
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            if (widget.reg.isNotEmpty && widget.reg != "None")
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          timeTableSyllabusModalPaperCreator(
+                                            heading: widget.reg,
+                                            size: widget.size,
+                                            mode: 'Syllabus',
+                                            reg: widget.reg,
+                                            branch: widget.branch,
+                                            id: widget.reg,
+                                          )));
+                            else {
+                              showToastText("Select Your Regulation");
+                            }
+                          },
+                        ),
+                      ),
+                      Flexible(
+                        child: InkWell(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            margin:
+                                EdgeInsets.only(bottom: 5, left: 2, top: 10),
+                            decoration: BoxDecoration(
+                                color: Colors.white12,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.add_box_outlined,
+                                      color: Colors.white54,
+                                      size: widget.size * 25,
+                                    ),
+                                    Text(
+                                      " Model Paper",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: widget.size * 22),
+                                    ),
+                                  ],
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  size: 25,
+                                  color: Colors.white54,
+                                )
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            if (widget.reg.isNotEmpty && widget.reg != "None")
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          timeTableSyllabusModalPaperCreator(
+                                            heading: widget.reg,
+                                            size: widget.size,
+                                            mode: 'modalPaper',
+                                            reg: widget.reg,
+                                            branch: widget.branch,
+                                            id: widget.reg,
+                                          )));
+                            else {
+                              showToastText("Select Your Regulation");
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: Size * 10, vertical: Size * 10),
+            child: Row(
+              children: [
+                Flexible(
+                  flex: 2,
+                  child: InkWell(
+                    child: Padding(
+                      padding:
+                      EdgeInsets.only(right: Size * 10.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.05),
+                            border:
+                            Border.all(color: Colors.white10),
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(Size * 15))),
+                        child: Padding(
+                          padding: EdgeInsets.all(Size * 8.0),
+                          child: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                "Text To Speech",
+                                style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: Size * 25,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Container(
+                                height: Size * 25,
+                                width: Size * 25,
+                                decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    image: DecorationImage(
+                                        image: AssetImage(
+                                            "assets/img.png")),
+                                    borderRadius:
+                                    BorderRadius.all(
+                                        Radius.circular(
+                                            Size * 20))),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration:
+                          const Duration(milliseconds: 300),
+                          pageBuilder: (context, animation,
+                              secondaryAnimation) =>
+                              MyHomePage(),
+                          transitionsBuilder: (context, animation,
+                              secondaryAnimation, child) {
+                            final fadeTransition = FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+
+                            return Container(
+                              color: Colors.black
+                                  .withOpacity(animation.value),
+                              child: AnimatedOpacity(
+                                  duration:
+                                  Duration(milliseconds: 300),
+                                  opacity: animation.value
+                                      .clamp(0.3, 1.0),
+                                  child: fadeTransition),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Flexible(
+                    child: InkWell(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.01),
+                            border: Border.all(color: Colors.white10),
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(Size * 15))),
+                        child: Padding(
+                          padding: EdgeInsets.all(Size * 5.0),
+                          child: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                "Ask",
+                                style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: Size * 25,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Container(
+                                height: Size * 30,
+                                width: Size * 30,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: Colors.white24),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(Size * 15))),
+                                child: Padding(
+                                  padding: EdgeInsets.all(Size * 3.0),
+                                  child: Text(
+                                    "AI",
+                                    style: TextStyle(
+                                        fontSize: Size * 22,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        showToastText("Coming Soon");
+                      },
+                    ))
+              ],
+            ),
+          ),
 
         ],
       ),
@@ -337,7 +1184,8 @@ class _CreatePageState extends State<CreatePage> {
 class newsUpadates extends StatefulWidget {
   String branch;
   double size;
-   newsUpadates({required this.branch,required this.size});
+
+  newsUpadates({required this.branch, required this.size});
 
   @override
   State<newsUpadates> createState() => _newsUpadatesState();
@@ -348,6 +1196,7 @@ class _newsUpadatesState extends State<newsUpadates> {
 
   bool isBranch = false;
   String folderPath = '';
+  String branch = '';
 
   Future<void> getPath() async {
     final directory = await getApplicationDocumentsDirectory();
@@ -360,6 +1209,7 @@ class _newsUpadatesState extends State<newsUpadates> {
   void initState() {
     setState(() {
       getPath();
+      branch = widget.branch;
     });
     super.initState();
   }
@@ -372,53 +1222,61 @@ class _newsUpadatesState extends State<newsUpadates> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
+            padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Notification",
+                  style: TextStyle(color: Colors.white, fontSize: 25),
+                ),
+                InkWell(
+                  child: Icon(
+                    Icons.notifications_none,
+                    color: Colors.white60,
+                    size: widget.size * 30,
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 300),
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            notifications(
+                          size: widget.size,
+                          branch: widget.branch,
+                        ),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          final fadeTransition = FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+
+                          return Container(
+                            color: Colors.black.withOpacity(animation.value),
+                            child: AnimatedOpacity(
+                                duration: Duration(milliseconds: 300),
+                                opacity: animation.value.clamp(0.3, 1.0),
+                                child: fadeTransition),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
               "Other Branches",
               style: TextStyle(color: Colors.white, fontSize: 20),
             ),
           ),
-          SizedBox(
-            height: 80,
-            child: ListView.builder(
-                itemCount: 4,
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, int index) {
-                  return Padding(
-                    padding:  EdgeInsets.only(left: index==0?10:5),
-                    child: Container(
-                      width: 80,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30)),
-                    ),
-                  );
-                }),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 30.0,left: 10,right: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "College Updates",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                InkWell(
-                  child: Text(
-                    "More",
-                    style: TextStyle(color: Colors.lightBlueAccent, fontSize: 20),
-                  ),
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>updatesPage(branch: widget.branch,size: widget.size,)));
-                  },
-                ),
-              ],
-            ),
-          ),
-          StreamBuilder<List<UpdateConvertor>>(
-              stream: readUpdate(widget.branch),
+          StreamBuilder<List<branchSharingConvertor>>(
+              stream: readbranchSharing(),
               builder: (context, snapshot) {
                 final BranchNews = snapshot.data;
                 switch (snapshot.connectionState) {
@@ -430,17 +1288,154 @@ class _newsUpadatesState extends State<newsUpadates> {
                         ));
                   default:
                     if (snapshot.hasError) {
-                      return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                      return const Center(
+                          child: Text(
+                              'Error with Time Table Data or\n Check Internet Connection'));
                     } else {
                       if (BranchNews!.length == 0) {
                         return Center(
                             child: Text(
-                              "No Updates",
-                              style: TextStyle(color: Colors.lightBlueAccent),
+                              "No Time Tables",
+                              style:
+                              TextStyle(color: Colors.amber.withOpacity(0.5)),
                             ));
                       } else
+                        return SizedBox(
+                          height: widget.size * 58,
+                          child: ListView.builder(
+                            itemCount: BranchNews.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, int index) {
+                              var BranchNew = BranchNews[index];
+                              file = File("");
+                              if (BranchNew.photoUrl.isNotEmpty) {
+                                final Uri uri = Uri.parse(BranchNew.photoUrl);
+                                final String fileName = uri.pathSegments.last;
+                                var name = fileName.split("/").last;
+                                file = File("${folderPath}/timetable/$name");
+                              }
+                              return (widget.branch!=BranchNew.id)||(widget.branch!=branch)?Padding(
+                                padding: EdgeInsets.only(
+                                    left: index==0?widget.size * 14:widget.size * 5),
+                                child: InkWell(
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(3),
+                                        margin:  EdgeInsets.only(
+                                            bottom: widget.size * 2.0),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(
+                                                widget.size * 27),
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                              colors: [
+                                                Colors.white,
+                                                Colors.blueGrey,
+                                                Colors.deepPurpleAccent,
+
+                                              ],
+                                            ),
+                                            border: Border.all(
+                                                width: 2,
+
+                                                style: BorderStyle.solid)),
+                                        child: Container(
+                                          height: widget.size * 45,
+                                          width: widget.size * 60,
+                                          decoration: BoxDecoration(
+                                            color: Colors.black.withOpacity(0.6),
+                                            image: DecorationImage(
+                                                image: FileImage(file),
+                                                fit: BoxFit.cover),
+                                            borderRadius:
+                                            BorderRadius.circular(
+                                                widget.size * 23),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              BranchNew.id.toUpperCase(),
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: widget.size * 18,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontFamily: "test"),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                    ],
+                                  ),
+                                  onTap: () {
+setState(() {
+  branch=BranchNew.id;
+});
+                                  },
+                                ),
+                              ):Container();
+                            },
+                          ),
+                        );
+                    }
+                }
+              }),
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0, left: 10, right: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "College Updates",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                InkWell(
+                  child: Text(
+                    "more",
+                    style: TextStyle(color: Colors.orangeAccent, fontSize: 16),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => updatesPage(
+                                  branch: branch,
+                                  size: widget.size,
+                                )));
+                  },
+                ),
+              ],
+            ),
+          ),
+          StreamBuilder<List<UpdateConvertor>>(
+              stream: readUpdate(branch),
+              builder: (context, snapshot) {
+                final BranchNews = snapshot.data;
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const Center(
+                        child: CircularProgressIndicator(
+                      strokeWidth: 0.3,
+                      color: Colors.cyan,
+                    ));
+                  default:
+                    if (snapshot.hasError) {
+                      return const Center(
+                          child: Text(
+                              'Error with TextBooks Data or\n Check Internet Connection'));
+                    } else {
+                      if (BranchNews!.length == 0) {
+                        return Center(
+                            child: Text(
+                          "No Updates",
+                          style: TextStyle(color: Colors.lightBlueAccent),
+                        ));
+                      } else
                         return ListView.builder(
-                          padding: EdgeInsets.only(left: 10,top: 10,bottom: 20,right: 8),
+                          padding: EdgeInsets.only(
+                              left: 10, top: 10, bottom: 20, right: 8),
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: min(2, BranchNews.length),
@@ -453,7 +1448,7 @@ class _newsUpadatesState extends State<newsUpadates> {
                               var name = fileName.split("/").last;
                               file = File("${folderPath}/updates/$name");
                             }
-                            String timeDate ="";
+                            String timeDate = "";
 
                             List<String> parts = BranchNew.id.split('-');
 
@@ -462,7 +1457,8 @@ class _newsUpadatesState extends State<newsUpadates> {
 
                             List<String> dateParts = datePart.split('.');
                             List<String> timeParts = timePart.split(':');
-                            if (dateParts.length == 3 && timeParts.length == 3) {
+                            if (dateParts.length == 3 &&
+                                timeParts.length == 3) {
                               int day = int.parse(dateParts[0]);
                               int month = int.parse(dateParts[1]);
                               int year = int.parse(dateParts[2]);
@@ -470,118 +1466,154 @@ class _newsUpadatesState extends State<newsUpadates> {
                               int hour = int.parse(timeParts[0]);
                               int minute = int.parse(timeParts[1]);
                               int second = int.parse(timeParts[2]);
-                              timeDate =formatTimeDifference(DateTime(year, month, day, hour, minute, second));
+                              timeDate = formatTimeDifference(DateTime(
+                                  year, month, day, hour, minute, second));
                             }
-
 
                             return InkWell(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.white10,
+                                  // color: Colors.yellowAccent.withOpacity(0.13),
                                   borderRadius: BorderRadius.circular(15),
+                                  color: Colors.white10
                                 ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    if(BranchNew.link.isEmpty &&BranchNew.photoUrl.isNotEmpty)InkWell(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(3.0),
-                                        child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(15),
-                                            child: Image.file(file)),
+                                    if (BranchNew.link.isEmpty &&
+                                        BranchNew.photoUrl.isNotEmpty)
+                                      InkWell(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(3.0),
+                                          child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              child: Image.file(file)),
+                                        ),
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ImageZoom(
+                                                        size: widget.size,
+                                                        url: BranchNew.photoUrl,
+                                                        file: file,
+                                                      )));
+                                        },
                                       ),
-                                      onTap: (){
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => ImageZoom(
-                                                  size: widget.size,
-                                                  url: BranchNew.photoUrl,
-                                                  file: file,
-                                                )));
-                                      },
-                                    ),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Expanded(
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 3),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10.0, vertical: 3),
                                             child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                if(BranchNew.heading.isNotEmpty)Text(
-                                                  BranchNew.heading,
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: widget.size * 18,
-                                                      fontWeight: FontWeight.w600),
-                                                ),
-                                                if(BranchNew.description.isNotEmpty)Text(
-                                                  "  ${BranchNew.description}",
-                                                  style: TextStyle(
-                                                      color: Colors.white.withOpacity(0.8),
-                                                      fontSize: widget.size * 14,
-                                                      fontWeight: FontWeight.w500),
-                                                ),
+                                                if (BranchNew
+                                                    .heading.isNotEmpty)
+                                                  Text(
+                                                    BranchNew.heading,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize:
+                                                            widget.size * 20,),
+                                                  ),
+                                                if (BranchNew
+                                                    .description.isNotEmpty)
+                                                  Text(
+                                                    " ${BranchNew.description}",
+                                                    style: TextStyle(
+                                                        color: Colors.white
+                                                            .withOpacity(0.8),
+                                                        fontSize:
+                                                            widget.size * 14,),
+                                                  ),
                                               ],
                                             ),
                                           ),
                                         ),
-                                        if(BranchNew.link.isNotEmpty&&BranchNew.photoUrl.isNotEmpty)InkWell(
-                                          child: SizedBox(
-                                            height: 100,
-                                            width: 140,
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(3.0),
-                                              child: ClipRRect(
-                                                  borderRadius: BorderRadius.circular(15),
-                                                  child: Image.file(file,fit: BoxFit.cover,)),
+                                        if (BranchNew.link.isNotEmpty &&
+                                            BranchNew.photoUrl.isNotEmpty)
+                                          InkWell(
+                                            child: SizedBox(
+                                              height: 100,
+                                              width: 140,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(3.0),
+                                                child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    child: Image.file(
+                                                      file,
+                                                      fit: BoxFit.cover,
+                                                    )),
+                                              ),
                                             ),
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ImageZoom(
+                                                            size: widget.size,
+                                                            url: BranchNew
+                                                                .photoUrl,
+                                                            file: file,
+                                                          )));
+                                            },
                                           ),
-                                          onTap: (){
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => ImageZoom(
-                                                      size: widget.size,
-                                                      url: BranchNew.photoUrl,
-                                                      file: file,
-                                                    )));
-                                          },
-                                        ),
                                       ],
                                     ),
-
-
                                     SizedBox(
                                         height: 2,
-                                        child: Divider(color: Colors.white10,)),
+                                        child: Divider(
+                                          color: Colors.white10,
+                                        )),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10.0, vertical: 2),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: [
                                               Text(
                                                 "${timeDate}  ",
-                                                style: TextStyle(fontSize: 12,color: Colors.white),
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white),
                                               ),
-                                              Icon(Icons.circle,color: Colors.white,size: 3,),
+                                              Icon(
+                                                Icons.circle,
+                                                color: Colors.white,
+                                                size: 3,
+                                              ),
                                               Text(
                                                 "  ${BranchNew.creator.split("@").first}",
-                                                style: TextStyle(fontSize: 12,color: Colors.white),
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white),
                                               ),
                                             ],
                                           ),
-                                          if (isGmail()||isOwner())
+                                          if (isGmail() || isOwner())
                                             SizedBox(
                                               height: 18,
                                               child: PopupMenuButton(
@@ -597,15 +1629,28 @@ class _newsUpadatesState extends State<newsUpadates> {
                                                     Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
-                                                            builder: (context) => updateCreator(
-                                                              NewsId: BranchNew.id,
-                                                              link: BranchNew.link,
-                                                              heading: BranchNew.heading,
-                                                              photoUrl: BranchNew.photoUrl,
-                                                              subMessage: BranchNew.description,
-                                                              branch: widget.branch,
-                                                              size: widget.size,
-                                                            )));
+                                                            builder: (context) =>
+                                                                updateCreator(
+                                                                  NewsId:
+                                                                      BranchNew
+                                                                          .id,
+                                                                  link:
+                                                                      BranchNew
+                                                                          .link,
+                                                                  heading:
+                                                                      BranchNew
+                                                                          .heading,
+                                                                  photoUrl:
+                                                                      BranchNew
+                                                                          .photoUrl,
+                                                                  subMessage:
+                                                                      BranchNew
+                                                                          .description,
+                                                                  branch: widget
+                                                                      .branch,
+                                                                  size: widget
+                                                                      .size,
+                                                                )));
                                                   } else if (item == "delete") {
                                                     FirebaseFirestore.instance
                                                         .collection("update")
@@ -615,7 +1660,9 @@ class _newsUpadatesState extends State<newsUpadates> {
                                                         "Update is Deleted\nBy '${fullUserId()}\n    Heading : ${BranchNew.heading}\n    Description : ${BranchNew.description}    \nImage : ${BranchNew.photoUrl}    \nLink : ${BranchNew.link}\n **${widget.branch}");
                                                   }
                                                 },
-                                                itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                                                itemBuilder:
+                                                    (BuildContext context) =>
+                                                        <PopupMenuEntry>[
                                                   const PopupMenuItem(
                                                     value: "edit",
                                                     child: Text('Edit'),
@@ -646,25 +1693,27 @@ class _newsUpadatesState extends State<newsUpadates> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               "Our Updates",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 20),
             ),
           ),
           StreamBuilder<List<BranchNewConvertor>>(
-              stream: readBranchNew(widget.branch),
+              stream: readBranchNew(branch),
               builder: (context, snapshot) {
                 final BranchNews = snapshot.data;
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
                     return const Center(
                         child: CircularProgressIndicator(
-                          strokeWidth: 0.3,
-                          color: Colors.cyan,
-                        ));
+                      strokeWidth: 0.3,
+                      color: Colors.cyan,
+                    ));
                   default:
                     if (snapshot.hasError) {
-                      return const Center(child: Text('Error with TextBooks Data or\n Check Internet Connection'));
+                      return const Center(
+                          child: Text(
+                              'Error with TextBooks Data or\n Check Internet Connection'));
                     } else {
-                      return ListView.builder(
+                      return BranchNews!.isNotEmpty?ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: BranchNews!.length,
@@ -681,15 +1730,18 @@ class _newsUpadatesState extends State<newsUpadates> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-
                                 if (BranchNew.photoUrl.isNotEmpty)
                                   Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: widget.size * 5.0),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: widget.size * 5.0),
                                     child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(widget.size * 15), child: Image.file(file)),
+                                        borderRadius: BorderRadius.circular(
+                                            widget.size * 15),
+                                        child: Image.file(file)),
                                   ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: widget.size * 8),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: widget.size * 8),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
@@ -697,8 +1749,11 @@ class _newsUpadatesState extends State<newsUpadates> {
                                         height: widget.size * 25,
                                         width: widget.size * 25,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(widget.size * 15),
-                                          image: DecorationImage(image: FileImage(file), fit: BoxFit.cover),
+                                          borderRadius: BorderRadius.circular(
+                                              widget.size * 15),
+                                          image: DecorationImage(
+                                              image: FileImage(file),
+                                              fit: BoxFit.cover),
                                         ),
                                       ),
                                       Text(
@@ -710,7 +1765,7 @@ class _newsUpadatesState extends State<newsUpadates> {
                                               fontSize: widget.size * 16,
                                               fontWeight: FontWeight.w600)),
                                       Spacer(),
-                                      if (isGmail()||isOwner())
+                                      if (isGmail() || isOwner())
                                         SizedBox(
                                           height: 35,
                                           child: PopupMenuButton(
@@ -725,22 +1780,38 @@ class _newsUpadatesState extends State<newsUpadates> {
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
-                                                        builder: (context) => NewsCreator(
-                                                            branch: widget.branch,
-                                                            NewsId: BranchNew.id,
-                                                            heading: BranchNew.heading,
-                                                            description: BranchNew.description,
-                                                            photoUrl: BranchNew.photoUrl)));
+                                                        builder: (context) =>
+                                                            NewsCreator(
+                                                                branch: widget
+                                                                    .branch,
+                                                                NewsId:
+                                                                    BranchNew
+                                                                        .id,
+                                                                heading:
+                                                                    BranchNew
+                                                                        .heading,
+                                                                description:
+                                                                    BranchNew
+                                                                        .description,
+                                                                photoUrl: BranchNew
+                                                                    .photoUrl)));
                                               } else if (item == "delete") {
-                                                if (BranchNew.photoUrl.isNotEmpty) {
-                                                  final Uri uri = Uri.parse(BranchNew.photoUrl);
-                                                  final String fileName = uri.pathSegments.last;
-                                                  final Reference ref = storage.ref().child("/${fileName}");
+                                                if (BranchNew
+                                                    .photoUrl.isNotEmpty) {
+                                                  final Uri uri = Uri.parse(
+                                                      BranchNew.photoUrl);
+                                                  final String fileName =
+                                                      uri.pathSegments.last;
+                                                  final Reference ref = storage
+                                                      .ref()
+                                                      .child("/${fileName}");
                                                   try {
                                                     await ref.delete();
-                                                    showToastText('Image deleted successfully');
+                                                    showToastText(
+                                                        'Image deleted successfully');
                                                   } catch (e) {
-                                                    showToastText('Error deleting image: $e');
+                                                    showToastText(
+                                                        'Error deleting image: $e');
                                                   }
                                                 }
                                                 messageToOwner(
@@ -749,12 +1820,15 @@ class _newsUpadatesState extends State<newsUpadates> {
                                                 FirebaseFirestore.instance
                                                     .collection(widget.branch)
                                                     .doc("${widget.branch}News")
-                                                    .collection("${widget.branch}News")
+                                                    .collection(
+                                                        "${widget.branch}News")
                                                     .doc(BranchNew.id)
                                                     .delete();
                                               }
                                             },
-                                            itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                                            itemBuilder:
+                                                (BuildContext context) =>
+                                                    <PopupMenuEntry>[
                                               const PopupMenuItem(
                                                 value: "edit",
                                                 child: Text('Edit'),
@@ -771,8 +1845,8 @@ class _newsUpadatesState extends State<newsUpadates> {
                                 ),
                                 if (BranchNew.description.isNotEmpty)
                                   Padding(
-                                    padding: EdgeInsets.symmetric(horizontal:
-                                      widget.size * 10,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: widget.size * 10,
                                     ),
                                     child: StyledTextWidget(
                                       text: BranchNew.description,
@@ -790,10 +1864,10 @@ class _newsUpadatesState extends State<newsUpadates> {
                                         ? "~ ${BranchNew.id.split('-').first}"
                                         : "No Date",
                                     style: TextStyle(
-                                        color: Colors.white70, fontSize: widget.size * 10),
+                                        color: Colors.white70,
+                                        fontSize: widget.size * 10),
                                   ),
                                 ),
-
                               ],
                             ),
                             onTap: () async {
@@ -801,18 +1875,35 @@ class _newsUpadatesState extends State<newsUpadates> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => ImageZoom(
-                                        size: widget.size,
-                                        url: "",
-                                        file: file,
-                                      )));
+                                            size: widget.size,
+                                            url: "",
+                                            file: file,
+                                          )));
                             },
                           );
                         },
+                      ):
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(height: 20,),
+                              Icon(Icons.newspaper,color: Colors.white30,size: 70,),
+                              Text("No ${branch} Updates",style: TextStyle(color: Colors.white54,fontSize: 16),)
+                            ],
+                          ),
+                        ],
                       );
                     }
                 }
               }),
-SizedBox(height: 50,)
+          SizedBox(
+            height: 50,
+          )
         ],
       ),
     );
@@ -921,7 +2012,10 @@ class _eventsPageState extends State<eventsPage> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 10,),
           StreamBuilder<List<eventsConvertor>>(
               stream: readevents(widget.branch),
               builder: (context, snapshot) {
@@ -940,6 +2034,7 @@ class _eventsPageState extends State<eventsPage> {
                               'Error with TextBooks Data or\n Check Internet Connection'));
                     } else {
                       return ListView.builder(
+                       padding: EdgeInsets.symmetric(horizontal: 3) ,
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: BranchNews!.length,
@@ -950,113 +2045,135 @@ class _eventsPageState extends State<eventsPage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (BranchNew.videoUrl.isNotEmpty||BranchNew.photoUrl.isNotEmpty)
+                              if (BranchNew.videoUrl.isNotEmpty ||
+                                  BranchNew.photoUrl.isNotEmpty)
                                 AspectRatio(
                                   aspectRatio: 16 / 9,
-
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Row(
                                       children: [
-                                        if (BranchNew.videoUrl.isNotEmpty)InkWell(
-                                            onTap: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) => youtube(
-                                                          url: BranchNew.videoUrl)));
-                                            },
-                                            child: AspectRatio(
-                                              aspectRatio: 16 / 9,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                  image: NetworkImage(
-                                                      YoutubeThumbnail(
-                                                              youtubeId:
-                                                                  extractVideoId(
-                                                                      BranchNew
-                                                                          .videoUrl))
-                                                          .hq()),
-                                                  fit: BoxFit.cover,
-                                                )),
-                                                child: Align(
-                                                    alignment: Alignment.bottomRight,
-                                                    child: InkWell(
-                                                      child: Container(
-                                                          margin:
-                                                              EdgeInsets.symmetric(
-                                                                  vertical: 3,
-                                                                  horizontal: 8),
-                                                          padding:
-                                                              EdgeInsets.symmetric(
-                                                                  vertical: 3,
-                                                                  horizontal: 8),
-                                                          decoration: BoxDecoration(
-                                                            color: Colors.black,
-                                                            border: Border.all(
-                                                                color: Colors.white),
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10),
-                                                          ),
-                                                          child: Text(
-                                                            "YouTube",
-                                                            style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: 20),
-                                                          )),
-                                                      onTap: () {
-                                                        ExternalLaunchUrl(
-                                                            BranchNew.videoUrl);
-                                                      },
-                                                    )),
-                                              ),
-                                            )),
-                                        ListView.builder(
-                                            shrinkWrap: true,
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount: BranchNew.photoUrl.split(";").length,itemBuilder: (context, int index) {
-                                          file = File("");
-
-                                          if (BranchNew.photoUrl.isNotEmpty) {
-                                            final Uri uri = Uri.parse(BranchNew.photoUrl);
-                                            final String fileName = uri.pathSegments.last;
-                                            var name = fileName.split("/").last;
-                                            file = File("${folderPath}/news/$name");
-                                          }
-                                              return InkWell(
+                                        if (BranchNew.videoUrl.isNotEmpty)
+                                          InkWell(
                                               onTap: () {
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
-                                                        builder: (context) => ImageZoom(
-                                                          size: widget.size,
-                                                          url: "",
-                                                          file: file,
-                                                        )));
+                                                        builder: (context) =>
+                                                            youtube(
+                                                                url: BranchNew
+                                                                    .videoUrl)));
                                               },
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(left: 8),
-                                                child: AspectRatio(
-                                                  aspectRatio: 16 / 9,
-                                                  child: Image.network(BranchNew.photoUrl.split(";")[index]),
+                                              child: AspectRatio(
+                                                aspectRatio: 16 / 9,
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                    image: NetworkImage(
+                                                        YoutubeThumbnail(
+                                                                youtubeId:
+                                                                    extractVideoId(
+                                                                        BranchNew
+                                                                            .videoUrl))
+                                                            .hq()),
+                                                    fit: BoxFit.cover,
+                                                  )),
+                                                  child: Align(
+                                                      alignment:
+                                                          Alignment.bottomRight,
+                                                      child: InkWell(
+                                                        child: Container(
+                                                            margin: EdgeInsets
+                                                                .symmetric(
+                                                                    vertical: 3,
+                                                                    horizontal:
+                                                                        8),
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    vertical: 3,
+                                                                    horizontal:
+                                                                        8),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  Colors.black,
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .white),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                            child: Text(
+                                                              "YouTube",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize: 20),
+                                                            )),
+                                                        onTap: () {
+                                                          ExternalLaunchUrl(
+                                                              BranchNew
+                                                                  .videoUrl);
+                                                        },
+                                                      )),
                                                 ),
-                                              ));
-                                        },
+                                              )),
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: BranchNew.photoUrl
+                                              .split(";")
+                                              .length,
+                                          itemBuilder: (context, int index) {
+                                            file = File("");
 
+                                            if (BranchNew.photoUrl.isNotEmpty) {
+                                              final Uri uri =
+                                                  Uri.parse(BranchNew.photoUrl);
+                                              final String fileName =
+                                                  uri.pathSegments.last;
+                                              var name =
+                                                  fileName.split("/").last;
+                                              file = File(
+                                                  "${folderPath}/news/$name");
+                                            }
+                                            return InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ImageZoom(
+                                                                size:
+                                                                    widget.size,
+                                                                url: "",
+                                                                file: file,
+                                                              )));
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8),
+                                                  child: AspectRatio(
+                                                    aspectRatio: 16 / 9,
+                                                    child: Image.network(
+                                                        BranchNew.photoUrl
+                                                            .split(";")[index]),
+                                                  ),
+                                                ));
+                                          },
                                         )
                                       ],
                                     ),
                                   ),
                                 ),
                               Padding(
-                                padding: EdgeInsets.only(
-                                    left: widget.size * 5,top: 5),
+                                padding: EdgeInsets.only( top: 5),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
-
                                   children: [
                                     Container(
                                       height: widget.size * 30,
@@ -1068,18 +2185,20 @@ class _eventsPageState extends State<eventsPage> {
                                       ),
                                       child: Center(
                                           child: Text(
-                                            getInitials(BranchNew.heading),
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w800,
-                                                fontSize: widget.size * 20,
-                                                fontFamily: "test"),
-                                          )),
+                                        getInitials(BranchNew.heading),
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w800,
+                                            fontSize: widget.size * 20,
+                                            fontFamily: "test"),
+                                      )),
                                     ),
                                     Expanded(
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                               BranchNew.heading.isNotEmpty
@@ -1088,25 +2207,31 @@ class _eventsPageState extends State<eventsPage> {
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: widget.size * 18,
-                                                  fontWeight:
-                                                  FontWeight.w400)),
+                                                  fontWeight: FontWeight.w400)),
                                           if (BranchNew.created.isNotEmpty)
                                             Row(
                                               children: [
-                                                Text(" @${BranchNew.created.split("@").first}",
+                                                Text(
+                                                    " @${BranchNew.created.split("@").first}",
                                                     style: TextStyle(
                                                         color: Colors.white70,
                                                         fontSize:
-                                                        widget.size * 10)),
+                                                            widget.size * 10)),
                                                 Spacer(),
                                                 Text(
-                                                  BranchNew.id.split("-").first.length < 12
+                                                  BranchNew.id
+                                                              .split("-")
+                                                              .first
+                                                              .length <
+                                                          12
                                                       ? "~ ${BranchNew.id.split('-').first}"
                                                       : "No Date",
                                                   style: TextStyle(
                                                       color: Colors.white,
-                                                      fontSize: widget.size * 10,
-                                                      fontWeight: FontWeight.w500),
+                                                      fontSize:
+                                                          widget.size * 10,
+                                                      fontWeight:
+                                                          FontWeight.w500),
                                                 ),
                                               ],
                                             ),
@@ -1131,14 +2256,14 @@ class _eventsPageState extends State<eventsPage> {
                                                       builder: (context) =>
                                                           NewsCreator(
                                                               branch:
-                                                              widget.branch,
+                                                                  widget.branch,
                                                               NewsId:
-                                                              BranchNew.id,
+                                                                  BranchNew.id,
                                                               heading: BranchNew
                                                                   .heading,
                                                               description:
-                                                              BranchNew
-                                                                  .description,
+                                                                  BranchNew
+                                                                      .description,
                                                               photoUrl: BranchNew
                                                                   .photoUrl)));
                                             } else if (item == "delete") {
@@ -1172,7 +2297,7 @@ class _eventsPageState extends State<eventsPage> {
                                             }
                                           },
                                           itemBuilder: (BuildContext context) =>
-                                          <PopupMenuEntry>[
+                                              <PopupMenuEntry>[
                                             const PopupMenuItem(
                                               value: "edit",
                                               child: Text('Edit'),
@@ -1189,17 +2314,15 @@ class _eventsPageState extends State<eventsPage> {
                               ),
                               if (BranchNew.description.isNotEmpty)
                                 Padding(
-                                  padding: EdgeInsets.only(left:
-                                    widget.size * 10,right: 5
-                                  ),
+                                  padding: EdgeInsets.only(
+                                      left: widget.size * 2, right: 5),
                                   child: StyledTextWidget(
                                     text: BranchNew.description,
                                     fontSize: widget.size * 12,
                                   ),
                                 ),
-
                               SizedBox(
-                                height: widget.size * 25,
+                                height: widget.size * 20,
                               )
                             ],
                           );
@@ -1209,12 +2332,13 @@ class _eventsPageState extends State<eventsPage> {
                 }
               }),
           SizedBox(
-            height: widget.size * 150,
+            height: widget.size * 100,
           )
         ],
       ),
     );
   }
+
   String getInitials(String fullName) {
     List<String> words = fullName.split(" ");
     String initials = "";

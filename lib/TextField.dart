@@ -667,16 +667,16 @@ class _updateCreatorState extends State<updateCreator> {
   FirebaseStorage storage = FirebaseStorage.instance;
   String Branch = "";
   bool isBranch = false;
-  final MessageController = TextEditingController();
-  final subMessageController = TextEditingController();
+  final HeadingController = TextEditingController();
+  final DescriptionController = TextEditingController();
   final PhotoUrlController = TextEditingController();
   final LinkController = TextEditingController();
   bool _isImage = false;
 
   void AutoFill() async {
-    MessageController.text = widget.heading;
+    HeadingController.text = widget.heading;
     PhotoUrlController.text = widget.photoUrl;
-    subMessageController.text = widget.subMessage;
+    DescriptionController.text = widget.subMessage;
     LinkController.text = widget.link;
     if (widget.photoUrl.length > 3) {
       setState(() {
@@ -693,7 +693,7 @@ class _updateCreatorState extends State<updateCreator> {
 
   @override
   void dispose() {
-    MessageController.dispose();
+    HeadingController.dispose();
     PhotoUrlController.dispose();
     LinkController.dispose();
     super.dispose();
@@ -709,7 +709,7 @@ class _updateCreatorState extends State<updateCreator> {
           children: [
             backButton(size: widget.size,text: "Updater",child: SizedBox(width: widget.size*45,)),
             TextFieldContainer(child: TextFormField(
-              controller: MessageController,
+              controller: HeadingController,
               textInputAction: TextInputAction.next,
               style: TextStyle(color: Colors.white,fontSize: widget.size*20),
               decoration: InputDecoration(
@@ -719,7 +719,7 @@ class _updateCreatorState extends State<updateCreator> {
               ),
             ),heading: "Heading",),
             TextFieldContainer(child: TextFormField(
-              controller: subMessageController,
+              controller: DescriptionController,
               textInputAction: TextInputAction.next,
               style: TextStyle(color: Colors.white,fontSize: widget.size*20),
               decoration: InputDecoration(
@@ -938,38 +938,73 @@ class _updateCreatorState extends State<updateCreator> {
                 ),
                 InkWell(
                   onTap: () {
-                    if (widget.NewsId.length > 3) {
-                      // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
-                      FirebaseFirestore.instance
-                          .collection("update")
-                          .doc(widget.NewsId)
-                          .update({
-                        "heading": MessageController.text.trim(),
-                        "link": LinkController.text.trim(),
-                        "image": PhotoUrlController.text,
-                        "description":subMessageController.text
-                      });
-                      messageToOwner("Update is Updated\nBy '${fullUserId()}\n    Heading : ${MessageController.text.trim()}\n    Description : ${subMessageController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
-                    } else {
-                      String id =  getID();
-                      createHomeUpdate(
-                          id: id,
-                          creator:fullUserId(),
-                          description: subMessageController.text,
-                          heading: MessageController.text,
-                          photoUrl: PhotoUrlController.text,
-                          link: LinkController.text);
-                      messageToOwner("Update is Created\nBy '${fullUserId()}\n    Heading : ${MessageController.text.trim()}\n    Description : ${subMessageController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
+                    if(true){
+                      if (widget.NewsId.length > 3) {
+                        // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
+                        FirebaseFirestore.instance
+                            .collection("update")
+                            .doc(widget.NewsId)
+                            .update({
+                          "heading": HeadingController.text.trim(),
+                          "link": LinkController.text.trim(),
+                          "image": PhotoUrlController.text,
+                          "description":DescriptionController.text
+                        });
+                        messageToOwner("Update is Updated\nBy '${fullUserId()}\n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
+                      } else {
+                        String id =  getID();
+                        createHomeUpdate(
+                            id: id,
+                            creator:fullUserId(),
+                            description: DescriptionController.text,
+                            heading: HeadingController.text,
+                            photoUrl: PhotoUrlController.text,
+                            link: LinkController.text);
+                        messageToOwner("Update is Created\nBy '${fullUserId()}\n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
 
-                      // SendMessage("Update;$id",MessageController.text.trim(),widget.branch );
+                        // SendMessage("Update;$id",MessageController.text.trim(),widget.branch );
+
+                      }
+
+
+                      HeadingController.clear();
+                      LinkController.clear();
+                      PhotoUrlController.clear();
+                      Navigator.pop(context);
+                    }else{
+
+                        if (widget.NewsId.length > 3) {
+                          FirebaseFirestore.instance
+                              .collection(widget.branch)
+                              .doc("${widget.branch}News")
+                              .collection("${widget.branch}News")
+                              .doc(widget.NewsId)
+                              .update({
+                            "heading": HeadingController.text.trim(),
+                            "description": DescriptionController.text.trim(),
+                            "image": PhotoUrlController.text.trim()
+                          });
+                          messageToOwner("Branch News Updated.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    Image : ${PhotoUrlController.text.trim()}\n **${widget.branch}");
+                        } else {
+                          String id= getID();
+                          createBranchNew(
+                              branch: widget.branch,
+                              heading: HeadingController.text.trim(),
+                              description: DescriptionController.text.trim(),
+                              photoUrl: PhotoUrlController.text, id: id);
+                          messageToOwner("Branch News Created.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    Image : ${PhotoUrlController.text.trim()}\n **${widget.branch}");
+
+                          // SendMessage("News;$id",HeadingController.text.trim(),widget.branch );
+
+                        }
+                        HeadingController.clear();
+                        DescriptionController.clear();
+                        PhotoUrlController.clear();
+                        Navigator.pop(context);
+
 
                     }
 
-
-                    MessageController.clear();
-                    LinkController.clear();
-                    PhotoUrlController.clear();
-                    Navigator.pop(context);
                   },
                   child: widget.NewsId.length < 3
                       ? Container(

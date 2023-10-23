@@ -222,496 +222,10 @@ class _appBar_HomePageState extends State<appBar_HomePage> {
               SizedBox(
                 width: 5,
               ),
-              InkWell(
-                child: Icon(
-                  Icons.notifications_none,
-                  color: Colors.white60,
-                  size: widget.size * 30,
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      transitionDuration: const Duration(milliseconds: 300),
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          notifications(
-                        size: widget.size,
-                        branch: widget.branch,
-                      ),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        final fadeTransition = FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        );
-
-                        return Container(
-                          color: Colors.black.withOpacity(animation.value),
-                          child: AnimatedOpacity(
-                              duration: Duration(milliseconds: 300),
-                              opacity: animation.value.clamp(0.3, 1.0),
-                              child: fadeTransition),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-              SizedBox(
-                width: 5,
-              ),
-              InkWell(
-                child: Icon(
-                  Icons.favorite_border,
-                  color: Colors.white60,
-                  size: widget.size * 28,
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      transitionDuration: const Duration(milliseconds: 300),
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          favorites(
-                        size: widget.size,
-                      ),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        final fadeTransition = FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        );
-
-                        return Container(
-                          color: Colors.black.withOpacity(animation.value),
-                          child: AnimatedOpacity(
-                              duration: Duration(milliseconds: 300),
-                              opacity: animation.value.clamp(0.3, 1.0),
-                              child: fadeTransition),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-              SizedBox(
-                width: 10,
-              ),
             ],
           ),
         ),
       ],
-    );
-  }
-}
-
-class academics extends StatefulWidget {
-  double size;
-  String reg, branch;
-
-  academics({required this.size, required this.branch, required this.reg});
-
-  @override
-  State<academics> createState() => _academicsState();
-}
-
-class _academicsState extends State<academics> {
-  String folderPath = "";
-
-  Future<void> getPath() async {
-    final directory = await getApplicationDocumentsDirectory();
-    setState(() {
-      folderPath = '${directory.path}';
-    });
-  }
-
-  @override
-  void initState() {
-    getPath();
-
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    double  Size=size(context);
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          StreamBuilder<List<branchSharingConvertor>>(
-              stream: readbranchSharing(),
-              builder: (context, snapshot) {
-                final BranchNews = snapshot.data;
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 0.3,
-                          color: Colors.cyan,
-                        ));
-                  default:
-                    if (snapshot.hasError) {
-                      return const Center(
-                          child: Text(
-                              'Error with Time Table Data or\n Check Internet Connection'));
-                    } else {
-                      if (BranchNews!.length == 0) {
-                        return Center(
-                            child: Text(
-                              "No Time Tables",
-                              style:
-                              TextStyle(color: Colors.amber.withOpacity(0.5)),
-                            ));
-                      } else
-                        return SizedBox(
-                          height: widget.size * 120,
-                          child: ListView.builder(
-                            itemCount: BranchNews.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, int index) {
-                              var BranchNew = BranchNews[index];
-                              file = File("");
-                              if (BranchNew.photoUrl.isNotEmpty) {
-                                final Uri uri = Uri.parse(BranchNew.photoUrl);
-                                final String fileName = uri.pathSegments.last;
-                                var name = fileName.split("/").last;
-                                file = File("${folderPath}/timetable/$name");
-                              }
-                              return Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: widget.size * 5,
-                                    vertical: widget.size * 5),
-                                child: InkWell(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(3),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.circular(
-                                                widget.size * 27),
-                                            border: Border.all(
-                                                width: 2,
-                                                color: Colors.purpleAccent,
-                                                style: BorderStyle.solid)),
-                                        child: Container(
-                                          height: widget.size * 65,
-                                          width: widget.size * 65,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                                image: FileImage(file),
-                                                fit: BoxFit.cover),
-                                            borderRadius:
-                                            BorderRadius.circular(
-                                                widget.size * 23),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: widget.size * 3.0),
-                                        child: Text(
-                                          BranchNew.id.toUpperCase(),
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: widget.size * 15,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: "test"),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => ImageZoom(
-                                              size: widget.size,
-                                              url: "",
-                                              file: file,
-                                            )));
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                    }
-                }
-              }),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Syllabus & Model Paper",style: TextStyle(color: Colors.white,fontSize: 20),),
-                Icon(Icons.chevron_right,color: Colors.white,size: 20,)
-              ],
-            ),
-          ),
-          Row(
-            children: [
-              Flexible(
-                  child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(25),
-                      child: Container(
-                        height: 80,
-                        color: Colors.white12,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: Text(
-                        "Syllabus Paper ( ${widget.reg.substring(0, 10)} )",
-                        style:
-                            TextStyle(color: Colors.white, fontSize: 15),
-                      ),
-                    )
-                  ],
-                ),
-              )),
-              Flexible(
-                  child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(25),
-                      child: Container(
-                        height: 80,
-                        color: Colors.white12,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: Text(
-                        "Model Paper ( ${widget.reg.substring(0, 10)} )",
-                        style:
-                            TextStyle(color: Colors.white, fontSize: 15),
-                      ),
-                    )
-                  ],
-                ),
-              )),
-            ],
-          ),
-          InkWell(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Time Tables",style: TextStyle(color: Colors.white,fontSize: 20),),
-                  Icon(Icons.chevron_right,color: Colors.white,size: 20,)
-                ],
-              ),
-            ),
-            onTap: (){
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  transitionDuration: const Duration(milliseconds: 300),
-                  pageBuilder: (context, animation, secondaryAnimation) =>
-                      TimeTables(
-                        reg: widget.reg,
-                        branch: widget.branch,
-                        size: widget.size,
-                      ),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    final fadeTransition = FadeTransition(
-                      opacity: animation,
-                      child: child,
-                    );
-
-                    return Container(
-                      color: Colors.black.withOpacity(animation.value),
-                      child: AnimatedOpacity(
-                          duration: Duration(milliseconds: 300),
-                          opacity: animation.value.clamp(0.3, 1.0),
-                          child: fadeTransition),
-                    );
-                  },
-                ),
-              );
-
-            },
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: Size * 15),
-            child: StreamBuilder<List<TimeTableConvertor>>(
-                stream: readTimeTable(
-                    branch: widget.branch, reg: widget.reg),
-                builder: (context, snapshot) {
-                  final BranchNews = snapshot.data;
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 0.3,
-                            color: Colors.cyan,
-                          ));
-                    default:
-                      if (snapshot.hasError) {
-                        return const Center(
-                            child: Text(
-                                'Error with Time Table Data or\n Check Internet Connection'));
-                      } else {
-                        if (BranchNews!.length == 0) {
-                          return Center(
-                              child: Text(
-                                "No Time Tables",
-                                style: TextStyle(
-                                    color: Colors.amber
-                                        .withOpacity(0.5)),
-                              ));
-                        } else
-                          return SizedBox(
-                            height: widget.size * 120,
-                            child: ListView.builder(
-                              itemCount: BranchNews.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, int index) {
-                                var BranchNew = BranchNews[index];
-                                file = File("");
-                                if (BranchNew
-                                    .photoUrl.isNotEmpty) {
-                                  final Uri uri = Uri.parse(
-                                      BranchNew.photoUrl);
-                                  final String fileName =
-                                      uri.pathSegments.last;
-                                  var name =
-                                      fileName.split("/").last;
-                                  file = File(
-                                      "${folderPath}/timetable/$name");
-                                }
-                                return Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: widget.size * 5,
-                                      vertical: widget.size * 5),
-                                  child: InkWell(
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          padding:
-                                          EdgeInsets.all(3),
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius
-                                                  .circular(
-                                                  widget.size *
-                                                      27),
-                                              border: Border.all(
-                                                  width: 2,
-                                                  color: Colors
-                                                      .purpleAccent,
-                                                  style:
-                                                  BorderStyle
-                                                      .solid)),
-                                          child: Container(
-                                            height:
-                                            widget.size * 65,
-                                            width:
-                                            widget.size * 65,
-                                            decoration:
-                                            BoxDecoration(
-                                              image: DecorationImage(
-                                                  image:
-                                                  FileImage(
-                                                      file),
-                                                  fit: BoxFit
-                                                      .cover),
-                                              borderRadius:
-                                              BorderRadius
-                                                  .circular(
-                                                  widget.size *
-                                                      23),
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                          EdgeInsets.only(
-                                              top: widget
-                                                  .size *
-                                                  3.0),
-                                          child: Text(
-                                            BranchNew.heading
-                                                .toUpperCase(),
-                                            style: TextStyle(
-                                                color:
-                                                Colors.white,
-                                                fontSize:
-                                                widget.size *
-                                                    15,
-                                                fontWeight:
-                                                FontWeight
-                                                    .w600,
-                                                fontFamily:
-                                                "test"),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder:
-                                                  (context) =>
-                                                  ImageZoom(
-                                                    size: widget
-                                                        .size,
-                                                    url: "",
-                                                    file:
-                                                    file,
-                                                  )));
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                      }
-                  }
-                }),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.0),
-            child: Center(
-              child: InkWell(
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.white54)),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
-                    child: Text(
-                      "Exam Notification",
-                      style: TextStyle(color: Colors.white, fontSize: 25),
-                    ),
-                  ),
-                ),
-                onTap: () {
-                  ExternalLaunchUrl("http://www.srkrexams.in/Login.aspx");
-                },
-              ),
-            ),
-          ),
-
-        ],
-      ),
     );
   }
 }
@@ -726,18 +240,13 @@ class tabBar extends StatefulWidget {
 }
 
 class _tabBarState extends State<tabBar> {
-  List<String> tabBarIndex = [
-    "Home",
-    "Academics",
-    "Subjects",
-    "Lab Subjects",
-    "Books"
-  ];
+  List<String> tabBarIndex = ["Home", "Subjects", "Lab Subjects", "Books"];
   int currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
+
     widget.tabController.addListener(_handleTabChange);
   }
 
@@ -771,7 +280,24 @@ class _tabBarState extends State<tabBar> {
                     right: index == tabBarIndex.length - 1 ? 20 : 0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    gradient: currentIndex == index
+                        ? LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.white.withOpacity(0.5),
+                              Colors.blue.withOpacity(0.2),
+                              Colors.deepPurpleAccent.withOpacity(0.5),
+                            ],
+                          )
+                        : LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.white.withOpacity(0.1),
+                              Colors.white.withOpacity(0.1),
+                            ],
+                          ),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Padding(
@@ -781,10 +307,9 @@ class _tabBarState extends State<tabBar> {
                         label,
                         style: TextStyle(
                           color: currentIndex == index
-                              ? Colors.purpleAccent
-                              : Colors.white,
+                              ? Colors.white
+                              : Colors.white54,
                           fontSize: 18,
-                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
@@ -803,6 +328,422 @@ class _tabBarState extends State<tabBar> {
 }
 
 final GlobalKey<_HomePageState> homePageKey = GlobalKey<_HomePageState>();
+
+class otherBranchSubjects extends StatefulWidget {
+  String reg, branch;
+  double size;
+
+  otherBranchSubjects(
+      {required this.reg, required this.size, required this.branch});
+
+  @override
+  State<otherBranchSubjects> createState() => _otherBranchSubjectsState();
+}
+
+class _otherBranchSubjectsState extends State<otherBranchSubjects> {
+  String branch = "";
+
+  String folderPath = "";
+
+
+  Future<void> getPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    setState(() {
+      folderPath = '${directory.path}';
+      branch = widget.branch;
+    });
+  }
+
+  @override
+  void initState() {
+    getPath();
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+          child: StreamBuilder<List<branchSharingConvertor>>(
+              stream: readbranchSharing(),
+              builder: (context, snapshot) {
+                final BranchNews = snapshot.data;
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 0.3,
+                          color: Colors.cyan,
+                        ));
+                  default:
+                    if (snapshot.hasError) {
+                      return const Center(
+                          child: Text(
+                              'Error with Time Table Data or\n Check Internet Connection'));
+                    } else {
+                      if (BranchNews!.length == 0) {
+                        return SizedBox(
+                          height: widget.size * 58,
+
+                          child: Center(
+                              child: Text(
+                                "No Time Tables",
+                                style: TextStyle(
+                                    color: Colors.amber
+                                        .withOpacity(0.5)),
+                              )),
+                        );
+                      } else
+                        return SizedBox(
+                          height: widget.size * 58,
+                          child: ListView.builder(
+                            itemCount: BranchNews.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, int index) {
+                              var BranchNew = BranchNews[index];
+                              file = File("");
+                              if (BranchNew
+                                  .photoUrl.isNotEmpty) {
+                                final Uri uri = Uri.parse(
+                                    BranchNew.photoUrl);
+                                final String fileName =
+                                    uri.pathSegments.last;
+                                var name =
+                                    fileName.split("/").last;
+                                file = File(
+                                    "${folderPath}/timetable/$name");
+                              }
+                              return (widget.branch!=BranchNew.id)||(widget.branch!=branch)?
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: index == 0
+                                        ? widget.size * 14
+                                        : widget.size * 5),
+                                child: InkWell(
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding:
+                                        EdgeInsets.all(3),
+                                        margin: EdgeInsets.only(
+                                            bottom:
+                                            widget.size *
+                                                2.0),
+                                        decoration:
+                                        BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(
+                                                widget.size *
+                                                    27),
+                                            gradient:
+                                            LinearGradient(
+                                              begin: Alignment
+                                                  .topLeft,
+                                              end: Alignment
+                                                  .bottomRight,
+                                              colors: [
+                                                Colors
+                                                    .white,
+                                                Colors
+                                                    .blueGrey,
+                                                Colors
+                                                    .deepPurpleAccent,
+                                              ],
+                                            ),
+                                            border: Border.all(
+                                                width: 2,
+                                                style: BorderStyle
+                                                    .solid)),
+                                        child: Container(
+                                          height:
+                                          widget.size * 45,
+                                          width:
+                                          widget.size * 60,
+                                          decoration:
+                                          BoxDecoration(
+                                            color: Colors.black
+                                                .withOpacity(
+                                                0.6),
+                                            image: DecorationImage(
+                                                image:
+                                                FileImage(
+                                                    file),
+                                                fit: BoxFit
+                                                    .cover),
+                                            borderRadius:
+                                            BorderRadius
+                                                .circular(
+                                                widget.size *
+                                                    23),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              BranchNew.id
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                  color: Colors
+                                                      .white,
+                                                  fontSize:
+                                                  widget.size *
+                                                      18,
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .w600,
+                                                  fontFamily:
+                                                  "test"),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () {
+                                setState(() {
+                                  branch =BranchNew.id;
+                                });
+
+                                  },
+                                ),
+                              ):Container();
+                            },
+                          ),
+                        );
+                    }
+                }
+              }),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Syllabus & Model Paper",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: Colors.white,
+                size: 20,
+              )
+            ],
+          ),
+        ),
+
+        Row(
+          children: [
+            Flexible(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(25),
+                        child: Container(
+                          height: 80,
+                          color: Colors.white12,
+
+
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: Text(
+                          "Syllabus Paper ( ${widget.reg.substring(0, 10)} )",
+                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+            Flexible(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(25),
+                        child: Container(
+                          height: 80,
+                          color: Colors.white12,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: Text(
+                          "Model Paper ( ${widget.reg.substring(0, 10)} )",
+                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+          ],
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.0),
+          child: Center(
+            child: InkWell(
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.white54)),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
+                  child: Text(
+                    "Exam Notification",
+                    style: TextStyle(color: Colors.white, fontSize: 25),
+                  ),
+                ),
+              ),
+              onTap: () {
+                ExternalLaunchUrl("http://www.srkrexams.in/Login.aspx");
+              },
+            ),
+          ),
+        ),
+        StreamBuilder<List<FlashNewsConvertor>>(
+            stream: readSRKRFlashNews(),
+            builder: (context, snapshot) {
+              final Favourites = snapshot.data;
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                  return const Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 0.3,
+                        color: Colors.cyan,
+                      ));
+                default:
+                  if (snapshot.hasError) {
+                    return Center(child: Text("Error"));
+                  } else {
+                    return Favourites!.isNotEmpty
+                        ? Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(widget.size * 8.0),
+                          child: Text(
+                            "Flash News",
+                            style: secondHeadingTextStyle(
+                                color: Colors.white, size: widget.size),
+                          ),
+                        ),
+                        CarouselSlider(
+                            items: List.generate(Favourites!.length,
+                                    (int index) {
+                                  final BranchNew = Favourites[index];
+
+                                  return Row(
+                                    children: [
+                                      Expanded(
+                                        child: InkWell(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left: widget.size * 20),
+                                            child: Text(
+                                              BranchNew.heading,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontFamily: "test",
+                                                  fontSize: widget.size * 16),
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            if (BranchNew.Url.isNotEmpty) {
+                                              ExternalLaunchUrl(
+                                                  BranchNew.Url);
+                                            } else {
+                                              showToastText("No Url Found");
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                      if (isGmail())
+                                        PopupMenuButton(
+                                          icon: Icon(
+                                            Icons.more_vert,
+                                            color: Colors.white,
+                                            size: widget.size * 25,
+                                          ),
+                                          // Callback that sets the selected popup menu item.
+                                          onSelected: (item) {
+                                            if (item == "edit") {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          flashNewsCreator(
+                                                            branch:
+                                                            widget.branch,
+                                                            size: widget.size,
+                                                            heading: BranchNew
+                                                                .heading,
+                                                            link:
+                                                            BranchNew.Url,
+                                                            NewsId:
+                                                            BranchNew.id,
+                                                          )));
+                                            } else if (item == "delete") {
+                                              messageToOwner(
+                                                  "Flash News is Deleted\nBy : '${fullUserId()}' \n   Heading : ${BranchNew.heading}\n   Link : ${BranchNew.Url}");
+
+                                              FirebaseFirestore.instance
+                                                  .collection("srkrPage")
+                                                  .doc("flashNews")
+                                                  .collection("flashNews")
+                                                  .doc(BranchNew.id)
+                                                  .delete();
+                                            }
+                                          },
+                                          itemBuilder:
+                                              (BuildContext context) =>
+                                          <PopupMenuEntry>[
+                                            const PopupMenuItem(
+                                              value: "edit",
+                                              child: Text('Edit'),
+                                            ),
+                                            const PopupMenuItem(
+                                              value: "delete",
+                                              child: Text('Delete'),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
+                                  );
+                                }),
+                            options: CarouselOptions(
+                              viewportFraction: 1,
+                              enlargeCenterPage: true,
+                              height: widget.size * 60,
+                              autoPlayAnimationDuration:
+                              Duration(milliseconds: 1800),
+                              autoPlay:
+                              Favourites.length > 1 ? true : false,
+                            )),
+                      ],
+                    )
+                        : Container();
+                  }
+              }
+            }),
+      ],
+    );
+  }
+}
 
 class HomePage extends StatefulWidget {
   final String branch, name;
@@ -828,11 +769,13 @@ class _HomePageState extends State<HomePage>
   late TabController _tabController;
   String folderPath = "";
   int currentIndex = 0;
+  String branch = "";
 
   Future<void> getPath() async {
     final directory = await getApplicationDocumentsDirectory();
     setState(() {
       folderPath = '${directory.path}';
+      branch = widget.branch;
     });
   }
 
@@ -844,7 +787,6 @@ class _HomePageState extends State<HomePage>
       length: 5,
     );
     super.initState();
-    // changeTab(1);
   }
 
   @override
@@ -855,7 +797,6 @@ class _HomePageState extends State<HomePage>
 
   void changeTab(int newIndex) {
     _tabController.animateTo(newIndex);
-    showToastText("Working");
   }
 
   final InputController = TextEditingController();
@@ -976,18 +917,60 @@ class _HomePageState extends State<HomePage>
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: widget.size * 10.0,
-                              top: widget.size * 20.0),
-                          child: Text(
-                            "Time Table",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w800,
-                                fontFamily: "test"),
+                        InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Time Tables",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  color: Colors.white,
+                                  size: 20,
+                                )
+                              ],
+                            ),
                           ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration:
+                                    const Duration(milliseconds: 300),
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        TimeTables(
+                                  reg: widget.reg,
+                                  branch: widget.branch,
+                                  size: widget.size,
+                                ),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  final fadeTransition = FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+
+                                  return Container(
+                                    color: Colors.black
+                                        .withOpacity(animation.value),
+                                    child: AnimatedOpacity(
+                                        duration: Duration(milliseconds: 300),
+                                        opacity:
+                                            animation.value.clamp(0.3, 1.0),
+                                        child: fadeTransition),
+                                  );
+                                },
+                              ),
+                            );
+                          },
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: Size * 15),
@@ -1019,7 +1002,7 @@ class _HomePageState extends State<HomePage>
                                         ));
                                       } else
                                         return SizedBox(
-                                          height: widget.size * 120,
+                                          height: widget.size * 110,
                                           child: ListView.builder(
                                             itemCount: BranchNews.length,
                                             scrollDirection: Axis.horizontal,
@@ -1047,18 +1030,30 @@ class _HomePageState extends State<HomePage>
                                                       Container(
                                                         padding:
                                                             EdgeInsets.all(3),
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
                                                                         widget.size *
                                                                             27),
-                                                            border: Border.all(
-                                                                width: 2,
-                                                                color: Colors
-                                                                    .purpleAccent,
-                                                                style:
-                                                                    BorderStyle
+                                                                gradient:
+                                                                    LinearGradient(
+                                                                  begin: Alignment
+                                                                      .topLeft,
+                                                                  end: Alignment
+                                                                      .bottomRight,
+                                                                  colors: [
+                                                                    Colors
+                                                                        .white,
+                                                                    Colors
+                                                                        .blueGrey,
+                                                                    Colors
+                                                                        .deepPurpleAccent,
+                                                                  ],
+                                                                ),
+                                                                border: Border.all(
+                                                                    width: 2,
+                                                                    style: BorderStyle
                                                                         .solid)),
                                                         child: Container(
                                                           height:
@@ -1129,27 +1124,46 @@ class _HomePageState extends State<HomePage>
                               }),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 8),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Based on Regulation",style: TextStyle(color: Colors.white,fontSize: 20),),
+                              Text(
+                                "Based on Regulation",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
+                              ),
                               Row(
                                 children: [
-                                  InkWell(onTap: (){
-                                    changeTab(2);
-                                  },child: Text("Sub ",style: TextStyle(color: Colors.white70,fontSize: 16,fontWeight: FontWeight.w600),)),
-                                  InkWell(onTap: (){
-                                    changeTab(3);
-
-                                  },child: Text(" Lab",style: TextStyle(color: Colors.white60,fontSize: 16,fontWeight: FontWeight.w600),)),
+                                  InkWell(
+                                      onTap: () {
+                                        changeTab(1);
+                                      },
+                                      child: Text(
+                                        "Sub ",
+                                        style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      )),
+                                  InkWell(
+                                      onTap: () {
+                                        changeTab(2);
+                                      },
+                                      child: Text(
+                                        " Lab",
+                                        style: TextStyle(
+                                            color: Colors.white60,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      )),
                                 ],
                               )
                             ],
                           ),
                         ),
-
                         StreamBuilder<List<subjectsConvertor>>(
                           stream: readFlashNews(widget.branch),
                           builder: (context, flashSnapshot) {
@@ -1401,536 +1415,31 @@ class _HomePageState extends State<HomePage>
                             );
                           },
                         ),
-
                         Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: widget.size * 8, vertical: 10),
-                          child: SizedBox(
-                            height: widget.size * 50,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Flexible(
-                                  child: InkWell(
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: widget.size * 3),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                            widget.size * 15),
-                                        color: Colors.white.withOpacity(0.2),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Time\nTable",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: widget.size * 20,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        PageRouteBuilder(
-                                          transitionDuration:
-                                              const Duration(milliseconds: 300),
-                                          pageBuilder: (context, animation,
-                                                  secondaryAnimation) =>
-                                              TimeTables(
-                                            reg: widget.reg,
-                                            branch: widget.branch,
-                                            size: widget.size,
-                                          ),
-                                          transitionsBuilder: (context,
-                                              animation,
-                                              secondaryAnimation,
-                                              child) {
-                                            final fadeTransition =
-                                                FadeTransition(
-                                              opacity: animation,
-                                              child: child,
-                                            );
-
-                                            return Container(
-                                              color: Colors.black
-                                                  .withOpacity(animation.value),
-                                              child: AnimatedOpacity(
-                                                  duration: Duration(
-                                                      milliseconds: 300),
-                                                  opacity: animation.value
-                                                      .clamp(0.3, 1.0),
-                                                  child: fadeTransition),
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Flexible(
-                                  child: InkWell(
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: widget.size * 3),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                            widget.size * 15),
-                                        color: Colors.white.withOpacity(0.2),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Syllabus",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: widget.size * 20,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        PageRouteBuilder(
-                                          transitionDuration:
-                                              const Duration(milliseconds: 300),
-                                          pageBuilder: (context, animation,
-                                                  secondaryAnimation) =>
-                                              syllabusPage(
-                                            branch: widget.branch,
-                                            reg: widget.reg,
-                                            size: widget.size,
-                                          ),
-                                          transitionsBuilder: (context,
-                                              animation,
-                                              secondaryAnimation,
-                                              child) {
-                                            final fadeTransition =
-                                                FadeTransition(
-                                              opacity: animation,
-                                              child: child,
-                                            );
-
-                                            return Container(
-                                              color: Colors.black
-                                                  .withOpacity(animation.value),
-                                              child: AnimatedOpacity(
-                                                  duration: Duration(
-                                                      milliseconds: 300),
-                                                  opacity: animation.value
-                                                      .clamp(0.3, 1.0),
-                                                  child: fadeTransition),
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Flexible(
-                                  child: InkWell(
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: widget.size * 3),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                            widget.size * 15),
-                                        color: Colors.white.withOpacity(0.2),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Model\nPaper",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: widget.size * 20,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        PageRouteBuilder(
-                                          transitionDuration:
-                                              const Duration(milliseconds: 300),
-                                          pageBuilder: (context, animation,
-                                                  secondaryAnimation) =>
-                                              ModalPapersPage(
-                                            branch: widget.branch,
-                                            reg: widget.reg,
-                                            size: widget.size,
-                                          ),
-                                          transitionsBuilder: (context,
-                                              animation,
-                                              secondaryAnimation,
-                                              child) {
-                                            final fadeTransition =
-                                                FadeTransition(
-                                              opacity: animation,
-                                              child: child,
-                                            );
-
-                                            return Container(
-                                              color: Colors.black
-                                                  .withOpacity(animation.value),
-                                              child: AnimatedOpacity(
-                                                  duration: Duration(
-                                                      milliseconds: 300),
-                                                  opacity: animation.value
-                                                      .clamp(0.3, 1.0),
-                                                  child: fadeTransition),
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Flexible(
-                                  child: InkWell(
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: widget.size * 3),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                            widget.size * 15),
-                                        color: Colors.white.withOpacity(0.2),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Books",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: widget.size * 20,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      changeTab(1);
-                                    },
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: Size * 10, vertical: Size * 10),
+                          padding: const EdgeInsets.only(left: 10.0, top: 20),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Flexible(
-                                flex: 2,
-                                child: InkWell(
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.only(right: Size * 10.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.05),
-                                          border:
-                                              Border.all(color: Colors.white10),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(Size * 15))),
-                                      child: Padding(
-                                        padding: EdgeInsets.all(Size * 8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Text(
-                                              "Text To Speech",
-                                              style: TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: Size * 25,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                            Container(
-                                              height: Size * 25,
-                                              width: Size * 25,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.black,
-                                                  image: DecorationImage(
-                                                      image: AssetImage(
-                                                          "assets/img.png")),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              Size * 20))),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        transitionDuration:
-                                            const Duration(milliseconds: 300),
-                                        pageBuilder: (context, animation,
-                                                secondaryAnimation) =>
-                                            MyHomePage(),
-                                        transitionsBuilder: (context, animation,
-                                            secondaryAnimation, child) {
-                                          final fadeTransition = FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          );
-
-                                          return Container(
-                                            color: Colors.black
-                                                .withOpacity(animation.value),
-                                            child: AnimatedOpacity(
-                                                duration:
-                                                    Duration(milliseconds: 300),
-                                                opacity: animation.value
-                                                    .clamp(0.3, 1.0),
-                                                child: fadeTransition),
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                ),
+                              Text(
+                                "Other Branches ( Sub - Lab - Syl - M.P )",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
                               ),
-                              Flexible(
-                                  child: InkWell(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.01),
-                                      border: Border.all(color: Colors.white10),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(Size * 15))),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(Size * 5.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          "Ask",
-                                          style: TextStyle(
-                                              color: Colors.white70,
-                                              fontSize: Size * 25,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        Container(
-                                          height: Size * 30,
-                                          width: Size * 30,
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              border: Border.all(
-                                                  color: Colors.white24),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(Size * 15))),
-                                          child: Padding(
-                                            padding: EdgeInsets.all(Size * 3.0),
-                                            child: Text(
-                                              "AI",
-                                              style: TextStyle(
-                                                  fontSize: Size * 22,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                onTap: () {
-                                  showToastText("Coming Soon");
-                                },
-                              ))
                             ],
                           ),
                         ),
 
-                        // if (modelPaper.isNotEmpty && syllabus.isNotEmpty)
-                        //   Row(
-                        //     children: [
-                        //       if (syllabus.isNotEmpty)
-                        //         Flexible(child: Container()),
-                        //       if (modelPaper.isNotEmpty)
-                        //         Flexible(child: Container())
-                        //     ],
-                        //   ),
-
-                        StreamBuilder<List<FlashNewsConvertor>>(
-                            stream: readSRKRFlashNews(),
-                            builder: (context, snapshot) {
-                              final Favourites = snapshot.data;
-                              switch (snapshot.connectionState) {
-                                case ConnectionState.waiting:
-                                  return const Center(
-                                      child: CircularProgressIndicator(
-                                    strokeWidth: 0.3,
-                                    color: Colors.cyan,
-                                  ));
-                                default:
-                                  if (snapshot.hasError) {
-                                    return Center(child: Text("Error"));
-                                  } else {
-                                    return Favourites!.isNotEmpty
-                                        ? Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.all(
-                                                    widget.size * 8.0),
-                                                child: Text(
-                                                  "Flash News",
-                                                  style: secondHeadingTextStyle(
-                                                      color: Colors.white,
-                                                      size: widget.size),
-                                                ),
-                                              ),
-                                              CarouselSlider(
-                                                  items: List.generate(
-                                                      Favourites!.length,
-                                                      (int index) {
-                                                    final BranchNew =
-                                                        Favourites[index];
-
-                                                    return Row(
-                                                      children: [
-                                                        Expanded(
-                                                          child: InkWell(
-                                                            child: Padding(
-                                                              padding: EdgeInsets.only(
-                                                                  left: widget
-                                                                          .size *
-                                                                      20),
-                                                              child: Text(
-                                                                BranchNew
-                                                                    .heading,
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    fontFamily:
-                                                                        "test",
-                                                                    fontSize:
-                                                                        widget.size *
-                                                                            16),
-                                                                maxLines: 3,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            ),
-                                                            onTap: () {
-                                                              if (BranchNew.Url
-                                                                  .isNotEmpty) {
-                                                                ExternalLaunchUrl(
-                                                                    BranchNew
-                                                                        .Url);
-                                                              } else {
-                                                                showToastText(
-                                                                    "No Url Found");
-                                                              }
-                                                            },
-                                                          ),
-                                                        ),
-                                                        if (isGmail())
-                                                          PopupMenuButton(
-                                                            icon: Icon(
-                                                              Icons.more_vert,
-                                                              color:
-                                                                  Colors.white,
-                                                              size:
-                                                                  widget.size *
-                                                                      25,
-                                                            ),
-                                                            // Callback that sets the selected popup menu item.
-                                                            onSelected: (item) {
-                                                              if (item ==
-                                                                  "edit") {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            flashNewsCreator(
-                                                                              branch: widget.branch,
-                                                                              size: widget.size,
-                                                                              heading: BranchNew.heading,
-                                                                              link: BranchNew.Url,
-                                                                              NewsId: BranchNew.id,
-                                                                            )));
-                                                              } else if (item ==
-                                                                  "delete") {
-                                                                messageToOwner(
-                                                                    "Flash News is Deleted\nBy : '${fullUserId()}' \n   Heading : ${BranchNew.heading}\n   Link : ${BranchNew.Url}");
-
-                                                                FirebaseFirestore
-                                                                    .instance
-                                                                    .collection(
-                                                                        "srkrPage")
-                                                                    .doc(
-                                                                        "flashNews")
-                                                                    .collection(
-                                                                        "flashNews")
-                                                                    .doc(
-                                                                        BranchNew
-                                                                            .id)
-                                                                    .delete();
-                                                              }
-                                                            },
-                                                            itemBuilder: (BuildContext
-                                                                    context) =>
-                                                                <PopupMenuEntry>[
-                                                              const PopupMenuItem(
-                                                                value: "edit",
-                                                                child: Text(
-                                                                    'Edit'),
-                                                              ),
-                                                              const PopupMenuItem(
-                                                                value: "delete",
-                                                                child: Text(
-                                                                    'Delete'),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                      ],
-                                                    );
-                                                  }),
-                                                  options: CarouselOptions(
-                                                    viewportFraction: 1,
-                                                    enlargeCenterPage: true,
-                                                    height: widget.size * 60,
-                                                    autoPlayAnimationDuration:
-                                                        Duration(
-                                                            milliseconds: 1800),
-                                                    autoPlay:
-                                                        Favourites.length > 1
-                                                            ? true
-                                                            : false,
-                                                  )),
-                                            ],
-                                          )
-                                        : Container();
-                                  }
-                              }
-                            }),
-
+                        otherBranchSubjects(
+                          reg: widget.reg,
+                          size: widget.size,
+                          branch: widget.branch,
+                        ),
                         SizedBox(
                           height: widget.size * 50,
                         )
                       ],
                     ),
-                  ),
-                  academics(
-                    branch: widget.branch,
-                    reg: widget.reg,
-                    size: widget.size,
                   ),
                   Subjects(
                     branch: widget.branch,
@@ -1957,6 +1466,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 }
+
 
 // floatingActionButton: SizedBox(
 // height: Size * 40,

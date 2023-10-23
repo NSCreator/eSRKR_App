@@ -10,6 +10,7 @@ import 'package:srkr_study_app/HomePage.dart';
 import 'package:srkr_study_app/notification.dart';
 import 'dart:convert';
 
+import 'SubPages.dart';
 import 'TextField.dart';
 import 'functins.dart';
 import 'main.dart';
@@ -59,7 +60,6 @@ class settings extends StatefulWidget {
 }
 
 class _settingsState extends State<settings> {
-  final InputController = TextEditingController();
 
   List<mainSettings> SettingsData = [
     mainSettings(
@@ -246,8 +246,7 @@ class _settingsState extends State<settings> {
                                                             });
                                                             Navigator.pop(
                                                                 context);
-                                                            Navigator.pop(
-                                                                context);
+
                                                           },
                                                         ),
                                                       ),
@@ -270,683 +269,233 @@ class _settingsState extends State<settings> {
               ],
             ),
           ),
-          if (!isGmail())
+          if ((!isGmail())&&(!isOwner()))
             ImageScreen(
               size: widget.size,
               branch: widget.branch,
             ),
-
-//             if(isGmail()||isOwner())Padding(
-//               padding: EdgeInsets.symmetric(
-//                   vertical: widget.size * 10,
-//                   horizontal: widget.size * 10),
-//               child: Container(
-//                 decoration: BoxDecoration(
-//                     color: Colors.white12,
-//                     borderRadius: BorderRadius.circular(
-//                         widget.size * 20),
-//                 ),
-//                 child: Column(
-//                   mainAxisAlignment: MainAxisAlignment.start,
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Padding(
-//                       padding:
-//                       EdgeInsets.all(widget.size * 8.0),
-//                       child: Text(
-//                         "Create Here",
-//                         style: TextStyle(
-//                             fontSize: widget.size * 25,
-//                             color: Colors.white,
-//                             fontWeight: FontWeight.w500),
-//                       ),
-//                     ),
-//                     InkWell(
-//                       child: Container(
-//                         margin: EdgeInsets.symmetric(  horizontal: widget.size * 10,vertical: widget.size * 2,),
-//                         decoration: BoxDecoration(
-//                           borderRadius:
-//                           BorderRadius.circular(
-//                               widget.size * 20),
-//                           color:
-//                           Colors.black.withOpacity(0.7),
-//                         ),
-//                         child: Padding(
-//                           padding: EdgeInsets.symmetric(
-//                             horizontal: widget.size * 25,vertical: widget.size * 8,),
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               Text(
-//                                 "Flash News",
-//                                 style: TextStyle(
-//                                     color: Colors.white,
-//                                     fontSize: widget.size * 20,
-//                                     fontWeight:
-//                                     FontWeight.w500),
-//                               ),
-//                               Container(
-//                                 decoration: BoxDecoration(
-//                                   color: Colors.white,
-//                                   borderRadius: BorderRadius.circular(widget.size * 20)
-//                                 ),
-//                                 child: Padding(
-//                                   padding:  EdgeInsets.all(widget.size * 3.0),
-//                                   child: Icon(Icons.arrow_forward_ios,),
-//                                 ),
-//                               )
-//                             ],
-//                           ),
-//                         ),
-//                       ),
-//                       onTap: () {
-//                         Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                                 builder: (context) =>
-//                                     flashNewsCreator(
-//                                       branch: widget.branch,
-//                                       size: widget.size,
-//                                     )));
-//                       },
-//                     ),
-//                     InkWell(
-//                       child: Container(
-//                         margin: EdgeInsets.symmetric(  horizontal: widget.size * 10,vertical: widget.size * 2,),
-//                         decoration: BoxDecoration(
-//                           borderRadius:
-//                           BorderRadius.circular(
-//                               widget.size * 20),
-//                           color:
-//                           Colors.black.withOpacity(0.7),
-//                         ),
-//                         child: Padding(
-//                           padding: EdgeInsets.symmetric(
-//                             horizontal: widget.size * 25,vertical: widget.size * 8,),
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               Text(
-//                                 "Time Table",
-//                                 style: TextStyle(
-//                                     color: Colors.white,
-//                                     fontSize: widget.size * 20,
-//                                     fontWeight:
-//                                     FontWeight.w500),
-//                               ),
-//                               Container(
-//                                 decoration: BoxDecoration(
-//                                     color: Colors.white,
-//                                     borderRadius: BorderRadius.circular(widget.size * 20)
-//                                 ),
-//                                 child: Padding(
-//                                   padding:  EdgeInsets.all(widget.size * 3.0),
-//                                   child: Icon(Icons.arrow_forward_ios,),
-//                                 ),
-//                               )
-//                             ],
-//                           ),
-//                         ),
-//                       ),
-//                       onTap: () {
-//                         Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                                 builder: (context) =>
-//                                     timeTableSyllabusModalPaperCreator(
-//                                       size: widget.size, mode: 'Time Table', reg: widget.reg, branch: widget.branch,
-//                                     )));
-//                       },
-//                     ),
-//                     InkWell(
-//                       child: Container(
-//                         margin: EdgeInsets.symmetric(  horizontal: widget.size * 10,vertical: widget.size * 2,),
-//                         decoration: BoxDecoration(
-//                           borderRadius:
-//                           BorderRadius.circular(
-//                               widget.size * 20),
-//                           color:
-//                           Colors.black.withOpacity(0.7),
-//                         ),
-//                         child: Padding(
-//                           padding: EdgeInsets.symmetric(
-//                             horizontal: widget.size * 25,vertical: widget.size * 8,),
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               Text(
-//                                 "Syllabus & Model Paper",
-//                                 style: TextStyle(
-//                                     color: Colors.white,
-//                                     fontSize: widget.size * 20,
-//                                     fontWeight:
-//                                     FontWeight.w500),
-//                               ),
-//                               Container(
-//                                 decoration: BoxDecoration(
-//                                     color: Colors.white,
-//                                     borderRadius: BorderRadius.circular(widget.size * 20)
-//                                 ),
-//                                 child: Padding(
-//                                   padding:  EdgeInsets.all(widget.size * 3.0),
-//                                   child: Icon(Icons.arrow_forward_ios,),
-//                                 ),
-//                               )
-//                             ],
-//                           ),
-//                         ),
-//                       ),
-//                       onTap: () {
-//                         Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                                 builder: (context) =>
-//                                     timeTableSyllabusModalPaperCreator(
-//                                       size: widget.size, mode: 'Syllabus & Modal Paper', reg: widget.reg, branch: widget.branch,id: widget.reg,
-//                                     )));
-//                       },
-//                     ),
-//                     InkWell(
-//                       child: Container(
-//                         margin: EdgeInsets.symmetric(  horizontal: widget.size * 10,vertical: widget.size * 2,),
-//                         decoration: BoxDecoration(
-//                           borderRadius:
-//                           BorderRadius.circular(
-//                               widget.size * 20),
-//                           color:
-//                           Colors.black.withOpacity(0.7),
-//                         ),
-//                         child: Padding(
-//                           padding: EdgeInsets.symmetric(
-//                             horizontal: widget.size * 25,vertical: widget.size * 8,),
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               Text(
-//                                 "Add Regulation",
-//                                 style: TextStyle(
-//                                     color: Colors.white,
-//                                     fontSize: widget.size * 20,
-//                                     fontWeight:
-//                                     FontWeight.w500),
-//                               ),
-//                               Container(
-//                                 decoration: BoxDecoration(
-//                                     color: Colors.white,
-//                                     borderRadius: BorderRadius.circular(widget.size * 20)
-//                                 ),
-//                                 child: Padding(
-//                                   padding:  EdgeInsets.all(widget.size * 3.0),
-//                                   child: Icon(Icons.arrow_forward_ios,),
-//                                 ),
-//                               )
-//                             ],
-//                           ),
-//                         ),
-//                       ),
-//                       onTap: () {
-//                         showDialog(
-//                           context: context,
-//                           builder: (context) {
-//                             return Dialog(
-//                               backgroundColor:
-//                               Colors.black.withOpacity(0.3),
-//                               shape: RoundedRectangleBorder(
-//                                   borderRadius:
-//                                   BorderRadius.circular(
-//                                       widget.size * 20)),
-//                               elevation: 16,
-//                               child: Container(
-//                                 decoration: BoxDecoration(
-//                                   color: Colors.black,
-//                                   border: Border.all(
-//                                       color: Colors.white24),
-//                                   borderRadius:
-//                                   BorderRadius.circular(
-//                                       widget.size * 20),
-//                                 ),
-//                                 child: ListView(
-//                                   shrinkWrap: true,
-//                                   children: <Widget>[
-//                                     SizedBox(
-//                                         height: widget.size * 15),
-//                                     Padding(
-//                                       padding: EdgeInsets.only(
-//                                           left: widget.size * 15),
-//                                       child: Text(
-//                                         "Add Regulation by Entering r20",
-//                                         style: TextStyle(
-//                                             color: Colors.white,
-//                                             fontWeight:
-//                                             FontWeight.w600,
-//                                             fontSize:
-//                                             widget.size * 18),
-//                                       ),
-//                                     ),
-//                                     Padding(
-//                                       padding: EdgeInsets.symmetric(horizontal: widget.size * 10),
-//                                       child: TextFieldContainer(
-//                                         child: TextField(
-//                                           controller: InputController,
-//                                           textInputAction: TextInputAction.next,
-//                                           style: TextStyle(color: Colors.white,fontSize: widget.size * 20),
-//                                           decoration: InputDecoration(
-//                                               border: InputBorder.none,
-//                                               hintText: 'r2_ <= Enter Regulation Number',
-//                                               hintStyle: TextStyle(
-//                                                   color: Colors.white70, fontSize: widget.size * 20)),
-//                                         ),
-//                                       ),
-//                                     ),
-//                                     SizedBox(
-//                                       height: widget.size * 5,
-//                                     ),
-//                                     Center(
-//                                       child: Row(
-//                                         mainAxisAlignment:
-//                                         MainAxisAlignment
-//                                             .center,
-//                                         crossAxisAlignment:
-//                                         CrossAxisAlignment
-//                                             .center,
-//                                         children: [
-//                                           Spacer(),
-//                                           InkWell(
-//                                             child: Container(
-//                                               decoration:
-//                                               BoxDecoration(
-//                                                 color:
-//                                                 Colors.black26,
-//                                                 border: Border.all(
-//                                                     color: Colors
-//                                                         .white
-//                                                         .withOpacity(
-//                                                         0.3)),
-//                                                 borderRadius:
-//                                                 BorderRadius
-//                                                     .circular(
-//                                                     widget.size *
-//                                                         25),
-//                                               ),
-//                                               child: Padding(
-//                                                 padding: EdgeInsets.symmetric(
-//                                                     horizontal: widget
-//                                                         .size *
-//                                                         15,
-//
-//                                                     vertical: widget
-//                                                         .size *
-//                                                         5),
-//                                                 child: Text(
-//                                                   "Back",
-//                                                   style: TextStyle(
-//                                                       color: Colors
-//                                                           .white,fontSize: widget.size *14),
-//                                                 ),
-//                                               ),
-//                                             ),
-//                                             onTap: () {
-//                                               Navigator.pop(
-//                                                   context);
-//                                             },
-//                                           ),
-//                                           SizedBox(
-//                                             width:
-//                                             widget.size * 10,
-//                                           ),
-//                                           InkWell(
-//                                             child: Container(
-//                                               decoration:
-//                                               BoxDecoration(
-//                                                 color: Colors.red,
-//                                                 border: Border.all(
-//                                                     color: Colors
-//                                                         .black),
-//                                                 borderRadius:
-//                                                 BorderRadius
-//                                                     .circular(
-//                                                     widget.size *
-//                                                         25),
-//                                               ),
-//                                               child: Padding(
-//                                                 padding: EdgeInsets.symmetric(
-//                                                     horizontal: widget
-//                                                         .size *
-//                                                         15,
-//
-//                                                     vertical: widget
-//                                                         .size *
-//                                                         5),
-//                                                 child: Text(
-//                                                   "ADD + ",
-//                                                   style: TextStyle(
-//                                                       color: Colors
-//                                                           .white,fontSize: widget.size *14),
-//                                                 ),
-//                                               ),
-//                                             ),
-//                                             onTap: () async {
-//                                               showDialog(
-//                                                 context: context,
-//                                                 barrierDismissible: false, // Prevents dismissing the dialog by tapping outside
-//                                                 builder: (context) {
-//                                                   return AlertDialog(
-//                                                     content: Column(
-//                                                       mainAxisSize: MainAxisSize.min,
-//                                                       children: [
-//                                                         CircularProgressIndicator(),
-//                                                         SizedBox(height: 16),
-//                                                         Text('Creating...'),
-//                                                       ],
-//                                                     ),
-//                                                   );
-//                                                 },
-//                                               );
-//                                               String reg = InputController.text;
-//                                               for (int year = 1; year <= 4; year++) {
-//                                                 for (int sem = 1; sem <= 2; sem++) {
-//
-//                                                   print("${reg.toLowerCase()} $year year $sem sem");
-//                                                   await FirebaseFirestore.instance
-//                                                       .collection(widget.branch)
-//                                                       .doc("regulation")
-//                                                       .collection("regulationWithYears").doc("${reg.toLowerCase()} $year year $sem sem".substring(0, 10)).set(
-//                                                       {
-//                                                         "id":"${reg.toLowerCase()} $year year $sem sem".substring(0, 10),
-//                                                         "syllabus":"",
-//                                                         "modelPaper":"",
-//                                                       }
-//                                                   );
-//                                                   await createRegulationSem(name: "${reg.toLowerCase()} $year year $sem sem", branch: widget.branch);
-//                                                 }
-//                                               }
-// messageToOwner("Regulation is Created.\nBy '${fullUserId()}'\n   Regulation : $reg\n **${widget.branch}");
-//                                          Navigator.pop(context);
-//                                          Navigator.pop(context);
-//                                             },
-//                                           ),
-//                                           SizedBox(
-//                                             width:
-//                                             widget.size * 20,
-//                                           ),
-//                                         ],
-//                                       ),
-//                                     ),
-//                                     SizedBox(
-//                                       height: widget.size* 10,
-//                                     ),
-//                                   ],
-//                                 ),
-//                               ),
-//                             );
-//                           },
-//                         );
-//                       },
-//                     ),
-//                     InkWell(
-//                       child: Container(
-//                         margin: EdgeInsets.symmetric(  horizontal: widget.size * 10,vertical: widget.size * 2,),
-//                         decoration: BoxDecoration(
-//                           borderRadius:
-//                           BorderRadius.circular(
-//                               widget.size * 20),
-//                           color:
-//                           Colors.black.withOpacity(0.7),
-//                         ),
-//                         child: Padding(
-//                           padding: EdgeInsets.symmetric(
-//                             horizontal: widget.size * 25,vertical: widget.size * 8,),
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               Text(
-//                                 "Updates",
-//                                 style: TextStyle(
-//                                     color: Colors.white,
-//                                     fontSize: widget.size * 20,
-//                                     fontWeight:
-//                                     FontWeight.w500),
-//                               ),
-//                               Container(
-//                                 decoration: BoxDecoration(
-//                                     color: Colors.white,
-//                                     borderRadius: BorderRadius.circular(widget.size * 20)
-//                                 ),
-//                                 child: Padding(
-//                                   padding:  EdgeInsets.all(widget.size * 3.0),
-//                                   child: Icon(Icons.arrow_forward_ios,),
-//                                 ),
-//                               )
-//                             ],
-//                           ),
-//                         ),
-//                       ),
-//                       onTap: () {
-//                         Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                                 builder: (context) =>
-//                                     updateCreator(
-//                                       branch: widget.branch,
-//
-//                                       size: widget.size,
-//                                     )));
-//                       },
-//                     ),
-//                     InkWell(
-//                       child: Container(
-//                         margin: EdgeInsets.symmetric(  horizontal: widget.size * 10,vertical: widget.size * 2,),
-//                         decoration: BoxDecoration(
-//                           borderRadius:
-//                           BorderRadius.circular(
-//                               widget.size * 20),
-//                           color:
-//                           Colors.black.withOpacity(0.7),
-//                         ),
-//                         child: Padding(
-//                           padding: EdgeInsets.symmetric(
-//                             horizontal: widget.size * 25,vertical: widget.size * 8,),
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               Text(
-//                                 "Branch News",
-//                                 style: TextStyle(
-//                                     color: Colors.white,
-//                                     fontSize: widget.size * 20,
-//                                     fontWeight:
-//                                     FontWeight.w500),
-//                               ),
-//                               Container(
-//                                 decoration: BoxDecoration(
-//                                     color: Colors.white,
-//                                     borderRadius: BorderRadius.circular(widget.size * 20)
-//                                 ),
-//                                 child: Padding(
-//                                   padding:  EdgeInsets.all(widget.size * 3.0),
-//                                   child: Icon(Icons.arrow_forward_ios,),
-//                                 ),
-//                               )
-//                             ],
-//                           ),
-//                         ),
-//                       ),
-//                       onTap: () {
-//                         Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                                 builder: (context) =>
-//                                     NewsCreator(
-//                                       branch: widget.branch,
-//                                     )));
-//                       },
-//                     ),
-//                     InkWell(
-//                       child: Container(
-//                         margin: EdgeInsets.symmetric(  horizontal: widget.size * 10,vertical: widget.size * 2,),
-//                         decoration: BoxDecoration(
-//                           borderRadius:
-//                           BorderRadius.circular(
-//                               widget.size * 20),
-//                           color:
-//                           Colors.black.withOpacity(0.7),
-//                         ),
-//                         child: Padding(
-//                           padding: EdgeInsets.symmetric(
-//                             horizontal: widget.size * 25,vertical: widget.size * 8,),
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               Text(
-//                                 "Subjects",
-//                                 style: TextStyle(
-//                                     color: Colors.white,
-//                                     fontSize: widget.size * 20,
-//                                     fontWeight:
-//                                     FontWeight.w500),
-//                               ),
-//                               Container(
-//                                 decoration: BoxDecoration(
-//                                     color: Colors.white,
-//                                     borderRadius: BorderRadius.circular(widget.size * 20)
-//                                 ),
-//                                 child: Padding(
-//                                   padding:  EdgeInsets.all(widget.size * 3.0),
-//                                   child: Icon(Icons.arrow_forward_ios,),
-//                                 ),
-//                               )
-//                             ],
-//                           ),
-//                         ),
-//                       ),
-//                       onTap: () {
-//                         Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                                 builder: (context) =>
-//                                     SubjectsCreator(
-//                                       size: widget.size,
-//
-//                                       branch: widget.branch,
-//                                     )));
-//                       },
-//                     ),
-//                     InkWell(
-//                       child: Container(
-//                         margin: EdgeInsets.symmetric(  horizontal: widget.size * 10,vertical: widget.size * 2,),
-//                         decoration: BoxDecoration(
-//                           borderRadius:
-//                           BorderRadius.circular(
-//                               widget.size * 20),
-//                           color:
-//                           Colors.black.withOpacity(0.7),
-//                         ),
-//                         child: Padding(
-//                           padding: EdgeInsets.symmetric(
-//                             horizontal: widget.size * 25,vertical: widget.size * 8,),
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               Text(
-//                                 "Books",
-//                                 style: TextStyle(
-//                                     color: Colors.white,
-//                                     fontSize: widget.size * 20,
-//                                     fontWeight:
-//                                     FontWeight.w500),
-//                               ),
-//                               Container(
-//                                 decoration: BoxDecoration(
-//                                     color: Colors.white,
-//                                     borderRadius: BorderRadius.circular(widget.size * 20)
-//                                 ),
-//                                 child: Padding(
-//                                   padding:  EdgeInsets.all(widget.size * 3.0),
-//                                   child: Icon(Icons.arrow_forward_ios,),
-//                                 ),
-//                               )
-//                             ],
-//                           ),
-//                         ),
-//                       ),
-//                       onTap: () {
-//                         Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                                 builder: (context) =>
-//                                     BooksCreator(
-//                                       branch: widget.branch,
-//                                     )));
-//                       },
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-
-          SizedBox(height: widget.size * 5.0),
           Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: widget.size * 20.0, vertical: widget.size * 50.0),
-            child: Container(
-              margin: EdgeInsets.all(widget.size * 3),
-              width: double.infinity,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(widget.size * 22),
-                color: Colors.white.withOpacity(0.3),
-              ),
-              child: Column(
-                children: [
-                  GridView.count(
-                    physics: const NeverScrollableScrollPhysics(),
-                    childAspectRatio: 4,
-                    shrinkWrap: true,
-                    padding: EdgeInsets.all(widget.size * 3),
-                    mainAxisSpacing: 3,
-                    crossAxisCount: Width(context) < 800 ? 2 : 3,
-                    children: List.generate(
-                      SettingsData.length,
-                      (int index) {
-                        return InkWell(
-                          child: Container(
-                            margin: EdgeInsets.all(widget.size * 2.0),
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(widget.size * 15),
-                              color: Colors.black.withOpacity(0.7),
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              children: [
+                InkWell(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                    margin: EdgeInsets.symmetric(vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.white12,
+                      borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.favorite_border,
+                              color: Colors.white60,
+                              size: widget.size * 25,
                             ),
-                            child: Padding(
-                              padding: EdgeInsets.all(widget.size * 5.0),
-                              child: Center(
-                                  child: Text(
-                                SettingsData[index].title,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: widget.size * 18,
-                                    fontWeight: FontWeight.w500),
-                              )),
-                            ),
-                          ),
-                          onTap: () {
-                            if (SettingsData[index].title == "Report") {
-                              sendingMails("sujithnimmala03@gmail.com");
-                            } else if (SettingsData[index].title == "About") {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const about()));
-                            } else {
-                              ExternalLaunchUrl(
-                                  "https://github.com/NSCreator/PRIVACY_POLACY/blob/main/Privacy-policy");
-                            }
-                          },
-                        );
-                      },
+                            Text(" favorite",style: TextStyle(color: Colors.white,fontSize: 25),),
+                          ],
+                        ),
+                        Icon(Icons.chevron_right,size: 25,color: Colors.white54,)
+                      ],
                     ),
                   ),
-                ],
-              ),
+                  onTap: (){
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 300),
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            favorites(
+                              size: widget.size,
+                            ),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          final fadeTransition = FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+
+                          return Container(
+                            color: Colors.black.withOpacity(animation.value),
+                            child: AnimatedOpacity(
+                                duration: Duration(milliseconds: 300),
+                                opacity: animation.value.clamp(0.3, 1.0),
+                                child: fadeTransition),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+                // InkWell(
+                //   child: Container(
+                //     padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                //     margin: EdgeInsets.symmetric(vertical: 2),
+                //     decoration: BoxDecoration(
+                //       color: Colors.white12,
+                //       borderRadius: BorderRadius.circular(10)
+                //     ),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: [
+                //         Row(
+                //           children: [
+                //             Icon(
+                //               Icons.download,
+                //               color: Colors.white60,
+                //               size: widget.size * 25,
+                //             ),
+                //             Text(" Downloads",style: TextStyle(color: Colors.white,fontSize: 25),),
+                //           ],
+                //         ),
+                //         Icon(Icons.chevron_right,size: 25,color: Colors.white54,)
+                //       ],
+                //     ),
+                //   ),
+                //   onTap: (){
+                //     Navigator.push(
+                //       context,
+                //       PageRouteBuilder(
+                //         transitionDuration: const Duration(milliseconds: 300),
+                //         pageBuilder: (context, animation, secondaryAnimation) =>
+                //             favorites(
+                //               size: widget.size,
+                //             ),
+                //         transitionsBuilder:
+                //             (context, animation, secondaryAnimation, child) {
+                //           final fadeTransition = FadeTransition(
+                //             opacity: animation,
+                //             child: child,
+                //           );
+                //
+                //           return Container(
+                //             color: Colors.black.withOpacity(animation.value),
+                //             child: AnimatedOpacity(
+                //                 duration: Duration(milliseconds: 300),
+                //                 opacity: animation.value.clamp(0.3, 1.0),
+                //                 child: fadeTransition),
+                //           );
+                //         },
+                //       ),
+                //     );
+                //   },
+                // ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+
+          SizedBox(height: widget.size * 5.0),
+
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Settings",style: TextStyle(color: Colors.orangeAccent.withOpacity(0.8),fontSize: 25),),
+
+                InkWell(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                    margin: EdgeInsets.only(top: 10,bottom: 2),
+                    decoration: BoxDecoration(
+                        color: Colors.white12,
+                        borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.report_problem_outlined,
+                              color: Colors.white60,
+                              size: widget.size * 25,
+                            ),
+                            Text(" Report",style: TextStyle(color: Colors.white,fontSize: 25),),
+                          ],
+                        ),
+                        Icon(Icons.chevron_right,size: 25,color: Colors.white54,)
+                      ],
+                    ),
+                  ),
+                  onTap: (){
+                    sendingMails("sujithnimmala03@gmail.com");
+                  },
+                ),
+                InkWell(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                    margin: EdgeInsets.symmetric(vertical: 2),
+                    decoration: BoxDecoration(
+                        color: Colors.white12,
+                        borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.privacy_tip_outlined,
+                              color: Colors.white60,
+                              size: widget.size * 25,
+                            ),
+                            Text(" Privacy Policy",style: TextStyle(color: Colors.white,fontSize: 25),),
+                          ],
+                        ),
+                        Icon(Icons.chevron_right,size: 25,color: Colors.white54,)
+                      ],
+                    ),
+                  ),
+                  onTap: (){
+                    ExternalLaunchUrl(
+                        "https://github.com/NSCreator/PRIVACY_POLACY/blob/main/Privacy-policy");
+
+                  },
+                ),
+                InkWell(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                    margin: EdgeInsets.symmetric(vertical: 2),
+                    decoration: BoxDecoration(
+                        color: Colors.white12,
+                        borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.read_more,
+                              color: Colors.white60,
+                              size: widget.size * 25,
+                            ),
+                            Text(" About",style: TextStyle(color: Colors.white,fontSize: 25),),
+                          ],
+                        ),
+                        Icon(Icons.chevron_right,size: 25,color: Colors.white54,)
+                      ],
+                    ),
+                  ),
+                  onTap: (){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const about()));
+
+                                  },
+                ),
+
+              ],
             ),
           ),
           StreamBuilder<List<followUsConvertor>>(
