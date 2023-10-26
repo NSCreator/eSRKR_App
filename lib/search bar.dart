@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:srkr_study_app/HomePage.dart';
 import 'package:srkr_study_app/TextField.dart';
 import 'SubPages.dart';
 

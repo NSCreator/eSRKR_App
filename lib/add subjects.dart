@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:srkr_study_app/functins.dart';
+import 'package:srkr_study_app/functions.dart';
 import 'ads.dart';
 import 'main.dart';
 

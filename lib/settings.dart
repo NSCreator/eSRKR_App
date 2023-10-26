@@ -7,12 +7,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:srkr_study_app/HomePage.dart';
-import 'package:srkr_study_app/notification.dart';
 import 'dart:convert';
 
 import 'SubPages.dart';
 import 'TextField.dart';
-import 'functins.dart';
+import 'functions.dart';
 import 'main.dart';
 import 'net.dart';
 

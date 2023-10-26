@@ -1,13 +1,11 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:convert';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srkr_study_app/ads.dart';
-import 'package:srkr_study_app/functins.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:srkr_study_app/functions.dart';
 
 import 'HomePage.dart';
 
@@ -15,10 +13,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import 'TextField.dart';
 import 'main.dart';
 
-import 'package:flutter/material.dart';
 
 class HighlightedTextWidget extends StatefulWidget {
   final String text;
@@ -145,7 +141,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  ScrollController _scrollController = ScrollController();
 
   // Function to save settings
   Future<void> saveSettings() async {
@@ -352,7 +347,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ElevatedButton(
                     style:ElevatedButton.styleFrom(
    backgroundColor: Colors.blueGrey,
-                        onPrimary: Colors.white
+
     ),
                     onPressed: () {
                       setState(() {

@@ -20,7 +20,7 @@ import 'SubPages.dart';
 import 'TextField.dart';
 import 'auth_page.dart';
 import 'firebase_options.dart';
-import 'functins.dart';
+import 'functions.dart';
 import 'net.dart';
 import 'notification.dart';
 
@@ -617,20 +617,26 @@ class _CreatePageState extends State<CreatePage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.add_box_outlined,
-                                          color: Colors.white70,
-                                          size: widget.size * 25,
-                                        ),
-                                        Text(
-                                          " Flash News",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 25),
-                                        ),
-                                      ],
+                                    Expanded(
+                                      child:                                    Row(
+                                        children: [
+                                          Icon(
+                                            Icons.add_box_outlined,
+                                            color: Colors.white70,
+                                            size: widget.size * 25,
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              " Flash News",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 25),maxLines:1
+                                            ),
+                                          ),
+
+                                        ],
+                                      ),
+
                                     ),
                                     Icon(
                                       Icons.chevron_right,
@@ -1716,7 +1722,7 @@ setState(() {
                       return BranchNews!.isNotEmpty?ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: BranchNews!.length,
+                        itemCount: BranchNews.length,
                         itemBuilder: (context, int index) {
                           final BranchNew = BranchNews[index];
                           if (BranchNew.photoUrl.isNotEmpty) {
@@ -2068,6 +2074,7 @@ class _eventsPageState extends State<eventsPage> {
                                                 aspectRatio: 16 / 9,
                                                 child: Container(
                                                   decoration: BoxDecoration(
+                                                      color: Colors.white12,
                                                       image: DecorationImage(
                                                     image: NetworkImage(
                                                         YoutubeThumbnail(

@@ -9,10 +9,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
-import 'package:srkr_study_app/HomePage.dart';
 import 'package:srkr_study_app/TextField.dart';
 import 'package:srkr_study_app/settings.dart';
-import 'functins.dart';
+import 'functions.dart';
 import 'notification.dart';
 
 class LoginPage extends StatefulWidget {

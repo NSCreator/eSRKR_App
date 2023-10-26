@@ -2,14 +2,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:srkr_study_app/HomePage.dart';
-import 'package:srkr_study_app/SubPages.dart';
+import 'HomePage.dart';
+import 'SubPages.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:srkr_study_app/main.dart';
-import 'package:srkr_study_app/settings.dart';
+import 'main.dart';
+import 'settings.dart';
 import 'dart:io';
-import 'functins.dart';
+import 'functions.dart';
 import 'notification.dart';
 
 TextStyle textFieldStyle(double size) {
@@ -1432,18 +1432,17 @@ class _SubjectsCreatorState extends State<SubjectsCreator> {
   final HeadingController1 = TextEditingController();
   final DescriptionController = TextEditingController();
   final FirebaseStorage storage = FirebaseStorage.instance;
-  bool _isImage = false;
   String reg="";
 
   void AutoFill() async {
     HeadingController.text = widget.heading;
     DescriptionController.text = widget.description;
     reg = widget.reg;
-    if (widget.photoUrl.length > 3) {
-      setState(() {
-        _isImage = true;
-      });
-    }
+    // if (widget.photoUrl.length > 3) {
+    //   setState(() {
+    //     var _isImage = true;
+    //   });
+    // }
   }
   String selectedLanguage = 'none';
   @override

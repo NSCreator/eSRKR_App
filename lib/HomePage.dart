@@ -3,27 +3,20 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srkr_study_app/SubPages.dart';
 import 'package:srkr_study_app/notification.dart';
 import 'package:srkr_study_app/search%20bar.dart';
 import 'package:srkr_study_app/settings.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 import 'TextField.dart';
-import 'favorites.dart';
-import 'functins.dart';
+import 'functions.dart';
 import 'main.dart';
-import 'net.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class appBar_HomePage extends StatefulWidget {
   double size;
@@ -265,7 +258,7 @@ class _tabBarState extends State<tabBar> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 30,
+      height: 35,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -277,7 +270,8 @@ class _tabBarState extends State<tabBar> {
               child: Padding(
                 padding: EdgeInsets.only(
                     left: index == 0 ? 12.0 : 5,
-                    right: index == tabBarIndex.length - 1 ? 20 : 0),
+                    right: index == tabBarIndex.length - 1 ? 20 : 0,
+                    bottom: 8),
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: currentIndex == index
@@ -345,7 +339,6 @@ class _otherBranchSubjectsState extends State<otherBranchSubjects> {
 
   String folderPath = "";
 
-
   Future<void> getPath() async {
     final directory = await getApplicationDocumentsDirectory();
     setState(() {
@@ -360,12 +353,27 @@ class _otherBranchSubjectsState extends State<otherBranchSubjects> {
 
     super.initState();
   }
+  String getFileName(String url) {
+    var name="";
+    if(url.isNotEmpty){
+      if (url.startsWith('https://drive.google.com')) {
+        name = url.split('/d/')[1].split('/')[0];
+      } else {
+        final Uri uri = Uri.parse(url);
+        final String fileName = uri.pathSegments.last;
+        name = fileName.split("/").last;
+      }
+    }
 
+    return name;
+  }
+  String syllabusLink="";
+  String ModelPaperLink="";
   @override
   Widget build(BuildContext context) {
+
     return Column(
       children: [
-
         Padding(
           padding: const EdgeInsets.only(top: 10.0, bottom: 10),
           child: StreamBuilder<List<branchSharingConvertor>>(
@@ -376,9 +384,9 @@ class _otherBranchSubjectsState extends State<otherBranchSubjects> {
                   case ConnectionState.waiting:
                     return const Center(
                         child: CircularProgressIndicator(
-                          strokeWidth: 0.3,
-                          color: Colors.cyan,
-                        ));
+                      strokeWidth: 0.3,
+                      color: Colors.cyan,
+                    ));
                   default:
                     if (snapshot.hasError) {
                       return const Center(
@@ -388,14 +396,12 @@ class _otherBranchSubjectsState extends State<otherBranchSubjects> {
                       if (BranchNews!.length == 0) {
                         return SizedBox(
                           height: widget.size * 58,
-
                           child: Center(
                               child: Text(
-                                "No Time Tables",
-                                style: TextStyle(
-                                    color: Colors.amber
-                                        .withOpacity(0.5)),
-                              )),
+                            "No Time Tables",
+                            style:
+                                TextStyle(color: Colors.amber.withOpacity(0.5)),
+                          )),
                         );
                       } else
                         return SizedBox(
@@ -406,109 +412,80 @@ class _otherBranchSubjectsState extends State<otherBranchSubjects> {
                             itemBuilder: (context, int index) {
                               var BranchNew = BranchNews[index];
                               file = File("");
-                              if (BranchNew
-                                  .photoUrl.isNotEmpty) {
-                                final Uri uri = Uri.parse(
-                                    BranchNew.photoUrl);
-                                final String fileName =
-                                    uri.pathSegments.last;
-                                var name =
-                                    fileName.split("/").last;
-                                file = File(
-                                    "${folderPath}/timetable/$name");
+                              if (BranchNew.photoUrl.isNotEmpty) {
+                                final Uri uri = Uri.parse(BranchNew.photoUrl);
+                                final String fileName = uri.pathSegments.last;
+                                var name = fileName.split("/").last;
+                                file = File("${folderPath}/timetable/$name");
                               }
-                              return (widget.branch!=BranchNew.id)||(widget.branch!=branch)?
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: index == 0
-                                        ? widget.size * 14
-                                        : widget.size * 5),
-                                child: InkWell(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        padding:
-                                        EdgeInsets.all(3),
-                                        margin: EdgeInsets.only(
-                                            bottom:
-                                            widget.size *
-                                                2.0),
-                                        decoration:
-                                        BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.circular(
-                                                widget.size *
-                                                    27),
-                                            gradient:
-                                            LinearGradient(
-                                              begin: Alignment
-                                                  .topLeft,
-                                              end: Alignment
-                                                  .bottomRight,
-                                              colors: [
-                                                Colors
-                                                    .white,
-                                                Colors
-                                                    .blueGrey,
-                                                Colors
-                                                    .deepPurpleAccent,
-                                              ],
+                              return (widget.branch != BranchNew.id) ||
+                                      (widget.branch != branch)
+                                  ? Padding(
+                                      padding: EdgeInsets.only(
+                                          left: index == 0
+                                              ? widget.size * 14
+                                              : widget.size * 5),
+                                      child: InkWell(
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(3),
+                                              margin: EdgeInsets.only(
+                                                  bottom: widget.size * 2.0),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          widget.size * 27),
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                    colors: [
+                                                      Colors.white,
+                                                      Colors.blueGrey,
+                                                      Colors.deepPurpleAccent,
+                                                    ],
+                                                  ),
+                                                  border: Border.all(
+                                                      width: 2,
+                                                      style:
+                                                          BorderStyle.solid)),
+                                              child: Container(
+                                                height: widget.size * 45,
+                                                width: widget.size * 60,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black
+                                                      .withOpacity(0.6),
+                                                  image: DecorationImage(
+                                                      image: FileImage(file),
+                                                      fit: BoxFit.cover),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          widget.size * 23),
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    BranchNew.id.toUpperCase(),
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize:
+                                                            widget.size * 18,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontFamily: "test"),
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                            border: Border.all(
-                                                width: 2,
-                                                style: BorderStyle
-                                                    .solid)),
-                                        child: Container(
-                                          height:
-                                          widget.size * 45,
-                                          width:
-                                          widget.size * 60,
-                                          decoration:
-                                          BoxDecoration(
-                                            color: Colors.black
-                                                .withOpacity(
-                                                0.6),
-                                            image: DecorationImage(
-                                                image:
-                                                FileImage(
-                                                    file),
-                                                fit: BoxFit
-                                                    .cover),
-                                            borderRadius:
-                                            BorderRadius
-                                                .circular(
-                                                widget.size *
-                                                    23),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              BranchNew.id
-                                                  .toUpperCase(),
-                                              style: TextStyle(
-                                                  color: Colors
-                                                      .white,
-                                                  fontSize:
-                                                  widget.size *
-                                                      18,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .w600,
-                                                  fontFamily:
-                                                  "test"),
-                                            ),
-                                          ),
+                                          ],
                                         ),
+                                        onTap: () {
+                                          setState(() {
+                                            branch = BranchNew.id;
+                                          });
+                                        },
                                       ),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                setState(() {
-                                  branch =BranchNew.id;
-                                });
-
-                                  },
-                                ),
-                              ):Container();
+                                    )
+                                  : Container();
                             },
                           ),
                         );
@@ -518,75 +495,89 @@ class _otherBranchSubjectsState extends State<otherBranchSubjects> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Syllabus & Model Paper",
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: Colors.white,
-                size: 20,
-              )
-            ],
+          child: InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>SyllabusAndModelPapers(reg: widget.reg,branch: widget.branch,size: widget.size,)));
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Syllabus & Model Paper",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                Icon(
+                  Icons.chevron_right,
+                  color: Colors.white,
+                  size: 20,
+                )
+              ],
+            ),
           ),
         ),
-
         Row(
           children: [
             Flexible(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(25),
-                        child: Container(
-                          height: 80,
-                          color: Colors.white12,
-
-
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text(
-                          "Syllabus Paper ( ${widget.reg.substring(0, 10)} )",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                        ),
-                      )
-                    ],
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: Container(
+                        height: 80,
+                        color: Colors.white12,
+                        child:
+                        File("${folderPath}/pdfs/${getFileName(syllabusLink)}").existsSync()?
+                        PDFView(
+                          filePath:
+                              "${folderPath}/pdfs/${getFileName(syllabusLink)}",
+                        ):
+                        Container()),
                   ),
-                )),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5.0),
+                    child: Text(
+                      "Syllabus Paper ( ${widget.reg.substring(0, 10)} )",
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                    ),
+                  )
+                ],
+              ),
+            )),
             Flexible(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(25),
-                        child: Container(
-                          height: 80,
-                          color: Colors.white12,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text(
-                          "Model Paper ( ${widget.reg.substring(0, 10)} )",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                        ),
-                      )
-                    ],
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: Container(
+                        height: 80,
+                        color: Colors.white12,
+                        child:
+                        File("${folderPath}/pdfs/${getFileName(ModelPaperLink)}").existsSync()?
+                        PDFView(
+                          filePath:
+                          "${folderPath}/pdfs/${getFileName(syllabusLink)}",
+                        ):
+                        Container()),
                   ),
-                )),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5.0),
+                    child: Text(
+                      "Model Paper ( ${widget.reg.substring(0, 10)} )",
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                    ),
+                  )
+                ],
+              ),
+            )),
           ],
         ),
         Padding(
@@ -619,123 +610,123 @@ class _otherBranchSubjectsState extends State<otherBranchSubjects> {
                 case ConnectionState.waiting:
                   return const Center(
                       child: CircularProgressIndicator(
-                        strokeWidth: 0.3,
-                        color: Colors.cyan,
-                      ));
+                    strokeWidth: 0.3,
+                    color: Colors.cyan,
+                  ));
                 default:
                   if (snapshot.hasError) {
                     return Center(child: Text("Error"));
                   } else {
                     return Favourites!.isNotEmpty
                         ? Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(widget.size * 8.0),
-                          child: Text(
-                            "Flash News",
-                            style: secondHeadingTextStyle(
-                                color: Colors.white, size: widget.size),
-                          ),
-                        ),
-                        CarouselSlider(
-                            items: List.generate(Favourites!.length,
-                                    (int index) {
-                                  final BranchNew = Favourites[index];
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(widget.size * 8.0),
+                                child: Text(
+                                  "Flash News",
+                                  style: secondHeadingTextStyle(
+                                      color: Colors.white, size: widget.size),
+                                ),
+                              ),
+                              CarouselSlider(
+                                  items: List.generate(Favourites.length,
+                                      (int index) {
+                                    final BranchNew = Favourites[index];
 
-                                  return Row(
-                                    children: [
-                                      Expanded(
-                                        child: InkWell(
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                left: widget.size * 20),
-                                            child: Text(
-                                              BranchNew.heading,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontFamily: "test",
-                                                  fontSize: widget.size * 16),
-                                              maxLines: 3,
-                                              overflow: TextOverflow.ellipsis,
+                                    return Row(
+                                      children: [
+                                        Expanded(
+                                          child: InkWell(
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: widget.size * 20),
+                                              child: Text(
+                                                BranchNew.heading,
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontFamily: "test",
+                                                    fontSize: widget.size * 16),
+                                                maxLines: 3,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
+                                            onTap: () {
+                                              if (BranchNew.Url.isNotEmpty) {
+                                                ExternalLaunchUrl(
+                                                    BranchNew.Url);
+                                              } else {
+                                                showToastText("No Url Found");
+                                              }
+                                            },
                                           ),
-                                          onTap: () {
-                                            if (BranchNew.Url.isNotEmpty) {
-                                              ExternalLaunchUrl(
-                                                  BranchNew.Url);
-                                            } else {
-                                              showToastText("No Url Found");
-                                            }
-                                          },
                                         ),
-                                      ),
-                                      if (isGmail())
-                                        PopupMenuButton(
-                                          icon: Icon(
-                                            Icons.more_vert,
-                                            color: Colors.white,
-                                            size: widget.size * 25,
-                                          ),
-                                          // Callback that sets the selected popup menu item.
-                                          onSelected: (item) {
-                                            if (item == "edit") {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          flashNewsCreator(
-                                                            branch:
-                                                            widget.branch,
-                                                            size: widget.size,
-                                                            heading: BranchNew
-                                                                .heading,
-                                                            link:
-                                                            BranchNew.Url,
-                                                            NewsId:
-                                                            BranchNew.id,
-                                                          )));
-                                            } else if (item == "delete") {
-                                              messageToOwner(
-                                                  "Flash News is Deleted\nBy : '${fullUserId()}' \n   Heading : ${BranchNew.heading}\n   Link : ${BranchNew.Url}");
+                                        if (isGmail())
+                                          PopupMenuButton(
+                                            icon: Icon(
+                                              Icons.more_vert,
+                                              color: Colors.white,
+                                              size: widget.size * 25,
+                                            ),
+                                            // Callback that sets the selected popup menu item.
+                                            onSelected: (item) {
+                                              if (item == "edit") {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            flashNewsCreator(
+                                                              branch:
+                                                                  widget.branch,
+                                                              size: widget.size,
+                                                              heading: BranchNew
+                                                                  .heading,
+                                                              link:
+                                                                  BranchNew.Url,
+                                                              NewsId:
+                                                                  BranchNew.id,
+                                                            )));
+                                              } else if (item == "delete") {
+                                                messageToOwner(
+                                                    "Flash News is Deleted\nBy : '${fullUserId()}' \n   Heading : ${BranchNew.heading}\n   Link : ${BranchNew.Url}");
 
-                                              FirebaseFirestore.instance
-                                                  .collection("srkrPage")
-                                                  .doc("flashNews")
-                                                  .collection("flashNews")
-                                                  .doc(BranchNew.id)
-                                                  .delete();
-                                            }
-                                          },
-                                          itemBuilder:
-                                              (BuildContext context) =>
-                                          <PopupMenuEntry>[
-                                            const PopupMenuItem(
-                                              value: "edit",
-                                              child: Text('Edit'),
-                                            ),
-                                            const PopupMenuItem(
-                                              value: "delete",
-                                              child: Text('Delete'),
-                                            ),
-                                          ],
-                                        ),
-                                    ],
-                                  );
-                                }),
-                            options: CarouselOptions(
-                              viewportFraction: 1,
-                              enlargeCenterPage: true,
-                              height: widget.size * 60,
-                              autoPlayAnimationDuration:
-                              Duration(milliseconds: 1800),
-                              autoPlay:
-                              Favourites.length > 1 ? true : false,
-                            )),
-                      ],
-                    )
+                                                FirebaseFirestore.instance
+                                                    .collection("srkrPage")
+                                                    .doc("flashNews")
+                                                    .collection("flashNews")
+                                                    .doc(BranchNew.id)
+                                                    .delete();
+                                              }
+                                            },
+                                            itemBuilder:
+                                                (BuildContext context) =>
+                                                    <PopupMenuEntry>[
+                                              const PopupMenuItem(
+                                                value: "edit",
+                                                child: Text('Edit'),
+                                              ),
+                                              const PopupMenuItem(
+                                                value: "delete",
+                                                child: Text('Delete'),
+                                              ),
+                                            ],
+                                          ),
+                                      ],
+                                    );
+                                  }),
+                                  options: CarouselOptions(
+                                    viewportFraction: 1,
+                                    enlargeCenterPage: true,
+                                    height: widget.size * 60,
+                                    autoPlayAnimationDuration:
+                                        Duration(milliseconds: 1800),
+                                    autoPlay:
+                                        Favourites.length > 1 ? true : false,
+                                  )),
+                            ],
+                          )
                         : Container();
                   }
               }
@@ -1429,7 +1420,6 @@ class _HomePageState extends State<HomePage>
                             ],
                           ),
                         ),
-
                         otherBranchSubjects(
                           reg: widget.reg,
                           size: widget.size,
@@ -1466,7 +1456,6 @@ class _HomePageState extends State<HomePage>
     );
   }
 }
-
 
 // floatingActionButton: SizedBox(
 // height: Size * 40,

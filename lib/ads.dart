@@ -3,7 +3,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:srkr_study_app/functins.dart';
+import 'package:srkr_study_app/functions.dart';
 
 
 

@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:srkr_study_app/HomePage.dart';
 import 'package:http/http.dart' as http;
-import 'functins.dart';
+import 'functions.dart';
 import 'main.dart';
 
 class notifications extends StatefulWidget {
