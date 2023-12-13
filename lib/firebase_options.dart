@@ -70,6 +70,7 @@ class DefaultFirebaseOptions {
     projectId: 'esrkr-app',
     databaseURL: 'https://esrkr-app-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'esrkr-app.appspot.com',
+    androidClientId: '922256000367-pr4gj3k622slqgjf8pfspm9gdjidjji4.apps.googleusercontent.com',
     iosBundleId: 'com.nimmalasujith.srkrStudyApp',
   );
 
@@ -80,7 +81,7 @@ class DefaultFirebaseOptions {
     projectId: 'esrkr-app',
     databaseURL: 'https://esrkr-app-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'esrkr-app.appspot.com',
-    iosClientId: '922256000367-b0b4huch1imm0aa7nlvhdpmn5u8j1o9j.apps.googleusercontent.com',
+    androidClientId: '922256000367-pr4gj3k622slqgjf8pfspm9gdjidjji4.apps.googleusercontent.com',
     iosBundleId: 'com.nimmalasujith.srkrStudyApp.RunnerTests',
   );
 }

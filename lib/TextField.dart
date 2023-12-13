@@ -2,15 +2,425 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'HomePage.dart';
-import 'SubPages.dart';
+import 'package:srkr_study_app/test.dart';
+import 'homePage/HomePage.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'main.dart';
-import 'settings.dart';
+import 'homePage/settings.dart';
 import 'dart:io';
 import 'functions.dart';
 import 'notification.dart';
+
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+class addEvent extends StatefulWidget {
+  String NewsId;
+  String heading;
+  String link;
+  String photoUrl;
+  String subMessage;
+  String branch;
+  final double size;
+
+  addEvent(
+      {this.NewsId = "",
+      this.link = '',
+      this.heading = "",
+      this.photoUrl = "",
+      this.subMessage = "",
+      required this.size,
+      required this.branch});
+
+  @override
+  State<addEvent> createState() => _addEventState();
+}
+
+class _addEventState extends State<addEvent> {
+  FirebaseStorage storage = FirebaseStorage.instance;
+  String Branch = "";
+  bool isBranch = false;
+  final HeadingController = TextEditingController();
+  final DescriptionController = TextEditingController();
+  final PhotoUrlController = TextEditingController();
+  final LinkController = TextEditingController();
+  bool _isImage = false;
+
+  void AutoFill() async {
+    HeadingController.text = widget.heading;
+    PhotoUrlController.text = widget.photoUrl;
+    DescriptionController.text = widget.subMessage;
+    LinkController.text = widget.link;
+    if (widget.photoUrl.length > 3) {
+      setState(() {
+        _isImage = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    AutoFill();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    HeadingController.dispose();
+    PhotoUrlController.dispose();
+    LinkController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            backButton(
+                size: widget.size,
+                text: "Events Creator",
+                child: SizedBox(
+                  width: widget.size * 45,
+                )),
+            TextFieldContainer(
+              child: TextFormField(
+                controller: HeadingController,
+                textInputAction: TextInputAction.next,
+                style:
+                    TextStyle(color: Colors.white, fontSize: widget.size * 20),
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'heading',
+                    hintStyle: TextStyle(color: Colors.white54)),
+              ),
+              heading: "Heading",
+            ),
+            TextFieldContainer(
+              child: TextFormField(
+                controller: DescriptionController,
+                textInputAction: TextInputAction.next,
+                style:
+                    TextStyle(color: Colors.white, fontSize: widget.size * 20),
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'description',
+                    hintStyle: TextStyle(color: Colors.white54)),
+              ),
+              heading: "Description",
+            ),
+            TextFieldContainer(
+              child: TextFormField(
+                controller: LinkController,
+                textInputAction: TextInputAction.next,
+                style:
+                    TextStyle(color: Colors.white, fontSize: widget.size * 20),
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'youTube Url',
+                    hintStyle: TextStyle(color: Colors.white54)),
+              ),
+              heading: "YouTube Url",
+            ),
+            if (_isImage == true)
+              Padding(
+                padding: EdgeInsets.only(
+                    left: widget.size * 10, top: widget.size * 20),
+                child: Row(
+                  children: [
+                    Container(
+                        height: widget.size * 110,
+                        width: widget.size * 180,
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius:
+                                BorderRadius.circular(widget.size * 14),
+                            image: DecorationImage(
+                                image: NetworkImage(
+                                    PhotoUrlController.text.trim()),
+                                fit: BoxFit.fill))),
+                    InkWell(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            left: widget.size * 30,
+                            top: widget.size * 10,
+                            bottom: widget.size * 10,
+                            right: widget.size * 10),
+                        child: Text(
+                          "Delete",
+                          style: TextStyle(
+                              fontSize: widget.size * 30,
+                              color: CupertinoColors.destructiveRed),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (_isImage == false)
+              InkWell(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: widget.size * 15,
+                      top: widget.size * 20,
+                      bottom: widget.size * 10),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.upload,
+                        size: widget.size * 35,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: widget.size * 5,
+                      ),
+                      Text(
+                        "Upload Photo",
+                        style: TextStyle(
+                            fontSize: widget.size * 30, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+                onTap: () async {
+                  final pickedFile = await ImagePicker()
+                      .pickImage(source: ImageSource.gallery);
+                  File file = File(pickedFile!.path);
+                  final Reference ref =
+                      storage.ref().child('${widget.branch}/events/${getID()}');
+                  final TaskSnapshot task = await ref.putFile(file);
+                  final String url = await task.ref.getDownloadURL();
+                  PhotoUrlController.text = url;
+                  bool _isLoading = false;
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        backgroundColor: Colors.black.withOpacity(0.1),
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(widget.size * 20)),
+                        elevation: 16,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.white.withOpacity(0.1)),
+                            borderRadius:
+                                BorderRadius.circular(widget.size * 20),
+                          ),
+                          child: ListView(
+                            physics: BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            children: <Widget>[
+                              Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(widget.size * 8.0),
+                                  child: Text(
+                                    "Image",
+                                    style: TextStyle(
+                                        fontSize: widget.size * 22,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.blue),
+                                  ),
+                                ),
+                              ),
+                              Stack(
+                                children: <Widget>[
+                                  Image.network(
+                                    url,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, progress) {
+                                      if (progress == null) {
+                                        _isLoading = false;
+                                      }
+                                      return progress == null
+                                          ? child
+                                          : Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                    },
+                                  ),
+                                  if (_isLoading)
+                                    Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: widget.size * 10,
+                              ),
+                              Row(
+                                children: [
+                                  InkWell(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.all(widget.size * 5.0),
+                                      child: Text(
+                                        "Cancel & Delete",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: widget.size * 20),
+                                      ),
+                                    ),
+                                    onTap: () async {
+                                      final Uri uri = Uri.parse(url);
+                                      final String fileName =
+                                          uri.pathSegments.last;
+                                      final Reference ref =
+                                          storage.ref().child("/${fileName}");
+                                      try {
+                                        await ref.delete();
+                                        showToastText(
+                                            'Image deleted successfully');
+                                      } catch (e) {
+                                        showToastText(
+                                            'Error deleting image: $e');
+                                      }
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: widget.size * 20,
+                                  ),
+                                  InkWell(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.all(widget.size * 5.0),
+                                      child: Text(
+                                        "Okay",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: widget.size * 20),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        PhotoUrlController.text = url;
+                                        _isImage = true;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[500],
+                      borderRadius: BorderRadius.circular(widget.size * 15),
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          left: widget.size * 10,
+                          right: widget.size * 10,
+                          top: widget.size * 5,
+                          bottom: widget.size * 5),
+                      child: Text("Back..."),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    if (widget.NewsId.length > 3) {
+                      // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
+                      FirebaseFirestore.instance
+                          .collection(widget.branch)
+                          .doc("events")
+                          .collection("events")
+                          .doc(widget.NewsId)
+                          .update({
+                        "heading": HeadingController.text.trim(),
+                        "link": LinkController.text.trim(),
+                        "image": PhotoUrlController.text,
+                        "description": DescriptionController.text
+                      });
+                      messageToOwner(
+                          "Update is Updated\nBy '${fullUserId()}\n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
+                    } else {
+                      createevents(
+                        heading: HeadingController.text.trim(),
+                        description: DescriptionController.text,
+                        videoUrl: LinkController.text.trim(),
+                        photoUrl: PhotoUrlController.text.trim(),
+                        created: fullUserId(),
+                        branch: widget.branch,
+                        id: getID(),
+                      );
+                      messageToOwner(
+                          "${widget.branch} event is Created\nBy '${fullUserId()}\n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
+                    }
+
+                    HeadingController.clear();
+                    LinkController.clear();
+                    PhotoUrlController.clear();
+                    Navigator.pop(context);
+                  },
+                  child: widget.NewsId.length < 3
+                      ? Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[500],
+                            borderRadius:
+                                BorderRadius.circular(widget.size * 15),
+                            border: Border.all(color: Colors.white),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: widget.size * 10,
+                                right: widget.size * 10,
+                                top: widget.size * 5,
+                                bottom: widget.size * 5),
+                            child: Text("Create"),
+                          ),
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[500],
+                            borderRadius:
+                                BorderRadius.circular(widget.size * 15),
+                            border: Border.all(color: Colors.white),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: widget.size * 10,
+                                right: widget.size * 10,
+                                top: widget.size * 5,
+                                bottom: widget.size * 5),
+                            child: Text("Update"),
+                          ),
+                        ),
+                ),
+                SizedBox(
+                  width: widget.size * 15,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ));
+  }
+}
 
 TextStyle textFieldStyle(double size) {
   return TextStyle(
@@ -19,6 +429,7 @@ TextStyle textFieldStyle(double size) {
     fontSize: size * 20,
   );
 }
+
 TextStyle textFieldHintStyle(double size) {
   return TextStyle(
     color: Colors.white54,
@@ -30,7 +441,8 @@ TextStyle textFieldHintStyle(double size) {
 class TextFieldContainer extends StatefulWidget {
   Widget child;
   String heading;
-  TextFieldContainer({required this.child,this.heading =""});
+
+  TextFieldContainer({required this.child, this.heading = ""});
 
   @override
   State<TextFieldContainer> createState() => _TextFieldContainerState();
@@ -44,24 +456,28 @@ class _TextFieldContainerState extends State<TextFieldContainer> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if(widget.heading.isNotEmpty)Padding(
-          padding:  EdgeInsets.only(left: Size*15, top:Size* 8),
-          child: Text(
-            widget.heading,
-            style: creatorHeadingTextStyle,
+        if (widget.heading.isNotEmpty)
+          Padding(
+            padding: EdgeInsets.only(left: Size * 15, top: Size * 8),
+            child: Text(
+              widget.heading,
+              style: creatorHeadingTextStyle,
+            ),
           ),
-        ),
         Padding(
-          padding:  EdgeInsets.only(
-              left: Size*10, right: Size*10, top: Size*5, bottom: Size*5),
+          padding: EdgeInsets.only(
+              left: Size * 10,
+              right: Size * 10,
+              top: Size * 5,
+              bottom: Size * 5),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              // border: Border.all(color: Colors.white54),
-              borderRadius: BorderRadius.circular(Size*20),
+              color: Colors.white.withOpacity(0.15),
+              border: Border.all(color: Colors.white12),
+              borderRadius: BorderRadius.circular(Size * 15),
             ),
             child: Padding(
-              padding:  EdgeInsets.only(left: Size*10),
+              padding: EdgeInsets.only(left: Size * 10),
               child: widget.child,
             ),
           ),
@@ -77,20 +493,20 @@ class flashNewsCreator extends StatefulWidget {
   String branch;
   String link;
   final double size;
-  flashNewsCreator(
-      {this.NewsId = "",
-        this.link = '',
-        this.heading = "",
-        required this.size,
-        required this.branch,
-      });
+
+  flashNewsCreator({
+    this.NewsId = "",
+    this.link = '',
+    this.heading = "",
+    required this.size,
+    required this.branch,
+  });
 
   @override
   State<flashNewsCreator> createState() => _flashNewsCreatorState();
 }
 
 class _flashNewsCreatorState extends State<flashNewsCreator> {
-
   final HeadingController = TextEditingController();
 
   final LinkController = TextEditingController();
@@ -122,15 +538,22 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              backButton(size: widget.size,text: "Flash News Creator",child: SizedBox(width: widget.size*45,)),
-              TextFieldContainer(heading: "Heading",
+              backButton(
+                  size: widget.size,
+                  text: "Flash News Creator",
+                  child: SizedBox(
+                    width: widget.size * 45,
+                  )),
+              TextFieldContainer(
+                  heading: "Heading",
                   child: Padding(
-                    padding:  EdgeInsets.only(left: widget.size*10),
+                    padding: EdgeInsets.only(left: widget.size * 10),
                     child: TextFormField(
                       controller: HeadingController,
                       textInputAction: TextInputAction.next,
                       maxLines: null,
-                      style: TextStyle(color: Colors.white,fontSize: widget.size*20),
+                      style: TextStyle(
+                          color: Colors.white, fontSize: widget.size * 20),
                       decoration: InputDecoration(
                         hintStyle: TextStyle(color: Colors.white54),
                         border: InputBorder.none,
@@ -138,29 +561,26 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
                       ),
                     ),
                   )),
-
-              TextFieldContainer(heading: "Link",
+              TextFieldContainer(
+                  heading: "Link",
                   child: Padding(
-                    padding:  EdgeInsets.only(left: widget.size*10),
+                    padding: EdgeInsets.only(left: widget.size * 10),
                     child: TextFormField(
                       //obscureText: true,
                       controller: LinkController,
                       textInputAction: TextInputAction.next,
                       maxLines: null,
-                      style: TextStyle(color: Colors.white,fontSize: widget.size*20),
+                      style: TextStyle(
+                          color: Colors.white, fontSize: widget.size * 20),
                       decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Description or Full name',
-                          hintStyle: TextStyle(color: Colors.white54)
-                      ),
+                          hintText: 'if any link',
+                          hintStyle: TextStyle(color: Colors.white54)),
                     ),
                   )),
-
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-
                   InkWell(
                     onTap: () {
                       Navigator.pop(context);
@@ -168,12 +588,15 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(widget.size*15),
+                        borderRadius: BorderRadius.circular(widget.size * 15),
                         border: Border.all(color: Colors.white),
                       ),
                       child: Padding(
-                        padding:  EdgeInsets.only(
-                            left: widget.size*10, right: widget.size*10, top:widget.size* 5, bottom: widget.size*5),
+                        padding: EdgeInsets.only(
+                            left: widget.size * 10,
+                            right: widget.size * 10,
+                            top: widget.size * 5,
+                            bottom: widget.size * 5),
                         child: Text("Back..."),
                       ),
                     ),
@@ -184,28 +607,32 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
                         // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
                         FirebaseFirestore.instance
                             .collection("srkrPage")
-                            .doc("flashNews").collection("flashNews").doc(widget.NewsId)
+                            .doc("flashNews")
+                            .collection("flashNews")
+                            .doc(widget.NewsId)
                             .update({
                           "heading": HeadingController.text.trim(),
                           "link": LinkController.text.trim(),
                         });
 
-                        messageToOwner("flash News is Updated\nBy '${fullUserId()}' \n  Heading : ${HeadingController.text.trim()}\n  Link: ${LinkController.text.trim()}\n **${widget.branch}");
-
+                        messageToOwner(
+                            "flash News is Updated\nBy '${fullUserId()}' \n  Heading : ${HeadingController.text.trim()}\n  Link: ${LinkController.text.trim()}\n **${widget.branch}");
                       } else {
-                        String id =  getID();
+                        String id = getID();
                         FirebaseFirestore.instance
                             .collection("srkrPage")
-                            .doc("flashNews").collection("flashNews").doc(id)
+                            .doc("flashNews")
+                            .collection("flashNews")
+                            .doc(id)
                             .set({
-                          "id":id,
+                          "id": id,
                           "heading": HeadingController.text.trim(),
                           "link": LinkController.text.trim(),
                         });
                         // SendMessage("flashNews;$id",HeadingController.text.trim(),"None");
-                        messageToOwner("flash News is Created\nBy '${fullUserId()}' \n  Heading : ${HeadingController.text.trim()}\n  Link: ${LinkController.text.trim()}\n **${widget.branch}");
+                        messageToOwner(
+                            "flash News is Created\nBy '${fullUserId()}' \n  Heading : ${HeadingController.text.trim()}\n  Link: ${LinkController.text.trim()}\n **${widget.branch}");
                       }
-
 
                       HeadingController.clear();
                       LinkController.clear();
@@ -214,39 +641,48 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
                     },
                     child: widget.NewsId.length < 3
                         ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(widget.size*15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.only(
-                            left: widget.size*10, right: widget.size*10, top:widget.size* 5, bottom: widget.size*5),
-                        child: Text("Create"),
-                      ),
-                    )
+                            decoration: BoxDecoration(
+                              color: Colors.grey[500],
+                              borderRadius:
+                                  BorderRadius.circular(widget.size * 15),
+                              border: Border.all(color: Colors.white),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: widget.size * 10,
+                                  right: widget.size * 10,
+                                  top: widget.size * 5,
+                                  bottom: widget.size * 5),
+                              child: Text("Create"),
+                            ),
+                          )
                         : Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(widget.size*15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.only(
-                            left: widget.size*10, right: widget.size*10, top:widget.size* 5, bottom:widget.size* 5),
-                        child: Text("Update"),
-                      ),
-                    ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[500],
+                              borderRadius:
+                                  BorderRadius.circular(widget.size * 15),
+                              border: Border.all(color: Colors.white),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: widget.size * 10,
+                                  right: widget.size * 10,
+                                  top: widget.size * 5,
+                                  bottom: widget.size * 5),
+                              child: Text("Update"),
+                            ),
+                          ),
                   ),
                   SizedBox(
-                    width:widget.size* 15,
+                    width: widget.size * 15,
                   ),
                 ],
               ),
             ],
           ),
         ),
-      ),);
+      ),
+    );
   }
 }
 
@@ -254,40 +690,41 @@ class timeTableSyllabusModalPaperCreator extends StatefulWidget {
   String id;
   String heading;
   String link;
-  String link1;
   String mode;
   String reg;
   String branch;
   final double size;
-  timeTableSyllabusModalPaperCreator(
-      {this.id = "",
-        this.link = '',
-        this.link1 = '',
-        this.heading = "",
-        required this.size,
-        required this.mode,
-        required this.reg,
-        required this.branch,
-      });
+
+  timeTableSyllabusModalPaperCreator({
+    this.id = "",
+    this.link = '',
+    this.heading = "",
+    required this.size,
+    required this.mode,
+    required this.reg,
+    required this.branch,
+  });
 
   @override
-  State<timeTableSyllabusModalPaperCreator> createState() => _timeTableSyllabusModalPaperCreatorState();
+  State<timeTableSyllabusModalPaperCreator> createState() =>
+      _timeTableSyllabusModalPaperCreatorState();
 }
 
-class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusModalPaperCreator> {
+class _timeTableSyllabusModalPaperCreatorState
+    extends State<timeTableSyllabusModalPaperCreator> {
   FirebaseStorage storage = FirebaseStorage.instance;
 
   final HeadingController = TextEditingController();
 
   final LinkController = TextEditingController();
-  final LinkController1 = TextEditingController();
   final PhotoUrlController = TextEditingController();
   bool _isImage = false;
+
   void AutoFill() async {
     HeadingController.text = widget.heading;
-    if(widget.mode!="Time Table")HeadingController.text = widget.reg.substring(0,10);
+    if (widget.mode != "Time Table")
+      HeadingController.text = widget.reg.substring(0, 10);
     LinkController.text = widget.link;
-    LinkController1.text = widget.link1;
   }
 
   @override
@@ -300,29 +737,34 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
   void dispose() {
     HeadingController.dispose();
     LinkController.dispose();
-    LinkController1.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              backButton(size: widget.size,text: widget.mode,child: SizedBox(width: widget.size*45,)),
-              TextFieldContainer(heading: "Heading",
+              backButton(
+                  size: widget.size,
+                  text: widget.mode,
+                  child: SizedBox(
+                    width: widget.size * 45,
+                  )),
+              TextFieldContainer(
+                  heading: "Heading",
                   child: Padding(
-                    padding:  EdgeInsets.only(left:widget.size* 10),
+                    padding: EdgeInsets.only(left: widget.size * 10),
                     child: TextFormField(
                       controller: HeadingController,
                       textInputAction: TextInputAction.next,
                       maxLines: null,
-                      style: TextStyle(color: Colors.white,fontSize: widget.size*20),
+                      style: TextStyle(
+                          color: Colors.white, fontSize: widget.size * 20),
                       decoration: InputDecoration(
                         hintStyle: TextStyle(color: Colors.white54),
                         border: InputBorder.none,
@@ -330,62 +772,52 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                       ),
                     ),
                   )),
-
-              if( widget.mode!="modalPaper")TextFieldContainer(heading: widget.mode!="Time Table"?"Syllabus":"Time Table",
-                  child: Padding(
-                    padding:  EdgeInsets.only(left: widget.size*10),
-                    child: TextFormField(
-                      //obscureText: true,
-                      controller: LinkController,
-                      textInputAction: TextInputAction.next,
-                      maxLines: null,
-                      style: TextStyle(color: Colors.white,fontSize: widget.size*20),
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: widget.mode!="Time Table"?"Syllabus Link":"Time Table Link",
-                          hintStyle: TextStyle(color: Colors.white54)
+              if (widget.mode != "Time Table")
+                TextFieldContainer(
+                    heading: "Link",
+                    child: Padding(
+                      padding: EdgeInsets.only(left: widget.size * 10),
+                      child: TextFormField(
+                        //obscureText: true,
+                        controller: LinkController,
+                        textInputAction: TextInputAction.next,
+                        maxLines: null,
+                        style: TextStyle(
+                            color: Colors.white, fontSize: widget.size * 20),
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Link',
+                            hintStyle: TextStyle(color: Colors.white54)),
                       ),
-                    ),
-                  )),
-              if( widget.mode=="modalPaper")TextFieldContainer(heading: "Modal Paper",
-                  child: Padding(
-                    padding:  EdgeInsets.only(left: widget.size*10),
-                    child: TextFormField(
-                      //obscureText: true,
-                      controller: LinkController1,
-                      textInputAction: TextInputAction.next,
-                      maxLines: null,
-                      style: TextStyle(color: Colors.white,fontSize:widget.size* 20),
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Modal Paper Link',
-                          hintStyle: TextStyle(color: Colors.white54)
-                      ),
-                    ),
-                  )),
-              if (_isImage == true &&widget.mode=="Time Table")
+                    )),
+              if (_isImage == true && widget.mode == "Time Table")
                 Padding(
-                  padding:  EdgeInsets.only(left:widget.size* 10, top:widget.size* 20),
+                  padding: EdgeInsets.only(
+                      left: widget.size * 10, top: widget.size * 20),
                   child: Row(
                     children: [
                       Container(
-                          height:widget.size* 110,
-                          width: widget.size*180,
+                          height: widget.size * 110,
+                          width: widget.size * 180,
                           decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(widget.size*14),
+                              borderRadius:
+                                  BorderRadius.circular(widget.size * 14),
                               image: DecorationImage(
                                   image: NetworkImage(
                                       PhotoUrlController.text.trim()),
                                   fit: BoxFit.fill))),
                       InkWell(
                         child: Padding(
-                          padding:  EdgeInsets.only(
-                              left:widget.size* 30, top:widget.size* 10, bottom: widget.size*10, right:widget.size* 10),
+                          padding: EdgeInsets.only(
+                              left: widget.size * 30,
+                              top: widget.size * 10,
+                              bottom: widget.size * 10,
+                              right: widget.size * 10),
                           child: Text(
                             "Delete",
                             style: TextStyle(
-                                fontSize: widget.size*30,
+                                fontSize: widget.size * 30,
                                 color: CupertinoColors.destructiveRed),
                           ),
                         ),
@@ -393,31 +825,37 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                     ],
                   ),
                 ),
-              if (_isImage == false&&widget.mode=="Time Table")
+              if (_isImage == false && widget.mode == "Time Table")
                 InkWell(
                   child: Padding(
-                    padding:  EdgeInsets.only(left: widget.size*15, top:widget.size* 20, bottom:widget.size* 10),
+                    padding: EdgeInsets.only(
+                        left: widget.size * 15,
+                        top: widget.size * 20,
+                        bottom: widget.size * 10),
                     child: Row(
                       children: [
                         Icon(
                           Icons.upload,
-                          size: widget.size*35,
+                          size: widget.size * 35,
                           color: Colors.white,
                         ),
                         SizedBox(
-                          width: widget.size*5,
+                          width: widget.size * 5,
                         ),
                         Text(
                           "Upload Photo",
-                          style: TextStyle(fontSize: widget.size*30, color: Colors.white),
+                          style: TextStyle(
+                              fontSize: widget.size * 30, color: Colors.white),
                         ),
                       ],
                     ),
                   ),
                   onTap: () async {
-                    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+                    final pickedFile = await ImagePicker()
+                        .pickImage(source: ImageSource.gallery);
                     File file = File(pickedFile!.path);
-                    final Reference ref = storage.ref().child('timetable/${getID()}');
+                    final Reference ref =
+                        storage.ref().child('timetable/${getID()}');
                     final TaskSnapshot task = await ref.putFile(file);
                     final String url = await task.ref.getDownloadURL();
                     PhotoUrlController.text = url;
@@ -428,25 +866,27 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                         return Dialog(
                           backgroundColor: Colors.black.withOpacity(0.1),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(widget.size*20)),
+                              borderRadius:
+                                  BorderRadius.circular(widget.size * 20)),
                           elevation: 16,
                           child: Container(
                             decoration: BoxDecoration(
                               border: Border.all(
                                   color: Colors.white.withOpacity(0.1)),
-                              borderRadius: BorderRadius.circular(widget.size*20),
+                              borderRadius:
+                                  BorderRadius.circular(widget.size * 20),
                             ),
                             child: ListView(
                               physics: BouncingScrollPhysics(),
                               shrinkWrap: true,
                               children: <Widget>[
-                                 Center(
+                                Center(
                                   child: Padding(
-                                    padding: EdgeInsets.all(widget.size*8.0),
+                                    padding: EdgeInsets.all(widget.size * 8.0),
                                     child: Text(
                                       "Image",
                                       style: TextStyle(
-                                          fontSize: widget.size*22,
+                                          fontSize: widget.size * 22,
                                           fontWeight: FontWeight.w300,
                                           color: Colors.blue),
                                     ),
@@ -457,15 +897,16 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                                     Image.network(
                                       url,
                                       fit: BoxFit.cover,
-                                      loadingBuilder: (context, child, progress) {
+                                      loadingBuilder:
+                                          (context, child, progress) {
                                         if (progress == null) {
                                           _isLoading = false;
                                         }
                                         return progress == null
                                             ? child
                                             : Center(
-                                            child:
-                                            CircularProgressIndicator());
+                                                child:
+                                                    CircularProgressIndicator());
                                       },
                                     ),
                                     if (_isLoading)
@@ -474,18 +915,20 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                                       ),
                                   ],
                                 ),
-                                 SizedBox(
-                                  height: widget.size*10,
+                                SizedBox(
+                                  height: widget.size * 10,
                                 ),
                                 Row(
                                   children: [
                                     InkWell(
                                       child: Padding(
-                                        padding:  EdgeInsets.all(widget.size*5.0),
+                                        padding:
+                                            EdgeInsets.all(widget.size * 5.0),
                                         child: Text(
                                           "Cancel & Delete",
                                           style: TextStyle(
-                                              color: Colors.white, fontSize:widget.size* 20),
+                                              color: Colors.white,
+                                              fontSize: widget.size * 20),
                                         ),
                                       ),
                                       onTap: () async {
@@ -493,7 +936,7 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                                         final String fileName =
                                             uri.pathSegments.last;
                                         final Reference ref =
-                                        storage.ref().child("/${fileName}");
+                                            storage.ref().child("/${fileName}");
                                         try {
                                           await ref.delete();
                                           showToastText(
@@ -506,15 +949,17 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                                       },
                                     ),
                                     SizedBox(
-                                      width: widget.size*20,
+                                      width: widget.size * 20,
                                     ),
                                     InkWell(
                                       child: Padding(
-                                        padding:  EdgeInsets.all(widget.size*5.0),
+                                        padding:
+                                            EdgeInsets.all(widget.size * 5.0),
                                         child: Text(
                                           "Okay",
                                           style: TextStyle(
-                                              color: Colors.white, fontSize:widget.size* 20),
+                                              color: Colors.white,
+                                              fontSize: widget.size * 20),
                                         ),
                                       ),
                                       onTap: () {
@@ -537,11 +982,9 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                     );
                   },
                 ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-
                   InkWell(
                     onTap: () {
                       Navigator.pop(context);
@@ -549,20 +992,22 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(widget.size*15),
+                        borderRadius: BorderRadius.circular(widget.size * 15),
                         border: Border.all(color: Colors.white),
                       ),
                       child: Padding(
-                        padding:  EdgeInsets.only(
-                            left: widget.size*10, right: widget.size*10, top: widget.size*5, bottom: widget.size*5),
+                        padding: EdgeInsets.only(
+                            left: widget.size * 10,
+                            right: widget.size * 10,
+                            top: widget.size * 5,
+                            bottom: widget.size * 5),
                         child: Text("Back..."),
                       ),
-
                     ),
                   ),
                   InkWell(
                     onTap: () {
-                      if(widget.mode=="Time Table"){
+                      if (widget.mode == "Time Table") {
                         if (widget.id.length > 3) {
                           FirebaseFirestore.instance
                               .collection(widget.branch)
@@ -570,75 +1015,97 @@ class _timeTableSyllabusModalPaperCreatorState extends State<timeTableSyllabusMo
                               .collection("regulationWithSem")
                               .doc(widget.reg)
                               .collection("timeTables")
-                              .doc(widget.id).update({"heading":HeadingController.text.trim(),"image":PhotoUrlController.text.trim()});
+                              .doc(widget.id)
+                              .update({
+                            "heading": HeadingController.text.trim(),
+                            "image": PhotoUrlController.text.trim()
+                          });
                         } else {
-                          createTimeTable(branch: widget.branch, heading: HeadingController.text.trim(), photoUrl: PhotoUrlController.text.trim(), reg: widget.reg);
+                          createTimeTable(
+                              branch: widget.branch,
+                              heading: HeadingController.text.trim(),
+                              photoUrl: PhotoUrlController.text.trim(),
+                              reg: widget.reg);
                         }
-                      }else{
+                      } else {
                         if (widget.id.length > 3) {
-                          if(widget.mode=="modalPaper"){
+                          if (widget.mode == "mp") {
                             FirebaseFirestore.instance
                                 .collection(widget.branch)
                                 .doc("regulation")
                                 .collection("regulationWithYears")
-                                .doc(widget.id.substring(0, 10)).update({"modelPaper":LinkController1.text.trim(),});
-
-                          }else{
+                                .doc(widget.id.substring(0, 10))
+                                .update({
+                              "modelPaper": LinkController.text.trim(),
+                            });
+                          } else {
                             FirebaseFirestore.instance
                                 .collection(widget.branch)
                                 .doc("regulation")
                                 .collection("regulationWithYears")
-                                .doc(widget.id.substring(0, 10)).update({"syllabus":LinkController.text.trim(),});
-
+                                .doc(widget.id.substring(0, 10))
+                                .update({
+                              "syllabus": LinkController.text.trim(),
+                            });
                           }
                         }
                       }
-
 
                       HeadingController.clear();
                       LinkController.clear();
 
                       Navigator.pop(context);
+                      Navigator.pop(context);
                     },
                     child: widget.id.length < 3
                         ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(widget.size*15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.only(
-                            left: widget.size*10, right:widget.size* 10, top: widget.size*5, bottom: widget.size*5),
-                        child: Text("Create"),
-                      ),
-                    )
+                            decoration: BoxDecoration(
+                              color: Colors.grey[500],
+                              borderRadius:
+                                  BorderRadius.circular(widget.size * 15),
+                              border: Border.all(color: Colors.white),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: widget.size * 10,
+                                  right: widget.size * 10,
+                                  top: widget.size * 5,
+                                  bottom: widget.size * 5),
+                              child: Text("Create"),
+                            ),
+                          )
                         : Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(widget.size*15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.only(
-                            left: widget.size*10, right: widget.size*10, top:widget.size* 5, bottom: widget.size*5),
-                        child: Text("Update"),
-                      ),
-                    ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[500],
+                              borderRadius:
+                                  BorderRadius.circular(widget.size * 15),
+                              border: Border.all(color: Colors.white),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: widget.size * 10,
+                                  right: widget.size * 10,
+                                  top: widget.size * 5,
+                                  bottom: widget.size * 5),
+                              child: Text("Update"),
+                            ),
+                          ),
                   ),
                   SizedBox(
-                    width:widget.size* 15,
+                    width: widget.size * 15,
                   ),
                 ],
               ),
             ],
           ),
         ),
-      ),);
+      ),
+    );
   }
 }
 
 class updateCreator extends StatefulWidget {
+  bool mode;
   String NewsId;
   String heading;
   String link;
@@ -647,17 +1114,15 @@ class updateCreator extends StatefulWidget {
   String branch;
   final double size;
 
-
   updateCreator(
       {this.NewsId = "",
-        this.link = '',
-        this.heading = "",
-        this.photoUrl = "",
-        this.subMessage = "",
-
-        required this.size,
-
-        required this.branch});
+      this.link = '',
+      this.heading = "",
+      this.photoUrl = "",
+      this.subMessage = "",
+      this.mode = false,
+      required this.size,
+      required this.branch});
 
   @override
   State<updateCreator> createState() => _updateCreatorState();
@@ -699,71 +1164,90 @@ class _updateCreatorState extends State<updateCreator> {
     super.dispose();
   }
 
+  bool isSwitched = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(
+    return Scaffold(
+        body: SafeArea(
       child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            backButton(size: widget.size,text: "Updater",child: SizedBox(width: widget.size*45,)),
-            TextFieldContainer(child: TextFormField(
-              controller: HeadingController,
-              textInputAction: TextInputAction.next,
-              style: TextStyle(color: Colors.white,fontSize: widget.size*20),
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Heading',
-                  hintStyle: TextStyle(color: Colors.white54)
+            backButton(
+                size: widget.size,
+                text: "Updater",
+                child: SizedBox(
+                  width: widget.size * 45,
+                )),
+            TextFieldContainer(
+              child: TextFormField(
+                controller: HeadingController,
+                textInputAction: TextInputAction.next,
+                style:
+                    TextStyle(color: Colors.white, fontSize: widget.size * 20),
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Heading',
+                    hintStyle: TextStyle(color: Colors.white54)),
               ),
-            ),heading: "Heading",),
-            TextFieldContainer(child: TextFormField(
-              controller: DescriptionController,
-              textInputAction: TextInputAction.next,
-              style: TextStyle(color: Colors.white,fontSize: widget.size*20),
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Description',
-                  hintStyle: TextStyle(color: Colors.white54)
+              heading: "Heading",
+            ),
+            TextFieldContainer(
+              child: TextFormField(
+                controller: DescriptionController,
+                textInputAction: TextInputAction.next,
+                style:
+                    TextStyle(color: Colors.white, fontSize: widget.size * 20),
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Description',
+                    hintStyle: TextStyle(color: Colors.white54)),
               ),
-            ),heading: "Description",),
-  TextFieldContainer(child: TextFormField(
-              controller: LinkController,
-              textInputAction: TextInputAction.next,
-              style: TextStyle(color: Colors.white,fontSize: widget.size*20),
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Url',
-                  hintStyle: TextStyle(color: Colors.white54)
+              heading: "Description",
+            ),
+            TextFieldContainer(
+              child: TextFormField(
+                controller: LinkController,
+                textInputAction: TextInputAction.next,
+                style:
+                    TextStyle(color: Colors.white, fontSize: widget.size * 20),
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Url',
+                    hintStyle: TextStyle(color: Colors.white54)),
               ),
-            ),heading: "Url",),
-
-
-
+              heading: "Url",
+            ),
             if (_isImage == true)
               Padding(
-                padding:  EdgeInsets.only(left:widget.size* 10, top:widget.size* 20),
+                padding: EdgeInsets.only(
+                    left: widget.size * 10, top: widget.size * 20),
                 child: Row(
                   children: [
                     Container(
-                        height:widget.size* 110,
-                        width:widget.size* 180,
+                        height: widget.size * 110,
+                        width: widget.size * 180,
                         decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(widget.size*14),
+                            borderRadius:
+                                BorderRadius.circular(widget.size * 14),
                             image: DecorationImage(
                                 image: NetworkImage(
                                     PhotoUrlController.text.trim()),
                                 fit: BoxFit.fill))),
                     InkWell(
                       child: Padding(
-                        padding:  EdgeInsets.only(
-                            left:widget.size* 30, top: widget.size*10, bottom:widget.size* 10, right: widget.size*10),
+                        padding: EdgeInsets.only(
+                            left: widget.size * 30,
+                            top: widget.size * 10,
+                            bottom: widget.size * 10,
+                            right: widget.size * 10),
                         child: Text(
                           "Delete",
                           style: TextStyle(
-                              fontSize:widget.size* 30,
+                              fontSize: widget.size * 30,
                               color: CupertinoColors.destructiveRed),
                         ),
                       ),
@@ -774,28 +1258,34 @@ class _updateCreatorState extends State<updateCreator> {
             if (_isImage == false)
               InkWell(
                 child: Padding(
-                  padding:  EdgeInsets.only(left:widget.size* 15, top:widget.size* 20, bottom: widget.size*10),
+                  padding: EdgeInsets.only(
+                      left: widget.size * 15,
+                      top: widget.size * 20,
+                      bottom: widget.size * 10),
                   child: Row(
                     children: [
                       Icon(
                         Icons.upload,
-                        size: widget.size*35,
+                        size: widget.size * 35,
                         color: Colors.white,
                       ),
                       SizedBox(
-                        width: widget.size*5,
+                        width: widget.size * 5,
                       ),
                       Text(
                         "Upload Photo",
-                        style: TextStyle(fontSize: widget.size*30, color: Colors.white),
+                        style: TextStyle(
+                            fontSize: widget.size * 30, color: Colors.white),
                       ),
                     ],
                   ),
                 ),
                 onTap: () async {
-                  final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+                  final pickedFile = await ImagePicker()
+                      .pickImage(source: ImageSource.gallery);
                   File file = File(pickedFile!.path);
-                  final Reference ref = storage.ref().child('update/${getID()}');
+                  final Reference ref =
+                      storage.ref().child('update/${getID()}');
                   final TaskSnapshot task = await ref.putFile(file);
                   final String url = await task.ref.getDownloadURL();
                   PhotoUrlController.text = url;
@@ -806,25 +1296,27 @@ class _updateCreatorState extends State<updateCreator> {
                       return Dialog(
                         backgroundColor: Colors.black.withOpacity(0.1),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(widget.size*20)),
+                            borderRadius:
+                                BorderRadius.circular(widget.size * 20)),
                         elevation: 16,
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(
                                 color: Colors.white.withOpacity(0.1)),
-                            borderRadius: BorderRadius.circular(widget.size*20),
+                            borderRadius:
+                                BorderRadius.circular(widget.size * 20),
                           ),
                           child: ListView(
                             physics: BouncingScrollPhysics(),
                             shrinkWrap: true,
                             children: <Widget>[
-                               Center(
+                              Center(
                                 child: Padding(
-                                  padding: EdgeInsets.all(widget.size*8.0),
+                                  padding: EdgeInsets.all(widget.size * 8.0),
                                   child: Text(
                                     "Image",
                                     style: TextStyle(
-                                        fontSize:widget.size* 22,
+                                        fontSize: widget.size * 22,
                                         fontWeight: FontWeight.w300,
                                         color: Colors.blue),
                                   ),
@@ -842,8 +1334,8 @@ class _updateCreatorState extends State<updateCreator> {
                                       return progress == null
                                           ? child
                                           : Center(
-                                          child:
-                                          CircularProgressIndicator());
+                                              child:
+                                                  CircularProgressIndicator());
                                     },
                                   ),
                                   if (_isLoading)
@@ -852,18 +1344,20 @@ class _updateCreatorState extends State<updateCreator> {
                                     ),
                                 ],
                               ),
-                               SizedBox(
-                                height: widget.size*10,
+                              SizedBox(
+                                height: widget.size * 10,
                               ),
                               Row(
                                 children: [
                                   InkWell(
                                     child: Padding(
-                                      padding:  EdgeInsets.all(widget.size*5.0),
+                                      padding:
+                                          EdgeInsets.all(widget.size * 5.0),
                                       child: Text(
                                         "Cancel & Delete",
                                         style: TextStyle(
-                                            color: Colors.white, fontSize: widget.size*20),
+                                            color: Colors.white,
+                                            fontSize: widget.size * 20),
                                       ),
                                     ),
                                     onTap: () async {
@@ -871,7 +1365,7 @@ class _updateCreatorState extends State<updateCreator> {
                                       final String fileName =
                                           uri.pathSegments.last;
                                       final Reference ref =
-                                      storage.ref().child("/${fileName}");
+                                          storage.ref().child("/${fileName}");
                                       try {
                                         await ref.delete();
                                         showToastText(
@@ -884,15 +1378,17 @@ class _updateCreatorState extends State<updateCreator> {
                                     },
                                   ),
                                   SizedBox(
-                                    width: 20,
+                                    width: widget.size * 20,
                                   ),
                                   InkWell(
                                     child: Padding(
-                                      padding:  EdgeInsets.all(widget.size*5.0),
+                                      padding:
+                                          EdgeInsets.all(widget.size * 5.0),
                                       child: Text(
                                         "Okay",
                                         style: TextStyle(
-                                            color: Colors.white, fontSize: widget.size*20),
+                                            color: Colors.white,
+                                            fontSize: widget.size * 20),
                                       ),
                                     ),
                                     onTap: () {
@@ -915,10 +1411,33 @@ class _updateCreatorState extends State<updateCreator> {
                   );
                 },
               ),
+            if (widget.NewsId.length < 3)
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                        flex: 3,
+                        child: Text(
+                          "This is news for the whole college and branch.",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        )),
+                    Expanded(
+                      child: Switch(
+                        value: isSwitched,
+                        onChanged: (value) {
+                          setState(() {
+                            isSwitched = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-
                 InkWell(
                   onTap: () {
                     Navigator.pop(context);
@@ -926,19 +1445,22 @@ class _updateCreatorState extends State<updateCreator> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[500],
-                      borderRadius: BorderRadius.circular(widget.size*15),
+                      borderRadius: BorderRadius.circular(widget.size * 15),
                       border: Border.all(color: Colors.white),
                     ),
                     child: Padding(
-                      padding:  EdgeInsets.only(
-                          left: widget.size*10, right: widget.size*10, top:widget.size* 5, bottom: widget.size*5),
+                      padding: EdgeInsets.only(
+                          left: widget.size * 10,
+                          right: widget.size * 10,
+                          top: widget.size * 5,
+                          bottom: widget.size * 5),
                       child: Text("Back..."),
                     ),
                   ),
                 ),
                 InkWell(
                   onTap: () {
-                    if(true){
+                    if (isSwitched || widget.mode) {
                       if (widget.NewsId.length > 3) {
                         // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
                         FirebaseFirestore.instance
@@ -948,92 +1470,95 @@ class _updateCreatorState extends State<updateCreator> {
                           "heading": HeadingController.text.trim(),
                           "link": LinkController.text.trim(),
                           "image": PhotoUrlController.text,
-                          "description":DescriptionController.text
+                          "description": DescriptionController.text
                         });
-                        messageToOwner("Update is Updated\nBy '${fullUserId()}\n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
+                        messageToOwner(
+                            "Update is Updated\nBy '${fullUserId()}\n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
                       } else {
-                        String id =  getID();
+                        String id = getID();
                         createHomeUpdate(
                             id: id,
-                            creator:fullUserId(),
+                            creator: fullUserId(),
                             description: DescriptionController.text,
                             heading: HeadingController.text,
                             photoUrl: PhotoUrlController.text,
                             link: LinkController.text);
-                        messageToOwner("Update is Created\nBy '${fullUserId()}\n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
+                        messageToOwner(
+                            "Update is Created\nBy '${fullUserId()}\n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
 
                         // SendMessage("Update;$id",MessageController.text.trim(),widget.branch );
-
                       }
-
-
-                      HeadingController.clear();
-                      LinkController.clear();
-                      PhotoUrlController.clear();
-                      Navigator.pop(context);
-                    }else{
-
-                        if (widget.NewsId.length > 3) {
-                          FirebaseFirestore.instance
-                              .collection(widget.branch)
-                              .doc("${widget.branch}News")
-                              .collection("${widget.branch}News")
-                              .doc(widget.NewsId)
-                              .update({
-                            "heading": HeadingController.text.trim(),
-                            "description": DescriptionController.text.trim(),
-                            "image": PhotoUrlController.text.trim()
-                          });
-                          messageToOwner("Branch News Updated.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    Image : ${PhotoUrlController.text.trim()}\n **${widget.branch}");
-                        } else {
-                          String id= getID();
-                          createBranchNew(
-                              branch: widget.branch,
-                              heading: HeadingController.text.trim(),
-                              description: DescriptionController.text.trim(),
-                              photoUrl: PhotoUrlController.text, id: id);
-                          messageToOwner("Branch News Created.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    Image : ${PhotoUrlController.text.trim()}\n **${widget.branch}");
-
-                          // SendMessage("News;$id",HeadingController.text.trim(),widget.branch );
-
-                        }
-                        HeadingController.clear();
-                        DescriptionController.clear();
-                        PhotoUrlController.clear();
-                        Navigator.pop(context);
-
-
                     }
 
+                    if (widget.NewsId.length > 3) {
+                      FirebaseFirestore.instance
+                          .collection(widget.branch)
+                          .doc("${widget.branch}News")
+                          .collection("${widget.branch}News")
+                          .doc(widget.NewsId)
+                          .update({
+                        "heading": HeadingController.text.trim(),
+                        "description": DescriptionController.text.trim(),
+                        "image": PhotoUrlController.text.trim()
+                      });
+                      messageToOwner(
+                          "Branch News Updated.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    Image : ${PhotoUrlController.text.trim()}\n **${widget.branch}");
+                    } else {
+                      String id = getID();
+                      createBranchNew(
+                          id: id,
+                          creator: fullUserId(),
+                          description: DescriptionController.text,
+                          heading: HeadingController.text,
+                          photoUrl: PhotoUrlController.text,
+                          link: LinkController.text,
+                          branch: widget.branch);
+                      messageToOwner(
+                          "Branch News Created.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    Image : ${PhotoUrlController.text.trim()}\n **${widget.branch}");
+
+                      // SendMessage("News;$id",HeadingController.text.trim(),widget.branch );
+                    }
+                    HeadingController.clear();
+                    DescriptionController.clear();
+                    PhotoUrlController.clear();
+                    Navigator.pop(context);
                   },
                   child: widget.NewsId.length < 3
                       ? Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[500],
-                      borderRadius: BorderRadius.circular(widget.size*15),
-                      border: Border.all(color: Colors.white),
-                    ),
-                    child: Padding(
-                      padding:  EdgeInsets.only(
-                          left: widget.size*10, right: widget.size*10, top:widget.size* 5, bottom:widget.size* 5),
-                      child: Text("Create"),
-                    ),
-                  )
+                          decoration: BoxDecoration(
+                            color: Colors.grey[500],
+                            borderRadius:
+                                BorderRadius.circular(widget.size * 15),
+                            border: Border.all(color: Colors.white),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: widget.size * 10,
+                                right: widget.size * 10,
+                                top: widget.size * 5,
+                                bottom: widget.size * 5),
+                            child: Text("Create"),
+                          ),
+                        )
                       : Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[500],
-                      borderRadius: BorderRadius.circular(widget.size*15),
-                      border: Border.all(color: Colors.white),
-                    ),
-                    child: Padding(
-                      padding:  EdgeInsets.only(
-                          left: widget.size*10, right: widget.size*10, top: widget.size*5, bottom: widget.size*5),
-                      child: Text("Update"),
-                    ),
-                  ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[500],
+                            borderRadius:
+                                BorderRadius.circular(widget.size * 15),
+                            border: Border.all(color: Colors.white),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: widget.size * 10,
+                                right: widget.size * 10,
+                                top: widget.size * 5,
+                                bottom: widget.size * 5),
+                            child: Text("Update"),
+                          ),
+                        ),
                 ),
                 SizedBox(
-                  width:widget.size* 15,
+                  width: widget.size * 15,
                 ),
               ],
             ),
@@ -1044,812 +1569,48 @@ class _updateCreatorState extends State<updateCreator> {
   }
 }
 
-class NewsCreator extends StatefulWidget {
-  String NewsId;
-  String heading;
-  String description;
-  String photoUrl;
-  String branch;
-
-  NewsCreator(
-      {this.NewsId = "",
-        this.description = '',
-        this.heading = "",
-        this.photoUrl = "",
-        required this.branch});
-
-  @override
-  State<NewsCreator> createState() => _NewsCreatorState();
-}
-
-class _NewsCreatorState extends State<NewsCreator> {
-  final FirebaseStorage storage = FirebaseStorage.instance;
-
-  final HeadingController = TextEditingController();
-  final DescriptionController = TextEditingController();
-  final PhotoUrlController = TextEditingController();
-  final LinkController = TextEditingController();
-  bool _isImage = false;
-
-  void AutoFill() async {
-    HeadingController.text = widget.heading;
-    DescriptionController.text = widget.description;
-    PhotoUrlController.text = widget.photoUrl;
-    if (widget.photoUrl.length > 3) {
-      setState(() {
-        _isImage = true;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    AutoFill();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    HeadingController.dispose();
-    DescriptionController.dispose();
-    PhotoUrlController.dispose();
-    LinkController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    double Size=size(context);
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              backButton(size: Size, text: "Branch News Creator",child: SizedBox(width:Size* 45,),),
-              TextFieldContainer(child: TextFormField(
-                controller: HeadingController,
-                textInputAction: TextInputAction.next,
-                style: TextStyle(color: Colors.white,fontSize: Size*20),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Heading',
-                    hintStyle: TextStyle(color: Colors.white54)
-                ),
-              ),heading: "Heading",),
-              TextFieldContainer(child: TextFormField(
-                controller: DescriptionController,
-                textInputAction: TextInputAction.next,
-                style: TextStyle(color: Colors.white,fontSize: Size*20),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Description',
-                    hintStyle: TextStyle(color: Colors.white54)
-                ),
-              ),heading: "Description",),
-
-
-              if (_isImage == true)
-                Padding(
-                  padding:  EdgeInsets.only(left: Size*10, top: Size*20),
-                  child: Row(
-                    children: [
-                      Container(
-                          height: Size*110,
-                          width: Size*180,
-                          decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(Size*14),
-                              image: DecorationImage(
-                                  image: NetworkImage(
-                                      PhotoUrlController.text.trim()),
-                                  fit: BoxFit.fill))),
-                      InkWell(
-                        child: Padding(
-                          padding:  EdgeInsets.only(
-                              left: Size*30, top:Size* 10, bottom: Size*10, right: Size*10),
-                          child: Text(
-                            "Delete",
-                            style: TextStyle(
-                                fontSize:Size* 30,
-                                color: CupertinoColors.destructiveRed),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              if (_isImage == false)
-                InkWell(
-                  child: Padding(
-                    padding:  EdgeInsets.only(left: Size*15, top: Size*20, bottom: Size*10),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.upload,
-                          size:Size* 35,
-                          color: Colors.white,
-                        ),
-                        SizedBox(
-                          width:Size* 5,
-                        ),
-                        Text(
-                          "Upload Photo",
-                          style: TextStyle(fontSize:Size* 30, color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                  onTap: () async {
-                    final pickedFile = await ImagePicker()
-                        .pickImage(source: ImageSource.gallery);
-                    File file = File(pickedFile!.path);
-                    final Reference ref = storage.ref().child(
-                        '${widget.branch.toLowerCase()}/news/${DateTime.now().toString()}');
-                    final TaskSnapshot task = await ref.putFile(file);
-                    final String url = await task.ref.getDownloadURL();
-                    PhotoUrlController.text = url;
-                    bool _isLoading = false;
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                          backgroundColor: Colors.black.withOpacity(0.1),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(Size*20)),
-                          elevation: 16,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.white.withOpacity(0.1)),
-                              borderRadius: BorderRadius.circular(Size*20),
-                            ),
-                            child: ListView(
-                              physics: BouncingScrollPhysics(),
-                              shrinkWrap: true,
-                              children: <Widget>[
-                                 Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(Size*8.0),
-                                    child: Text(
-                                      "Image",
-                                      style: TextStyle(
-                                          fontSize: Size*22,
-                                          fontWeight: FontWeight.w300,
-                                          color: Colors.blue),
-                                    ),
-                                  ),
-                                ),
-                                Stack(
-                                  children: <Widget>[
-                                    Image.network(
-                                      url,
-                                      fit: BoxFit.cover,
-                                      loadingBuilder: (context, child, progress) {
-                                        if (progress == null) {
-                                          _isLoading = false;
-                                        }
-                                        return progress == null
-                                            ? child
-                                            : Center(
-                                            child:
-                                            CircularProgressIndicator());
-                                      },
-                                    ),
-                                    if (_isLoading)
-                                      Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    InkWell(
-                                      child: Padding(
-                                        padding:  EdgeInsets.all(Size*5.0),
-                                        child: Text(
-                                          "Cancel & Delete",
-                                          style: TextStyle(
-                                              color: Colors.white, fontSize:Size* 20),
-                                        ),
-                                      ),
-                                      onTap: () async {
-                                        final Uri uri = Uri.parse(url);
-                                        final String fileName =
-                                            uri.pathSegments.last;
-                                        final Reference ref =
-                                        storage.ref().child("/${fileName}");
-                                        try {
-                                          await ref.delete();
-                                          showToastText(
-                                              'Image deleted successfully');
-                                        } catch (e) {
-                                          showToastText(
-                                              'Error deleting image: $e');
-                                        }
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                    SizedBox(
-                                      width: Size*20,
-                                    ),
-                                    InkWell(
-                                      child: Padding(
-                                        padding:  EdgeInsets.all(Size*5.0),
-                                        child: Text(
-                                          "Okay",
-                                          style: TextStyle(
-                                              color: Colors.white, fontSize: Size*20),
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        setState(() {
-                                          PhotoUrlController.text = url;
-                                          _isImage = true;
-                                        });
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ],
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              SizedBox(
-                height:Size* 20,
-              ),
-              Row(
-                children: [
-                  Spacer(),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(Size*15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.only(
-                            left:Size* 10, right: Size*10, top:Size* 5, bottom: Size*5),
-                        child: Text("Back..."),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      if (widget.NewsId.length > 3) {
-                        FirebaseFirestore.instance
-                            .collection(widget.branch)
-                            .doc("${widget.branch}News")
-                            .collection("${widget.branch}News")
-                            .doc(widget.NewsId)
-                            .update({
-                          "heading": HeadingController.text.trim(),
-                          "description": DescriptionController.text.trim(),
-                          "image": PhotoUrlController.text.trim()
-                        });
-                        messageToOwner("Branch News Updated.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    Image : ${PhotoUrlController.text.trim()}\n **${widget.branch}");
-                      } else {
-                        String id= getID();
-                        createBranchNew(
-                            branch: widget.branch,
-                            heading: HeadingController.text.trim(),
-                            description: DescriptionController.text.trim(),
-                            photoUrl: PhotoUrlController.text, id: id);
-                        messageToOwner("Branch News Created.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    Image : ${PhotoUrlController.text.trim()}\n **${widget.branch}");
-
-                        // SendMessage("News;$id",HeadingController.text.trim(),widget.branch );
-
-                      }
-                      HeadingController.clear();
-                      DescriptionController.clear();
-                      PhotoUrlController.clear();
-                      Navigator.pop(context);
-                    },
-                    child: widget.NewsId.length < 3
-                        ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(Size*15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.only(
-                            left: Size*10, right: Size*10, top: Size*5, bottom: Size*5),
-                        child: Text("Create"),
-                      ),
-                    )
-                        : Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(Size*15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.only(
-                            left: Size*10, right:Size* 10, top: Size*5, bottom: Size*5),
-                        child: Text("Update"),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: Size*15,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class SubjectsCreator extends StatefulWidget {
-  String Id;
-  String heading;
-  String description;
-  double size;
-  String photoUrl;
-  String mode;
-  String branch;
-  String reg;
-
-  SubjectsCreator(
-      {this.Id = "",
-        this.description = '',
-        this.heading = "",
-        this.reg = "",
-        this.photoUrl = "",
-        this.mode = "Subjects",
-        required this.branch,
-        required this.size
-      });
-
-  @override
-  State<SubjectsCreator> createState() => _SubjectsCreatorState();
-}
-
-class _SubjectsCreatorState extends State<SubjectsCreator> {
-  final HeadingController = TextEditingController();
-  final HeadingController1 = TextEditingController();
-  final DescriptionController = TextEditingController();
-  final FirebaseStorage storage = FirebaseStorage.instance;
-  String reg="";
-
-  void AutoFill() async {
-    HeadingController.text = widget.heading;
-    DescriptionController.text = widget.description;
-    reg = widget.reg;
-    // if (widget.photoUrl.length > 3) {
-    //   setState(() {
-    //     var _isImage = true;
-    //   });
-    // }
-  }
-  String selectedLanguage = 'none';
-  @override
-  void initState() {
-    AutoFill();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    HeadingController.dispose();
-    DescriptionController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              backButton(size: size(context),text:"Subject Editor" ,child: SizedBox(width:widget.size* 45,)),
-
-             Row(
-               children: [
-                 Flexible(
-                   child: TextFieldContainer(child: TextFormField(
-                     controller: HeadingController,
-                     textInputAction: TextInputAction.next,
-                     style: TextStyle(color: Colors.white,fontSize: widget.size*20),
-                     decoration: InputDecoration(
-                         border: InputBorder.none,
-                         hintText: 'Name',
-                         hintStyle: TextStyle(color: Colors.white54)
-                     ),
-                   ),heading: "Short Name",),
-                 ),
-                 Flexible(
-                   flex: 2,
-                   child: TextFieldContainer(child: TextFormField(
-                     controller: HeadingController1,
-                     textInputAction: TextInputAction.next,
-                     style: TextStyle(color: Colors.white,fontSize: widget.size*20),
-                     decoration: InputDecoration(
-                         border: InputBorder.none,
-                         hintText: 'Full Name',
-                         hintStyle: TextStyle(color: Colors.white54)
-                     ),
-                   ),heading: "Full Name",),
-                 ),
-               ],
-             ),
-
-
-              TextFieldContainer(child: TextFormField(
-                //obscureText: true,
-                controller: DescriptionController,
-                textInputAction: TextInputAction.next,
-                style: TextStyle(color: Colors.white,fontSize:widget.size* 20),
-
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Description or Full name',
-                    hintStyle: TextStyle(color: Colors.white54)
-
-                ),
-              ),heading: "Description",),
-
-              SizedBox(
-                height:widget.size* 5,
-              ),
-              if (widget.Id.length < 3)
-                Divider(
-                  height: widget.size*5,
-                  color: Colors.white,
-                ),
-              if (widget.Id.length < 3)
-                Padding(
-                  padding:  EdgeInsets.all(widget.size*8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blueGrey,
-                      borderRadius: BorderRadius.circular(widget.size*15),
-                      border: Border.all(color: Colors.white54),
-                    ),
-                    child: Column(
-                      children: [
-                        RadioListTile(
-                          activeColor: Colors.white,
-                          tileColor: Colors.white38,
-                          title: Text(
-                            "Subject",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize:widget.size* 16),
-                          ),
-                          value: "Subjects",
-                          groupValue: widget.mode,
-                          onChanged: (value) {
-                            setState(() {
-                              widget.mode = value.toString();
-                            });
-                          },
-                        ),
-                        RadioListTile(
-                          title: Text("Lab Subject",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: widget.size*16)),
-                          value: "LabSubjects",
-                          activeColor: Colors.white,
-                          tileColor: Colors.white38,
-                          groupValue: widget.mode,
-                          onChanged: (value) {
-                            setState(() {
-                              widget.mode = value.toString();
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              if (widget.Id.length < 3)
-                Divider(
-                  height: widget.size*5,
-                  color: Colors.white,
-                ),
-              SizedBox(
-                height:widget.size* 20,
-              ),
-              Padding(
-                padding:  EdgeInsets.symmetric(horizontal:widget.size* 10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              widget.size * 8),
-                          color: Colors.white24,
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: widget.size * 5,
-                              horizontal: widget.size * 10),
-                          child: Text(
-                            "Change Regulation",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: widget.size * 22),
-                          ),
-                        ),
-                      ),
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Dialog(
-                              backgroundColor: Colors.transparent,
-
-                              elevation: 20,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white70,
-                                    borderRadius: BorderRadius.circular(widget.size*30)
-                                ),
-                                child: StreamBuilder<List<RegulationConvertor>>(
-                                    stream: readRegulation(widget.branch),
-                                    builder: (context, snapshot) {
-                                      final user = snapshot.data;
-                                      switch (snapshot.connectionState) {
-                                        case ConnectionState.waiting:
-                                          return const Center(
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 0.3,
-                                                color: Colors.cyan,
-                                              ));
-                                        default:
-                                          if (snapshot.hasError) {
-                                            return const Center(
-                                                child: Text(
-                                                    'Error with Regulation Data or\n Check Internet Connection'));
-                                          } else {
-                                            return ListView.builder(
-                                              shrinkWrap: true,
-                                              itemCount: user!.length,
-                                              itemBuilder: (context, int index) {
-                                                final SubjectsData = user[index];
-                                                return Center(
-                                                  child: Padding(
-                                                    padding:  EdgeInsets.symmetric(vertical:widget.size*5.0),
-                                                    child: InkWell(
-                                                      child: Text(
-                                                        SubjectsData.id.toUpperCase(),
-                                                        style: TextStyle(
-                                                            color: Colors.black87,
-                                                            fontSize: widget.size*20,fontWeight: FontWeight.bold),
-                                                      ),
-                                                      onTap: () {
-                                                        setState(() {
-                                                          reg=SubjectsData.id;
-                                                        });
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          }
-                                      }
-                                    }),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    Text("$reg",style: TextStyle(color: Colors.white,fontSize: widget.size*20,fontWeight: FontWeight.w800),)
-                  ],
-                ),
-              ),
-
-              Row(
-                children: [
-                  Spacer(),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(widget.size*15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.only(
-                            left:widget.size* 10, right: widget.size*10, top: widget.size*5, bottom: widget.size*5),
-                        child: Text("<-- Back"),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width:widget.size* 10,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      if (widget.Id.length > 3) {
-                        if (widget.mode != "LabSubjects") {
-                          FirebaseFirestore.instance
-                              .collection(widget.branch)
-                              .doc("Subjects")
-                              .collection("Subjects")
-                              .doc(widget.Id)
-                              .update({
-                            "heading": HeadingController.text.trim()+';'+HeadingController1.text.trim(),
-                            "description": DescriptionController.text.trim(),
-                            "regulation":reg
-                          });
-                          messageToOwner("Subject Updated.\nBy : '${fullUserId()}' \n    Heading : ${ HeadingController.text.trim()+';'+HeadingController1.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    regulation : ${reg}\n **${widget.branch}");
-
-                        } else {
-                          FirebaseFirestore.instance
-                              .collection(widget.branch)
-                              .doc("LabSubjects")
-                              .collection("LabSubjects")
-                              .doc(widget.Id)
-                              .update({
-                            "heading": HeadingController.text.trim()+';'+HeadingController1.text.trim(),
-                            "description": DescriptionController.text.trim(),
-                            "regulation":reg
-                          });
-                          messageToOwner("Subject Updated.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()+';'+HeadingController1.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    regulation : ${reg}\n **${widget.branch}");
-
-                        }
-                      } else {
-                        if (widget.mode == "LabSubjects") {
-                          createLabSubjects(
-                            branch: widget.branch,
-                            regulation: reg,
-                            heading: HeadingController.text.trim()+';'+HeadingController1.text.trim(),
-                            description: DescriptionController.text.trim(),
-                            creator: fullUserId(),
-                          );
-                          messageToOwner("Lab Subject Created.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()+';'+HeadingController1.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    regulation : ${reg}\n **${widget.branch}");
-
-                        } else {
-                          createSubjects(
-                              branch: widget.branch,
-                              heading: HeadingController.text.trim()+';'+HeadingController1.text.trim(),
-                              description: DescriptionController.text.trim(),
-                              creator: fullUserId(),
-                              regulation: reg);
-                          messageToOwner("Subject Created.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()+';'+HeadingController1.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    regulation : ${reg}\n **${widget.branch}");
-
-                        }
-                      }
-                      HeadingController.clear();
-                      DescriptionController.clear();
-                      Navigator.pop(context);
-                    },
-                    child: widget.Id.length < 3
-                        ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(widget.size*15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.only(
-                            left:widget.size* 10, right: widget.size*10, top:widget.size* 5, bottom: widget.size*5),
-                        child: Text("Create"),
-                      ),
-                    )
-                        : Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(widget.size*15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.only(
-                            left: widget.size*10, right:widget.size* 10, top: widget.size*5, bottom:widget.size* 5),
-                        child: Text("Update"),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: widget.size*20,
-                  )
-                ],
-              ),
-              SizedBox(
-                height: widget.size*10,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class BooksCreator extends StatefulWidget {
-  String id;
-  String heading;
-  String description;
-  String photoUrl;
-  String Date;
-  String Link;
-  String Edition;
-  String Author;
+  BooksConvertor? data;
   String branch;
 
   BooksCreator(
-      {this.id = "",
-        this.description = '',
-        this.heading = "",
-        this.photoUrl = "",
-        this.Date = "",
-        this.Author = "",
-        this.Edition = "",
+      {
         required this.branch,
-        this.Link = ""});
-
+         this.data,
+      });
   @override
   State<BooksCreator> createState() => _BooksCreatorState();
 }
 
 class _BooksCreatorState extends State<BooksCreator> {
-  final FirebaseStorage storage = FirebaseStorage.instance;
+
   final HeadingController = TextEditingController();
   final DescriptionController = TextEditingController();
-  final PhotoUrlController = TextEditingController();
   final LinkController = TextEditingController();
   final EditionController = TextEditingController();
   final AuthorController = TextEditingController();
 
   void autoFill() async {
-    HeadingController.text = widget.heading;
-    DescriptionController.text = widget.description;
-    PhotoUrlController.text = widget.photoUrl;
-    LinkController.text = widget.Link;
-    EditionController.text = widget.Edition;
-    AuthorController.text = widget.Author;
+    HeadingController.text = widget.data!.heading;
+    DescriptionController.text = widget.data!.description;
+    LinkController.text = widget.data!.link;
+    EditionController.text = widget.data!.edition;
+    AuthorController.text = widget.data!.Author;
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    autoFill();
+    if(widget.data!=null) {
+      autoFill();
+    }
   }
 
   @override
   void dispose() {
     HeadingController.dispose();
     DescriptionController.dispose();
-    PhotoUrlController.dispose();
     LinkController.dispose();
     EditionController.dispose();
     AuthorController.dispose();
@@ -1858,7 +1619,7 @@ class _BooksCreatorState extends State<BooksCreator> {
 
   @override
   Widget build(BuildContext context) {
-    double Size=size(context);
+    double Size = size(context);
 
     return Scaffold(
       body: SafeArea(
@@ -1867,153 +1628,106 @@ class _BooksCreatorState extends State<BooksCreator> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              backButton(size:Size , child: SizedBox(width: Size*45),text:"Books Creator"),
-              TextFieldContainer(child: TextFormField(
-                controller: HeadingController,
-                textInputAction: TextInputAction.next,
-                style: TextStyle(color: Colors.white,fontSize: Size*20),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Heading',
-                    hintStyle: TextStyle(color: Colors.white54)
+              backButton(
+                  size: Size,
+                  child: SizedBox(width: Size * 45),
+                  text: "Books Creator"),
+              TextFieldContainer(
+                child: TextFormField(
+                  controller: HeadingController,
+                  textInputAction: TextInputAction.next,
+                  style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Heading',
+                      hintStyle: TextStyle(color: Colors.white54)),
                 ),
-              ),heading: "Heading",),
-              TextFieldContainer(child: TextFormField(
-                controller: DescriptionController,
-                textInputAction: TextInputAction.next,
-                style: TextStyle(color: Colors.white,fontSize: Size*20),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Description',
-                    hintStyle: TextStyle(color: Colors.white54)
+                heading: "Heading",
+              ),
+              TextFieldContainer(
+                child: TextFormField(
+                  controller: DescriptionController,
+                  textInputAction: TextInputAction.next,
+                  style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Description',
+                      hintStyle: TextStyle(color: Colors.white54)),
                 ),
-              ),heading: "Description",),
-              TextFieldContainer(child: TextFormField(
-                controller: PhotoUrlController,
-                textInputAction: TextInputAction.next,
-                style: TextStyle(color: Colors.white,fontSize: Size*20),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Image',
-                    hintStyle: TextStyle(color: Colors.white54)
+                heading: "Description",
+              ),
+              TextFieldContainer(
+                child: TextFormField(
+                  controller: AuthorController,
+                  textInputAction: TextInputAction.next,
+                  style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Author',
+                      hintStyle: TextStyle(color: Colors.white54)),
                 ),
-              ),heading: "Image",),
-              TextFieldContainer(child: TextFormField(
-                controller: AuthorController,
-                textInputAction: TextInputAction.next,
-                style: TextStyle(color: Colors.white,fontSize: Size*20),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Author',
-                    hintStyle: TextStyle(color: Colors.white54)
+                heading: "Author",
+              ),
+              TextFieldContainer(
+                child: TextFormField(
+                  controller: EditionController,
+                  textInputAction: TextInputAction.next,
+                  style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Edition',
+                      hintStyle: TextStyle(color: Colors.white54)),
                 ),
-              ),heading: "Author",),
-              TextFieldContainer(child: TextFormField(
-                controller: EditionController,
-                textInputAction: TextInputAction.next,
-                style: TextStyle(color: Colors.white,fontSize: Size*20),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Edition',
-                    hintStyle: TextStyle(color: Colors.white54)
+                heading: "Edition",
+              ),
+              TextFieldContainer(
+                child: TextFormField(
+                  controller: LinkController,
+                  textInputAction: TextInputAction.next,
+                  style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Link',
+                      hintStyle: TextStyle(color: Colors.white54)),
                 ),
-              ),heading: "Edition",),
-              TextFieldContainer(child: TextFormField(
-                controller: LinkController,
-                textInputAction: TextInputAction.next,
-                style: TextStyle(color: Colors.white,fontSize: Size*20),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'PDF Link',
-                    hintStyle: TextStyle(color: Colors.white54)
-                ),
-              ),heading: "PDF Link",),
-
+                heading: "PDF Link",
+              ),
               SizedBox(
-                height:Size* 20,
+                height: Size * 20,
               ),
               Row(
                 children: [
                   Spacer(),
-                  InkWell(
-                      onTap: () {
+                  ElevatedButton(
+                      onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[500],
-                          borderRadius: BorderRadius.circular(Size*15),
-                          border: Border.all(color: Colors.white),
-                        ),
-                        child: Padding(
-                          padding:  EdgeInsets.only(
-                              left:Size* 10, right: Size*10, top:Size* 5, bottom: Size*5),
-                          child: Text("Back"),
-                        ),
-                      )),
+                      child: Text("Back")),
                   SizedBox(
-                    width: Size*10,
+                    width: Size * 10,
                   ),
-                  InkWell(
-                    onTap: () {
-                      if (widget.id.isNotEmpty) {
-                        FirebaseFirestore.instance
-                            .collection(widget.branch)
-                            .doc("Books")
-                            .collection("CoreBooks")
-                            .doc(widget.id)
-                            .update({
-                          "heading": HeadingController.text.trim(),
-                          "edition": EditionController.text.trim(),
-                          "author": AuthorController.text.trim(),
-                          "link": LinkController.text.trim(),
-                          "description": DescriptionController.text.trim(),
-                          "image": PhotoUrlController.text.trim()
-                        });
-                        messageToOwner("Book Updated.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    Image : ${PhotoUrlController.text}\n    Author : ${AuthorController.text}\n    Edition : ${EditionController.text}\n    PDF Link : ${LinkController.text}\n **${widget.branch}");
+                  ElevatedButton(
+                    onPressed: () async {
 
-                      } else {
                         createBook(
+                            isUpdate:widget.data!=null,
                             branch: widget.branch,
                             heading: HeadingController.text.trim(),
                             description: DescriptionController.text.trim(),
-                            photoUrl: PhotoUrlController.text.trim(),
                             edition: EditionController.text.trim(),
                             Author: AuthorController.text.trim(),
-                            link: LinkController.text.trim());
-                        messageToOwner("Book Created.\nBy : '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text.trim()}\n    Image : ${PhotoUrlController.text}\n    Author : ${AuthorController.text}\n    Edition : ${EditionController.text}\n    PDF Link : ${LinkController.text}\n **${widget.branch}");
+                            link: LinkController.text.trim(),
+                          id: widget.data!=null?widget.data!.id:getID(),
 
-                      }
+                        );
                       Navigator.pop(context);
                     },
-                    child: widget.id.length < 3
-                        ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(Size*15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.only(
-                            left: Size*10, right: Size*10, top: Size*5, bottom: Size*5),
-                        child: Text("Create"),
-                      ),
-                    )
-                        : Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(Size*15),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.only(
-                            left:Size* 10, right: Size*10, top: Size*5, bottom:Size* 5),
-                        child: Text("Update"),
-                      ),
-                    ),
+                    child: widget.data==null
+                        ? Text("Create")
+                        : Text("Update"),
                   ),
                   SizedBox(
-                    width: Size*20,
+                    width: Size * 20,
                   ),
                 ],
               )
@@ -2026,33 +1740,23 @@ class _BooksCreatorState extends State<BooksCreator> {
 }
 
 class UnitsCreator extends StatefulWidget {
-  String id;
-  String type;
-  String Heading,subjectName;
-  String Description;
-  String photoUrl;
-  String edition;
-  String questions;
+  final subjectConvertor subject;
+  final UnitConvertor? unit;
+  final TextBookConvertor? textBook;
+  final MoreInfoConvertor? moreInfo;
   String branch;
-  String author;
-  String PDFUrl;
-  String UnitId;
+  String subjectId;
   String mode;
 
-  UnitsCreator(
-      {required this.id,
-        required this.mode,
-        required this.subjectName,
-        required this.branch,
-        required this.type,
-        this.edition = "",
-        this.photoUrl = "",
-        this.Description = "",
-        this.Heading = "",
-        this.questions = "",
-        this.author = "",
-        this.PDFUrl = "",
-        this.UnitId = ""});
+  UnitsCreator({
+    required this.mode,
+    required this.subjectId,
+    required this.subject,
+    this.unit,
+    this.textBook,
+    this.moreInfo,
+    required this.branch,
+  });
 
   @override
   State<UnitsCreator> createState() => _UnitsCreatorState();
@@ -2061,7 +1765,7 @@ class UnitsCreator extends StatefulWidget {
 class _UnitsCreatorState extends State<UnitsCreator> {
   String unit = "Unknown";
   bool isEdit = false;
-  List list =["PDF","Image","YouTube","WebSite","More"];
+  List list = ["PDF", "Image", "YouTube", "WebSite", "More"];
   final HeadingController = TextEditingController();
 
   final PDFUrlController = TextEditingController();
@@ -2069,32 +1773,32 @@ class _UnitsCreatorState extends State<UnitsCreator> {
   final AuthorController = TextEditingController();
   final EditionController = TextEditingController();
 
-
   void AutoFill() {
-    if(widget.type=="more")unit =widget.PDFUrl.split(";").first;
-    if(widget.type=="unit")HeadingController.text = widget.Heading.split(";").last;
-    if(widget.type=="more"||widget.type=="textbook")HeadingController.text = widget.Heading;
-    if(widget.Description.isNotEmpty)DescriptionList = widget.Description.split(";");
-    if(widget.questions.isNotEmpty)QuestionsList = widget.questions.split(";");
-    PDFUrlController.text = widget.PDFUrl.split(";").last;
-    EditionController.text=widget.edition;
-    PhotoUrlController.text=widget.photoUrl;
-    AuthorController.text=widget.author;
+    if (widget.mode == "units" && widget.unit != null) {
+      HeadingController.text = widget.unit!.Heading;
+      unit = widget.unit!.Unit;
+      PDFUrlController.text = widget.unit!.Link;
+      DescriptionList = widget.unit!.Description;
+    } else if (widget.mode == "textBook" && widget.textBook != null) {
+      HeadingController.text = widget.textBook!.Heading;
+      PDFUrlController.text = widget.textBook!.Link;
+      AuthorController.text = widget.textBook!.Author;
+      EditionController.text = widget.textBook!.Edition;
+    } else if (widget.mode == "more" && widget.moreInfo != null) {
+      HeadingController.text = widget.moreInfo!.Heading;
+      PDFUrlController.text = widget.moreInfo!.Link;
+      unit = widget.moreInfo!.Type;
+    }
     setState(() {
-
+      DescriptionList;
+      unit;
     });
   }
-  List DescriptionList = [];
-  final TextEditingController _DescriptionController = TextEditingController();
-  int selectedDescriptionIndex = -1;
-
-  List QuestionsList = [];
-  final TextEditingController _QuestionsController = TextEditingController();
-  int selectedQuestionsIndex = -1;
 
   @override
   void initState() {
     AutoFill();
+
     super.initState();
   }
 
@@ -2105,31 +1809,47 @@ class _UnitsCreatorState extends State<UnitsCreator> {
     PDFUrlController.dispose();
     super.dispose();
   }
+
+  List<DescriptionAndQuestionConvertor> DescriptionList = [];
+  final TextEditingController _DescriptionController = TextEditingController();
+  int selectedDescriptionIndex = -1;
+  int DescriptionPageNumber = 0;
+  int QuestionPageNumber = 0;
+
   void addDescription() {
     String points = _DescriptionController.text;
     if (points.isNotEmpty) {
       setState(() {
-        DescriptionList.add(points);
+        DescriptionList.add(DescriptionAndQuestionConvertor(
+            pageNumber: DescriptionPageNumber, data: points));
         _DescriptionController.clear();
       });
-
     }
   }
 
   void editDescription(int index) {
     setState(() {
       selectedDescriptionIndex = index;
-      _DescriptionController.text = DescriptionList[index];
+      _DescriptionController.text = DescriptionList[index].data;
+      DescriptionPageNumber = DescriptionList[index].pageNumber;
     });
   }
 
   void saveDescription() {
     String editedImage = _DescriptionController.text;
     if (editedImage.isNotEmpty && selectedDescriptionIndex != -1) {
+      DescriptionList.removeAt(selectedDescriptionIndex);
+      if (selectedDescriptionIndex == selectedDescriptionIndex) {
+        selectedDescriptionIndex = -1;
+        _DescriptionController.clear();
+      }
       setState(() {
-        DescriptionList[selectedDescriptionIndex] = editedImage;
+        DescriptionList.add(DescriptionAndQuestionConvertor(
+            pageNumber: DescriptionPageNumber, data: editedImage));
+        _DescriptionController.clear();
         _DescriptionController.clear();
         selectedDescriptionIndex = -1;
+        DescriptionPageNumber = 0;
       });
     }
   }
@@ -2147,7 +1867,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
   void moveDescriptionUp(int index) {
     if (index > 0) {
       setState(() {
-        String point = DescriptionList.removeAt(index);
+        DescriptionAndQuestionConvertor point = DescriptionList.removeAt(index);
         DescriptionList.insert(index - 1, point);
         if (selectedDescriptionIndex == index) {
           selectedDescriptionIndex--;
@@ -2159,8 +1879,8 @@ class _UnitsCreatorState extends State<UnitsCreator> {
   void moveDescriptionDown(int index) {
     if (index < DescriptionList.length - 1) {
       setState(() {
-        String Image = DescriptionList.removeAt(index);
-        DescriptionList.insert(index + 1, Image);
+        DescriptionAndQuestionConvertor image = DescriptionList.removeAt(index);
+        DescriptionList.insert(index + 1, image);
         if (selectedDescriptionIndex == index) {
           selectedDescriptionIndex++;
         }
@@ -2168,31 +1888,113 @@ class _UnitsCreatorState extends State<UnitsCreator> {
     }
   }
 
+  List<String> NormalDescriptionList = [];
+  final TextEditingController _NormalDescriptionController =
+      TextEditingController();
+  int selectedNormalDescriptionIndex = -1;
+
+  void addNormalDescription() {
+    String points = _NormalDescriptionController.text;
+    if (points.isNotEmpty) {
+      setState(() {
+        NormalDescriptionList.add(points);
+        _NormalDescriptionController.clear();
+      });
+    }
+  }
+
+  void editNormalDescription(int index) {
+    setState(() {
+      selectedNormalDescriptionIndex = index;
+      _NormalDescriptionController.text = NormalDescriptionList[index];
+    });
+  }
+
+  void saveNormalDescription() {
+    String editedImage = _NormalDescriptionController.text;
+    if (editedImage.isNotEmpty && selectedNormalDescriptionIndex != -1) {
+      setState(() {
+        NormalDescriptionList[selectedNormalDescriptionIndex] = editedImage;
+        _NormalDescriptionController.clear();
+        selectedNormalDescriptionIndex = -1;
+      });
+    }
+  }
+
+  void deleteNormalDescription(int index) {
+    setState(() {
+      NormalDescriptionList.removeAt(index);
+      if (selectedNormalDescriptionIndex == index) {
+        selectedNormalDescriptionIndex = -1;
+        _NormalDescriptionController.clear();
+      }
+    });
+  }
+
+  void moveNormalDescriptionUp(int index) {
+    if (index > 0) {
+      setState(() {
+        String point = NormalDescriptionList.removeAt(index);
+        NormalDescriptionList.insert(index - 1, point);
+        if (selectedNormalDescriptionIndex == index) {
+          selectedNormalDescriptionIndex--;
+        }
+      });
+    }
+  }
+
+  void moveNormalDescriptionDown(int index) {
+    if (index < NormalDescriptionList.length - 1) {
+      setState(() {
+        String Image = NormalDescriptionList.removeAt(index);
+        NormalDescriptionList.insert(index + 1, Image);
+        if (selectedNormalDescriptionIndex == index) {
+          selectedNormalDescriptionIndex++;
+        }
+      });
+    }
+  }
+
+  List<DescriptionAndQuestionConvertor> QuestionsList = [];
+  final TextEditingController _QuestionsController = TextEditingController();
+  int selectedQuestionsIndex = -1;
+
   void addQuestion() {
     String points = _QuestionsController.text;
     if (points.isNotEmpty) {
       setState(() {
-        QuestionsList.add(points);
+        QuestionsList.add(
+          DescriptionAndQuestionConvertor(
+              pageNumber: QuestionPageNumber, data: points),
+        );
         _QuestionsController.clear();
       });
-
     }
   }
 
   void editQuestion(int index) {
     setState(() {
       selectedQuestionsIndex = index;
-      _QuestionsController.text = QuestionsList[index];
+      _QuestionsController.text = QuestionsList[index].data;
+      QuestionPageNumber = QuestionsList[index].pageNumber;
     });
   }
 
   void saveQuestion() {
     String editedImage = _QuestionsController.text;
     if (editedImage.isNotEmpty && selectedQuestionsIndex != -1) {
+      QuestionsList.removeAt(selectedQuestionsIndex);
+      if (selectedQuestionsIndex == selectedQuestionsIndex) {
+        selectedQuestionsIndex = -1;
+        _QuestionsController.clear();
+      }
       setState(() {
-        QuestionsList[selectedQuestionsIndex] = editedImage;
+        QuestionsList.add(DescriptionAndQuestionConvertor(
+            pageNumber: QuestionPageNumber, data: editedImage));
+        _QuestionsController.clear();
         _QuestionsController.clear();
         selectedQuestionsIndex = -1;
+        QuestionPageNumber = 0;
       });
     }
   }
@@ -2210,7 +2012,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
   void moveQuestionUp(int index) {
     if (index > 0) {
       setState(() {
-        String point = QuestionsList.removeAt(index);
+        DescriptionAndQuestionConvertor point = QuestionsList.removeAt(index);
         QuestionsList.insert(index - 1, point);
         if (selectedQuestionsIndex == index) {
           selectedQuestionsIndex--;
@@ -2222,8 +2024,9 @@ class _UnitsCreatorState extends State<UnitsCreator> {
   void moveQuestionDown(int index) {
     if (index < QuestionsList.length - 1) {
       setState(() {
-        String Image = QuestionsList.removeAt(index);
-        QuestionsList.insert(index + 1, Image);
+        DescriptionAndQuestionConvertor question =
+            QuestionsList.removeAt(index);
+        QuestionsList.insert(index + 1, question);
         if (selectedQuestionsIndex == index) {
           selectedQuestionsIndex++;
         }
@@ -2231,561 +2034,834 @@ class _UnitsCreatorState extends State<UnitsCreator> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    double Size =size(context);
+    double Size = size(context);
     return Scaffold(
         body: SafeArea(
-          child: Column(
-            children: [
-              backButton(size: size(context),text: "Create Unit",child: SizedBox(width:Size* 45,)),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if(widget.type=="unit")Padding(
-                        padding:  EdgeInsets.only(left: Size*15, top:Size* 8,bottom: Size*10),
-                        child: Text(
-                          "Type Selected : $unit",
-                          style: creatorHeadingTextStyle,
-                        ),
+      child: Column(
+        children: [
+          backButton(
+              size: size(context),
+              text: "Create Unit",
+              child: SizedBox(
+                width: Size * 45,
+              )),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (widget.mode == "units")
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: Size * 15, top: Size * 8, bottom: Size * 10),
+                      child: Text(
+                        "Type Selected : $unit",
+                        style: creatorHeadingTextStyle,
                       ),
-                      if(widget.type=="unit")SizedBox(
-                        height:Size* 30,
-                        child: ListView.separated(
-                          physics: const BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 6, // Display only top 5 items
-                          itemBuilder: (context, int index) {
-                            if(index==0) {
-                              return Padding(
-                                padding:  EdgeInsets.only(left:Size* 25),
-                                child: InkWell(
-                                  child: Container(
-                                      decoration: BoxDecoration(
-
-                                          color: unit=="Unknown"?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(Size*10)
-                                      ),
-                                      child: Padding(
-                                        padding:  EdgeInsets.symmetric(vertical:Size* 3,horizontal:Size* 8),
-                                        child: Text("Unknown",style: TextStyle(color: Colors.white,fontSize: Size*25,fontWeight: FontWeight.w500),),
-                                      )),
-                                  onTap: (){
-                                    setState(() {
-                                      unit = "Unknown";
-                                    });
-                                  },
-                                ),
-                              );
-                            } else{
-                              return InkWell(
+                    ),
+                  if (widget.mode == "units")
+                    SizedBox(
+                      height: Size * 30,
+                      child: ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 6,
+                        // Display only top 5 items
+                        itemBuilder: (context, int index) {
+                          if (index == 0) {
+                            return Padding(
+                              padding: EdgeInsets.only(left: Size * 25),
+                              child: InkWell(
                                 child: Container(
                                     decoration: BoxDecoration(
-
-                                        color: unit=="Unit $index"?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(Size*10)
-                                    ),
+                                        color: unit == "Unknown"
+                                            ? Colors.white.withOpacity(0.6)
+                                            : Colors.white.withOpacity(0.1),
+                                        borderRadius:
+                                            BorderRadius.circular(Size * 10)),
                                     child: Padding(
-                                      padding:  EdgeInsets.symmetric(vertical: Size*3,horizontal:Size* 8),
-                                      child: Text("Unit $index",style: TextStyle(color: Colors.white,fontSize: Size*25,fontWeight: FontWeight.w500),),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: Size * 3,
+                                          horizontal: Size * 8),
+                                      child: Text(
+                                        "Unknown",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: Size * 25,
+                                            fontWeight: FontWeight.w500),
+                                      ),
                                     )),
-                                onTap: (){
+                                onTap: () {
                                   setState(() {
-                                    unit = "Unit $index";
+                                    unit = "Unknown";
                                   });
                                 },
-                              );
-                            }
-                          },
-                          separatorBuilder: (context,index)=>SizedBox(width: Size*3,),),
-                      ),
-                      TextFieldContainer(
-                        child: TextFormField(
-                          controller: HeadingController,
-                          textInputAction: TextInputAction.next,
-                          style: textFieldStyle(size(context)),
-                          decoration: InputDecoration(
-                            hintStyle: TextStyle(color: Colors.white54),
-                            border: InputBorder.none,
-                            hintText: 'Heading',
-                          ),
-                        ),
-                        heading:"Heading" ,
-                      ),
-                      if(widget.type=="more")Padding(
-                        padding:  EdgeInsets.only(left:Size* 15, top: Size*8,bottom: Size*10),
-                        child: Text(
-                          "Type Selected : $unit",
-                          style: creatorHeadingTextStyle,
-                        ),
-                      ),
-                      if(widget.type=="more")SizedBox(
-                        height:Size* 30,
-                        child: ListView.separated(
-                          physics: const BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: list.length, // Display only top 5 items
-                          itemBuilder: (context, int index) {
-
-
+                              ),
+                            );
+                          } else {
                             return InkWell(
                               child: Container(
                                   decoration: BoxDecoration(
-
-                                      color: unit==list[index] ?Colors.white.withOpacity(0.6):Colors.white.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(Size*10)
-                                  ),
+                                      color: unit == "Unit $index"
+                                          ? Colors.white.withOpacity(0.6)
+                                          : Colors.white.withOpacity(0.1),
+                                      borderRadius:
+                                          BorderRadius.circular(Size * 10)),
                                   child: Padding(
-                                    padding:  EdgeInsets.symmetric(vertical: Size*3,horizontal: Size*8),
-                                    child: Text(list[index],style: TextStyle(color: Colors.white,fontSize:Size* 25,fontWeight: FontWeight.w500),),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: Size * 3,
+                                        horizontal: Size * 8),
+                                    child: Text(
+                                      "Unit $index",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: Size * 25,
+                                          fontWeight: FontWeight.w500),
+                                    ),
                                   )),
-                              onTap: (){
+                              onTap: () {
                                 setState(() {
-                                  unit = list[index];
+                                  unit = "Unit $index";
                                 });
                               },
                             );
-
+                          }
+                        },
+                        separatorBuilder: (context, index) => SizedBox(
+                          width: Size * 3,
+                        ),
+                      ),
+                    ),
+                  TextFieldContainer(
+                    child: TextFormField(
+                      controller: HeadingController,
+                      textInputAction: TextInputAction.next,
+                      style: textFieldStyle(size(context)),
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Colors.white54),
+                        border: InputBorder.none,
+                        hintText: 'Heading',
+                      ),
+                    ),
+                    heading: "Heading",
+                  ),
+                  if (widget.mode == "more")
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: Size * 15, top: Size * 8, bottom: Size * 10),
+                      child: Text(
+                        "Type Selected : $unit",
+                        style: creatorHeadingTextStyle,
+                      ),
+                    ),
+                  if (widget.mode == "more")
+                    SizedBox(
+                      height: Size * 30,
+                      child: ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: list.length,
+                        // Display only top 5 items
+                        itemBuilder: (context, int index) {
+                          return InkWell(
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    color: unit == list[index]
+                                        ? Colors.white.withOpacity(0.6)
+                                        : Colors.white.withOpacity(0.1),
+                                    borderRadius:
+                                        BorderRadius.circular(Size * 10)),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: Size * 3, horizontal: Size * 8),
+                                  child: Text(
+                                    list[index],
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: Size * 25,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                )),
+                            onTap: () {
+                              setState(() {
+                                unit = list[index];
+                              });
+                            },
+                          );
+                        },
+                        separatorBuilder: (context, index) => SizedBox(
+                          width: Size * 3,
+                        ),
+                      ),
+                    ),
+                  if (unit != "more")
+                    TextFieldContainer(
+                      child: TextFormField(
+                        controller: PDFUrlController,
+                        textInputAction: TextInputAction.next,
+                        style: textFieldStyle(size(context)),
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(color: Colors.white54),
+                          border: InputBorder.none,
+                          hintText: 'Url',
+                        ),
+                      ),
+                      heading: unit != "more"
+                          ? "PDF Url"
+                          : "Any Url (.img, .pdf, YT, .Web)",
+                    ),
+                  if (widget.mode == "units")
+                    Padding(
+                      padding: EdgeInsets.only(left: Size * 15, top: Size * 8),
+                      child: Text(
+                        "Description",
+                        style: creatorHeadingTextStyle,
+                      ),
+                    ),
+                  if (widget.mode == "units")
+                    ListView.builder(
+                      itemCount: DescriptionList.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return Dismissible(
+                          key: Key(DescriptionList[index].data),
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerRight,
+                            padding:
+                                EdgeInsets.symmetric(horizontal: Size * 16.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.black,
+                            ),
+                          ),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) {
+                            deleteDescription(index);
                           },
-                          separatorBuilder: (context,index)=>SizedBox(width:Size* 3,),),
-                      ),
-                      if(unit!="More")TextFieldContainer(
-                        child: TextFormField(
-                          controller: PDFUrlController,
-                          textInputAction: TextInputAction.next,
-                          style: textFieldStyle(size(context)),
-                          decoration: InputDecoration(
-                            hintStyle: TextStyle(color: Colors.white54),
-                            border: InputBorder.none,
-                            hintText: 'PDF Url',
-                          ),
-                        ),
-                        heading:"PDF Url" ,
-                      ),
-                      Padding(
-                        padding:  EdgeInsets.only(left: Size*15, top: Size*8),
-                        child: Text(
-                          "Description",
-                          style: creatorHeadingTextStyle,
-                        ),
-                      ),
-                      ListView.builder(
-                        itemCount: DescriptionList.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return Dismissible(
-                            key: Key(DescriptionList[index]),
-                            background: Container(
-                              color: Colors.red,
-                              alignment: Alignment.centerRight,
-                              padding: EdgeInsets.symmetric(horizontal: Size*16.0),
-                              child: Icon(
-                                Icons.delete,
-                                color: Colors.black,
+                          child: ListTile(
+                            title: Text(
+                              DescriptionList[index].data,
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: Size * 20),
+                            ),
+                            trailing: SingleChildScrollView(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.delete,
+                                      color: Colors.redAccent,
+                                    ),
+                                    onPressed: () {
+                                      deleteDescription(index);
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.edit,
+                                      color: Colors.greenAccent,
+                                    ),
+                                    onPressed: () {
+                                      editDescription(index);
+                                      setState(() {
+                                        isEdit = true;
+                                      });
+                                    },
+                                  ),
+                                  InkWell(
+                                    child: Icon(
+                                      Icons.move_up,
+                                      size: Size * 30,
+                                      color: Colors.amber,
+                                    ),
+                                    onTap: () {
+                                      moveDescriptionUp(index);
+                                    },
+                                    onDoubleTap: () {
+                                      moveDescriptionDown(index);
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
-                            direction: DismissDirection.endToStart,
-                            onDismissed: (direction) {
-                              deleteDescription(index);
+                            onTap: () {
+                              editDescription(index);
                             },
-                            child: ListTile(
-                              title: Text(DescriptionList[index],style: TextStyle(color: Colors.white,fontSize: Size*20),),
-                              trailing: SingleChildScrollView(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    IconButton(
-                                      icon: Icon(Icons.delete,color: Colors.redAccent,),
-                                      onPressed: () {
-                                        deleteDescription(index);
-                                      },
-
+                          ),
+                        );
+                      },
+                    ),
+                  if (widget.mode == "units")
+                    Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: Size * 10,
+                              right: Size * 10,
+                              top: Size * 5,
+                              bottom: Size * 5),
+                          child: TextFieldContainer(
+                            child: TextFormField(
+                              controller: _DescriptionController,
+                              style: textFieldStyle(size(context)),
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Enter Description Here',
+                                hintStyle: TextStyle(color: Colors.white54),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: Size * 10,
+                                    right: Size * 10,
+                                    top: Size * 5,
+                                    bottom: Size * 5),
+                                child: TextFieldContainer(
+                                  child: TextFormField(
+                                    style: textFieldStyle(size(context)),
+                                    keyboardType: TextInputType.multiline,
+                                    maxLines: 1,
+                                    onChanged: (value) {
+                                      DescriptionPageNumber = int.parse(value);
+                                    },
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'Enter Page Number (Optional)',
+                                      hintStyle:
+                                          TextStyle(color: Colors.white54),
                                     ),
-                                    IconButton(
-                                      icon: Icon(Icons.edit,color: Colors.greenAccent,),
-                                      onPressed: () {
-                                        editDescription(index);
-                                        setState(() {
-                                          isEdit=true;
-                                        });
-                                      },
+                                  ),
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              child: !isEdit ? Text("Add") : Text("Save"),
+                              onPressed: () {
+                                !isEdit ? addDescription() : saveDescription();
+                                setState(() {
+                                  isEdit = false;
+                                });
+                              },
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  if (widget.mode == "units")
+                    Padding(
+                      padding: EdgeInsets.only(left: Size * 15, top: Size * 8),
+                      child: Text(
+                        "Question",
+                        style: creatorHeadingTextStyle,
+                      ),
+                    ),
+                  if (widget.mode == "units")
+                    ListView.builder(
+                      itemCount: QuestionsList.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return Dismissible(
+                          key: Key(QuestionsList[index].data),
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerRight,
+                            padding:
+                                EdgeInsets.symmetric(horizontal: Size * 16.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.black,
+                            ),
+                          ),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) {
+                            deleteQuestion(index);
+                          },
+                          child: ListTile(
+                            title: Text(
+                              QuestionsList[index].data,
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: Size * 20),
+                            ),
+                            trailing: SingleChildScrollView(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.delete,
+                                      color: Colors.redAccent,
                                     ),
-                                    InkWell(
-                                      child: Icon(Icons.move_up,size: Size*30,color: Colors.amber,),
-                                      onTap: (){
-                                        moveDescriptionUp(index);
-                                      },
-                                      onDoubleTap: (){
-                                        moveDescriptionDown(index);
-                                      },
+                                    onPressed: () {
+                                      deleteQuestion(index);
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.edit,
+                                      color: Colors.greenAccent,
                                     ),
-
-
-                                  ],
+                                    onPressed: () {
+                                      editQuestion(index);
+                                      setState(() {
+                                        isEdit = true;
+                                      });
+                                    },
+                                  ),
+                                  InkWell(
+                                    child: Icon(
+                                      Icons.move_up,
+                                      size: Size * 30,
+                                      color: Colors.amber,
+                                    ),
+                                    onTap: () {
+                                      moveQuestionUp(index);
+                                    },
+                                    onDoubleTap: () {
+                                      moveQuestionDown(index);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            onTap: () {
+                              editQuestion(index);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  if (widget.mode == "units")
+                    Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: Size * 10,
+                              right: Size * 10,
+                              top: Size * 5,
+                              bottom: Size * 5),
+                          child: TextFieldContainer(
+                              child: TextFormField(
+                            controller: _QuestionsController,
+                            style: textFieldStyle(size(context)),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Enter Question Here',
+                              hintStyle: TextStyle(color: Colors.white54),
+                            ),
+                          )),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: Size * 10,
+                                    right: Size * 10,
+                                    top: Size * 5,
+                                    bottom: Size * 5),
+                                child: TextFieldContainer(
+                                    child: TextFormField(
+                                  style: textFieldStyle(size(context)),
+                                  keyboardType: TextInputType.multiline,
+                                  maxLines: 1,
+                                  onChanged: (value) {},
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: 'Enter Question Here',
+                                    hintStyle: TextStyle(color: Colors.white54),
+                                  ),
+                                )),
+                              ),
+                            ),
+                            InkWell(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white12,
+                                  border: Border.all(color: Colors.white),
+                                  borderRadius:
+                                      BorderRadius.circular(Size * 14),
+                                ),
+                                child: Icon(
+                                  !isEdit ? Icons.add : Icons.save,
+                                  size: Size * 45,
+                                  color: Colors.white,
                                 ),
                               ),
                               onTap: () {
-                                editDescription(index);
+                                !isEdit ? addQuestion() : saveQuestion();
+                                setState(() {
+                                  isEdit = false;
+                                });
                               },
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  if (widget.mode == "more")
+                    Padding(
+                      padding: EdgeInsets.only(left: Size * 15, top: Size * 8),
+                      child: Text(
+                        "Description",
+                        style: creatorHeadingTextStyle,
+                      ),
+                    ),
+                  if (widget.mode == "more")
+                    ListView.builder(
+                      itemCount: NormalDescriptionList.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return Dismissible(
+                          key: Key(NormalDescriptionList[index]),
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerRight,
+                            padding:
+                                EdgeInsets.symmetric(horizontal: Size * 16.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.black,
                             ),
-                          );
+                          ),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) {
+                            deleteNormalDescription(index);
+                          },
+                          child: ListTile(
+                            title: Text(
+                              NormalDescriptionList[index],
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: Size * 20),
+                            ),
+                            trailing: SingleChildScrollView(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.delete,
+                                      color: Colors.redAccent,
+                                    ),
+                                    onPressed: () {
+                                      deleteNormalDescription(index);
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.edit,
+                                      color: Colors.greenAccent,
+                                    ),
+                                    onPressed: () {
+                                      editNormalDescription(index);
+                                      setState(() {
+                                        isEdit = true;
+                                      });
+                                    },
+                                  ),
+                                  InkWell(
+                                    child: Icon(
+                                      Icons.move_up,
+                                      size: Size * 30,
+                                      color: Colors.amber,
+                                    ),
+                                    onTap: () {
+                                      moveNormalDescriptionUp(index);
+                                    },
+                                    onDoubleTap: () {
+                                      moveNormalDescriptionDown(index);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            onTap: () {
+                              editNormalDescription(index);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  if (widget.mode == "more")
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: Size * 10,
+                                right: Size * 10,
+                                top: Size * 5,
+                                bottom: Size * 5),
+                            child: TextFieldContainer(
+                                child: TextFormField(
+                              controller: _NormalDescriptionController,
+                              style: textFieldStyle(size(context)),
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Enter Description Here',
+                                hintStyle: TextStyle(color: Colors.white54),
+                              ),
+                            )),
+                          ),
+                        ),
+                        InkWell(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white12,
+                              border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(Size * 14),
+                            ),
+                            child: Icon(
+                              !isEdit ? Icons.add : Icons.save,
+                              size: Size * 45,
+                              color: Colors.white,
+                            ),
+                          ),
+                          onTap: () {
+                            !isEdit ? addNormalDescription() : saveNormalDescription();
+                            setState(() {
+                              isEdit = false;
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                  if (widget.mode == "textBook")
+                    TextFieldContainer(
+                      child: TextFormField(
+                        controller: AuthorController,
+                        textInputAction: TextInputAction.next,
+                        style: textFieldStyle(size(context)),
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(color: Colors.white54),
+                          border: InputBorder.none,
+                          hintText: 'Author',
+                        ),
+                      ),
+                      heading: "Author",
+                    ),
+                  if (widget.mode == "textBook")
+                    TextFieldContainer(
+                      child: TextFormField(
+                        controller: EditionController,
+                        textInputAction: TextInputAction.next,
+                        style: textFieldStyle(size(context)),
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(color: Colors.white54),
+                          border: InputBorder.none,
+                          hintText: 'Edition',
+                        ),
+                      ),
+                      heading: "Edition",
+                    ),
+                  SizedBox(
+                    height: Size * 10,
+                  ),
+                  Row(
+                    children: [
+                      Spacer(),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
                         },
-                      ),
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Padding(
-                              padding:
-                               EdgeInsets.only(left: Size*10, right: Size*10, top: Size*5, bottom: Size*5),
-                              child:TextFieldContainer(child:TextFormField(
-                                controller: _DescriptionController,
-                                style: textFieldStyle(size(context)),
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'Enter Description Here',
-                                  hintStyle: TextStyle(color: Colors.white54),
-                                ),
-                              ) ,),
-                            ),
-                          ),
-                          InkWell(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white12,
-                                border: Border.all(color: Colors.white),
-                                borderRadius: BorderRadius.circular(Size*14),
-                              ),
-                              child: Icon(!isEdit?Icons.add:Icons.save,size: Size*45,color: Colors.white,),
-                            ),
-                            onTap: (){
-                              !isEdit?addDescription():saveDescription();
-                              setState(() {
-                                isEdit=false;
-                              });
-                            },
-                          )
-                        ],
-                      ),
-                      if(widget.type=="unit")Padding(
-                        padding:  EdgeInsets.only(left: Size*15, top: Size*8),
-                        child: Text(
-                          "Questions",
-                          style: creatorHeadingTextStyle,
-                        ),
-                      ),
-                      if(widget.type=="unit")ListView.builder(
-                        itemCount: QuestionsList.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return Dismissible(
-                            key: Key(QuestionsList[index]),
-                            background: Container(
-                              color: Colors.red,
-                              alignment: Alignment.centerRight,
-                              padding: EdgeInsets.symmetric(horizontal:Size* 16.0),
-                              child: Icon(
-                                Icons.delete,
-                                color: Colors.black,
-                              ),
-                            ),
-                            direction: DismissDirection.endToStart,
-                            onDismissed: (direction) {
-                              deleteQuestion(index);
-                            },
-                            child: ListTile(
-                              title: Text(QuestionsList[index],style: TextStyle(color: Colors.white,fontSize:Size* 20),),
-                              trailing: SingleChildScrollView(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    IconButton(
-                                      icon: Icon(Icons.delete,color: Colors.redAccent,),
-                                      onPressed: () {
-                                        deleteQuestion(index);
-                                      },
-
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.edit,color: Colors.greenAccent,),
-                                      onPressed: () {
-                                        editQuestion(index);
-                                        setState(() {
-                                          isEdit=true;
-                                        });
-                                      },
-                                    ),
-                                    InkWell(
-                                      child: Icon(Icons.move_up,size:Size* 30,color: Colors.amber,),
-                                      onTap: (){
-                                        moveQuestionUp(index);
-                                      },
-                                      onDoubleTap: (){
-                                        moveQuestionDown(index);
-                                      },
-                                    ),
-
-
-                                  ],
-                                ),
-                              ),
-                              onTap: () {
-                                editQuestion(index);
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                      if(widget.type=="unit")Row(
-                        children: [
-                          Flexible(
-                            child: Padding(
-                              padding:
-                               EdgeInsets.only(left: Size*10, right: Size*10, top:Size* 5, bottom:Size* 5),
-                              child:TextFieldContainer(child:TextFormField(
-                                controller: _QuestionsController,
-                                style: textFieldStyle(size(context)),
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'Enter Images Here',
-                                  hintStyle: TextStyle(color: Colors.white54),
-                                ),
-                              ) ,),
-                            ),
-                          ),
-                          InkWell(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white12,
-                                border: Border.all(color: Colors.white),
-                                borderRadius: BorderRadius.circular(Size*14),
-                              ),
-                              child: Icon(!isEdit?Icons.add:Icons.save,size:Size* 45,color: Colors.white,),
-                            ),
-                            onTap: (){
-                              !isEdit?addQuestion():saveQuestion();
-                              setState(() {
-                                isEdit=false;
-                              });
-                            },
-                          )
-                        ],
-                      ),
-                      if(widget.type=="textbook")TextFieldContainer(
-                        child: TextFormField(
-                          controller: PhotoUrlController,
-                          textInputAction: TextInputAction.next,
-                          style: textFieldStyle(size(context)),
-                          decoration: InputDecoration(
-                            hintStyle: TextStyle(color: Colors.white54),
-                            border: InputBorder.none,
-                            hintText: 'Photo Url',
-                          ),
-                        ),
-                        heading:"Photo Url" ,
-                      ),
-                      if(widget.type=="textbook")TextFieldContainer(
-                        child: TextFormField(
-                          controller: AuthorController,
-                          textInputAction: TextInputAction.next,
-                          style: textFieldStyle(size(context)),
-                          decoration: InputDecoration(
-                            hintStyle: TextStyle(color: Colors.white54),
-                            border: InputBorder.none,
-                            hintText: 'Author',
-                          ),
-                        ),
-                        heading:"Author" ,
-                      ),
-                      if(widget.type=="textbook")TextFieldContainer(
-                        child: TextFormField(
-                          controller: EditionController,
-                          textInputAction: TextInputAction.next,
-                          style: textFieldStyle(size(context)),
-                          decoration: InputDecoration(
-                            hintStyle: TextStyle(color: Colors.white54),
-                            border: InputBorder.none,
-                            hintText: 'Edition',
-                          ),
-                        ),
-                        heading:"Edition" ,
+                        child: Text("Back"),
                       ),
                       SizedBox(
-                        height: Size*10,
+                        width: Size * 10,
                       ),
-                      Row(
-                        children: [
-                          Spacer(),
-                          InkWell(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(Size*15),
-                                color: Colors.white.withOpacity(0.5),
-                                border: Border.all(color: Colors.white),
-                              ),
-                              child: Padding(
-                                padding:  EdgeInsets.only(
-                                    left:Size* 10, right: Size*10, top: Size*5, bottom: Size*5),
-                                child: Text("Back"),
-                              ),
-                            ),
+                      ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.greenAccent),
                           ),
-                          SizedBox(
-                            width: Size*10,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              if(widget.type=="unit"){
-                                if (widget.UnitId.length < 3) {
-                                  createUnits(
-                                    branch: widget.branch,
-                                    description: DescriptionList.join(";"),
-                                    questions: QuestionsList.join(";"),
-                                    heading: unit+";"+HeadingController.text.trim(),
-                                    PDFSize: "0",
-                                    PDFLink: PDFUrlController.text.trim(),
-                                    subjectsID: widget.id,
-                                    mode: widget.mode,
-                                  );
-                                  messageToOwner("Unit Created in ${widget.subjectName.split(";").last} (${widget.mode})\n By '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    PDF Url : ${PDFUrlController.text.trim()}\n    Description : ${DescriptionList}\n    Questions : ${QuestionsList}\n **${widget.branch}" );
-
+                          onPressed: () async {
+                            if (widget.mode == "units") {
+                              if (widget.unit == null) {
+                                await _firestore
+                                    .collection('StudyMaterials')
+                                    .doc(widget.branch)
+                                    .collection("Subjects")
+                                    .doc(widget.subjectId)
+                                    .update({
+                                  'units': FieldValue.arrayUnion([
+                                    UnitConvertor(
+                                      id: getID(),
+                                      Heading: HeadingController.text.trim(),
+                                      Description: DescriptionList,
+                                      Link: PDFUrlController.text,
+                                      Unit: unit,
+                                      Size: '',
+                                      Question: QuestionsList,
+                                    ).toJson(),
+                                  ]),
+                                });
+                              } else {
+                                List<UnitConvertor> updatedUnits = List.from(
+                                  widget.subject.units
+                                      .where(
+                                          (unit) => unit.id != widget.unit!.id)
+                                      .toList(),
+                                );
+                                try {
+                                  updatedUnits.add(UnitConvertor(
+                                    id: widget.unit!.id,
+                                    Heading: HeadingController.text.trim(),
+                                    Description: DescriptionList,
+                                    Link: PDFUrlController.text,
+                                    Unit: unit,
+                                    Size: widget.unit!.Size,
+                                    Question: QuestionsList,
+                                  ));
+                                } catch (e) {
+                                  print("Error updating units: $e");
                                 }
-                                else {
-                                  FirebaseFirestore.instance
-                                      .collection(widget.branch)
-                                      .doc(widget.mode)
-                                      .collection(widget.mode)
-                                      .doc(widget.UnitId)
-                                      .collection("Units")
-                                      .doc(widget.id)
-                                      .update({
-                                    "heading": unit+";"+HeadingController.text.trim(),
-                                    "link": PDFUrlController.text.trim(),
-                                    "description": DescriptionList.join(";"),
-                                    "questions": QuestionsList.join(";")
-                                  });
-                                  messageToOwner("Unit Updated in ${widget.subjectName.split(";").last} (${widget.mode})\n By '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    PDF Url : ${PDFUrlController.text.trim()}\n    Description : ${DescriptionList}\n    Questions : ${QuestionsList}\n **${widget.branch}" );
-
-                                }
+                                await _firestore
+                                    .collection('StudyMaterials')
+                                    .doc(widget.branch)
+                                    .collection("Subjects")
+                                    .doc(widget.subjectId)
+                                    .update({
+                                  'units': updatedUnits
+                                      .map((unit) => unit.toJson())
+                                      .toList(),
+                                });
                               }
-                              else if(widget.type=="textbook"){
-                                if (widget.UnitId.length < 3) {
+                            } else if (widget.mode == "textBook") {
+                              if (widget.textBook == null) {
+                                await _firestore
+                                    .collection('StudyMaterials')
+                                    .doc(widget.branch)
+                                    .collection("Subjects")
+                                    .doc(widget.subjectId)
+                                    .update({
+                                  'textBooks': FieldValue.arrayUnion([
+                                    TextBookConvertor(
+                                      id: getID(),
+                                      Heading: HeadingController.text.trim(),
+                                      Link: PDFUrlController.text,
+                                      Size: '',
+                                      Author: AuthorController.text.trim(),
+                                      Edition: EditionController.text.trim(),
+                                    ).toJson(),
+                                  ]),
+                                });
+                              } else {
+                                List<TextBookConvertor> updatedTextBook =
+                                    List.from(
+                                  widget.subject.moreInfos
+                                      .where((unit) =>
+                                          unit.id != widget.moreInfo!.id)
+                                      .toList(),
+                                );
 
-                                  createUnitsTextbooks(
-                                    branch: widget.branch,
-                                    description: DescriptionList.join(";"),
-                                    heading: HeadingController.text.trim(),
-                                    PDFLink: PDFUrlController.text.trim(),
-                                    subjectsID: widget.id,
-                                    mode: widget.mode,
-                                    photoUrl: PhotoUrlController.text.trim(), author: AuthorController.text.trim(),
-                                    edition: EditionController.text.trim(),
-                                  );
-                                  messageToOwner("Text Book Created in ${widget.subjectName.split(";").last}\n By '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    PDF Url : ${PDFUrlController.text.trim()}\n    Description : ${DescriptionList}\n    Photo Url : ${PhotoUrlController.text}\n    Author : ${AuthorController.text}\n    Edition : ${EditionController.text}\n **${widget.branch}" );
-
+                                try {
+                                  updatedTextBook.add(TextBookConvertor(
+                                    id: widget.textBook!.id,
+                                    Heading: HeadingController.text.trim(),
+                                    Link: PDFUrlController.text,
+                                    Size: widget.textBook!.Size,
+                                    Author: AuthorController.text,
+                                    Edition: EditionController.text,
+                                  ));
+                                } catch (e) {
+                                  print("Error updating units: $e");
                                 }
-                                else {
-                                  FirebaseFirestore.instance
-                                      .collection(widget.branch)
-                                      .doc(widget.mode)
-                                      .collection(widget.mode)
-                                      .doc(widget.UnitId)
-                                      .collection("TextBooks")
-                                      .doc(widget.id)
-                                      .update({
-                                    "description": DescriptionList.join(";"),
-                                    "heading": HeadingController.text.trim(),
-                                    "author": AuthorController.text.trim(),
-                                    "image": PhotoUrlController.text.trim(),
-                                    "edition": EditionController.text.trim(),
-                                    "link": PDFUrlController.text.trim(),
-                                  });
-                                  messageToOwner("Text Book Updated in ${widget.subjectName.split(";").last}\n By '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    PDF Url : ${PDFUrlController.text.trim()}\n    Description : ${DescriptionList}\n    Photo Url : ${PhotoUrlController.text}\n    Author : ${AuthorController.text}\n    Edition : ${EditionController.text}\n **${widget.branch}" );
-
-                                }
+                                await _firestore
+                                    .collection('StudyMaterials')
+                                    .doc(widget.branch)
+                                    .collection("Subjects")
+                                    .doc(widget.subjectId)
+                                    .update({
+                                  'textBooks': updatedTextBook
+                                      .map((unit) => unit.toJson())
+                                      .toList(),
+                                });
                               }
-                              else{
-                                if (widget.UnitId.length < 3) {
+                            } else {
+                              if (widget.moreInfo == null) {
+                                await _firestore
+                                    .collection('StudyMaterials')
+                                    .doc(widget.branch)
+                                    .collection("Subjects")
+                                    .doc(widget.subjectId)
+                                    .update({
+                                  'moreInfos': FieldValue.arrayUnion([
+                                    MoreInfoConvertor(
+                                      id: getID(),
+                                      Heading: HeadingController.text.trim(),
+                                      Link: PDFUrlController.text,
+                                      Description: NormalDescriptionList,
+                                      Type: unit,
+                                    ).toJson(),
+                                  ]),
+                                });
+                              } else {
+                                List<MoreInfoConvertor> updatedMore = List.from(
+                                  widget.subject.moreInfos
+                                      .where((unit) =>
+                                          unit.id != widget.moreInfo!.id)
+                                      .toList(),
+                                );
 
-                                  createUnitsMore(
-                                    branch: widget.branch,
-                                    subjectsID: widget.id,
-                                    mode: widget.mode,
-                                    heading: HeadingController.text.trim(),
-                                    description: DescriptionList.join(";"),
-                                    link: unit+";"+PDFUrlController.text,
-
-                                  );
-                                  messageToOwner("More Created in ${widget.subjectName.split(";").last} (${widget.mode})\n By '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    Url : ${unit}=>${PDFUrlController.text.trim()}\n    Description : ${DescriptionList}\n **${widget.branch}" );
-
+                                try {
+                                  updatedMore.add(MoreInfoConvertor(
+                                    id: widget.moreInfo!.id,
+                                    Heading: HeadingController.text.trim(),
+                                    Description: NormalDescriptionList,
+                                    Link: PDFUrlController.text,
+                                    Type: unit,
+                                  ));
+                                } catch (e) {
+                                  print("Error updating units: $e");
                                 }
-                                else {
-                                  FirebaseFirestore.instance
-                                      .collection(widget.branch)
-                                      .doc(widget.mode)
-                                      .collection(widget.mode)
-                                      .doc(widget.UnitId)
-                                      .collection("More")
-                                      .doc(widget.id)
-                                      .update({
-                                    "description": DescriptionList.join(";"),
-                                    "heading": HeadingController.text.trim(),
-                                    "link": unit+";"+PDFUrlController.text.trim(),
-                                  });
-                                  messageToOwner("More Updated in ${widget.subjectName.split(";").last} (${widget.mode})\n By '${fullUserId()}' \n    Heading : ${HeadingController.text.trim()}\n    Url : ${unit}=>${PDFUrlController.text.trim()}\n    Description : ${DescriptionList}\n **${widget.branch}" );
-
-                                }
+                                await _firestore
+                                    .collection('StudyMaterials')
+                                    .doc(widget.branch)
+                                    .collection("Subjects")
+                                    .doc(widget.subjectId)
+                                    .update({
+                                  'moreInfos': updatedMore
+                                      .map((unit) => unit.toJson())
+                                      .toList(),
+                                });
                               }
-                              Navigator.pop(context);
-                            },
-                            child: widget.UnitId.length < 3
-                                ? Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(Size*15),
-                                color: Colors.white.withOpacity(0.5),
-                                border: Border.all(color: Colors.white),
-                              ),
-                              child: Padding(
-                                padding:  EdgeInsets.only(
-                                    left: Size*10, right: Size*10, top:Size* 5, bottom:Size* 5),
-                                child: Text("Create"),
-                              ),
-                            )
-                                : Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(Size*15),
-                                color: Colors.white.withOpacity(0.5),
-                                border: Border.all(color: Colors.white),
-                              ),
-                              child: Padding(
-                                padding:  EdgeInsets.only(
-                                    left: Size*10, right: Size*10, top:Size* 5, bottom: Size*5),
-                                child: Text("Update"),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width:Size* 20,
-                          ),
-                        ],
-                      )
+                            }
+
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          child: Text(widget.unit == null ||
+                                  widget.textBook == null ||
+                                  widget.moreInfo == null
+                              ? "Create"
+                              : "Update")),
+                      SizedBox(
+                        width: Size * 20,
+                      ),
                     ],
-                  ),
-                ),
+                  )
+                ],
               ),
-            ],
+            ),
           ),
-        ));
+        ],
+      ),
+    ));
   }
 }
 
@@ -2797,5 +2873,5 @@ Stream<List<RegulationConvertor>> readRegulation(String branch) =>
         .orderBy("id", descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
-        .map((doc) => RegulationConvertor.fromJson(doc.data()))
-        .toList());
+            .map((doc) => RegulationConvertor.fromJson(doc.data()))
+            .toList());

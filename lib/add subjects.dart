@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:srkr_study_app/functions.dart';
-import 'ads.dart';
-import 'main.dart';
 
 class PdfViewerPage extends StatefulWidget {
   final String pdfUrl;
@@ -210,9 +208,9 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                  
                 },
                     ),
-              if(!isGmail())Align(
-                  alignment: Alignment.bottomCenter,
-                  child: CustomAdsBannerForPdfs(size: widget.size,)),
+              // if(!isGmail())Align(
+              //     alignment: Alignment.bottomCenter,
+              //     child: CustomAdsBannerForPdfs(size: widget.size,)),
               Positioned(
                 left: 0,
                 top: widget.size * 50,

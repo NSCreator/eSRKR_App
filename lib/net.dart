@@ -1,66 +1,14 @@
 // ignore_for_file: must_be_immutable
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:srkr_study_app/ads.dart';
 import 'package:srkr_study_app/functions.dart';
 
-import 'HomePage.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import 'main.dart';
-
-
-class HighlightedTextWidget extends StatefulWidget {
-  final String text;
-  final String highlightWord;
-
-  HighlightedTextWidget({required this.text, required this.highlightWord});
-
-  @override
-  State<HighlightedTextWidget> createState() => _HighlightedTextWidgetState();
-}
-
-class _HighlightedTextWidgetState extends State<HighlightedTextWidget> {
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> widgets = [];
-
-    final words = widget.text.split(' ');
-
-    for (var word in words) {
-      final isHighlighted = word.toLowerCase() == widget.highlightWord.toLowerCase();
-      final textStyle = isHighlighted
-          ? TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: Colors.blue,
-            )
-          : TextStyle(fontSize: 18);
-
-      widgets.add(
-        Text(
-          " $word",
-          style: textStyle,
-        ),
-      );
-
-      if (isHighlighted) {
-        widgets.add(SizedBox(width: 8.0)); // Add some spacing for highlighted word.
-      }
-    }
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: widgets,
-    );
-  }
-}
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -83,7 +31,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    flutterTts.setProgressHandler((String text, int startOffset, int endOffset, String word) {
+    flutterTts.setProgressHandler(
+        (String text, int startOffset, int endOffset, String word) {
       setState(() {
         _currentWord = word;
         words.add(_currentWord);
@@ -141,7 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-
   // Function to save settings
   Future<void> saveSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -178,14 +126,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(Size * 16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               backButton(
                 size: Size,
                 child: SizedBox(
-                  width: Size*45,
+                  width: Size * 45,
                 ),
                 text: "Reader (Beta)",
               ),
@@ -193,10 +141,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: isSpeaking
                     ? Container(
                         width: double.infinity,
-                        padding: EdgeInsets.all(Size*8),
+                        padding: EdgeInsets.all(Size * 8),
                         decoration: BoxDecoration(
                           color: Colors.white12,
-                          borderRadius: BorderRadius.circular(Size*30),
+                          borderRadius: BorderRadius.circular(Size * 30),
                         ),
                         child: SingleChildScrollView(
                           reverse: true,
@@ -206,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               return Text(
                                 " $word",
                                 style: TextStyle(
-                                  fontSize:Size* 20.0,
+                                  fontSize: Size * 20.0,
                                   color: Colors.white,
                                 ),
                               );
@@ -214,14 +162,17 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ))
                     : Container(
-                        decoration: BoxDecoration(color: Colors.white12, borderRadius: BorderRadius.circular(30)),
+                        decoration: BoxDecoration(
+                            color: Colors.white12,
+                            borderRadius: BorderRadius.circular(Size * 30)),
                         child: Padding(
-                          padding:  EdgeInsets.only(left:Size* 10),
+                          padding: EdgeInsets.only(left: Size * 10),
                           child: TextFormField(
                             controller: textEditingController,
                             textInputAction: TextInputAction.next,
                             maxLines: null,
-                            style: TextStyle(color: Colors.white, fontSize: Size*20),
+                            style: TextStyle(
+                                color: Colors.white, fontSize: Size * 20),
                             decoration: InputDecoration(
                               hintStyle: TextStyle(color: Colors.white54),
                               border: InputBorder.none,
@@ -230,27 +181,27 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         )),
               ),
-              SizedBox(height: Size*20),
-
+              SizedBox(height: Size * 20),
               if (isExp)
                 Container(
-                  padding: EdgeInsets.all(Size*10),
+                  padding: EdgeInsets.all(Size * 10),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(Size*20),
-                    gradient:
-                    LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-                      Colors.white.withOpacity(0.1),
-                      Colors.transparent,
-                      Colors.white.withOpacity(0.1),
-
-                    ]),
+                    borderRadius: BorderRadius.circular(Size * 20),
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.white.withOpacity(0.1),
+                          Colors.transparent,
+                          Colors.white.withOpacity(0.1),
+                        ]),
                   ),
                   child: Column(
                     children: [
                       SliderTheme(
                         data: SliderTheme.of(context).copyWith(
                           valueIndicatorTextStyle: TextStyle(
-                            fontSize: Size*13,
+                            fontSize: Size * 13,
                           ),
                         ),
                         child: Column(
@@ -260,7 +211,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: [
                                 Text(
                                   "Pitch: ${pitch.toStringAsFixed(2)}",
-                                  style: TextStyle(color: Colors.white, fontSize:Size* 20, fontWeight: FontWeight.w500),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: Size * 20,
+                                      fontWeight: FontWeight.w500),
                                 ),
                                 Expanded(
                                   child: Slider(
@@ -281,7 +235,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: [
                                 Text(
                                   "Speech Rate: ${speechRate.toStringAsFixed(2)}",
-                                  style: TextStyle(color: Colors.white, fontSize: Size*20, fontWeight: FontWeight.w500),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: Size * 20,
+                                      fontWeight: FontWeight.w500),
                                 ),
                                 Expanded(
                                   child: Slider(
@@ -305,15 +262,22 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: [
                           Text(
                             "Change Language : ",
-                            style: TextStyle(color: Colors.white, fontSize:Size* 20, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: Size * 20,
+                                fontWeight: FontWeight.w500),
                           ),
                           Expanded(
                             child: Center(
                               child: Container(
-                                height:Size* 40,
-                                decoration: BoxDecoration(color: Colors.white70, borderRadius: BorderRadius.circular(Size*20)),
+                                height: Size * 40,
+                                decoration: BoxDecoration(
+                                    color: Colors.white70,
+                                    borderRadius:
+                                        BorderRadius.circular(Size * 20)),
                                 child: Padding(
-                                  padding:  EdgeInsets.symmetric(horizontal: Size* 8.0),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Size * 8.0),
                                   child: DropdownButton<String>(
                                     value: selectedLanguage,
                                     items: languageItems,
@@ -334,21 +298,21 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         child: Text(
                           "Save Changes",
-                          style: TextStyle(fontSize: Size*16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: Size * 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
                   ),
                 ),
-              SizedBox(height:Size* 20),
+              SizedBox(height: Size * 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    style:ElevatedButton.styleFrom(
-   backgroundColor: Colors.blueGrey,
-
-    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueGrey,
+                    ),
                     onPressed: () {
                       setState(() {
                         isExp = !isExp;
@@ -356,7 +320,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                     child: Text(
                       "Audio Settings",
-                      style: TextStyle(fontSize: Size*16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: Size * 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                   ElevatedButton(
@@ -364,19 +329,21 @@ class _MyHomePageState extends State<MyHomePage> {
                       if (isSpeaking) {
                         pauseSpeech();
                       } else {
+                        words.clear();
+                        setState(() {});
                         speakText(textEditingController.text);
                         saveSettings();
                       }
                     },
                     child: Text(
                       isSpeaking ? "Pause" : "Speak Text",
-                      style: TextStyle(fontSize:Size* 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: Size * 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
               ),
-
-              SizedBox(height: Size*20),
+              SizedBox(height: Size * 20),
             ],
           ),
         ),
@@ -385,222 +352,222 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class ImageScreen extends StatefulWidget {
-  final String branch;
-  double size;
-
-  ImageScreen({required this.branch,required this.size});
-
-  @override
-  _ImageScreenState createState() => _ImageScreenState();
-}
-
-class _ImageScreenState extends State<ImageScreen> {
-  late final RewardedAd rewardedAd;
-
-
-  bool isAdLoaded = false;
-
-  void _loadRewardedAd() {
-    RewardedAd.load(
-      adUnitId: AdVideo.bannerAdUnitId,
-      request: const AdRequest(),
-      rewardedAdLoadCallback: RewardedAdLoadCallback(
-        onAdFailedToLoad: (LoadAdError error) {
-          print("Failed to load rewarded ad, Error: $error");
-        },
-        onAdLoaded: (RewardedAd ad) {
-          print("$ad loaded");
-          showToastText("Add loaded");
-          rewardedAd = ad;
-          setState(() {
-            isAdLoaded = true;
-          });
-          //set on full screen content call back
-          _setFullScreenContentCallback();
-        },
-      ),
-    );
-  }
-
-  //method to set show content call back
-  void _setFullScreenContentCallback() {
-    if (rewardedAd == null) {
-      return;
-    }
-    rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
-      //when ad  shows fullscreen
-      onAdShowedFullScreenContent: (RewardedAd ad) =>
-          print("$ad onAdShowedFullScreenContent"),
-      //when ad dismissed by user
-      onAdDismissedFullScreenContent: (RewardedAd ad) {
-        print("$ad onAdDismissedFullScreenContent");
-
-        //dispose the dismissed ad
-        ad.dispose();
-      },
-      //when ad fails to show
-      onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-        print("$ad  onAdFailedToShowFullScreenContent: $error ");
-        //dispose the failed ad
-        ad.dispose();
-      },
-
-      //when impression is detected
-      onAdImpression: (RewardedAd ad) => print("$ad Impression occured"),
-    );
-  }
-
-  Future<void> _showRewardedAd() async {
-    rewardedAd.show(
-        onUserEarnedReward: (AdWithoutView ad, RewardItem rewardItem) {
-      num amount = rewardItem.amount;
-      showToastText("You earned: $amount");
-
-    });
-    final imageRef = _firestore.collection("user").doc(fullUserId());
-
-    final documentSnapshot = await imageRef.get();
-    if (documentSnapshot.exists) {
-      final data = documentSnapshot.data() as Map<String, dynamic>;
-      if (data['adSeenCount']==null) {
-        _firestore.collection("user").doc(fullUserId()).update({"adSeenCount":0});
-      } else {
-        _firestore.collection("user").doc(fullUserId()).update({"adSeenCount":data['adSeenCount']+1});
-
-      }
-    }
-  }
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  bool _canOpenImage = true;
-  double remainingTime = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkImageOpenStatus();
-    _loadRewardedAd();
-  }
-
-  Future<void> _checkImageOpenStatus() async {
-    final user = _auth.currentUser;
-    if (user != null) {
-      final imageRef = _firestore.collection("user").doc(fullUserId());
-
-      final documentSnapshot = await imageRef.get();
-      if (documentSnapshot.exists) {
-        final data = documentSnapshot.data() as Map<String, dynamic>;
-        if (data['lastOpenAdTime'].toString().isEmpty) {
-          setState(() {
-            _canOpenImage = true; // 3600 seconds = 1 hour
-          });
-        } else {
-          final lastOpenTime = data['lastOpenAdTime'] as Timestamp;
-
-          final currentTime = Timestamp.now();
-          final difference = currentTime.seconds - lastOpenTime.seconds;
-
-          setState(() {
-            _canOpenImage = difference >= 3600; // 3600 seconds = 1 hour
-            remainingTime = (3600 - difference) / 60;
-          });
-        }
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding:  EdgeInsets.all(widget.size *15.0),
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(widget.size *10),
-            border: Border.all(color: Colors.white54)),
-        child: Padding(
-          padding:  EdgeInsets.symmetric(vertical:widget.size * 5, horizontal: widget.size *10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Support Us => ",
-                    style: TextStyle(color: Colors.white, fontSize: widget.size *20),
-                  ),
-                ],
-              ),
-              _canOpenImage
-                  ? isAdLoaded
-                  ? InkWell(
-                onTap: () async {
-                  if (_canOpenImage) {
-                    _showRewardedAd();
-
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => supportList(
-                              branch: widget.branch,
-                            )));
-                    final user = _auth.currentUser;
-                    if (user != null) {
-                      final imageRef = _firestore
-                          .collection('user')
-                          .doc(fullUserId());
-                      await imageRef.update({
-                        'lastOpenAdTime':
-                        FieldValue.serverTimestamp(),
-                      });
-                    }
-                    setState(() {
-                      _canOpenImage = false;
-                    });
-                  }
-                },
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.lightGreenAccent,
-                        borderRadius: BorderRadius.circular(widget.size *10)
-                    ),
-                    child: Padding(
-                      padding:  EdgeInsets.symmetric(vertical: widget.size *3,horizontal: widget.size *10),
-                      child: Text('Help',style: TextStyle(color: Colors.black,fontSize: widget.size *20,fontWeight: FontWeight.w500),),
-                    )),
-              )
-                  : Text(
-                'Wait for few secs',
-                style: TextStyle(fontSize:widget.size * 18, color: Colors.amber),
-              )
-                  : Text(
-                'Wait for ${remainingTime.round()} mins',
-                style: TextStyle(fontSize: widget.size *18, color: Colors.amber),
-              ),
-              if (!_canOpenImage)
-                InkWell(
-                  child: Icon(
-                    Icons.refresh,
-                    color: Colors.white,
-                    size:widget.size * 35,
-                  ),
-                  onTap: () {
-                    _checkImageOpenStatus();
-                  },
-                )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+// class ImageScreen extends StatefulWidget {
+//   final String branch;
+//   double size;
+//
+//   ImageScreen({required this.branch,required this.size});
+//
+//   @override
+//   _ImageScreenState createState() => _ImageScreenState();
+// }
+//
+// class _ImageScreenState extends State<ImageScreen> {
+//   late final RewardedAd rewardedAd;
+//
+//
+//   bool isAdLoaded = false;
+//
+//   void _loadRewardedAd() {
+//     RewardedAd.load(
+//       adUnitId: AdVideo.bannerAdUnitId,
+//       request: const AdRequest(),
+//       rewardedAdLoadCallback: RewardedAdLoadCallback(
+//         onAdFailedToLoad: (LoadAdError error) {
+//           print("Failed to load rewarded ad, Error: $error");
+//         },
+//         onAdLoaded: (RewardedAd ad) {
+//           print("$ad loaded");
+//           showToastText("Add loaded");
+//           rewardedAd = ad;
+//           setState(() {
+//             isAdLoaded = true;
+//           });
+//           //set on full screen content call back
+//           _setFullScreenContentCallback();
+//         },
+//       ),
+//     );
+//   }
+//
+//   //method to set show content call back
+//   void _setFullScreenContentCallback() {
+//     if (rewardedAd == null) {
+//       return;
+//     }
+//     rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
+//       //when ad  shows fullscreen
+//       onAdShowedFullScreenContent: (RewardedAd ad) =>
+//           print("$ad onAdShowedFullScreenContent"),
+//       //when ad dismissed by user
+//       onAdDismissedFullScreenContent: (RewardedAd ad) {
+//         print("$ad onAdDismissedFullScreenContent");
+//
+//         //dispose the dismissed ad
+//         ad.dispose();
+//       },
+//       //when ad fails to show
+//       onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
+//         print("$ad  onAdFailedToShowFullScreenContent: $error ");
+//         //dispose the failed ad
+//         ad.dispose();
+//       },
+//
+//       //when impression is detected
+//       onAdImpression: (RewardedAd ad) => print("$ad Impression occured"),
+//     );
+//   }
+//
+//   Future<void> _showRewardedAd() async {
+//     rewardedAd.show(
+//         onUserEarnedReward: (AdWithoutView ad, RewardItem rewardItem) {
+//       num amount = rewardItem.amount;
+//       showToastText("You earned: $amount");
+//
+//     });
+//     final imageRef = _firestore.collection("user").doc(fullUserId());
+//
+//     final documentSnapshot = await imageRef.get();
+//     if (documentSnapshot.exists) {
+//       final data = documentSnapshot.data() as Map<String, dynamic>;
+//       if (data['adSeenCount']==null) {
+//         _firestore.collection("user").doc(fullUserId()).update({"adSeenCount":0});
+//       } else {
+//         _firestore.collection("user").doc(fullUserId()).update({"adSeenCount":data['adSeenCount']+1});
+//
+//       }
+//     }
+//   }
+//
+//   final FirebaseAuth _auth = FirebaseAuth.instance;
+//   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+//
+//   bool _canOpenImage = true;
+//   double remainingTime = 0;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _checkImageOpenStatus();
+//     _loadRewardedAd();
+//   }
+//
+//   Future<void> _checkImageOpenStatus() async {
+//     final user = _auth.currentUser;
+//     if (user != null) {
+//       final imageRef = _firestore.collection("user").doc(fullUserId());
+//
+//       final documentSnapshot = await imageRef.get();
+//       if (documentSnapshot.exists) {
+//         final data = documentSnapshot.data() as Map<String, dynamic>;
+//         if (data['lastOpenAdTime'].toString().isEmpty) {
+//           setState(() {
+//             _canOpenImage = true; // 3600 seconds = 1 hour
+//           });
+//         } else {
+//           final lastOpenTime = data['lastOpenAdTime'] as Timestamp;
+//
+//           final currentTime = Timestamp.now();
+//           final difference = currentTime.seconds - lastOpenTime.seconds;
+//
+//           setState(() {
+//             _canOpenImage = difference >= 3600; // 3600 seconds = 1 hour
+//             remainingTime = (3600 - difference) / 60;
+//           });
+//         }
+//       }
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding:  EdgeInsets.all(widget.size *15.0),
+//       child: Container(
+//         decoration: BoxDecoration(
+//             color: Colors.black,
+//             borderRadius: BorderRadius.circular(widget.size *10),
+//             border: Border.all(color: Colors.white54)),
+//         child: Padding(
+//           padding:  EdgeInsets.symmetric(vertical:widget.size * 5, horizontal: widget.size *10),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Column(
+//                 mainAxisAlignment: MainAxisAlignment.start,
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     "Support Us => ",
+//                     style: TextStyle(color: Colors.white, fontSize: widget.size *20),
+//                   ),
+//                 ],
+//               ),
+//               _canOpenImage
+//                   ? isAdLoaded
+//                   ? InkWell(
+//                 onTap: () async {
+//                   if (_canOpenImage) {
+//                     _showRewardedAd();
+//
+//                     Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                             builder: (context) => supportList(
+//                               branch: widget.branch,
+//                             )));
+//                     final user = _auth.currentUser;
+//                     if (user != null) {
+//                       final imageRef = _firestore
+//                           .collection('user')
+//                           .doc(fullUserId());
+//                       await imageRef.update({
+//                         'lastOpenAdTime':
+//                         FieldValue.serverTimestamp(),
+//                       });
+//                     }
+//                     setState(() {
+//                       _canOpenImage = false;
+//                     });
+//                   }
+//                 },
+//                 child: Container(
+//                     decoration: BoxDecoration(
+//                         color: Colors.lightGreenAccent,
+//                         borderRadius: BorderRadius.circular(widget.size *10)
+//                     ),
+//                     child: Padding(
+//                       padding:  EdgeInsets.symmetric(vertical: widget.size *3,horizontal: widget.size *10),
+//                       child: Text('Help',style: TextStyle(color: Colors.black,fontSize: widget.size *20,fontWeight: FontWeight.w500),),
+//                     )),
+//               )
+//                   : Text(
+//                 'Wait for few secs',
+//                 style: TextStyle(fontSize:widget.size * 18, color: Colors.amber),
+//               )
+//                   : Text(
+//                 'Wait for ${remainingTime.round()} mins',
+//                 style: TextStyle(fontSize: widget.size *18, color: Colors.amber),
+//               ),
+//               if (!_canOpenImage)
+//                 InkWell(
+//                   child: Icon(
+//                     Icons.refresh,
+//                     color: Colors.white,
+//                     size:widget.size * 35,
+//                   ),
+//                   onTap: () {
+//                     _checkImageOpenStatus();
+//                   },
+//                 )
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class supportList extends StatefulWidget {
   final String branch;
@@ -630,8 +597,13 @@ class _supportListState extends State<supportList> {
       }
       data = "${picText("") + ":" + fullUserId()};$data";
     }
-    FirebaseFirestore.instance.collection(widget.branch).doc("supportedList").update({
-      "supportedList": isAdd ? FieldValue.arrayUnion([data]) : FieldValue.arrayRemove([data]),
+    FirebaseFirestore.instance
+        .collection(widget.branch)
+        .doc("supportedList")
+        .update({
+      "supportedList": isAdd
+          ? FieldValue.arrayUnion([data])
+          : FieldValue.arrayRemove([data]),
     });
   }
 
@@ -665,32 +637,36 @@ class _supportListState extends State<supportList> {
 
   @override
   Widget build(BuildContext context) {
-    double Size=size(context);
+    double Size = size(context);
     return Scaffold(
         body: SafeArea(
-          child: Column(
-      children: [
+      child: Column(
+        children: [
           backButton(
               size: size(context),
               text: "Supported List",
               child: SizedBox(
-                width: Size *45,
+                width: Size * 45,
               )),
           !commentsIds.contains(fullUserId())
               ? Padding(
-                  padding:  EdgeInsets.symmetric(vertical:Size * 8, horizontal:Size * 20),
+                  padding: EdgeInsets.symmetric(
+                      vertical: Size * 8, horizontal: Size * 20),
                   child: Row(
                     children: [
                       Flexible(
                         child: Container(
-                          decoration: BoxDecoration(color: Colors.white30, borderRadius: BorderRadius.circular(Size *20)),
+                          decoration: BoxDecoration(
+                              color: Colors.white30,
+                              borderRadius: BorderRadius.circular(Size * 20)),
                           child: Padding(
-                            padding:  EdgeInsets.only(left:Size * 10),
+                            padding: EdgeInsets.only(left: Size * 10),
                             child: TextFormField(
                               controller: _comment,
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.multiline,
-                              style: TextStyle(color: Colors.white, fontSize: Size *25),
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: Size * 25),
                               maxLines: null,
                               // Allows the field to expand as needed
                               decoration: const InputDecoration(
@@ -706,7 +682,7 @@ class _supportListState extends State<supportList> {
                       ),
                       InkWell(
                         child: Padding(
-                          padding:  EdgeInsets.all(Size *5.0),
+                          padding: EdgeInsets.all(Size * 5.0),
                           child: Icon(
                             Icons.send,
                             color: Colors.lightBlueAccent,
@@ -723,59 +699,69 @@ class _supportListState extends State<supportList> {
                 )
               : Text(
                   "Your already Submitted",
-                  style: TextStyle(color: Colors.greenAccent, fontSize:Size * 30, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                      color: Colors.greenAccent,
+                      fontSize: Size * 30,
+                      fontWeight: FontWeight.w700),
                 ),
           Padding(
-            padding:  EdgeInsets.all(Size *5.0),
+            padding: EdgeInsets.all(Size * 5.0),
             child: Text(
               "Note : You can send message only for one time",
-              style: TextStyle(color: Colors.amber, fontSize: Size *15),
+              style: TextStyle(color: Colors.amber, fontSize: Size * 15),
             ),
           ),
           Padding(
-            padding:  EdgeInsets.symmetric(vertical: Size *10, horizontal:Size * 5),
+            padding:
+                EdgeInsets.symmetric(vertical: Size * 10, horizontal: Size * 5),
             child: Text(
               "Thanks for being a member :)",
-              style: TextStyle(color: Colors.white, fontSize:Size * 25, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: Size * 25,
+                  fontWeight: FontWeight.w600),
             ),
           ),
           Container(
-            height: 3,
-            width: 150,
+            height: Size * 3,
+            width: Size * 150,
             decoration: BoxDecoration(
               color: Colors.white54,
-              borderRadius: BorderRadius.circular(Size *5),
+              borderRadius: BorderRadius.circular(Size * 5),
             ),
           ),
           Expanded(
             child: Padding(
-              padding:  EdgeInsets.symmetric(vertical: Size *10, horizontal:Size * 5),
+              padding: EdgeInsets.symmetric(
+                  vertical: Size * 10, horizontal: Size * 5),
               child: ListView.builder(
                 shrinkWrap: true,
                 reverse: false,
-                padding: EdgeInsets.symmetric(horizontal: Size *10),
+                padding: EdgeInsets.symmetric(horizontal: Size * 10),
                 itemCount: comments.length,
                 itemBuilder: (BuildContext context, int index) {
                   String data = comments[index];
                   String user = data.split(";").first;
                   String comment = data.split(";").last;
                   return Padding(
-                    padding:  EdgeInsets.symmetric(vertical:Size * 5),
+                    padding: EdgeInsets.symmetric(vertical: Size * 5),
                     child: Row(
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(Size *30), border: Border.all(color: Colors.white54)),
+                              borderRadius: BorderRadius.circular(Size * 30),
+                              border: Border.all(color: Colors.white54)),
                           child: Padding(
-                            padding:  EdgeInsets.all(Size *3.0),
+                            padding: EdgeInsets.all(Size * 3.0),
                             child: Text(
                               user.split(":").first,
-                              style: TextStyle(color: Colors.white, fontSize:Size * 20),
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: Size * 20),
                             ),
                           ),
                         ),
                         SizedBox(
-                          width:Size * 10,
+                          width: Size * 10,
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -783,11 +769,13 @@ class _supportListState extends State<supportList> {
                           children: [
                             Text(
                               "@${user.split(":").last}",
-                              style: TextStyle(color: Colors.white54, fontSize: Size *13),
+                              style: TextStyle(
+                                  color: Colors.white54, fontSize: Size * 13),
                             ),
                             Text(
                               comment,
-                              style: TextStyle(color: Colors.white, fontSize:Size * 20),
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: Size * 20),
                             ),
                           ],
                         ),
@@ -797,7 +785,7 @@ class _supportListState extends State<supportList> {
                             child: Icon(
                               Icons.delete,
                               color: Colors.redAccent,
-                              size: Size *30,
+                              size: Size * 30,
                             ),
                             onTap: () {
                               addComment(false, data);
@@ -815,71 +803,14 @@ class _supportListState extends State<supportList> {
             alignment: Alignment.bottomCenter,
             child: Text(
               "Earned money \$ $money",
-              style: TextStyle(color: Colors.white60, fontWeight: FontWeight.w500, fontSize: Size *13),
+              style: TextStyle(
+                  color: Colors.white60,
+                  fontWeight: FontWeight.w500,
+                  fontSize: Size * 13),
             ),
           ),
-      ],
-    ),
-        ));
-  }
-}
-
-class UpdateConvertorUtil {
-  // Add a new UpdateConvertor instance to the list in SharedPreferences
-  static Future<void> addUpdateConvertor(UpdateConvertor update) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> updateList = prefs.getStringList('update_list') ?? [];
-    updateList.add(jsonEncode(update.toJson()));
-    await prefs.setStringList('update_list', updateList);
-  }
-
-  // Get the list of UpdateConvertor instances from SharedPreferences
-  static Future<List<UpdateConvertor>> getUpdateConvertorList() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> updateList = prefs.getStringList('update_list') ?? [];
-    return updateList.map((jsonString) {
-      Map<String, dynamic> updateMap = jsonDecode(jsonString);
-      return UpdateConvertor.fromJson(updateMap);
-    }).toList();
-  }
-
-  // Remove a specific UpdateConvertor instance from the list in SharedPreferences
-  static Future<void> removeUpdateConvertor(int index) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> updateList = prefs.getStringList('update_list') ?? [];
-    if (index >= 0 && index < updateList.length) {
-      updateList.removeAt(index);
-      await prefs.setStringList('update_list', updateList);
-    }
-  }
-}
-
-class BranchNewConvertorUtil {
-  // Add a new UpdateConvertor instance to the list in SharedPreferences
-  static Future<void> addUpdateConvertor(BranchNewConvertor update) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> updateList = prefs.getStringList('news_list') ?? [];
-    updateList.add(jsonEncode(update.toJson()));
-    await prefs.setStringList('news_list', updateList);
-  }
-
-  // Get the list of UpdateConvertor instances from SharedPreferences
-  static Future<List<BranchNewConvertor>> getUpdateConvertorList() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> updateList = prefs.getStringList('news_list') ?? [];
-    return updateList.map((jsonString) {
-      Map<String, dynamic> updateMap = jsonDecode(jsonString);
-      return BranchNewConvertor.fromJson(updateMap);
-    }).toList();
-  }
-
-  // Remove a specific UpdateConvertor instance from the list in SharedPreferences
-  static Future<void> removeUpdateConvertor(int index) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> updateList = prefs.getStringList('news_list') ?? [];
-    if (index >= 0 && index < updateList.length) {
-      updateList.removeAt(index);
-      await prefs.setStringList('news_list', updateList);
-    }
+        ],
+      ),
+    ));
   }
 }

@@ -10,7 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:srkr_study_app/TextField.dart';
-import 'package:srkr_study_app/settings.dart';
+import 'package:srkr_study_app/homePage/settings.dart';
 import 'functions.dart';
 import 'notification.dart';
 
@@ -151,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                           actions: <Widget>[
                             TextButton(
                               onPressed: () => Navigator.pop(context),
-                              child: Text('OK'),
+                              child: Text('OK',style: TextStyle(fontSize:  Size *14),),
                             ),
                           ],
                         ),

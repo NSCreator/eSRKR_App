@@ -1,43 +1,46 @@
 name: srkr_study_app
 description: A new Flutter project.
 publish_to: 'none'
-version: 2023.10.3+25
+version: 2023.11.14+26
 
 environment:
   sdk: ">=2.12.0-dev.68.0 <3.0.0"
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.5
-  firebase_storage: ^11.2.7
-  url_launcher: ^6.1.14
-  http: ^0.13.0
-  fluttertoast: ^8.2.2
-  google_mobile_ads: ^3.0.0
-  carousel_slider: ^4.2.1
-  firebase_core: ^2.16.0
-  cloud_firestore: ^4.9.2
-  firebase_auth: ^4.10.0
-  email_validator: ^2.1.17
-  intl: ^0.18.1
-  photo_view: ^0.14.0
-  firebase_database: ^10.2.6
-  image_picker: ^1.0.4
-  path_provider: ^2.1.1
-  flutter_local_notifications: ^15.1.1
-  animations: ^2.0.8
-  flutter_pdfview: ^1.3.1
-  firebase_messaging: ^14.6.8
-  marquee: ^2.2.3
-  shared_preferences: ^2.2.1
-  mailer: ^6.0.1
-  open_file: ^3.3.2
-  flutter_tts: ^3.8.3
-  visibility_detector: ^0.3.3
-  objectbox_flutter_libs: ^2.3.0
-  flutter_speed_dial: ^7.0.0
-  youtube_player_flutter: ^8.1.2
-  youtube: ^1.0.1
+  cupertino_icons:
+  firebase_storage:
+  url_launcher:
+  http:
+  fluttertoast:
+#  google_mobile_ads:
+#  youtube_explode_dart:
+  carousel_slider:
+  firebase_core:
+  cloud_firestore:
+  firebase_auth:
+  email_validator:
+  intl:
+  photo_view:
+  firebase_database:
+  image_picker:
+  path_provider:
+  flutter_local_notifications:
+#  animations:
+  flutter_pdfview:
+  firebase_messaging:
+  marquee:
+  shared_preferences:
+  mailer:
+#  open_file:
+  flutter_tts:
+#  visibility_detector:
+  objectbox_flutter_libs:
+#  flutter_speed_dial:
+  youtube_player_flutter:
+  youtube:
+#  flutter_inappwebview:
+
 
 
 dev_dependencies:

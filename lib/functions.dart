@@ -11,13 +11,61 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'main.dart';
 import 'notification.dart';
 
 class Constants {
   static final String BASE_URL = 'https://fcm.googleapis.com/fcm/send';
   static final String KEY_SERVER = "AAAA1rq9xW8:APA91bE_dMaAdvS09kz8BOFA2Oy6ZUEee8tcTUMmNYsiyWVyBPbMRfoZ1VgmGD_arVZ9Uib_TDHhmjBvkW75tMovO8jdV6zgUOwZ4z5pmdrAz0MAodlFVd9ssphVxJ2l_WCDuB0KSjiU";
   static final String SENDER_ID = '922256000367	';
+}
+class backgroundcolor extends StatefulWidget {
+  Widget child;
+
+  backgroundcolor({required this.child});
+
+  @override
+  State<backgroundcolor> createState() => _backgroundcolorState();
+}
+
+class _backgroundcolorState extends State<backgroundcolor> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: double.infinity,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withOpacity(0.05),
+            Colors.blue.withOpacity(0.12),
+            Colors.black.withOpacity(0.12),
+          ],
+        ),
+      ),
+      child: widget.child,
+    );
+  }
+}
+
+fullUserId() {
+  var user = FirebaseAuth.instance.currentUser!.email!;
+  return user;
+}
+
+bool isGmail() {
+  var user = FirebaseAuth.instance.currentUser!.email!;
+
+  String numberString = user.substring(0, 2);
+
+  int? number = int.tryParse(numberString);
+
+  if (number == null && user.split("@").last == "srkrec.ac.in") {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 Future<void> sendingMails(String urlIn) async {
@@ -32,12 +80,7 @@ class Utils {
   }
 }
 
-double Width(BuildContext context) {
-  MediaQueryData mediaQuery = MediaQuery.of(context);
-  double screenWidth = mediaQuery.size.width;
 
-  return screenWidth;
-}
 
 
 double size(BuildContext context) {
@@ -97,7 +140,7 @@ class backButton extends StatefulWidget {
     this.color = Colors.white,
     required this.size,
     this.text = "",
-    required this.child,
+     required this.child,
   }) ;
   @override
   State<backButton> createState() => _backButtonState();
@@ -107,7 +150,7 @@ class _backButtonState extends State<backButton> {
   @override
   Widget build(BuildContext context) {
     return  Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+      padding:  EdgeInsets.symmetric(vertical: widget.size*5,horizontal: widget.size*5),
       child: InkWell(
         onTap: (){
           Navigator.pop(context);
@@ -296,7 +339,7 @@ class _downloadAllPdfsState extends State<downloadAllPdfs> {
   }
    downloadAllImages() async {
 
-    
+
     final CollectionReference subjects = FirebaseFirestore.instance
         .collection(widget.branch)
         .doc(widget.mode=="Subjects"?"Subjects":"LabSubjects")
@@ -331,7 +374,7 @@ class _downloadAllPdfsState extends State<downloadAllPdfs> {
     } catch (e) {
       print('Error: $e');
     }
-   
+
 
   }
 

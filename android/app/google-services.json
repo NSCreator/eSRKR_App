@@ -13,12 +13,7 @@
           "package_name": "com.nimmalasujith.esrkr"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "922256000367-1i36d2s531rmr8t4k6khdch3mo99323m.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyBDqW-2hA1dM5rOLl9kVE6Dhp5EsqUhNfE"
@@ -26,19 +21,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "922256000367-1i36d2s531rmr8t4k6khdch3mo99323m.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "922256000367-b0b4huch1imm0aa7nlvhdpmn5u8j1o9j.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.nimmalasujith.srkrStudyApp.RunnerTests"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

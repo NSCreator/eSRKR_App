@@ -1,11 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
-TextStyle favoritesHeadingTextStyle = TextStyle(
-    color: Colors.white,
-    fontSize: 30,
-    fontWeight: FontWeight.w600);
 
 Stream<List<FavouriteSubjectsConvertor>> readFavouriteSubjects() =>
     FirebaseFirestore.instance

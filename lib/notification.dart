@@ -7,11 +7,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:srkr_study_app/HomePage.dart';
 import 'package:http/http.dart' as http;
+import 'package:srkr_study_app/homePage/settings.dart';
 import 'functions.dart';
-import 'main.dart';
 
 class notifications extends StatefulWidget {
   final String branch;
@@ -270,50 +268,13 @@ class _notificationsState extends State<notifications>
                                                     if (Notification
                                                             .image.length >
                                                         3)
-                                                      InkWell(
-                                                        child: Padding(
-                                                          padding: EdgeInsets.all(
-                                                              widget.size * 3.0),
-                                                          child: ClipRRect(
-                                                            borderRadius: BorderRadius.circular(widget.size *15),
-                                                            child: Image.network(
-                                                                Notification.image),
-                                                          ),
+                                                      Padding(
+                                                        padding: EdgeInsets.all(
+                                                            widget.size * 3.0),
+                                                        child: ClipRRect(
+                                                          borderRadius: BorderRadius.circular(widget.size *15),
+                                                          child: ImageShowAndDownload(image: Notification.image, isZoom: true,),
                                                         ),
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            PageRouteBuilder(
-                                                              transitionDuration:
-                                                              const Duration(milliseconds: 300),
-                                                              pageBuilder: (context, animation,
-                                                                  secondaryAnimation) =>
-                                                                  ImageZoom(
-
-                                                                    size: widget.size, url:Notification
-                                                                      .image , file: File(""),
-                                                                  ),
-                                                              transitionsBuilder: (context, animation,
-                                                                  secondaryAnimation, child) {
-                                                                final fadeTransition = FadeTransition(
-                                                                  opacity: animation,
-                                                                  child: child,
-                                                                );
-
-                                                                return Container(
-                                                                  color: Colors.black
-                                                                      .withOpacity(animation.value),
-                                                                  child: AnimatedOpacity(
-                                                                      duration:
-                                                                      Duration(milliseconds: 300),
-                                                                      opacity: animation.value
-                                                                          .clamp(0.3, 1.0),
-                                                                      child: fadeTransition),
-                                                                );
-                                                              },
-                                                            ),
-                                                          );
-                                                        },
                                                       )
                                                   ],
                                                 ))
@@ -323,7 +284,7 @@ class _notificationsState extends State<notifications>
                                         ),
                                         if (isOwner()||isGmail()||Notification.fromTo.split("~")[0] == fullUserId())
                                           SizedBox(
-                                            width: 20,
+                                            width: widget.size *20,
                                             child: PopupMenuButton(
                                               icon: Icon(
                                                 Icons.more_vert,
@@ -519,50 +480,13 @@ class _notificationsState extends State<notifications>
                                                         if (Notification
                                                             .image.length >
                                                             3)
-                                                          InkWell(
-                                                            child: Padding(
-                                                              padding: EdgeInsets.all(
-                                                                  widget.size * 3.0),
-                                                              child: ClipRRect(
-                                                                borderRadius: BorderRadius.circular(widget.size *15),
-                                                                child: Image.network(
-                                                                    Notification.image),
-                                                              ),
+                                                          Padding(
+                                                            padding: EdgeInsets.all(
+                                                                widget.size * 3.0),
+                                                            child: ClipRRect(
+                                                              borderRadius: BorderRadius.circular(widget.size *15),
+                                                              child: ImageShowAndDownload(image:Notification.image ,isZoom: true,),
                                                             ),
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                PageRouteBuilder(
-                                                                  transitionDuration:
-                                                                  const Duration(milliseconds: 300),
-                                                                  pageBuilder: (context, animation,
-                                                                      secondaryAnimation) =>
-                                                                      ImageZoom(
-
-                                                                        size: widget.size, url:Notification
-                                                                          .image , file: File(""),
-                                                                      ),
-                                                                  transitionsBuilder: (context, animation,
-                                                                      secondaryAnimation, child) {
-                                                                    final fadeTransition = FadeTransition(
-                                                                      opacity: animation,
-                                                                      child: child,
-                                                                    );
-
-                                                                    return Container(
-                                                                      color: Colors.black
-                                                                          .withOpacity(animation.value),
-                                                                      child: AnimatedOpacity(
-                                                                          duration:
-                                                                          Duration(milliseconds: 300),
-                                                                          opacity: animation.value
-                                                                              .clamp(0.3, 1.0),
-                                                                          child: fadeTransition),
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              );
-                                                            },
                                                           )
                                                       ],
                                                     ))
@@ -571,7 +495,7 @@ class _notificationsState extends State<notifications>
                                           ),
                                         ),
                                           SizedBox(
-                                            width: 25,
+                                            width: widget.size *25,
                                             child: PopupMenuButton(
                                               icon: Icon(
                                                 Icons.more_vert,
@@ -1147,229 +1071,6 @@ class NotificationsConvertor {
       );
 }
 
-Future<void> downloadAllImages(
-    BuildContext context, String branch, String reg) async {
-  List list = [];
-
-  final directory = await getApplicationDocumentsDirectory();
-
-  String folderPath = directory.path;
-
-  final CollectionReference timetable =
-  FirebaseFirestore.instance.collection(branch).doc("regulation").collection("regulationWithSem").doc(reg).collection("timeTables");
-
-  try {
-    final QuerySnapshot querySnapshot = await timetable.get();
-    if (querySnapshot.docs.isNotEmpty) {
-      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-
-      for (final document in documents) {
-        final data = document.data() as Map<String, dynamic>;
-        if (data["image"].length > 3) {
-          final Uri uri = Uri.parse(data["image"]);
-          final String fileName = uri.pathSegments.last;
-          var name = fileName.split("/").last;
-          final file = await File("${folderPath}/timetable/$name");
-          if (!file.existsSync()) {
-            list.add(data["image"] + ";" + "timetable");
-          }
-        }
-      }
-    } else {
-      print('No documents found');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-  
-  final CollectionReference updates =
-      FirebaseFirestore.instance.collection("update");
-
-  try {
-    final QuerySnapshot querySnapshot = await updates.get();
-    if (querySnapshot.docs.isNotEmpty) {
-      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-
-      for (final document in documents) {
-        final data = document.data() as Map<String, dynamic>;
-        if (data["image"].length > 3) {
-          final Uri uri = Uri.parse(data["image"]);
-          final String fileName = uri.pathSegments.last;
-          var name = fileName.split("/").last;
-          final file = await File("${folderPath}/updates/$name");
-          if (!file.existsSync()) {
-            list.add(data["image"] + ";" + "updates");
-          }
-        }
-      }
-    } else {
-      print('No documents found');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-
-  final CollectionReference News = FirebaseFirestore.instance
-      .collection(branch)
-      .doc("${branch}News")
-      .collection("${branch}News");
-
-  try {
-    final QuerySnapshot querySnapshot = await News.get();
-    if (querySnapshot.docs.isNotEmpty) {
-      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-
-      for (final document in documents) {
-        final data = document.data() as Map<String, dynamic>;
-        if (data["image"].length > 3) {
-          final Uri uri = Uri.parse(data["image"]);
-          final String fileName = uri.pathSegments.last;
-          var name = fileName.split("/").last;
-          final file = await File("${folderPath}/news/$name");
-          if (!file.existsSync()) {
-            list.add(data["image"] + ";" + "news");
-          }
-        }
-      }
-    } else {
-      print('No documents found');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-
-  final CollectionReference books = FirebaseFirestore.instance
-      .collection(branch)
-      .doc("Books")
-      .collection("CoreBooks");
-
-  try {
-    final QuerySnapshot querySnapshot = await books.get();
-    if (querySnapshot.docs.isNotEmpty) {
-      final List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-      for (final document in documents) {
-        final data = document.data() as Map<String, dynamic>;
-        if (data["image"].length > 3) {
-          final Uri uri = Uri.parse(data["image"]);
-          final String fileName = uri.pathSegments.last;
-          var name = fileName.split("/").last;
-          final file = await File("${folderPath}/books/$name");
-          if (!file.existsSync()) {
-            list.add(data["image"] + ";" + "books");
-          }
-        }
-      }
-    } else {
-      print('No documents found');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-  if (list.isNotEmpty) {
-    await showDialog(
-      context: context,
-      builder: (context) => ImageDownloadScreen(
-        images: list,
-      ),
-    );
-    list=[];
-  }
-}
-
-class ImageDownloadScreen extends StatefulWidget {
-  List images;
-
-  ImageDownloadScreen({Key? key, required this.images}) : super(key: key);
-
-  @override
-  _ImageDownloadScreenState createState() => _ImageDownloadScreenState();
-}
-
-class _ImageDownloadScreenState extends State<ImageDownloadScreen> {
-  int totalImages = 0;
-  int downloadedImages = 0;
-  double overallProgress = 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-    _downloadImages();
-  }
-
-  _downloadImages() async {
-    totalImages = widget.images.length;
-    downloadedImages = 0;
-    overallProgress = 0.0;
-
-    for (String url in widget.images) {
-      final Uri uri = Uri.parse(url.split(";").first);
-      final String fileName = uri.pathSegments.last;
-      var name = fileName.split("/").last;
-      if (url.startsWith('https://drive.google.com')) {
-        name = url.split(";").first.split('/d/')[1].split('/')[0];
-
-        url = "https://drive.google.com/uc?export=download&id=$name";
-      }
-      final response = await http.get(Uri.parse(url.split(";").first));
-      final documentDirectory = await getApplicationDocumentsDirectory();
-      final newDirectory =
-          Directory('${documentDirectory.path}/${url.split(";").last}');
-      if (!await newDirectory.exists()) {
-        await newDirectory.create(recursive: true);
-      }
-      final file = File('${newDirectory.path}/${name.split(";").first}');
-      await file.writeAsBytes(response.bodyBytes);
-
-      setState(() {
-        downloadedImages++;
-        overallProgress = downloadedImages / totalImages;
-      });
-
-      await Future.delayed(Duration(milliseconds: 100));
-    }
-    showNotification(downloadedImages);
-
-    Navigator.of(context).pop();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Colors.transparent,
-      content: Container(
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.white30),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'Just A Movement',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 25,
-                  fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Text(
-              '...downloading image $downloadedImages of $totalImages',
-              style: TextStyle(color: Colors.white, fontSize: 18),
-            ),
-            LinearProgressIndicator(
-              value: overallProgress,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 void showNotification(int count) {
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();

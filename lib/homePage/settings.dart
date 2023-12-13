@@ -6,17 +6,126 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:srkr_study_app/HomePage.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:srkr_study_app/homePage/HomePage.dart';
 import 'dart:convert';
 
-import 'SubPages.dart';
-import 'TextField.dart';
-import 'functions.dart';
-import 'main.dart';
-import 'net.dart';
+import '../TextField.dart';
+import '../functions.dart';
 
 int currentIndex = 0;
-File file = File("");
+class ImageShowAndDownload extends StatefulWidget {
+  String  image;
+  bool isZoom;
+
+  ImageShowAndDownload(
+      { required this.image,  this.isZoom = false});
+
+  @override
+  State<ImageShowAndDownload> createState() => _ImageShowAndDownloadState();
+}
+
+class _ImageShowAndDownloadState extends State<ImageShowAndDownload> {
+  String filePath = "";
+
+  @override
+  void initState() {
+    super.initState();
+    getPath();
+  }
+
+  getPath() async {
+    final Directory appDir = await getApplicationDocumentsDirectory();
+    filePath = '${appDir.path}/${Uri.parse(widget.image).pathSegments.last.split("/").last}';
+    setState(() {
+      filePath;
+    });
+    if (!File(filePath).existsSync()) {
+      await _downloadImages(widget.image);
+    }
+
+  }
+
+  _downloadImages(String url) async {
+    String name;
+    if (url.startsWith('https://drive.google.com')) {
+      name = url.split(";").first.split('/d/')[1].split('/')[0];
+      url = "https://drive.google.com/uc?export=download&id=$name";
+    }
+
+    final response = await http.get(Uri.parse(url));
+
+    final file = File(filePath);
+    await file.writeAsBytes(response.bodyBytes);
+setState(() {
+
+});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double Size=size(context);
+    return
+      widget.isZoom
+          ? InkWell(
+        child: !File(filePath).existsSync()
+            ? Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(widget.image),
+                fit: BoxFit.cover,
+              )),
+        )
+            : Image.file(
+          File(filePath),
+          fit: BoxFit.cover,
+        ),
+        onTap: () {
+          if (widget.isZoom)
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Scaffold(
+                        backgroundColor: Colors.black,
+                        body: SafeArea(
+                          child: Column(
+                            children: [
+                              backButton(text: "back", size: Size , child: SizedBox(),),
+                              Expanded(
+                                child: Center(
+                                  child: File(filePath).existsSync()
+                                      ? PhotoView(
+                                      imageProvider: FileImage(File(filePath)))
+                                      : PhotoView(
+                                    imageProvider:
+                                    NetworkImage(widget.image),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ))));
+        },
+      )
+          :
+      !File(filePath).existsSync()
+          ?
+      Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(widget.image),
+              fit: BoxFit.cover,
+            )),
+      )
+          :
+      Image.file(
+        File(filePath),
+        fit: BoxFit.cover,
+      )
+    ;
+  }
+}
 
 DecorationImage noImageFound = DecorationImage(
     image: AssetImage("assets/app_logo.png"), fit: BoxFit.cover);
@@ -34,7 +143,7 @@ TextStyle secondTabBarTextStyle(
 const TextStyle AppBarHeadingTextStyle =
     TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700);
 const TextStyle creatorHeadingTextStyle =
-    TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white);
+    TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white);
 
 TextStyle secondHeadingTextStyle(
     {Color color = Colors.white, required double size}) {
@@ -80,40 +189,37 @@ class _settingsState extends State<settings> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(15.0),
+            padding:  EdgeInsets.all(widget.size*15.0),
             child: Text(
               "My Account",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: Colors.white, fontSize: widget.size*20),
             ),
           ),
           Container(
             width: double.infinity,
             color: Colors.white30,
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.all(widget.size*8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Container(
-                    height: widget.size * 80,
-                    width: widget.size * 80,
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(widget.size * 40),
-                      color: Colors.black,
-                    ),
-                    child: Center(
-                        child: Text(
-                      picText(""),
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          fontSize: widget.size * 40,
-                          fontFamily: "test"),
-                    )),
+                Container(
+                  height: widget.size * 70,
+                  width: widget.size * 70,
+                  margin: EdgeInsets.symmetric(horizontal:widget.size* 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(widget.size * 40),
+                    color: Colors.black,
                   ),
+                  child: Center(
+                      child: Text(
+                    picText(""),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: widget.size * 40,
+                        fontFamily: "test"),
+                  )),
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -150,14 +256,14 @@ class _settingsState extends State<settings> {
                             padding: EdgeInsets.symmetric(
                                 vertical: widget.size * 3,
                                 horizontal: widget.size * 8),
-                            margin: EdgeInsets.symmetric(horizontal: 5),
+                            margin: EdgeInsets.symmetric(horizontal: widget.size*5),
                             decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.circular(widget.size * 20),
                               color: Colors.white30,
                             ),
                             child: Text(
-                              "Change Reg",
+                              "Change",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -268,145 +374,32 @@ class _settingsState extends State<settings> {
               ],
             ),
           ),
-          if ((!isGmail())&&(!isOwner()))
-            ImageScreen(
-              size: widget.size,
-              branch: widget.branch,
-            ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              children: [
-                InkWell(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-                    margin: EdgeInsets.symmetric(vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.white12,
-                      borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.favorite_border,
-                              color: Colors.white60,
-                              size: widget.size * 25,
-                            ),
-                            Text(" favorite",style: TextStyle(color: Colors.white,fontSize: 25),),
-                          ],
-                        ),
-                        Icon(Icons.chevron_right,size: 25,color: Colors.white54,)
-                      ],
-                    ),
-                  ),
-                  onTap: (){
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 300),
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            favorites(
-                              size: widget.size,
-                            ),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) {
-                          final fadeTransition = FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-
-                          return Container(
-                            color: Colors.black.withOpacity(animation.value),
-                            child: AnimatedOpacity(
-                                duration: Duration(milliseconds: 300),
-                                opacity: animation.value.clamp(0.3, 1.0),
-                                child: fadeTransition),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-                // InkWell(
-                //   child: Container(
-                //     padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-                //     margin: EdgeInsets.symmetric(vertical: 2),
-                //     decoration: BoxDecoration(
-                //       color: Colors.white12,
-                //       borderRadius: BorderRadius.circular(10)
-                //     ),
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //       children: [
-                //         Row(
-                //           children: [
-                //             Icon(
-                //               Icons.download,
-                //               color: Colors.white60,
-                //               size: widget.size * 25,
-                //             ),
-                //             Text(" Downloads",style: TextStyle(color: Colors.white,fontSize: 25),),
-                //           ],
-                //         ),
-                //         Icon(Icons.chevron_right,size: 25,color: Colors.white54,)
-                //       ],
-                //     ),
-                //   ),
-                //   onTap: (){
-                //     Navigator.push(
-                //       context,
-                //       PageRouteBuilder(
-                //         transitionDuration: const Duration(milliseconds: 300),
-                //         pageBuilder: (context, animation, secondaryAnimation) =>
-                //             favorites(
-                //               size: widget.size,
-                //             ),
-                //         transitionsBuilder:
-                //             (context, animation, secondaryAnimation, child) {
-                //           final fadeTransition = FadeTransition(
-                //             opacity: animation,
-                //             child: child,
-                //           );
-                //
-                //           return Container(
-                //             color: Colors.black.withOpacity(animation.value),
-                //             child: AnimatedOpacity(
-                //                 duration: Duration(milliseconds: 300),
-                //                 opacity: animation.value.clamp(0.3, 1.0),
-                //                 child: fadeTransition),
-                //           );
-                //         },
-                //       ),
-                //     );
-                //   },
-                // ),
-              ],
-            ),
-          ),
+          // if ((!isGmail())&&(!isOwner()))
+          //   ImageScreen(
+          //     size: widget.size,
+          //     branch: widget.branch,
+          //   ),
           SizedBox(
-            width: 10,
+            width: widget.size*10,
           ),
 
           SizedBox(height: widget.size * 5.0),
 
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding:  EdgeInsets.all(widget.size*10.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Settings",style: TextStyle(color: Colors.orangeAccent.withOpacity(0.8),fontSize: 25),),
+                Text("Settings",style: TextStyle(color: Colors.orangeAccent.withOpacity(0.8),fontSize:widget.size* 25),),
 
                 InkWell(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-                    margin: EdgeInsets.only(top: 10,bottom: 2),
+                    padding: EdgeInsets.symmetric(horizontal: widget.size*10,vertical:widget.size* 5),
+                    margin: EdgeInsets.only(top:widget.size* 10,bottom:widget.size* 2),
                     decoration: BoxDecoration(
                         color: Colors.white12,
-                        borderRadius: BorderRadius.circular(10)
+                        borderRadius: BorderRadius.circular(widget.size*10)
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -418,10 +411,10 @@ class _settingsState extends State<settings> {
                               color: Colors.white60,
                               size: widget.size * 25,
                             ),
-                            Text(" Report",style: TextStyle(color: Colors.white,fontSize: 25),),
+                            Text(" Report",style: TextStyle(color: Colors.white,fontSize: widget.size*25),),
                           ],
                         ),
-                        Icon(Icons.chevron_right,size: 25,color: Colors.white54,)
+                        Icon(Icons.chevron_right,size:widget.size* 25,color: Colors.white54,)
                       ],
                     ),
                   ),
@@ -431,11 +424,11 @@ class _settingsState extends State<settings> {
                 ),
                 InkWell(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-                    margin: EdgeInsets.symmetric(vertical: 2),
+                    padding: EdgeInsets.symmetric(horizontal:widget.size* 10,vertical: widget.size*5),
+                    margin: EdgeInsets.symmetric(vertical: widget.size*2),
                     decoration: BoxDecoration(
                         color: Colors.white12,
-                        borderRadius: BorderRadius.circular(10)
+                        borderRadius: BorderRadius.circular(widget.size*10)
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -447,10 +440,10 @@ class _settingsState extends State<settings> {
                               color: Colors.white60,
                               size: widget.size * 25,
                             ),
-                            Text(" Privacy Policy",style: TextStyle(color: Colors.white,fontSize: 25),),
+                            Text(" Privacy Policy",style: TextStyle(color: Colors.white,fontSize:widget.size* 25),),
                           ],
                         ),
-                        Icon(Icons.chevron_right,size: 25,color: Colors.white54,)
+                        Icon(Icons.chevron_right,size: widget.size*25,color: Colors.white54,)
                       ],
                     ),
                   ),
@@ -462,11 +455,11 @@ class _settingsState extends State<settings> {
                 ),
                 InkWell(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-                    margin: EdgeInsets.symmetric(vertical: 2),
+                    padding: EdgeInsets.symmetric(horizontal:widget.size* 10,vertical:widget.size* 5),
+                    margin: EdgeInsets.symmetric(vertical: widget.size*2),
                     decoration: BoxDecoration(
                         color: Colors.white12,
-                        borderRadius: BorderRadius.circular(10)
+                        borderRadius: BorderRadius.circular(widget.size*10)
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -478,10 +471,10 @@ class _settingsState extends State<settings> {
                               color: Colors.white60,
                               size: widget.size * 25,
                             ),
-                            Text(" About",style: TextStyle(color: Colors.white,fontSize: 25),),
+                            Text(" About",style: TextStyle(color: Colors.white,fontSize: widget.size*25),),
                           ],
                         ),
-                        Icon(Icons.chevron_right,size: 25,color: Colors.white54,)
+                        Icon(Icons.chevron_right,size: widget.size*25,color: Colors.white54,)
                       ],
                     ),
                   ),
@@ -634,16 +627,16 @@ class _settingsState extends State<settings> {
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: 10),
+            padding: EdgeInsets.symmetric(vertical: widget.size*10),
             decoration: BoxDecoration(color: Colors.white12),
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0,left: 30,right: 30),
+                  padding:  EdgeInsets.only(bottom:widget.size* 10.0,left:widget.size* 30,right: widget.size*30),
                   child: InkWell(
                     child: Container(
                       width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 5),
+                      padding: EdgeInsets.symmetric(vertical:widget.size* 5),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(widget.size * 10),
                           border: Border.all(color: Colors.white54)),
