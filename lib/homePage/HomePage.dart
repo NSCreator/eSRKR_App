@@ -21,6 +21,7 @@ class appBar_HomePage extends StatefulWidget {
   double size;
   String reg, branch, name;
 
+
   appBar_HomePage(
       {required this.size,
       required this.branch,
