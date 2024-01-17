@@ -37,7 +37,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    double Size  = size(context);
 
     return Scaffold(
         body: SafeArea(
@@ -51,74 +50,74 @@ class _LoginPageState extends State<LoginPage> {
               Text(
                 "eSRKR ",
                 style: TextStyle(
-                    fontSize: Size * 30,
+                    fontSize:   30,
                     fontWeight: FontWeight.w700,
                     color: Colors.deepOrange),
               ),
               SizedBox(
-                height: Size * 10,
+                height:   10,
               ),
               Text(
                 "Welcome Back!",
                 style: TextStyle(
-                    fontSize: Size * 35,
+                    fontSize:   35,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                    color: Colors. black),
               ),
               SizedBox(
-                height: Size * 40,
+                height:   40,
               ),
 
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: Size * 25),
+                padding: EdgeInsets.symmetric(horizontal:   25),
                 child: TextFieldContainer(
                   child: TextField(
                     controller: emailController,
                     textInputAction: TextInputAction.next,
-                    style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                    style: TextStyle(color: Colors. black, fontSize:   20),
                     decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Email',
                         hintStyle: TextStyle(
-                            color: Colors.white54, fontSize: Size * 20)),
+                            color: Colors. black54, fontSize:   20)),
                   ),
                 ),
               ),
               //password
 
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: Size * 25),
+                padding: EdgeInsets.symmetric(horizontal:   25),
                 child: TextFieldContainer(
                     child: TextField(
                   obscureText: true,
                   controller: passwordController,
                   textInputAction: TextInputAction.next,
-                  style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                  style: TextStyle(color: Colors. black, fontSize:   20),
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Password',
                       hintStyle: TextStyle(
-                          color: Colors.white54, fontSize: Size * 20)),
+                          color: Colors. black54, fontSize:   20)),
                 )),
               ),
 
               //sign in button
               SizedBox(
-                height: Size * 10,
+                height:   10,
               ),
 
               InkWell(
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                      horizontal: Size * 20, vertical: Size * 10),
+                      horizontal:   20, vertical:   10),
                   decoration: BoxDecoration(
                     color: Colors.greenAccent,
-                    borderRadius: BorderRadius.circular(Size * 10),
+                    borderRadius: BorderRadius.circular(  10),
                   ),
                   child: Text(
                     "Sign In",
                     style: TextStyle(
-                        fontSize: Size * 20,
+                        fontSize:   20,
                         fontWeight: FontWeight.bold,
                         color: Colors.black),
                   ),
@@ -127,13 +126,13 @@ class _LoginPageState extends State<LoginPage> {
               ),
 
               SizedBox(
-                height:  Size  *20,
+                height: 20,
               ),
               InkWell(
                 child: Text(
                   "Forgot Password?",
                   style: TextStyle(
-                      fontSize: Size * 18,
+                      fontSize:   18,
                       fontWeight: FontWeight.bold,
                       color: Colors.red),
                 ),
@@ -151,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                           actions: <Widget>[
                             TextButton(
                               onPressed: () => Navigator.pop(context),
-                              child: Text('OK',style: TextStyle(fontSize:  Size *14),),
+                              child: Text('OK',style: TextStyle(fontSize:   14),),
                             ),
                           ],
                         ),
@@ -178,22 +177,22 @@ class _LoginPageState extends State<LoginPage> {
               ),
 
               SizedBox(
-                height: Size * 20,
+                height:   20,
               ),
               Wrap(
                 children: [
                   Text(
                     "Not a Member?",
                     style: TextStyle(
-                        fontSize: Size * 20,
+                        fontSize:   20,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white),
+                        color: Colors. black),
                   ),
                   InkWell(
                     child: Text(
-                      " Register Here",
+                      " Register",
                       style: TextStyle(
-                          fontSize: Size * 20,
+                          fontSize:   20,
                           fontWeight: FontWeight.bold,
                           color: Colors.cyan),
                     ),
@@ -202,14 +201,14 @@ class _LoginPageState extends State<LoginPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => createNewUser(
-                                    size: size(context),
+
                                   )));
                     },
                   ),
                 ],
               ),
               SizedBox(
-                height: Size * 20,
+                height:   20,
               ),
               InkWell(
                 child: Text(
@@ -217,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(
                       color: Colors.redAccent,
                       fontWeight: FontWeight.w600,
-                      fontSize: Size * 20),
+                      fontSize:   20),
                 ),
                 onTap: () {
                   sendingMails("sujithnimmala03@gmail.com");
@@ -252,9 +251,9 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 class createNewUser extends StatefulWidget {
-  double size;
 
-  createNewUser({required this.size});
+
+  createNewUser();
 
   @override
   State<createNewUser> createState() => _createNewUserState();
@@ -286,30 +285,30 @@ class _createNewUserState extends State<createNewUser> {
 
   @override
   Widget build(BuildContext context) {
-    double Size = widget.size;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
               backButton(
-                  size: Size,
+
                   text: "Enter College Mail ID",
                   child: SizedBox(
-                    width:  Size *45,
+                    width:   45,
                   )),
               SizedBox(
-                height: Size * 15,
+                height:   15,
               ),
               TextFieldContainer(
                   child: TextFormField(
                 controller: emailController,
                 textInputAction: TextInputAction.next,
-                style: textFieldStyle(Size),
+                style: textFieldStyle(),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Enter College Mail ID',
-                    hintStyle: textFieldHintStyle(Size)),
+                    hintStyle: textFieldHintStyle()),
                 validator: (email) =>
                     email != null && !EmailValidator.validate(email)
                         ? "Enter a valid Email"
@@ -324,28 +323,28 @@ class _createNewUserState extends State<createNewUser> {
                           child: TextFormField(
                         controller: otpController,
                         textInputAction: TextInputAction.next,
-                        style: textFieldStyle(Size),
+                        style: textFieldStyle(),
                         decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Enter OPT',
-                            hintStyle: textFieldHintStyle(Size)),
+                            hintText: 'Enter OTP',
+                            hintStyle: textFieldHintStyle()),
                       )),
                     ),
                   Padding(
-                    padding:  EdgeInsets.symmetric(horizontal:  Size *20),
+                    padding:  EdgeInsets.symmetric(horizontal:   10),
                     child: InkWell(
                       child: Container(
                         decoration: BoxDecoration(
                             color: Colors.blueGrey,
-                            borderRadius: BorderRadius.circular( Size *20)),
+                            borderRadius: BorderRadius.circular(  20)),
                         child: Padding(
                           padding:  EdgeInsets.symmetric(
-                              vertical: Size * 5, horizontal: Size * 10),
+                              vertical:   5, horizontal:   10),
                           child: Text(
-                            isSend ? "Verity" : "Send OTP",
+                            isSend ? "Verify" : "Send OTP",
                             style: TextStyle(
                                 color: Colors.black,
-                                fontSize:  Size *30,
+                                fontSize:   25,
                                 fontWeight: FontWeight.w600),
                           ),
                         ),
@@ -380,7 +379,7 @@ class _createNewUserState extends State<createNewUser> {
                               }
                             }
                             else {
-                              otp = generateCode();
+                              otp = await generateCode();
                              await FirebaseFirestore.instance
                                   .collection("tempRegisters")
                                   .doc(emailController.text)
@@ -445,7 +444,7 @@ class _createNewUserState extends State<createNewUser> {
               ),
               Text(
                 "Your Branch : $branch",
-                style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                style: TextStyle(color: Colors. black, fontSize:   20),
               ),
               if (isTrue)
                 Column(
@@ -454,7 +453,7 @@ class _createNewUserState extends State<createNewUser> {
                   children: [
                     Padding(
                       padding:
-                           EdgeInsets.symmetric(vertical:  Size *15, horizontal:  Size *15),
+                           EdgeInsets.symmetric(vertical:   15, horizontal:   15),
                       child: Text(
                         "Fill the Details",
                         style: creatorHeadingTextStyle,
@@ -467,11 +466,11 @@ class _createNewUserState extends State<createNewUser> {
                               child: TextFormField(
                             controller: firstNameController,
                             textInputAction: TextInputAction.next,
-                            style: textFieldStyle(Size),
+                            style: textFieldStyle(),
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: 'First Name',
-                                hintStyle: textFieldHintStyle(Size)),
+                                hintStyle: textFieldHintStyle()),
                           )),
                         ),
                         Flexible(
@@ -479,11 +478,11 @@ class _createNewUserState extends State<createNewUser> {
                               child: TextFormField(
                             controller: lastNameController,
                             textInputAction: TextInputAction.next,
-                            style: textFieldStyle(Size),
+                            style: textFieldStyle(),
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Last Name',
-                              hintStyle: textFieldHintStyle(Size),
+                              hintStyle: textFieldHintStyle(),
                             ),
                           )),
                         ),
@@ -493,11 +492,11 @@ class _createNewUserState extends State<createNewUser> {
                         child: TextFormField(
                       controller: gmailController,
                       textInputAction: TextInputAction.next,
-                      style: textFieldStyle(Size),
+                      style: textFieldStyle(),
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Enter Personal mail ID',
-                          hintStyle: textFieldHintStyle(Size)),
+                          hintStyle: textFieldHintStyle()),
                       validator: (email) =>
                           email != null && !EmailValidator.validate(email)
                               ? "Enter a valid Email"
@@ -508,11 +507,11 @@ class _createNewUserState extends State<createNewUser> {
                       obscureText: true,
                       controller: passwordController,
                       textInputAction: TextInputAction.next,
-                      style: textFieldStyle(Size),
+                      style: textFieldStyle  (),
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Password',
-                          hintStyle: textFieldHintStyle(Size)),
+                          hintStyle: textFieldHintStyle()),
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) => value != null && value.length < 6
                           ? "Enter min. 6 characters"
@@ -523,11 +522,11 @@ class _createNewUserState extends State<createNewUser> {
                       obscureText: true,
                       controller: passwordController_X,
                       textInputAction: TextInputAction.next,
-                      style: textFieldStyle(Size),
+                      style: textFieldStyle  (),
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Conform Password',
-                        hintStyle: textFieldHintStyle(Size),
+                        hintStyle: textFieldHintStyle  (),
                       ),
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) => value != null && value.length < 6
@@ -536,7 +535,7 @@ class _createNewUserState extends State<createNewUser> {
                     )),
                     Padding(
                       padding:
-                           EdgeInsets.symmetric(vertical:  Size *10, horizontal:  Size *10),
+                           EdgeInsets.symmetric(vertical:   10, horizontal:   10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -554,9 +553,10 @@ class _createNewUserState extends State<createNewUser> {
                     ),
                     if (branch == "None")
                       Padding(
-                        padding:  EdgeInsets.all( Size *8.0),
-                        child: SizedBox(
-                          height:  Size *30,
+                        padding:  EdgeInsets.all(  8.0),
+                        child: Container(
+                          constraints: BoxConstraints(maxHeight: 50),
+
                           child: ListView.separated(
                             physics: const BouncingScrollPhysics(),
                             scrollDirection: Axis.horizontal,
@@ -567,17 +567,17 @@ class _createNewUserState extends State<createNewUser> {
                                 child: Container(
                                     decoration: BoxDecoration(
                                         color: branch == branches[index]
-                                            ? Colors.white.withOpacity(0.6)
-                                            : Colors.white.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular( Size *10)),
+                                            ? Colors. black.withOpacity(0.6)
+                                            : Colors. black.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(  10)),
                                     child: Padding(
                                       padding:  EdgeInsets.symmetric(
-                                          vertical:  Size *3, horizontal:  Size *8),
+                                          vertical:   3, horizontal:   8),
                                       child: Text(
                                         "${branches[index]}",
                                         style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize:  Size *25,
+                                            color: Colors. black,
+                                            fontSize:   25,
                                             fontWeight: FontWeight.w500),
                                       ),
                                     )),
@@ -589,7 +589,7 @@ class _createNewUserState extends State<createNewUser> {
                               );
                             },
                             separatorBuilder: (context, index) => SizedBox(
-                              width:  Size *3,
+                              width:   3,
                             ),
                           ),
                         ),
@@ -599,9 +599,9 @@ class _createNewUserState extends State<createNewUser> {
                         Navigator.pop(context);
                       },
                       child: Padding(
-                        padding: EdgeInsets.only(right: Size * 15),
+                        padding: EdgeInsets.only(right:   15),
                         child:
-                            Text('cancel ', style: TextStyle(fontSize: Size * 20)),
+                            Text('cancel ', style: TextStyle(fontSize:   20)),
                       ),
                     ),
                     TextButton(
@@ -657,13 +657,14 @@ class _createNewUserState extends State<createNewUser> {
                         }
                       },
                       child: Padding(
-                        padding: EdgeInsets.only(right: Size * 15),
+                        padding: EdgeInsets.only(right:   15),
                         child: Text(
                           'Sign up ',
-                          style: TextStyle(fontSize: Size * 20),
+                          style: TextStyle(fontSize:   20),
                         ),
                       ),
                     ),
+                    SizedBox(height: 100,)
                   ],
                 ),
             ],

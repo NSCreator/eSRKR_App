@@ -6,16 +6,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:srkr_study_app/functions.dart';
 
+import 'ads.dart';
+
 class PdfViewerPage extends StatefulWidget {
   final String pdfUrl;
   final int defaultPage;
-  final double size;
+
 
   const PdfViewerPage(
       {Key? key,
       required this.pdfUrl,
-      this.defaultPage = 0,
-      required this.size})
+      this.defaultPage = 0})
       : super(key: key);
 
   @override
@@ -96,30 +97,30 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
             return Dialog(
               backgroundColor: Colors.transparent,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(widget.size * 20)),
+                  borderRadius: BorderRadius.circular(  20)),
               elevation: 16,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white54,
-                  border: Border.all(color: Colors.white24),
-                  borderRadius: BorderRadius.circular(widget.size * 20),
+                  color: Colors. black54,
+                  border: Border.all(color: Colors. black26),
+                  borderRadius: BorderRadius.circular(  20),
                 ),
                 child: ListView(
                   shrinkWrap: true,
                   children: <Widget>[
-                    SizedBox(height: widget.size * 15),
+                    SizedBox(height:   15),
                     Padding(
-                      padding: EdgeInsets.only(left: widget.size * 15),
+                      padding: EdgeInsets.only(left:   15),
                       child: Text(
                         "Press Yes to go back",
                         style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
-                            fontSize: widget.size * 18),
+                            fontSize:   18),
                       ),
                     ),
                     SizedBox(
-                      height: widget.size * 5,
+                      height:   5,
                     ),
                     Center(
                       child: Row(
@@ -134,7 +135,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                               'No',
                               style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: widget.size * 20,
+                                  fontSize:   20,
                                   fontWeight: FontWeight.w600),
                             ),
                           ),
@@ -146,7 +147,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                               'Yes',
                               style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: widget.size * 20,
+                                  fontSize:   20,
                                   fontWeight: FontWeight.w600),
                             ),
                           ),
@@ -154,7 +155,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                       ),
                     ),
                     SizedBox(
-                      height: widget.size * 10,
+                      height:   10,
                     ),
                   ],
                 ),
@@ -210,36 +211,35 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                     ),
               // if(!isGmail())Align(
               //     alignment: Alignment.bottomCenter,
-              //     child: CustomAdsBannerForPdfs(size: widget.size,)),
+              //     child: CustomAdsBannerForPdfs(  )),
               Positioned(
                 left: 0,
-                top: widget.size * 50,
+                top:   50,
                 child: backButton(
-                  color: Colors.black,
-                  size: widget.size,child: SizedBox(width: widget.size * 45,)
+                  color: Colors.black,child: SizedBox(width:   45,)
                 ),
               ),
             ],
           ),
           floatingActionButton: Padding(
-            padding: EdgeInsets.only(bottom: widget.size * 35),
+            padding: EdgeInsets.only(bottom:   35),
             child: Container(
-                height: isExpand ? widget.size * 130 : widget.size * 40,
-                width: widget.size * 40,
+                height: isExpand ?   130 :   40,
+                width:   40,
                 decoration: BoxDecoration(
                   color: isNightMode
-                      ? Colors.white.withOpacity(0.5)
+                      ? Colors. black.withOpacity(0.5)
                       : Colors.black.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(widget.size * 16),
+                  borderRadius: BorderRadius.circular(  16),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Padding(
                       padding: EdgeInsets.only(
-                          left: widget.size * 3,
-                          top: widget.size * 3,
-                          right: widget.size * 3),
+                          left:   3,
+                          top:   3,
+                          right:   3),
                       child: InkWell(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -249,21 +249,21 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                               Text(
                                 "${currentPage! + 1}",
                                 style: TextStyle(
-                                    fontSize: widget.size * 20,
+                                    fontSize:   20,
                                     fontWeight: FontWeight.w600,
                                     color: isNightMode
                                         ? Colors.black
-                                        : Colors.white),
+                                        : Colors. black),
                               )
                             else
                               Icon(
                                   isExpand
                                       ? Icons.expand_more
                                       : Icons.more_horiz,
-                                  size: widget.size * 30,
+                                  size:   30,
                                   color: isNightMode
                                       ? Colors.black
-                                      : Colors.white),
+                                      : Colors. black),
                           ],
                         ),
                         onTap: () {
@@ -283,8 +283,8 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                       Text(
                         "P : ${currentPage! + 1}/$pages",
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: widget.size * 10,
+                            color: Colors. black,
+                            fontSize:   10,
                             fontWeight: FontWeight.w600),
                       ),
                     if (isExpand)
@@ -293,8 +293,8 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                           isSwipeHorizontal
                               ? Icons.swap_vert
                               : Icons.swap_horiz,
-                          size: widget.size * 30,
-                          color: isNightMode ? Colors.black : Colors.white,
+                          size:   30,
+                          color: isNightMode ? Colors.black : Colors. black,
                         ),
                         onTap: () {
                           isSwipeHorizontal = !isSwipeHorizontal;
@@ -303,15 +303,15 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                       ),
                     if (isExpand)
                       Padding(
-                        padding: EdgeInsets.all(widget.size * 3.0),
+                        padding: EdgeInsets.all(  3.0),
                         child: InkWell(
                             child: Icon(
                                 isNightMode
                                     ? Icons.wb_sunny_outlined
                                     : Icons.nightlight_round_rounded,
-                                size: widget.size * 30,
+                                size:   30,
                                 color:
-                                    isNightMode ? Colors.black : Colors.white),
+                                    isNightMode ? Colors.black : Colors. black),
                             onTap: () {
                               isNightMode = !isNightMode;
                               _reloadPage();

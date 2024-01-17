@@ -1,11 +1,12 @@
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'dart:io';
 
-//
+
+
 // class CustomAdsBannerForPdfs extends StatefulWidget {
-//   double size;
-//   CustomAdsBannerForPdfs({required this.size});
+//
+//   CustomAdsBannerForPdfs();
 //   @override
 //   _CustomAdsBannerForPdfsState createState() => _CustomAdsBannerForPdfsState();
 // }
@@ -48,7 +49,7 @@ import 'dart:io';
 //   @override
 //   Widget build(BuildContext context) {
 //     return Container(
-//       height: _isBannerAdLoaded ? _bannerAd.size.height.toDouble() :widget.size *  50,
+//       height: _isBannerAdLoaded ? _bannerAd.size.height.toDouble() :   50,
 //       child: AdWidget(ad: _bannerAd),
 //     );
 //   }

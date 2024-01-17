@@ -1,20 +1,19 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'functions.dart';
+import 'package:srkr_study_app/test.dart';
+import 'TextField.dart';
+import 'subjects.dart';
 
 class MyAppq extends StatefulWidget {
+  BranchStudyMaterialsConvertor data;
   final String branch;
   final String reg;
-  final double size;
 
-
-  const MyAppq(
-      {Key? key,
-      required this.branch,
-      required this.reg,
-      required this.size})
-      : super(key: key);
+  MyAppq({
+    Key? key,
+    required this.branch,
+    required this.data,
+    required this.reg,
+  }) : super(key: key);
 
   @override
   State<MyAppq> createState() => _MyAppqState();
@@ -23,408 +22,251 @@ class MyAppq extends StatefulWidget {
 class _MyAppqState extends State<MyAppq> {
   String name = "";
 
-  String folderPath = "";
-
-  Future<void> getPath() async {
-    final directory = await getApplicationDocumentsDirectory();
-    setState(() {
-      folderPath = '${directory.path}';
-    });
-  }
-
   @override
-  void initState() {
-    getPath();
-    super.initState();
-  }
+  Widget build(BuildContext context) => Scaffold(
 
-  @override
-  Widget build(BuildContext context) =>backgroundcolor(
-    child: Scaffold(
-        backgroundColor: Colors.transparent,
-    //     body: SafeArea(
-    //   child: Column(
-    //     mainAxisAlignment: MainAxisAlignment.start,
-    //     crossAxisAlignment: CrossAxisAlignment.start,
-    //     children: [
-    //       Padding(
-    //         padding: EdgeInsets.symmetric(
-    //             horizontal: widget.size * 10,
-    //             vertical: widget.size * 5),
-    //         child: Row(
-    //           children: [
-    //             InkWell(
-    //               child: Icon(Icons.arrow_back,color: Colors.white,size: widget.size*30,),
-    //               onTap: (){
-    //                 Navigator.pop(context);
-    //               },
-    //             ),
-    //             Flexible(
-    //                 child: TextFieldContainer(child:
-    //                 TextField(
-    //                   onChanged: (val) {
-    //                     setState(() {
-    //                       name = val;
-    //                     });
-    //                   },
-    //                   style: TextStyle(
-    //                       color: Colors.white,
-    //                       fontSize: widget.size * 20),
-    //                   decoration: InputDecoration(
-    //                     icon: Icon(
-    //                       Icons.search,
-    //                       color: Colors.white,
-    //                       size: widget.size * 20,
-    //                     ),
-    //                     border: InputBorder.none,
-    //                     hintText: 'Search Bar',
-    //                     hintStyle: TextStyle(
-    //                         color: Colors.white60,
-    //                         fontSize: widget.size * 20),
-    //                   ),
-    //                 ))
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //       Expanded(
-    //         child: SingleChildScrollView(
-    //           child: Column(
-    //             mainAxisAlignment: MainAxisAlignment.start,
-    //             crossAxisAlignment: CrossAxisAlignment.start,
-    //             children: [
-    //
-    //               if(name.isNotEmpty)StreamBuilder<QuerySnapshot>(
-    //                 stream: FirebaseFirestore.instance
-    //                     .collection(widget.branch)
-    //                     .doc("Subjects")
-    //                     .collection("Subjects")
-    //                     .snapshots(),
-    //                 builder: (context, snapshots) {
-    //                   return (snapshots.connectionState ==
-    //                       ConnectionState.waiting)
-    //                       ? Center(
-    //                     child: CircularProgressIndicator(),
-    //                   )
-    //                       : Column(
-    //                     mainAxisAlignment: MainAxisAlignment.start,
-    //                     crossAxisAlignment: CrossAxisAlignment.start,
-    //                         children: [
-    //                           Padding(
-    //                             padding: EdgeInsets.only(
-    //                                 left: widget.size * 10,
-    //                                 bottom: widget.size * 3,
-    //                                 top: widget.size * 5),
-    //                             child: InkWell(
-    //                               child: Text(
-    //                                 "Subjects",
-    //                                 style: TextStyle(
-    //                                     color: Colors.purpleAccent,
-    //                                     fontSize: widget.size * 20),
-    //                               ),
-    //                               onTap: () {
-    //                                 Navigator.push(
-    //                                     context,
-    //                                     MaterialPageRoute(
-    //                                         builder: (context) => Subjects(
-    //                                           branch: widget.branch,
-    //                                           reg: widget.reg,
-    //                                           width: widget.size,
-    //                                           height: widget.size,
-    //                                           size: widget.size,
-    //                                         )));
-    //                               },
-    //                             ),
-    //                           ),
-    //                           ListView.builder(
-    //                           physics:
-    //                           NeverScrollableScrollPhysics(),
-    //                           itemCount:
-    //                           snapshots.data!.docs.length,
-    //                           shrinkWrap: true,
-    //                           itemBuilder: (context, index) {
-    //                             var data = snapshots
-    //                                 .data!.docs[index]
-    //                                 .data() as Map<String, dynamic>;
-    //
-    //                             if (data['heading']
-    //                                 .toString().split(";").first
-    //                                 .toLowerCase()
-    //                                 .startsWith(
-    //                                 name.toLowerCase())||data['heading']
-    //                                 .toString().split(";").last
-    //                                 .toLowerCase()
-    //                                 .startsWith(
-    //                                 name.toLowerCase())||data['regulation']
-    //                                 .toString()
-    //                                 .toLowerCase()
-    //                                 .startsWith(
-    //                                 name.toLowerCase())) {
-    //                               return Column(
-    //                                 mainAxisAlignment: MainAxisAlignment.start,
-    //                                 crossAxisAlignment: CrossAxisAlignment.start,
-    //                                 children: [
-    //
-    //                                   Padding(
-    //                                     padding: EdgeInsets.symmetric(
-    //                                         horizontal: widget.size * 10,
-    //                                         vertical: widget.size * 1),
-    //                                     child: InkWell(
-    //                                       child: Container(
-    //                                         width: double.infinity,
-    //                                         decoration: BoxDecoration(
-    //                                             color: Colors.black38,
-    //                                             borderRadius:
-    //                                             BorderRadius.all(
-    //                                                 Radius.circular(
-    //                                                     widget.size *
-    //                                                         20))),
-    //                                         child:
-    //                                         Padding(
-    //                                           padding:  EdgeInsets.symmetric(horizontal: widget.size *10,vertical: widget.size *5),
-    //                                           child: Column(
-    //                                             mainAxisAlignment:
-    //                                             MainAxisAlignment
-    //                                                 .start,
-    //                                             crossAxisAlignment:
-    //                                             CrossAxisAlignment
-    //                                                 .start,
-    //                                             children: [
-    //                                               Text(
-    //                                                 data['heading'].toString().replaceAll(";", " - "),
-    //                                                 style:
-    //                                                 TextStyle(
-    //                                                   fontSize:
-    //                                                   widget.size *
-    //                                                       20.0,
-    //                                                   color: Colors
-    //                                                       .white,
-    //                                                   fontWeight:
-    //                                                   FontWeight
-    //                                                       .w600,
-    //                                                 ),
-    //                                               ),
-    //                                               SizedBox(
-    //                                                 height: widget
-    //                                                     .size *
-    //                                                     2,
-    //                                               ),
-    //                                               Text(
-    //                                                 data[
-    //                                                 'description'],
-    //                                                 style:
-    //                                                 TextStyle(
-    //                                                   fontSize:
-    //                                                   widget.size *
-    //                                                       13.0,
-    //                                                   color: Colors.white60,
-    //                                                 ),
-    //                                               ),
-    //                                             ],
-    //                                           ),
-    //                                         ),
-    //                                       ),
-    //                                       onTap: () {
-    //                                         Navigator.push(
-    //                                             context,
-    //                                             MaterialPageRoute(
-    //                                                 builder: (context) =>
-    //                                                     subjectUnitsData(
-    //                                                       reg: data[
-    //                                                       "regulation"],
-    //
-    //                                                       size: widget
-    //                                                           .size,
-    //                                                       branch: widget
-    //                                                           .branch,
-    //
-    //                                                       mode:
-    //                                                       "Subjects",
-    //                                                       ,
-    //
-    //                                                     )));
-    //                                       },
-    //                                     ),
-    //                                   ),
-    //                                 ],
-    //                               );
-    //                             }
-    //                             return Container(
-    //                             );
-    //                           }),
-    //                         ],
-    //                       );
-    //                 },
-    //               ),
-    //
-    //               if(name.isNotEmpty)StreamBuilder<QuerySnapshot>(
-    //                 stream: FirebaseFirestore.instance
-    //                     .collection(widget.branch)
-    //                     .doc("LabSubjects")
-    //                     .collection("LabSubjects")
-    //                     .snapshots(),
-    //                 builder: (context, snapshots) {
-    //                   return (snapshots.connectionState ==
-    //                       ConnectionState.waiting)
-    //                       ? Center(
-    //                     child: CircularProgressIndicator(),
-    //                   )
-    //                       : Column(
-    //                     mainAxisAlignment: MainAxisAlignment.start,
-    //                         crossAxisAlignment: CrossAxisAlignment.start,
-    //                         children: [
-    //
-    //                           Padding(
-    //                             padding: EdgeInsets.only(
-    //                                 left: widget.size * 10,
-    //                                 bottom: widget.size * 3,
-    //                                 top: widget.size * 20),
-    //                             child: InkWell(
-    //                               child: Text(
-    //                                 "Lab Subjects",
-    //                                 style: TextStyle(
-    //                                     color: Colors.purpleAccent,
-    //                                     fontSize: widget.size * 20),
-    //                               ),
-    //                               onTap: () {
-    //                                 Navigator.push(
-    //                                     context,
-    //                                     MaterialPageRoute(
-    //                                         builder: (context) => LabSubjects(
-    //                                           branch: widget.branch,
-    //                                           reg: widget.reg,
-    //
-    //                                           size: widget.size,
-    //                                         )));
-    //                               },
-    //                             ),
-    //                           ),
-    //
-    //                           ListView.builder(
-    //                           physics:
-    //                           NeverScrollableScrollPhysics(),
-    //                           itemCount:
-    //                           snapshots.data!.docs.length,
-    //                           shrinkWrap: true,
-    //                           itemBuilder: (context, index) {
-    //                             var data = snapshots
-    //                                 .data!.docs[index]
-    //                                 .data() as Map<String, dynamic>;
-    //
-    //                             if (data['heading']
-    //                                 .toString().split(";").first
-    //                                 .toLowerCase()
-    //                                 .startsWith(
-    //                                 name.toLowerCase())||data['heading']
-    //                                 .toString().split(";").last
-    //                                 .toLowerCase()
-    //                                 .startsWith(
-    //                                 name.toLowerCase())||data['regulation']
-    //                                 .toString()
-    //                                 .toLowerCase()
-    //                                 .startsWith(
-    //                                 name.toLowerCase())) {
-    //                               return Padding(
-    //                                 padding: EdgeInsets.symmetric(
-    //                                     horizontal: widget.size * 10,
-    //                                     vertical: widget.size * 1),
-    //                                 child: InkWell(
-    //                                   child: Container(
-    //                                     width: double.infinity,
-    //                                     decoration: BoxDecoration(
-    //                                         color: Colors.black38,
-    //                                         borderRadius:
-    //                                         BorderRadius.all(
-    //                                             Radius.circular(
-    //                                                 widget.size *
-    //                                                     20))),
-    //                                     child:
-    //                                     Padding(
-    //                                       padding:  EdgeInsets.symmetric(horizontal: widget.size *15,vertical: widget.size *8),
-    //                                       child: Column(
-    //                                         mainAxisAlignment:
-    //                                         MainAxisAlignment
-    //                                             .start,
-    //                                         crossAxisAlignment:
-    //                                         CrossAxisAlignment
-    //                                             .start,
-    //                                         children: [
-    //                                           Text(
-    //                                             data['heading'],
-    //                                             style:
-    //                                             TextStyle(
-    //                                               fontSize:
-    //                                               widget.size *
-    //                                                   20.0,
-    //                                               color: Colors
-    //                                                   .white,
-    //                                               fontWeight:
-    //                                               FontWeight
-    //                                                   .w600,
-    //                                             ),
-    //                                           ),
-    //                                           SizedBox(
-    //                                             height: widget
-    //                                                 .size *
-    //                                                 2,
-    //                                           ),
-    //                                           Text(
-    //                                             data[
-    //                                             'description'],
-    //                                             style:
-    //                                             TextStyle(
-    //                                               fontSize:
-    //                                               widget.size *
-    //                                                   13.0,
-    //                                               color: Colors.white60,
-    //                                             ),
-    //                                           ),
-    //                                         ],
-    //                                       ),
-    //                                     ),
-    //                                   ),
-    //                                   onTap: () {
-    //                                     Navigator.push(
-    //                                         context,
-    //                                         MaterialPageRoute(
-    //                                             builder: (context) =>
-    //                                                 subjectUnitsData(
-    //
-    //
-    //                                                   size: widget
-    //                                                       .size,
-    //                                                   branch: widget
-    //                                                       .branch,
-    //
-    //                                                   mode:
-    //                                                   "LabSubjects",
-    //                                                   data: data,
-    //
-    //
-    //                                                 )));
-    //                                   },
-    //                                 ),
-    //                               );
-    //                             }
-    //                             return Container();
-    //                           }),
-    //                         ],
-    //                       );
-    //                 },
-    //               ),
-    //               SizedBox(
-    //                 height: widget.size *50,
-    //               )
-    //             ],
-    //           ),
-    //         ),
-    //       ),
-    //
-    //     ],
-    //   ),
-    // )
-    ),
-  );
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Row(
+                children: [
+                  InkWell(
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                      size: 30,
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  Flexible(
+                      child: TextFieldContainer(
+                          child: TextField(
+                    onChanged: (val) {
+                      setState(() {
+                        name = val;
+                      });
+                    },
+                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    decoration: InputDecoration(
+                      icon: Icon(
+                        Icons.search,
+                        color: Colors.black,
+                        size: 20,
+                      ),
+                      border: InputBorder.none,
+                      hintText: 'Search Bar',
+                      hintStyle: TextStyle(color: Colors.black54, fontSize: 20),
+                    ),
+                  ))),
+                ],
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 10, bottom: 3, top: 5),
+                          child: InkWell(
+                            child: Text(
+                              "Subjects",
+                              style: TextStyle(
+                                  color: Colors.black, fontSize: 20),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Subjects(
+                                            branch: widget.branch,
+                                            reg: widget.reg,
+                                            subjects: widget.data.subjects,
+                                            syllabusModelPaper:
+                                                widget.data.regSylMP,
+                                          )));
+                            },
+                          ),
+                        ),
+                        ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: widget.data.subjects.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              var data = widget.data.subjects[index];
+                              if (data.heading.short
+                                      .toLowerCase()
+                                      .startsWith(name.toLowerCase()) ||
+                                  data.heading.full
+                                      .toLowerCase()
+                                      .startsWith(name.toLowerCase()) ||
+                                  data.regulation
+                                      .contains(name.toUpperCase()) ||
+                                  name.isEmpty) {
+                                return InkWell(
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 2),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        color: Colors.black12,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20))),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "${data.heading.short} - ${data.heading.full}",
+                                            style: TextStyle(
+                                              fontSize: 20.0,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                subjectUnitsData(
+                                                  reg: widget.reg,
+                                                  branch: widget.branch,
+                                                  mode: true,
+                                                  syllabusModelPaper:
+                                                      widget
+                                                          .data.regSylMP,
+                                                  data: data,
+                                                )));
+                                  },
+                                );
+                              }
+                              return Container();
+                            }),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding:
+                              EdgeInsets.only(left: 10, bottom: 3, top: 20),
+                          child: InkWell(
+                            child: Text(
+                              "Lab Subjects",
+                              style: TextStyle(
+                                  color: Colors.black, fontSize: 20),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LabSubjects(
+                                            branch: widget.branch,
+                                            reg: widget.reg,
+                                            labSubjects:
+                                                widget.data.labSubjects,
+                                            syllabusModelPaper:
+                                                widget.data.regSylMP,
+                                          )));
+                            },
+                          ),
+                        ),
+                        ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: widget.data.labSubjects.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              var data = widget.data.labSubjects[index];
+
+                              if (data.heading.short
+                                      .toLowerCase()
+                                      .startsWith(name.toLowerCase()) ||
+                                  data.heading.full
+                                      .toLowerCase()
+                                      .startsWith(name.toLowerCase()) ||
+                                  data.regulation
+                                      .contains(name.toUpperCase()) ||
+                                  name.isEmpty) {
+                                return InkWell(
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 2),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        color: Colors.black12,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20))),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "${data.heading.short} - ${data.heading.full}",
+                                            style: TextStyle(
+                                              fontSize: 20.0,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                subjectUnitsData(
+                                                  branch: widget.branch,
+                                                  mode: false,
+                                                  data: data,
+                                                  reg: widget.reg,
+                                                  syllabusModelPaper:
+                                                      widget.data.regSylMP,
+                                                )));
+                                  },
+                                );
+                              }
+                              return Container();
+                            }),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 50,
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ));
 }
-
-

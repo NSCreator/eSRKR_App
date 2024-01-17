@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, deprecated_member_use
 
 import 'dart:io';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,42 +12,91 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'homePage/settings.dart';
 import 'notification.dart';
+class scrollingImages extends StatefulWidget {
+  AspectRatio ar;
+  final List images;
+  final String id;
+  bool isZoom;
+
+  scrollingImages(
+      {Key? key, required this.images, required this.id, this.isZoom = false,this.ar=const AspectRatio(aspectRatio: 16 / 9),})
+      : super(key: key);
+
+  @override
+  State<scrollingImages> createState() => _scrollingImagesState();
+}
+
+class _scrollingImagesState extends State<scrollingImages> {
+  String imagesDirPath = '';
+  int currentPos = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(25),
+          child: CarouselSlider.builder(
+              itemCount: widget.images.length,
+              options: CarouselOptions(
+                  aspectRatio: widget.ar.aspectRatio,
+                  viewportFraction: 1.0,
+                  enableInfiniteScroll: true,
+                  autoPlay: widget.images.length > 1 ? true : false,
+                  autoPlayInterval: const Duration(seconds: 3),
+                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                  autoPlayCurve: Curves.fastOutSlowIn,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      currentPos = index;
+                    });
+                  }),
+              itemBuilder:
+                  (BuildContext context, int itemIndex, int pageViewIndex) {
+                return ImageShowAndDownload(
+                  image: widget.images[itemIndex],
+                  isZoom: widget.isZoom,
+                );
+              }),
+        ),
+
+        Positioned(
+          bottom: 5,right: 20,
+          child: Container(
+            decoration: BoxDecoration(color: Colors.black,borderRadius: BorderRadius.circular(5)),
+
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: widget.images.map((url) {
+                int index = widget.images.indexOf(url);
+                return Container(
+                  width: 5.0,
+                  height: 5.0,
+                  margin:
+                  const EdgeInsets.symmetric(vertical: 2.0, horizontal: 2.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: currentPos == index
+                        ? Colors.white
+                        :  Colors.white24,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 class Constants {
   static final String BASE_URL = 'https://fcm.googleapis.com/fcm/send';
   static final String KEY_SERVER = "AAAA1rq9xW8:APA91bE_dMaAdvS09kz8BOFA2Oy6ZUEee8tcTUMmNYsiyWVyBPbMRfoZ1VgmGD_arVZ9Uib_TDHhmjBvkW75tMovO8jdV6zgUOwZ4z5pmdrAz0MAodlFVd9ssphVxJ2l_WCDuB0KSjiU";
   static final String SENDER_ID = '922256000367	';
-}
-class backgroundcolor extends StatefulWidget {
-  Widget child;
-
-  backgroundcolor({required this.child});
-
-  @override
-  State<backgroundcolor> createState() => _backgroundcolorState();
-}
-
-class _backgroundcolorState extends State<backgroundcolor> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: double.infinity,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withOpacity(0.05),
-            Colors.blue.withOpacity(0.12),
-            Colors.black.withOpacity(0.12),
-          ],
-        ),
-      ),
-      child: widget.child,
-    );
-  }
 }
 
 fullUserId() {
@@ -83,11 +133,6 @@ class Utils {
 
 
 
-double size(BuildContext context) {
-  MediaQueryData mediaQuery = MediaQuery.of(context);
-  double screenHeight = ((mediaQuery.size.height/800)+(mediaQuery.size.width/400))/2;
-  return screenHeight;
-}
 
 
 
@@ -108,6 +153,63 @@ Future<void> ExternalLaunchUrl(String url) async {
 }
 
 
+String calculateTimeDifference(String inputDate) {
+  DateTime parsedDate = DateFormat("dd.MM.yyyy-HH:mm:ss").parse(inputDate);
+  DateTime currentDate = DateTime.now();
+
+  Duration difference = currentDate.difference(parsedDate);
+
+  if (difference.inDays > 365) {
+    int years = difference.inDays ~/ 365;
+    return "$years years ago";
+  } else if (difference.inDays > 30) {
+    int months = difference.inDays ~/ 30;
+    return "$months months ago";
+  } else if (difference.inDays > 0) {
+    return "${difference.inDays} days ago";
+  } else if (difference.inHours > 0) {
+    return "${difference.inHours} hours ago";
+  } else if (difference.inMinutes > 0) {
+    return "${difference.inMinutes} minutes ago";
+  } else {
+    return "${difference.inSeconds} seconds ago";
+  }
+}
+String formatTimeDifference(DateTime postedTime) {
+  DateTime currentTime = DateTime.now();
+  Duration difference = currentTime.difference(postedTime);
+
+  int minutesDifference = difference.inMinutes;
+  int hoursDifference = difference.inHours;
+  int daysDifference = difference.inDays;
+  int monthsDifference = currentTime.month -
+      postedTime.month +
+      (currentTime.year - postedTime.year) * 12;
+
+  if (monthsDifference > 12) {
+    int yearsDifference = monthsDifference ~/ 12;
+    return '$yearsDifference years ago';
+  } else if (monthsDifference > 0) {
+    return '$monthsDifference months ago';
+  } else if (daysDifference > 0) {
+    return '$daysDifference days ago';
+  } else if (hoursDifference > 0) {
+    return '$hoursDifference hours ago';
+  } else {
+    return '$minutesDifference mins ago';
+  }
+}
+String getFileName(String url) {
+  var name;
+  if (url.startsWith('https://drive.google.com')) {
+    name = url.split('/d/')[1].split('/')[0];
+  } else {
+    final Uri uri = Uri.parse(url);
+    final String fileName = uri.pathSegments.last;
+    name = fileName.split("/").last;
+  }
+  return name;
+}
 
 picText(String id) {
   var user;
@@ -132,13 +234,13 @@ Future<void> showToastText(String message) async {
 }
 class backButton extends StatefulWidget {
   final Color color;
-  final double size;
+
   final String text;
    Widget child;
 
   backButton({
-    this.color = Colors.white,
-    required this.size,
+    this.color = Colors. black,
+
     this.text = "",
      required this.child,
   }) ;
@@ -150,7 +252,7 @@ class _backButtonState extends State<backButton> {
   @override
   Widget build(BuildContext context) {
     return  Padding(
-      padding:  EdgeInsets.symmetric(vertical: widget.size*5,horizontal: widget.size*5),
+      padding:  EdgeInsets.symmetric(vertical:  5,horizontal:  5),
       child: InkWell(
         onTap: (){
           Navigator.pop(context);
@@ -160,20 +262,20 @@ class _backButtonState extends State<backButton> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              padding:  EdgeInsets.only(left:widget.size * 10,right: widget.size * 10),
-              child: Icon(Icons.arrow_back,color: widget.color,size:widget.size *  20,),
+              padding:  EdgeInsets.only(left:  10,right:   10),
+              child: Icon(Icons.arrow_back,color: widget.color,size:   20,),
             ),
-           if(widget.text.isNotEmpty) Expanded(
-             child: Text(
-               widget.text,
-               style: TextStyle(
-                   color: Colors.white,
-                   fontSize: widget.size * 20,
-                   fontWeight: FontWeight.w600),
-               maxLines: 1,
-               overflow: TextOverflow.ellipsis,
-             ),
-           ),
+            if(widget.text.isNotEmpty) Expanded(
+              child: Text(
+                widget.text,
+                style: TextStyle(
+                    color: Colors. black,
+                    fontSize:   16,
+                    fontWeight: FontWeight.w600),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
             widget.child
           ],
         ),
@@ -189,7 +291,7 @@ class StyledTextWidget extends StatelessWidget {
   StyledTextWidget(
       {required this.text,
         this.fontSize = 14,
-        this.color = Colors.white,
+        this.color = Colors. black,
         this.fontWeight = FontWeight.normal});
 
   @override
@@ -209,7 +311,7 @@ class StyledTextWidget extends StatelessWidget {
               child: InkWell(
                 child: Text(
                   "${word.substring(0,35)}.... ",
-                  style: TextStyle(color: Colors.lightBlueAccent,
+                  style: TextStyle(color: Colors.deepOrange,
                       fontSize: fontSize),
                 ),
                 onTap: () {
@@ -227,13 +329,13 @@ class StyledTextWidget extends StatelessWidget {
             WidgetSpan(
               child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.white12,
+                    color: Colors. black12,
                     borderRadius: BorderRadius.circular(5.0),
-                    border: Border.all(color: Colors.white54)),
+                    border: Border.all(color: Colors. black54)),
                 padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2),
                 child: Text(
                   word.substring(2),
-                  style: TextStyle(color: Colors.white, fontSize: fontSize ),
+                  style: TextStyle(color: Colors. black, fontSize: fontSize ),
                 ),
               ),
             ),
@@ -300,8 +402,8 @@ Future<void> updateToken(String branch) async {
 class downloadAllPdfs extends StatefulWidget {
   String branch,SubjectID;
   String mode;
-  double size;
- downloadAllPdfs({required this.branch,required this.SubjectID,required this.mode,required this.size});
+    
+ downloadAllPdfs({required this.branch,required this.SubjectID,required this.mode,  });
 
   @override
   State<downloadAllPdfs> createState() => _downloadAllPdfsState();
@@ -383,7 +485,7 @@ class _downloadAllPdfsState extends State<downloadAllPdfs> {
     return InkWell(
       child: Container(
         decoration: BoxDecoration(
-            color: Colors.white12,
+            color: Colors. black12,
             borderRadius: BorderRadius.circular(20)
         ),
         child: Padding(
@@ -393,8 +495,8 @@ class _downloadAllPdfsState extends State<downloadAllPdfs> {
             children: <Widget>[
 
               SizedBox(
-                height:widget.size* 28,
-                width: widget.size*28,
+                height:  28,
+                width:  28,
                 child: CircularProgressIndicator(
                    strokeWidth: 3,
                   color: Colors.green,
@@ -402,15 +504,15 @@ class _downloadAllPdfsState extends State<downloadAllPdfs> {
                 ),
               ),
               if(isDownloaded)SizedBox(
-                height:widget.size* 34,
-                width: widget.size*34,
+                height:  34,
+                width:  34,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
 
                   color: Colors.red,
                 ),
               ),
-              Icon(isDownloaded?Icons.download_done:Icons.file_download_outlined, size:widget.size* 30.0,color: isDownloaded?Colors.greenAccent:Colors.purpleAccent,),
+              Icon(isDownloaded?Icons.download_done:Icons.file_download_outlined, size:  30.0,color: isDownloaded?Colors.greenAccent:Colors.purpleAccent,),
             ],
           ),
         ),

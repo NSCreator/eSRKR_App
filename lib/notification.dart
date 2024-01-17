@@ -13,13 +13,12 @@ import 'functions.dart';
 
 class notifications extends StatefulWidget {
   final String branch;
-  final double size;
 
 
   const notifications(
       {Key? key,
       required this.branch,
-      required this.size,})
+      })
       : super(key: key);
 
   @override
@@ -42,10 +41,8 @@ class _notificationsState extends State<notifications>
   }
   Map<String, Color> colorMap = {};
 
-  // Function to get or generate a color for a given combination
   Color getColorForCombination(String combination) {
     if (!colorMap.containsKey(combination)) {
-      // Generate a random color if the combination is not in the map
       colorMap[combination] = Color(0xFF000000 + (combination.hashCode & 0xFFFFFF));
     }
     return colorMap[combination]!;
@@ -68,30 +65,29 @@ class _notificationsState extends State<notifications>
       body: SafeArea(
         child: Column(children: [
           backButton(
-              size: widget.size,
               text: "Notifications",
               child: SizedBox(
-                width: widget.size *45,
+                width:  45,
               )),
           Container(
             color: Colors.transparent,
-            height: widget.size * 30,
+            height:   30,
             child: Center(
               child: TabBar(
                 dividerColor: Colors.transparent,
                 indicator: BoxDecoration(
-                    borderRadius: BorderRadius.circular(widget.size * 15),
-                    color: Colors.white24),
+                    borderRadius: BorderRadius.circular(  15),
+                    color: Colors. black26),
                 controller: _tabController,
                 isScrollable: true,
-                labelPadding: EdgeInsets.symmetric(horizontal: widget.size * 5),
+                labelPadding: EdgeInsets.symmetric(horizontal:   5),
                 tabs: [
                   Tab(
                     child: Text(
                       "   All   ",
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: widget.size * 25,
+                        color: Colors. black,
+                        fontSize:   25,
                       ),
                     ),
                   ),
@@ -99,7 +95,7 @@ class _notificationsState extends State<notifications>
                     child: Text(
                       "   Personal   ",
                       style: TextStyle(
-                          color: Colors.white, fontSize: widget.size * 25),
+                          color: Colors. black, fontSize:   25),
                     ),
                   )
                 ],
@@ -142,13 +138,13 @@ class _notificationsState extends State<notifications>
                                   return Padding(
                                     padding: Notification.fromTo == fullUserId()
                                         ? EdgeInsets.only(
-                                            left: widget.size * 30,
-                                            right: widget.size * 5,
-                                            top:widget.size * 5)
+                                            left:   30,
+                                            right:   5,
+                                            top:  5)
                                         : EdgeInsets.only(
-                                            right:widget.size * 30,
-                                            left: widget.size * 5,
-                                            top: widget.size * 5),
+                                            right:  30,
+                                            left:   5,
+                                            top:   5),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -158,14 +154,14 @@ class _notificationsState extends State<notifications>
                                         if (Notification.fromTo.split("~")[0] != fullUserId())
                                           Padding(
                                             padding: EdgeInsets.all(
-                                                widget.size * 3.0),
+                                                  3.0),
                                             child: Container(
-                                              height: widget.size * 35,
-                                              width: widget.size * 35,
+                                              height:   35,
+                                              width:   35,
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(
-                                                        widget.size * 17),
+                                                          17),
                                                 color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
                                               ),
                                               child: Center(
@@ -173,7 +169,7 @@ class _notificationsState extends State<notifications>
                                                 picText(Notification.fromTo.split("~")[0]),
                                                 style: TextStyle(
                                                     color: Colors.black,
-                                                    fontSize: widget.size * 12,
+                                                    fontSize:   12,
                                                     fontWeight:
                                                         FontWeight.w600),
                                               )),
@@ -186,9 +182,9 @@ class _notificationsState extends State<notifications>
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                widget.size * 15,
+                                                  15,
                                               ),
-                                              color: Notification.fromTo.split("~")[0] != fullUserId()?Colors.white12:Colors.blue.withOpacity(0.3),
+                                              color: Notification.fromTo.split("~")[0] != fullUserId()?Colors. black12:Colors.blue.withOpacity(0.3),
                                             ),
                                             child: Row(
                                               mainAxisAlignment:
@@ -209,7 +205,7 @@ class _notificationsState extends State<notifications>
                                                           "   ~ ${Notification.fromTo.split("@")[0]}",
                                                           style: TextStyle(
                                                             fontSize:
-                                                                widget.size *
+                                                                 
                                                                     12.0,
                                                             color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
                                                             fontWeight:
@@ -220,13 +216,13 @@ class _notificationsState extends State<notifications>
                                                         Padding(
                                                           padding: EdgeInsets
                                                               .fromLTRB(
-                                                                  widget.size *
+                                                                   
                                                                       8,
-                                                                  widget.size *
+                                                                   
                                                                       1,
-                                                                  widget.size *
+                                                                   
                                                                       10,
-                                                                  widget.size *
+                                                                   
                                                                       1),
                                                           child: Column(
                                                             children: [
@@ -234,10 +230,10 @@ class _notificationsState extends State<notifications>
                                                                 '${Notification.id}',
                                                                 style: TextStyle(
                                                                     fontSize:
-                                                                        widget.size *
+                                                                         
                                                                             10.0,
                                                                     color: Colors
-                                                                        .white,
+                                                                        . black,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w500
@@ -252,15 +248,15 @@ class _notificationsState extends State<notifications>
                                                     Padding(
                                                       padding: EdgeInsets.only(
                                                           left:
-                                                              widget.size * 10,
+                                                                10,
                                                           right:
-                                                              widget.size * 5,
-                                                          top: widget.size * 3,
-                                                          bottom: widget.size * 8,
+                                                                5,
+                                                          top:   3,
+                                                          bottom:   8,
                                                       ),
                                                       child: StyledTextWidget(
                                                         fontSize:
-                                                            widget.size * 13,
+                                                              13,
                                                         text: Notification.data,
 
                                                       ),
@@ -270,9 +266,9 @@ class _notificationsState extends State<notifications>
                                                         3)
                                                       Padding(
                                                         padding: EdgeInsets.all(
-                                                            widget.size * 3.0),
+                                                              3.0),
                                                         child: ClipRRect(
-                                                          borderRadius: BorderRadius.circular(widget.size *15),
+                                                          borderRadius: BorderRadius.circular( 15),
                                                           child: ImageShowAndDownload(image: Notification.image, isZoom: true,),
                                                         ),
                                                       )
@@ -284,12 +280,12 @@ class _notificationsState extends State<notifications>
                                         ),
                                         if (isOwner()||isGmail()||Notification.fromTo.split("~")[0] == fullUserId())
                                           SizedBox(
-                                            width: widget.size *20,
+                                            width:  20,
                                             child: PopupMenuButton(
                                               icon: Icon(
                                                 Icons.more_vert,
-                                                color: Colors.white,
-                                                size: widget.size * 25,
+                                                color: Colors. black,
+                                                size:   25,
                                               ),
                                               // Callback that sets the selected popup menu item.
                                               onSelected: (item) {
@@ -320,7 +316,7 @@ class _notificationsState extends State<notifications>
                                   );
                                 },
                                 separatorBuilder: (context, index) => SizedBox(
-                                      height: widget.size * 1,
+                                      height:   1,
                                     ));
                           }
                       }
@@ -353,16 +349,16 @@ class _notificationsState extends State<notifications>
                                   return Padding(
                                     padding: Notification.fromTo.split("~")[0] == fullUserId()
                                         ? EdgeInsets.only(
-                                      bottom: index==0?widget.size * 15:0,
-                                        left: widget.size * 35,
-                                        right: widget.size *5,
-                                        top:widget.size *5)
+                                      bottom: index==0?  15:0,
+                                        left:   35,
+                                        right:  5,
+                                        top: 5)
                                         : EdgeInsets.only(
-                                        bottom: index==0?widget.size *15:0,
+                                        bottom: index==0? 15:0,
 
-                                        right: widget.size *35,
-                                        left: widget.size * 5,
-                                        top:widget.size *5),
+                                        right:  35,
+                                        left:   5,
+                                        top: 5),
                                     child: Row(
                                       mainAxisAlignment:
                                       MainAxisAlignment.start,
@@ -372,14 +368,14 @@ class _notificationsState extends State<notifications>
                                         if (Notification.fromTo.split("~")[0] != fullUserId())
                                           Padding(
                                             padding: EdgeInsets.all(
-                                                widget.size * 3.0),
+                                                  3.0),
                                             child: Container(
-                                              height: widget.size * 35,
-                                              width: widget.size * 35,
+                                              height:   35,
+                                              width:   35,
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                 BorderRadius.circular(
-                                                    widget.size * 17),
+                                                      17),
                                                 color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
                                               ),
                                               child: Center(
@@ -387,7 +383,7 @@ class _notificationsState extends State<notifications>
                                                     picText(Notification.fromTo),
                                                     style: TextStyle(
                                                         color: Colors.black,
-                                                        fontSize: widget.size * 13,
+                                                        fontSize:   13,
                                                         fontWeight:
                                                         FontWeight.w800),
                                                   )),
@@ -400,9 +396,9 @@ class _notificationsState extends State<notifications>
                                             decoration: BoxDecoration(
                                               borderRadius:
                                               BorderRadius.circular(
-                                                widget.size * 15,
+                                                  15,
                                               ),
-                                              color: Notification.fromTo.split("~")[0] != fullUserId()?Colors.white12:Colors.blue.withOpacity(0.3),
+                                              color: Notification.fromTo.split("~")[0] != fullUserId()?Colors. black12:Colors.blue.withOpacity(0.3),
                                             ),
                                             child: Row(
                                               mainAxisAlignment:
@@ -423,7 +419,7 @@ class _notificationsState extends State<notifications>
                                             Notification.fromTo.split("~")[0] != fullUserId()?"   ~ ${Notification.fromTo.split("~")[0].split("@")[0]}":"   to ${Notification.fromTo.split("~")[1].split("@")[0]}",
                                                               style: TextStyle(
                                                                 fontSize:
-                                                                widget.size *
+                                                                 
                                                                     12.0,
                                                                 color: getColorForCombination( picText(Notification.fromTo.split("~")[0])),
                                                                 fontWeight:
@@ -434,13 +430,13 @@ class _notificationsState extends State<notifications>
                                                             Padding(
                                                               padding: EdgeInsets
                                                                   .fromLTRB(
-                                                                  widget.size *
+                                                                   
                                                                       8,
-                                                                  widget.size *
+                                                                   
                                                                       1,
-                                                                  widget.size *
+                                                                   
                                                                       10,
-                                                                  widget.size *
+                                                                   
                                                                       1),
                                                               child: Column(
                                                                 children: [
@@ -448,10 +444,10 @@ class _notificationsState extends State<notifications>
                                                                     '${Notification.id}',
                                                                     style: TextStyle(
                                                                         fontSize:
-                                                                        widget.size *
+                                                                         
                                                                             10.0,
                                                                         color: Colors
-                                                                            .white,
+                                                                            . black,
 
                                                                       //   fontWeight: FontWeight.bold,
                                                                     ),
@@ -464,15 +460,15 @@ class _notificationsState extends State<notifications>
                                                         Padding(
                                                           padding: EdgeInsets.only(
                                                             left:
-                                                            widget.size * 10,
+                                                              10,
                                                             right:
-                                                            widget.size * 5,
-                                                            top: widget.size * 3,
-                                                            bottom: widget.size * 8,
+                                                              5,
+                                                            top:   3,
+                                                            bottom:   8,
                                                           ),
                                                           child: StyledTextWidget(
                                                             fontSize:
-                                                            widget.size * 13,
+                                                              13,
                                                             text: Notification.data,
 
                                                           ),
@@ -482,9 +478,9 @@ class _notificationsState extends State<notifications>
                                                             3)
                                                           Padding(
                                                             padding: EdgeInsets.all(
-                                                                widget.size * 3.0),
+                                                                  3.0),
                                                             child: ClipRRect(
-                                                              borderRadius: BorderRadius.circular(widget.size *15),
+                                                              borderRadius: BorderRadius.circular( 15),
                                                               child: ImageShowAndDownload(image:Notification.image ,isZoom: true,),
                                                             ),
                                                           )
@@ -495,12 +491,12 @@ class _notificationsState extends State<notifications>
                                           ),
                                         ),
                                           SizedBox(
-                                            width: widget.size *25,
+                                            width:  25,
                                             child: PopupMenuButton(
                                               icon: Icon(
                                                 Icons.more_vert,
-                                                color: Colors.white,
-                                                size: widget.size * 25,
+                                                color: Colors. black,
+                                                size:   25,
                                               ),
                                               // Callback that sets the selected popup menu item.
                                               onSelected: (item) {
@@ -538,7 +534,7 @@ class _notificationsState extends State<notifications>
                                   );
                                 },
                                 separatorBuilder: (context, index) => SizedBox(
-                                      height:widget.size * 1,
+                                      height:  1,
                                     ));
                           }
                       }
@@ -549,7 +545,7 @@ class _notificationsState extends State<notifications>
 
           searchBar(
 
-            size: widget.size,
+              
             branch: widget.branch,
             tabController: _tabController,
             user: emailController,
@@ -563,7 +559,6 @@ class searchBar extends StatefulWidget {
   final TabController tabController;
   final TextEditingController user;
   final String branch;
-  final double size;
 
 
   const searchBar(
@@ -571,7 +566,6 @@ class searchBar extends StatefulWidget {
       required this.tabController,
       required this.user,
       required this.branch,
-      required this.size,
       })
       : super(key: key);
 
@@ -623,22 +617,22 @@ class _searchBarState extends State<searchBar> {
           if(currentIndex == 1)Row(
             children: [
               SizedBox(
-                width: widget.size *250,
+                width:  250,
                 child: Padding(
-                  padding: EdgeInsets.only(left:widget.size * 5,),
+                  padding: EdgeInsets.only(left:  5,),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white10,
-                      // border: Border.all(color: Colors.white24),
-                      borderRadius: BorderRadius.circular(widget.size *50),
+                      color: Colors. black12,
+                      // border: Border.all(color: Colors.  black26),
+                      borderRadius: BorderRadius.circular( 50),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.only(left:widget.size * 10),
+                      padding: EdgeInsets.only(left:  10),
                       child: TextField(
                         style: TextStyle(
-                            color: Colors.white, fontSize: widget.size * 13),
-                        cursorColor: Colors.white,
-                        cursorHeight: widget.size * 10,
+                            color: Colors. black, fontSize:   13),
+                        cursorColor: Colors. black,
+                        cursorHeight:   10,
                         controller: emailController,
                         maxLines: 1,
                         textInputAction: TextInputAction.newline,
@@ -646,7 +640,7 @@ class _searchBarState extends State<searchBar> {
                           border: InputBorder.none,
                           hintText: ' ID ',
                           hintStyle: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
+                            color: Colors. black.withOpacity(0.6),
                           ),
                         ),
                       ),
@@ -661,20 +655,20 @@ class _searchBarState extends State<searchBar> {
               Flexible(
                 flex: 7,
                 child: Padding(
-                  padding: EdgeInsets.only(left: widget.size *5, right: widget.size *5, top: widget.size *5, bottom: widget.size *5),
+                  padding: EdgeInsets.only(left:  5, right:  5, top:  5, bottom:  5),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white12,
-                      // border: Border.all(color: Colors.white24),
-                      borderRadius: BorderRadius.circular(widget.size *50),
+                      color: Colors. black12,
+                      // border: Border.all(color: Colors.  black26),
+                      borderRadius: BorderRadius.circular( 50),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.only(left: widget.size *25 ),
+                      padding: EdgeInsets.only(left:  25 ),
                       child: TextField(
                         style: TextStyle(
-                            color: Colors.white, fontSize: widget.size * 15),
-                        cursorColor: Colors.white,
-                        cursorHeight: widget.size * 10,
+                            color: Colors. black, fontSize:   15),
+                        cursorColor: Colors. black,
+                        cursorHeight:   10,
                         controller: bodyController,
                         maxLines: null,
                         scrollPhysics: BouncingScrollPhysics(),
@@ -683,7 +677,7 @@ class _searchBarState extends State<searchBar> {
                           border: InputBorder.none,
                           hintText: ' Message ',
                           hintStyle: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
+                            color: Colors. black.withOpacity(0.6),
                           ),
                         ),
                       ),
@@ -695,18 +689,18 @@ class _searchBarState extends State<searchBar> {
                   flex: 2,
                   //fit: FlexFit.tight,
                   child: Padding(
-                    padding: EdgeInsets.only(right: widget.size * 10),
+                    padding: EdgeInsets.only(right:   10),
                     child: InkWell(
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(widget.size * 30),
-                          color: Colors.white.withOpacity(0.1)
-                          // border: Border.all(color: Colors.white.withOpacity(0.2)),
+                          borderRadius: BorderRadius.circular(  30),
+                          color: Colors. black.withOpacity(0.1)
+                          // border: Border.all(color: Colors. black.withOpacity(0.2)),
                         ),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: widget.size * 3,
-                              vertical: widget.size * 5),
+                              horizontal:   3,
+                              vertical:   5),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -723,7 +717,7 @@ class _searchBarState extends State<searchBar> {
                                             child: Icon(
                                               Icons.upload,
                                               color: Colors.blue,
-                                              size: widget.size *30,
+                                              size:  30,
                                             ),
                                             onTap: () async {
                                               final pickedFile = await ImagePicker()
@@ -746,7 +740,7 @@ class _searchBarState extends State<searchBar> {
                               Icon(
                                 Icons.send,
                                 color: Colors.blue,
-                                size: widget.size *30,
+                                size:  30,
                               )
                             ],
                           ),

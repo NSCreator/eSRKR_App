@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:srkr_study_app/SubPages.dart';
 import 'package:srkr_study_app/homePage/settings.dart';
 
 import 'homePage/HomePage.dart';
@@ -8,32 +12,27 @@ import 'TextField.dart';
 import 'functions.dart';
 import 'notification.dart';
 
-
-
-
 class SubjectCreator extends StatefulWidget {
   subjectConvertor? data;
   String branch;
   bool isSub;
-  double size;
-  SubjectCreator(
-      {
 
-        required this.branch,
-         this.data,
-        required this.size,
 
-        this.isSub=true,
-      });
+  SubjectCreator({
+    required this.branch,
+    this.data,
+
+    this.isSub = true,
+  });
 
   @override
   State<SubjectCreator> createState() => _SubjectCreatorState();
 }
 
 class _SubjectCreatorState extends State<SubjectCreator> {
-  List<UnitConvertor> Unit=[];
-  List<TextBookConvertor> TextBooks=[];
-  List<MoreInfoConvertor> MoreInfos=[];
+  List<UnitConvertor> Unit = [];
+  List<TextBookConvertor> TextBooks = [];
+  List<MoreInfoConvertor> MoreInfos = [];
   final ShortHeadingController = TextEditingController();
   final FullHeadingController = TextEditingController();
   final DescriptionController = TextEditingController();
@@ -53,26 +52,28 @@ class _SubjectCreatorState extends State<SubjectCreator> {
     MoreInfos = widget.data!.moreInfos;
     EditAccess = widget.data!.createdByAndPermissions.EditAccess;
     BranchAccess = widget.data!.createdByAndPermissions.BranchAccess;
-    descriptionList=widget.data!.oldPapers;
-    Regulation=widget.data!.regulation;
-    setState(() {
-
-    });
+    descriptionList = widget.data!.oldPapers;
+    Regulation = widget.data!.regulation;
+    setState(() {});
   }
+
   @override
   void initState() {
-    if(widget.data!=null) {
+    if (widget.data != null) {
       AutoFill();
     }
     super.initState();
   }
-bool isEdit=false;
+
+  bool isEdit = false;
+
   @override
   void dispose() {
     ShortHeadingController.dispose();
     DescriptionController.dispose();
     super.dispose();
   }
+
   bool _switch1Value = false;
   List<OldPapersConvertor> descriptionList = [];
   final TextEditingController _headingController = TextEditingController();
@@ -85,7 +86,8 @@ bool isEdit=false;
 
     if (heading.isNotEmpty && pdfLink.isNotEmpty) {
       setState(() {
-        descriptionList.add(OldPapersConvertor(heading: heading, pdfLink: pdfLink));
+        descriptionList
+            .add(OldPapersConvertor(heading: heading, pdfLink: pdfLink));
         _headingController.clear();
         _pdfLinkController.clear();
       });
@@ -104,7 +106,9 @@ bool isEdit=false;
     String editedHeading = _headingController.text;
     String editedPdfLink = _pdfLinkController.text;
 
-    if (editedHeading.isNotEmpty && editedPdfLink.isNotEmpty && selectedDescriptionIndex != -1) {
+    if (editedHeading.isNotEmpty &&
+        editedPdfLink.isNotEmpty &&
+        selectedDescriptionIndex != -1) {
       setState(() {
         descriptionList[selectedDescriptionIndex] =
             OldPapersConvertor(heading: editedHeading, pdfLink: editedPdfLink);
@@ -149,6 +153,7 @@ bool isEdit=false;
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,71 +163,84 @@ bool isEdit=false;
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              backButton(size: size(context),text:widget.isSub?"Subject Editor":"Lab Subject Editor" ,child: SizedBox(width:widget.size* 45,)),
+              backButton(
+                  text: widget.isSub ? "Subject Editor" : "Lab Subject Editor",
+                  child: SizedBox(
+                    width:   45,
+                  )),
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Flexible(
-                    child: TextFieldContainer(child: TextFormField(
-                      controller: ShortHeadingController,
-                      textInputAction: TextInputAction.next,
-                      style: TextStyle(color: Colors.white,fontSize: widget.size*20),
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Name',
-                          hintStyle: TextStyle(color: Colors.white54)
+                  Expanded(
+                    child: TextFieldContainer(
+                      child: TextFormField(
+                        controller: ShortHeadingController,
+                        textInputAction: TextInputAction.next,
+                        style: TextStyle(
+                            color: Colors. black, fontSize:   20),
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Name',
+                            hintStyle: TextStyle(color: Colors. black54)),
                       ),
-                    ),heading: "Short Name",),
+                      heading: "Short Name",
+                    ),
                   ),
-                  Flexible(
+                  Expanded(
                     flex: 2,
-                    child: TextFieldContainer(child: TextFormField(
-                      controller: FullHeadingController,
-                      textInputAction: TextInputAction.next,
-                      style: TextStyle(color: Colors.white,fontSize: widget.size*20),
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Full Name',
-                          hintStyle: TextStyle(color: Colors.white54)
+                    child: TextFieldContainer(
+                      child: TextFormField(
+                        controller: FullHeadingController,
+                        textInputAction: TextInputAction.next,
+                        style: TextStyle(
+                            color: Colors. black, fontSize:   20),
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Full Name',
+                            hintStyle: TextStyle(color: Colors. black54)),
                       ),
-                    ),heading: "Full Name",),
+                      heading: "Full Name",
+                    ),
                   ),
                 ],
               ),
-              TextFieldContainer(child: TextFormField(
-                //obscureText: true,
-                controller: DescriptionController,
-                textInputAction: TextInputAction.next,
-                maxLines: null,
-                style: TextStyle(color: Colors.white,fontSize:widget.size* 20),
+              TextFieldContainer(
+                child: TextFormField(
+                  //obscureText: true,
+                  controller: DescriptionController,
+                  textInputAction: TextInputAction.next,
+                  maxLines: null,
+                  style: TextStyle(
+                      color: Colors. black, fontSize:   20),
 
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Description or Full name',
-                    hintStyle: TextStyle(color: Colors.white54)
-
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Description or Full name',
+                      hintStyle: TextStyle(color: Colors. black54)),
                 ),
-              ),heading: "Description",),
+                heading: "Description",
+              ),
               Padding(
-                padding:  EdgeInsets.symmetric(horizontal:widget.size* 10.0,vertical: 20),
+                padding: EdgeInsets.symmetric(
+                    horizontal:   10.0, vertical: 20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     InkWell(
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              widget.size * 8),
-                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(  8),
+                          color: Colors.  black26,
                         ),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: widget.size * 5,
-                              horizontal: widget.size * 10),
+                              vertical:   5,
+                              horizontal:   10),
                           child: Text(
                             "Change Regulation",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: widget.size * 22),
+                                color: Colors. black,
+                                fontSize:   22),
                           ),
                         ),
                       ),
@@ -232,13 +250,12 @@ bool isEdit=false;
                           builder: (context) {
                             return Dialog(
                               backgroundColor: Colors.transparent,
-
                               elevation: 20,
                               child: Container(
                                 decoration: BoxDecoration(
-                                    color: Colors.white70,
-                                    borderRadius: BorderRadius.circular(widget.size*30)
-                                ),
+                                    color: Colors.  black87,
+                                    borderRadius: BorderRadius.circular(
+                                          30)),
                                 child: StreamBuilder<List<RegulationConvertor>>(
                                     stream: readRegulation(widget.branch),
                                     builder: (context, snapshot) {
@@ -247,9 +264,9 @@ bool isEdit=false;
                                         case ConnectionState.waiting:
                                           return const Center(
                                               child: CircularProgressIndicator(
-                                                strokeWidth: 0.3,
-                                                color: Colors.cyan,
-                                              ));
+                                            strokeWidth: 0.3,
+                                            color: Colors.cyan,
+                                          ));
                                         default:
                                           if (snapshot.hasError) {
                                             return const Center(
@@ -259,21 +276,36 @@ bool isEdit=false;
                                             return ListView.builder(
                                               shrinkWrap: true,
                                               itemCount: user!.length,
-                                              itemBuilder: (context, int index) {
-                                                final SubjectsData = user[index];
+                                              itemBuilder:
+                                                  (context, int index) {
+                                                final SubjectsData =
+                                                    user[index];
                                                 return Center(
                                                   child: Padding(
-                                                    padding:  EdgeInsets.symmetric(vertical:widget.size*5.0),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical:
+                                                                 
+                                                                    5.0),
                                                     child: InkWell(
                                                       child: Text(
-                                                        SubjectsData.id.toUpperCase(),
+                                                        SubjectsData.id
+                                                            .toUpperCase(),
                                                         style: TextStyle(
-                                                            color: Colors.black87,
-                                                            fontSize: widget.size*20,fontWeight: FontWeight.bold),
+                                                            color:
+                                                                Colors.black87,
+                                                            fontSize:
+                                                                 
+                                                                    20,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
                                                       ),
                                                       onTap: () {
                                                         setState(() {
-                                                          Regulation.add(SubjectsData.id.toUpperCase());
+                                                          Regulation.add(
+                                                              SubjectsData.id
+                                                                  .toUpperCase());
                                                         });
                                                         Navigator.pop(context);
                                                       },
@@ -297,9 +329,16 @@ bool isEdit=false;
                       itemCount: Regulation.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          title: Text(Regulation[index],style: TextStyle(color: Colors.white60,fontSize: 20),),
+                          title: Text(
+                            Regulation[index],
+                            style:
+                                TextStyle(color: Colors.  black54, fontSize: 20),
+                          ),
                           trailing: IconButton(
-                            icon: Icon(Icons.delete,color: Colors.white70,),
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.  black87,
+                            ),
                             onPressed: () {
                               deleteRegulation(index);
                             },
@@ -310,183 +349,180 @@ bool isEdit=false;
                   ],
                 ),
               ),
-                Padding(
-                  padding: EdgeInsets.only(left: 15, top:  8),
-                  child: Text(
-                    "Description",
-                    style: creatorHeadingTextStyle,
-                  ),
+              Padding(
+                padding: EdgeInsets.only(left: 15, top: 8),
+                child: Text(
+                  "Old Papers",
+                  style: creatorHeadingTextStyle,
                 ),
-
-                ListView.builder(
-                  itemCount: descriptionList.length,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return Dismissible(
-                      key: Key(descriptionList[index].heading),
-                      background: Container(
-                        color: Colors.red,
-                        alignment: Alignment.centerRight,
-                        padding:
-                        EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.black,
+              ),
+              ListView.builder(
+                itemCount: descriptionList.length,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Dismissible(
+                    key: Key(descriptionList[index].heading),
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.black,
+                      ),
+                    ),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (direction) {
+                      deleteDescription(index);
+                    },
+                    child: ListTile(
+                      title: Text(
+                        descriptionList[index].heading,
+                        style: TextStyle(color: Colors. black, fontSize: 20),
+                      ),
+                      trailing: SingleChildScrollView(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            IconButton(
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.redAccent,
+                              ),
+                              onPressed: () {
+                                deleteDescription(index);
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.edit,
+                                color: Colors.greenAccent,
+                              ),
+                              onPressed: () {
+                                editDescription(index);
+                                setState(() {
+                                  isEdit = true;
+                                });
+                              },
+                            ),
+                            InkWell(
+                              child: Icon(
+                                Icons.move_up,
+                                size: 30,
+                                color: Colors.amber,
+                              ),
+                              onTap: () {
+                                moveDescriptionUp(index);
+                              },
+                              onDoubleTap: () {
+                                moveDescriptionDown(index);
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                      direction: DismissDirection.endToStart,
-                      onDismissed: (direction) {
-                        deleteDescription(index);
+                      onTap: () {
+                        editDescription(index);
                       },
-                      child: ListTile(
-                        title: Text(
-                          descriptionList[index].heading,
-                          style: TextStyle(
-                              color: Colors.white, fontSize: 20),
-                        ),
-                        trailing: SingleChildScrollView(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              IconButton(
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: Colors.redAccent,
-                                ),
-                                onPressed: () {
-                                  deleteDescription(index);
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: Colors.greenAccent,
-                                ),
-                                onPressed: () {
-                                  editDescription(index);
-                                  setState(() {
-                                    isEdit = true;
-                                  });
-                                },
-                              ),
-                              InkWell(
-                                child: Icon(
-                                  Icons.move_up,
-                                  size:  30,
-                                  color: Colors.amber,
-                                ),
-                                onTap: () {
-                                  moveDescriptionUp(index);
-                                },
-                                onDoubleTap: () {
-                                  moveDescriptionDown(index);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          editDescription(index);
-                        },
-                      ),
-                    );
-                  },
-                ),
-
-                Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 10,
-                          right:  10,
-                          top:  5,
-                          bottom:  5),
-                      child: TextFieldContainer(
-                        child: TextFormField(
-                          controller: _headingController,
-                          style: textFieldStyle(size(context)),
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Enter Description Here',
-                            hintStyle: TextStyle(color: Colors.white54),
-                          ),
+                    ),
+                  );
+                },
+              ),
+              Column(
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                    child: TextFieldContainer(
+                      child: TextFormField(
+                        controller: _headingController,
+                        style: textFieldStyle(),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter Old Papers Here',
+                          hintStyle: TextStyle(color: Colors. black54),
                         ),
                       ),
                     ),
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: 10,
-                                right: 10,
-                                top:  5,
-                                bottom: 5),
-                            child: TextFieldContainer(
-                              child: TextFormField(
-                                controller: _pdfLinkController,
-                                style: textFieldStyle(size(context)),
-                                keyboardType: TextInputType.multiline,
-                                maxLines: 1,
-
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'Enter Link',
-                                  hintStyle:
-                                  TextStyle(color: Colors.white54),
-                                ),
+                  ),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              left: 10, right: 10, top: 5, bottom: 5),
+                          child: TextFieldContainer(
+                            child: TextFormField(
+                              controller: _pdfLinkController,
+                              style: textFieldStyle(),
+                              keyboardType: TextInputType.multiline,
+                              maxLines: 1,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Enter Link',
+                                hintStyle: TextStyle(color: Colors. black54),
                               ),
                             ),
                           ),
                         ),
-                        ElevatedButton(
-                          child: !isEdit ? Text("Add") : Text("Save"),
-                          onPressed: () {
-                            !isEdit ? addDescription() : saveDescription();
-                            setState(() {
-                              isEdit = false;
-                            });
-                          },
-                        )
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                      ElevatedButton(
+                        child: !isEdit ? Text("Add") : Text("Save"),
+                        onPressed: () {
+                          !isEdit ? addDescription() : saveDescription();
+                          setState(() {
+                            isEdit = false;
+                          });
+                        },
+                      )
+                    ],
+                  ),
+                ],
+              ),
               Container(
-                padding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                margin: EdgeInsets.symmetric(vertical: 30,horizontal: 10),
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                margin: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(20)
-                ),
+                    color: Colors. black.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(20)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
-
                   children: [
-                    Text("Subjects Accessing ( Optional )",style: TextStyle(color: Colors.white70,fontSize: 22),),
+                    Text(
+                      "Subjects Accessing ( Optional )",
+                      style: TextStyle(color: Colors.  black87, fontSize: 22),
+                    ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 15.0,horizontal: 10),
-                      child: Text("Created By ${fullUserId()}"
-                        ,style: TextStyle(color: Colors.white,fontSize: 18),),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 10),
+                      child: Text(
+                        "Created By ${fullUserId()}",
+                        style: TextStyle(color: Colors. black, fontSize: 18),
+                      ),
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Expanded(
-                          child: TextFieldContainer(child:TextFormField(
-                            controller: EditAccessController,
-                            textInputAction: TextInputAction.next,
-                            style: TextStyle(color: Colors.white, fontSize: widget.size * 20),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Enter gmail id',
-                              hintStyle: TextStyle(color: Colors.white54),
+                          child: TextFieldContainer(
+                            child: TextFormField(
+                              controller: EditAccessController,
+                              textInputAction: TextInputAction.next,
+                              style: TextStyle(
+                                  color: Colors. black,
+                                  fontSize:   20),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Enter gmail id',
+                                hintStyle: TextStyle(color: Colors. black54),
+                              ),
                             ),
-                          ),heading: "Please enter the ID for editing access.",),
+                            heading: "Please enter the ID for editing access.",
+                          ),
                         ),
                         ElevatedButton(
                           onPressed: () {
@@ -497,16 +533,22 @@ bool isEdit=false;
                         ),
                       ],
                     ),
-
                     ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: EditAccess.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          title: Text(EditAccess[index],style: TextStyle(color: Colors.white60,fontSize: 20),),
+                          title: Text(
+                            EditAccess[index],
+                            style:
+                                TextStyle(color: Colors.  black54, fontSize: 20),
+                          ),
                           trailing: IconButton(
-                            icon: Icon(Icons.delete,color: Colors.white70,),
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.  black87,
+                            ),
                             onPressed: () {
                               deleteEditAccess(index);
                             },
@@ -518,16 +560,22 @@ bool isEdit=false;
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Expanded(
-                          child: TextFieldContainer(child: TextFormField(
-                            controller: BranchAccessController,
-                            textInputAction: TextInputAction.next,
-                            style: TextStyle(color: Colors.white, fontSize: widget.size * 20),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Enter Branch (ece or ECE)',
-                              hintStyle: TextStyle(color: Colors.white54),
+                          child: TextFieldContainer(
+                            child: TextFormField(
+                              controller: BranchAccessController,
+                              textInputAction: TextInputAction.next,
+                              style: TextStyle(
+                                  color: Colors. black,
+                                  fontSize:   20),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Enter Branch (ece or ECE)',
+                                hintStyle: TextStyle(color: Colors. black54),
+                              ),
                             ),
-                          ),heading: "Enter the branches that can access this Subject.",),
+                            heading:
+                                "Enter the branches that can access this Subject.",
+                          ),
                         ),
                         ElevatedButton(
                           onPressed: () {
@@ -538,16 +586,22 @@ bool isEdit=false;
                         ),
                       ],
                     ),
-
                     ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: BranchAccess.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          title: Text(BranchAccess[index],style: TextStyle(color: Colors.white60,fontSize: 20),),
+                          title: Text(
+                            BranchAccess[index],
+                            style:
+                                TextStyle(color: Colors.  black54, fontSize: 20),
+                          ),
                           trailing: IconButton(
-                            icon: Icon(Icons.delete,color: Colors.white70,),
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.  black87,
+                            ),
                             onPressed: () {
                               deleteBranchAccess(index);
                             },
@@ -561,9 +615,12 @@ bool isEdit=false;
                         children: [
                           Expanded(
                               child: Text(
-                                "Is Downloadable",
-                                style: TextStyle(color: Colors.white, fontSize: 25,fontWeight: FontWeight.w600),
-                              )),
+                            "Is Downloadable",
+                            style: TextStyle(
+                                color: Colors. black,
+                                fontSize: 25,
+                                fontWeight: FontWeight.w600),
+                          )),
                           CupertinoSwitch(
                             value: _switch1Value,
                             onChanged: (value) {
@@ -575,43 +632,62 @@ bool isEdit=false;
                         ],
                       ),
                     ),
-
                   ],
                 ),
               ),
               Row(
                 children: [
-                  Spacer(),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white70,
+                      backgroundColor: Colors.  black87,
                     ),
                     child: Text("Back"),
                   ),
                   SizedBox(
-                    width:widget.size* 10,
+                    width:   10,
                   ),
                   ElevatedButton(
-                    onPressed: ()  {
-                        CreateSubject(isUpdate: widget.data!= null,isSub: widget.isSub,id:widget.data!= null?widget.data!.id: getID(), Branch: widget.branch, Heading: HeadingConvertor(full: FullHeadingController.text, short: ShortHeadingController.text), Description: DescriptionController.text, MoreInfos: MoreInfos, TextBooks: TextBooks, Units: Unit, CreatedByAndPermissions: CreatedByAndPermissionsConvertor(id: fullUserId(), EditAccess: EditAccess, BranchAccess: BranchAccess, isDownloadable: _switch1Value), Regulation: Regulation, OldPapers: descriptionList);
-                      ShortHeadingController.clear();
-                      DescriptionController.clear();
-                      Navigator.pop(context);
-                    },
+                      onPressed: () {
+                        CreateSubject(
+                            isUpdate: widget.data != null,
+                            isSub: widget.isSub,
+                            id: widget.data != null ? widget.data!.id : getID(),
+                            Branch: widget.branch,
+                            Heading: HeadingConvertor(
+                                full: FullHeadingController.text,
+                                short: ShortHeadingController.text),
+                            Description: DescriptionController.text,
+                            MoreInfos: MoreInfos,
+                            TextBooks: TextBooks,
+                            Units: Unit,
+                            CreatedByAndPermissions:
+                                CreatedByAndPermissionsConvertor(
+                                    id: fullUserId(),
+                                    EditAccess: EditAccess,
+                                    BranchAccess: BranchAccess,
+                                    isDownloadable: _switch1Value),
+                            Regulation: Regulation,
+                            OldPapers: descriptionList, QAFromChatGPT: []);
+                        ShortHeadingController.clear();
+                        DescriptionController.clear();
+                        Navigator.pop(context);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.greenAccent,
                       ),
-                    child: widget.data==null?Text("Create"):Text("Update")),
+                      child: widget.data == null
+                          ? Text("Create")
+                          : Text("Update")),
                   SizedBox(
-                    width: widget.size*20,
+                    width:   20,
                   )
                 ],
               ),
               SizedBox(
-                height: widget.size*20,
+                height:   20,
               ),
             ],
           ),
@@ -619,6 +695,7 @@ bool isEdit=false;
       ),
     );
   }
+
   void saveEditAccess() {
     String enteredText = EditAccessController.text;
     if (enteredText.isNotEmpty) {
@@ -628,6 +705,7 @@ bool isEdit=false;
       });
     }
   }
+
   void deleteEditAccess(int index) {
     setState(() {
       EditAccess.removeAt(index);
@@ -639,6 +717,7 @@ bool isEdit=false;
       Regulation.removeAt(index);
     });
   }
+
   void saveBranchAccess() {
     String enteredText = BranchAccessController.text;
     if (enteredText.isNotEmpty) {
@@ -648,28 +727,13 @@ bool isEdit=false;
       });
     }
   }
+
   void deleteBranchAccess(int index) {
     setState(() {
       EditAccess.removeAt(index);
     });
   }
 }
-
-Stream<List<subjectConvertor>> readSubject(String branch) =>
-    FirebaseFirestore.instance
-        .collection("StudyMaterials").doc(branch).collection("Subjects")
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => subjectConvertor.fromJson(doc.data()))
-        .toList());
-Stream<List<subjectConvertor>> readLabSubject(String branch) =>
-    FirebaseFirestore.instance
-        .collection("StudyMaterials").doc(branch).collection("LabSubjects")
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => subjectConvertor.fromJson(doc.data()))
-        .toList());
-
 
 Future CreateSubject({
   required String id,
@@ -683,11 +747,14 @@ Future CreateSubject({
   required List<OldPapersConvertor> OldPapers,
   required List<TextBookConvertor> TextBooks,
   required List<UnitConvertor> Units,
+  required List<questionsFromChatGPTConvertor> QAFromChatGPT,
   required CreatedByAndPermissionsConvertor CreatedByAndPermissions,
 }) async {
   final docTrip = FirebaseFirestore.instance
-      .collection(
-      'StudyMaterials').doc(Branch).collection(isSub?"Subjects":"LabSubjects").doc(id);
+      .collection('StudyMaterials')
+      .doc(Branch)
+      .collection(isSub ? "Subjects" : "LabSubjects")
+      .doc(id);
   final tripData = subjectConvertor(
     id: id,
     heading: Heading,
@@ -696,19 +763,19 @@ Future CreateSubject({
     description: Description,
     textBooks: TextBooks,
     moreInfos: MoreInfos,
-    createdByAndPermissions: CreatedByAndPermissions, oldPapers: OldPapers,
+    createdByAndPermissions: CreatedByAndPermissions,
+    oldPapers: OldPapers, QAFromChatGPT: QAFromChatGPT,
   );
 
   final jsonData = tripData.toJson();
-  if(isUpdate) {
+  if (isUpdate) {
     await docTrip.update(jsonData);
   } else {
     await docTrip.set(jsonData);
   }
   messageToOwner("${jsonData}");
-
-
 }
+
 class subjectConvertor {
   final String id;
   final HeadingConvertor heading;
@@ -718,6 +785,7 @@ class subjectConvertor {
   final List<UnitConvertor> units;
   final List<TextBookConvertor> textBooks;
   final List<MoreInfoConvertor> moreInfos;
+  final List<questionsFromChatGPTConvertor> QAFromChatGPT;
   final CreatedByAndPermissionsConvertor createdByAndPermissions;
 
   subjectConvertor({
@@ -726,6 +794,7 @@ class subjectConvertor {
     required this.regulation,
     required this.oldPapers,
     required this.units,
+    required this.QAFromChatGPT,
     required this.description,
     required this.textBooks,
     required this.moreInfos,
@@ -733,35 +802,40 @@ class subjectConvertor {
   });
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "description": description,
-    "regulation": regulation,
-    "heading": heading.toJson(),
-    "units": units.map((unit) => unit.toJson()).toList(),
-    "oldPapers": oldPapers.map((oldPaper) => oldPaper.toJson()).toList(),
-    "textBooks": textBooks.map((textBook) => textBook.toJson()).toList(),
-    "moreInfos": moreInfos.map((info) => info.toJson()).toList(),
-    "createdByAndPermissions": createdByAndPermissions.toJson(),
-  };
+        "id": id,
+        "description": description,
+        "regulation": regulation,
+        "heading": heading.toJson(),
+        "units": units.map((unit) => unit.toJson()).toList(),
+        "QAFromChatGPT": QAFromChatGPT.map((unit) => unit.toJson()).toList(),
+        "oldPapers": oldPapers.map((oldPaper) => oldPaper.toJson()).toList(),
+        "textBooks": textBooks.map((textBook) => textBook.toJson()).toList(),
+        "moreInfos": moreInfos.map((info) => info.toJson()).toList(),
+        "createdByAndPermissions": createdByAndPermissions.toJson(),
+      };
+  int getSubjectCountWithQuestions() {
+    return QAFromChatGPT.isNotEmpty ? 1 : 0;
+  }
 
-  static subjectConvertor fromJson(Map<String, dynamic> json) => subjectConvertor(
-    id: json['id'] ?? "",
-    regulation: List<String>.from(json['regulation'] ?? []),
-    heading: HeadingConvertor.fromJson(json['heading'] ?? {}),
-    description: json['description'] ?? "",
-    units: UnitConvertor.fromMapList(json['units'] ?? []),
-    oldPapers: OldPapersConvertor.fromMapList(json['oldPapers'] ?? []),
-    textBooks: TextBookConvertor.fromMapList(json['textBooks'] ?? []),
-    moreInfos: MoreInfoConvertor.fromMapList(json['moreInfos'] ?? []),
-    createdByAndPermissions: CreatedByAndPermissionsConvertor.fromJson(
-        json['createdByAndPermissions'] ?? {}),
-  );
+  static subjectConvertor fromJson(Map<String, dynamic> json) =>
+      subjectConvertor(
+        id: json['id'] ?? "",
+        regulation: List<String>.from(json['regulation'] ?? []),
+        heading: HeadingConvertor.fromJson(json['heading'] ?? {}),
+        description: json['description'] ?? "",
+        units: UnitConvertor.fromMapList(json['units'] ?? []),
+        oldPapers: OldPapersConvertor.fromMapList(json['oldPapers'] ?? []),
+        QAFromChatGPT: questionsFromChatGPTConvertor.fromMapList(json['QAFromChatGPT'] ?? []),
+        textBooks: TextBookConvertor.fromMapList(json['textBooks'] ?? []),
+        moreInfos: MoreInfoConvertor.fromMapList(json['moreInfos'] ?? []),
+        createdByAndPermissions: CreatedByAndPermissionsConvertor.fromJson(
+            json['createdByAndPermissions'] ?? {}),
+      );
 
   static List<subjectConvertor> fromMapList(List<dynamic> list) {
     return list.map((item) => fromJson(item)).toList();
   }
 }
-
 
 class HeadingConvertor {
   final String short;
@@ -772,8 +846,7 @@ class HeadingConvertor {
     required this.short,
   });
 
-  Map<String, dynamic> toJson() =>
-      {"full": full, "short": short};
+  Map<String, dynamic> toJson() => {"full": full, "short": short};
 
   static HeadingConvertor fromJson(Map<String, dynamic> json) =>
       HeadingConvertor(
@@ -785,6 +858,7 @@ class HeadingConvertor {
     return list.map((item) => fromJson(item)).toList();
   }
 }
+
 class OldPapersConvertor {
   final String heading;
   final String pdfLink;
@@ -794,8 +868,7 @@ class OldPapersConvertor {
     required this.heading,
   });
 
-  Map<String, dynamic> toJson() =>
-      {"pdfLink": pdfLink, "heading": heading};
+  Map<String, dynamic> toJson() => {"pdfLink": pdfLink, "heading": heading};
 
   static OldPapersConvertor fromJson(Map<String, dynamic> json) =>
       OldPapersConvertor(
@@ -807,6 +880,7 @@ class OldPapersConvertor {
     return list.map((item) => fromJson(item)).toList();
   }
 }
+
 class UnitConvertor {
   final String Heading, id, Unit, Size, Link;
   final List<DescriptionAndQuestionConvertor> Description;
@@ -819,28 +893,31 @@ class UnitConvertor {
     required this.id,
     required this.Link,
     required this.Unit,
-    required this.Size,
+    required this.Size
+
   });
 
   Map<String, dynamic> toJson() => {
-    "Heading": Heading,
-    "id": id,
-    "Unit": Unit,
-    'Size': Size,
-    "Description": Description.map((d) => d.toJson()).toList(),
-    "Link": Link,
-    "Question": Question.map((q) => q.toJson()).toList(),
-  };
+        "Heading": Heading,
+        "id": id,
+        "Unit": Unit,
+        'Size': Size,
+        "Description": Description.map((d) => d.toJson()).toList(),
+        "Link": Link,
+        "Question": Question.map((q) => q.toJson()).toList(),
+      };
 
   static UnitConvertor fromJson(Map<String, dynamic> json) => UnitConvertor(
-    id: json['id'] ?? "",
-    Description: DescriptionAndQuestionConvertor.fromMapList(json['Description'] ?? []),
-    Question: DescriptionAndQuestionConvertor.fromMapList(json['Question'] ?? []),
-    Heading: json["Heading"] ?? "",
-    Link: json["Link"] ?? "",
-    Size: json["Size"] ?? "",
-    Unit: json["Unit"] ?? "",
-  );
+        id: json['id'] ?? "",
+        Description: DescriptionAndQuestionConvertor.fromMapList(
+            json['Description'] ?? []),
+        Question:
+            DescriptionAndQuestionConvertor.fromMapList(json['Question'] ?? []),
+        Heading: json["Heading"] ?? "",
+        Link: json["Link"] ?? "",
+        Size: json["Size"] ?? "",
+        Unit: json["Unit"] ?? "",
+      );
 
   static List<UnitConvertor> fromMapList(List<dynamic> list) {
     return list.map((item) => fromJson(item)).toList();
@@ -851,24 +928,24 @@ class DescriptionAndQuestionConvertor {
   late final String data;
   late final int pageNumber;
 
-DescriptionAndQuestionConvertor ({
+  DescriptionAndQuestionConvertor({
     required this.pageNumber,
     required this.data,
   });
 
-  Map<String, dynamic> toJson() =>
-      {"pageNumber": pageNumber, "data": data};
+  Map<String, dynamic> toJson() => {"pageNumber": pageNumber, "data": data};
 
-  static DescriptionAndQuestionConvertor  fromJson(Map<String, dynamic> json) =>
+  static DescriptionAndQuestionConvertor fromJson(Map<String, dynamic> json) =>
       DescriptionAndQuestionConvertor(
         data: json['data'] ?? "",
         pageNumber: json["pageNumber"] ?? 0,
       );
 
-  static List<DescriptionAndQuestionConvertor > fromMapList(List<dynamic> list) {
+  static List<DescriptionAndQuestionConvertor> fromMapList(List<dynamic> list) {
     return list.map((item) => fromJson(item)).toList();
   }
 }
+
 class TextBookConvertor {
   final String Heading, id, Link, Size, Author, Edition;
 
@@ -876,28 +953,29 @@ class TextBookConvertor {
     required this.Heading,
     required this.id,
     required this.Link,
-    required this.Size,
+  required this.Size ,
     required this.Author,
     required this.Edition,
   });
 
   Map<String, dynamic> toJson() => {
-    "Heading": Heading,
-    "id": id,
-    "Link": Link,
-    'Size': Size,
-    'Author': Author,
-    'Edition': Edition,
-  };
+        "Heading": Heading,
+        "id": id,
+        "Link": Link,
+        'Size': Size,
+        'Author': Author,
+        'Edition': Edition,
+      };
 
-  static TextBookConvertor fromJson(Map<String, dynamic> json) => TextBookConvertor(
-    id: json['id'] ?? "",
-    Heading: json["Heading"] ?? "",
-    Size: json["Size"] ?? '',
-    Link: json["Link"] ?? "",
-    Author: json["Author"] ?? "",
-    Edition: json["Edition"] ?? "",
-  );
+  static TextBookConvertor fromJson(Map<String, dynamic> json) =>
+      TextBookConvertor(
+        id: json['id'] ?? "",
+        Heading: json["Heading"] ?? "",
+        Size: json["Size"] ?? '',
+        Link: json["Link"] ?? "",
+        Author: json["Author"] ?? "",
+        Edition: json["Edition"] ?? "",
+      );
 
   static List<TextBookConvertor> fromMapList(List<dynamic> list) {
     return list.map((item) => fromJson(item)).toList();
@@ -916,14 +994,21 @@ class MoreInfoConvertor {
     required this.Type,
   });
 
-  Map<String, dynamic> toJson() =>
-      {"Heading": Heading, "id": id, "Link": Link, 'Type': Type,"Description":Description};
+  Map<String, dynamic> toJson() => {
+        "Heading": Heading,
+        "id": id,
+        "Link": Link,
+        'Type': Type,
+        "Description": Description
+      };
 
-  static MoreInfoConvertor fromJson(Map<String, dynamic> json) =>
+  static MoreInfoConvertor fromJson(
+          Map<String, dynamic> json) =>
       MoreInfoConvertor(
-          id: json['id'] ,
+          id: json['id'],
           Heading: json["Heading"] ?? "",
-          Description: (json["description"] as List<dynamic>?)?.cast<String>() ?? [],
+          Description:
+              (json["description"] as List<dynamic>?)?.cast<String>() ?? [],
           Type: json["Type"] ?? "",
           Link: json["Link"] ?? "");
 
@@ -931,6 +1016,7 @@ class MoreInfoConvertor {
     return list.map((item) => fromJson(item)).toList();
   }
 }
+
 class CreatedByAndPermissionsConvertor {
   final String id;
   final bool isDownloadable;
@@ -944,18 +1030,142 @@ class CreatedByAndPermissionsConvertor {
     required this.BranchAccess,
   });
 
-  Map<String, dynamic> toJson() => {"id": id, "EditAccess": EditAccess, "BranchAccess": BranchAccess,"isDownloadable":isDownloadable};
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "EditAccess": EditAccess,
+        "BranchAccess": BranchAccess,
+        "isDownloadable": isDownloadable
+      };
 
   static CreatedByAndPermissionsConvertor fromJson(Map<String, dynamic> json) =>
       CreatedByAndPermissionsConvertor(
         id: json['id'] ?? "",
         isDownloadable: json['isDownloadable'] ?? false,
-        EditAccess: (json['EditAccess'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
-        BranchAccess: (json['BranchAccess'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
+        EditAccess: (json['EditAccess'] as List<dynamic>?)
+                ?.map((e) => e as String)
+                .toList() ??
+            [],
+        BranchAccess: (json['BranchAccess'] as List<dynamic>?)
+                ?.map((e) => e as String)
+                .toList() ??
+            [],
       );
 
-  static List<CreatedByAndPermissionsConvertor> fromMapList(List<dynamic> list) {
+  static List<CreatedByAndPermissionsConvertor> fromMapList(
+      List<dynamic> list) {
     return list.map((item) => fromJson(item)).toList();
   }
 }
 
+Future<BranchStudyMaterialsConvertor?> getBranchStudyMaterials(
+    String branch, bool isLoading) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final studyMaterialsJson = await prefs.getString("studyMaterials");
+
+  if (studyMaterialsJson == null || isLoading) {
+
+    try {
+      var documentSnapshot = await FirebaseFirestore.instance
+          .collection("StudyMaterials")
+          .doc(branch)
+          .get();
+      if (documentSnapshot.exists) {
+
+        var documentData = documentSnapshot.data();
+        try {
+          final subjectsQuery =
+              await documentSnapshot.reference.collection("Subjects").get();
+          final labSubjectsQuery =
+              await documentSnapshot.reference.collection("LabSubjects").get();
+
+          final subjects = await subjectsQuery.docs
+              .map((doc) => subjectConvertor.fromJson(doc.data()))
+              .toList();
+          final labSubjects = await labSubjectsQuery.docs
+              .map((doc) => subjectConvertor.fromJson(doc.data()))
+              .toList();
+          final regSylMp = await (documentData!["RegSylMP"] as List<dynamic>?)
+                  ?.map((item) => RegSylMPConvertor.fromJson(item))
+                  .toList() ??
+              [];
+          final regAndTT =
+              await (documentData["RegulationAndTimeTable"] as List<dynamic>?)
+                      ?.map((item) => RegTimeTableConvertor.fromJson(item))
+                      .toList() ??
+                  [];
+          final data = await BranchStudyMaterialsConvertor(
+            subjects: subjects,
+            labSubjects: labSubjects,
+            regSylMP: regSylMp,
+            regulationAndTimeTable: regAndTT,
+          );
+
+          String studyMaterialsJson = await json.encode(data.toJson());
+          await prefs.setString("studyMaterials", studyMaterialsJson);
+          return data;
+        } catch (e) {
+          print("Error processing data: $e");
+          return null;
+        }
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Error getting study materials: $e");
+      return null;
+    }
+  }
+  else {
+    return await BranchStudyMaterialsConvertor.fromJson(
+        json.decode(studyMaterialsJson));
+  }
+}
+
+class BranchStudyMaterialsConvertor {
+  List<subjectConvertor> subjects;
+  List<subjectConvertor> labSubjects;
+  List<RegSylMPConvertor> regSylMP;
+  List<RegTimeTableConvertor> regulationAndTimeTable;
+
+  BranchStudyMaterialsConvertor({
+    required this.subjects,
+    required this.labSubjects,
+    required this.regSylMP,
+    required this.regulationAndTimeTable,
+  });
+
+  Map<String, dynamic> toJson() => {
+        "Subjects": subjects.map((subject) => subject.toJson()).toList(),
+        "RegulationAndTimeTable": regulationAndTimeTable
+            .map((regulationAndTimeTable) => regulationAndTimeTable.toJson())
+            .toList(),
+        "RegSylMP": regSylMP.map((regSylMP) => regSylMP.toJson()).toList(),
+        "LabSubjects":
+            labSubjects.map((labSubject) => labSubject.toJson()).toList(),
+      };
+
+  static BranchStudyMaterialsConvertor fromJson(Map<String, dynamic> json) =>
+      BranchStudyMaterialsConvertor(
+        subjects: (json['Subjects'] as List<dynamic>?)
+                ?.map((item) => subjectConvertor.fromJson(item))
+                .toList() ??
+            [],
+        regulationAndTimeTable:
+            (json['RegulationAndTimeTable'] as List<dynamic>?)
+                    ?.map((item) => RegTimeTableConvertor.fromJson(item))
+                    .toList() ??
+                [],
+        regSylMP: (json['RegSylMP'] as List<dynamic>?)
+                ?.map((item) => RegSylMPConvertor.fromJson(item))
+                .toList() ??
+            [],
+        labSubjects: (json['LabSubjects'] as List<dynamic>?)
+                ?.map((item) => subjectConvertor.fromJson(item))
+                .toList() ??
+            [],
+      );
+
+  static List<BranchStudyMaterialsConvertor> fromMapList(List<dynamic> list) {
+    return list.map((item) => fromJson(item)).toList();
+  }
+}

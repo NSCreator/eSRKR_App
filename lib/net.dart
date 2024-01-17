@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,7 +8,31 @@ import 'package:srkr_study_app/functions.dart';
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+import 'ads.dart';
+
+class AskAi extends StatefulWidget {
+  // const AskAi({super.key});
+
+  @override
+  State<AskAi> createState() => _AskAiState();
+}
+
+class _AskAiState extends State<AskAi> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        child: Column(
+          children: [
+
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 
 class MyHomePage extends StatefulWidget {
@@ -122,18 +147,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    double Size = size(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(Size * 16.0),
+          padding: EdgeInsets.all(  16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               backButton(
-                size: Size,
                 child: SizedBox(
-                  width: Size * 45,
+                  width:   45,
                 ),
                 text: "Reader (Beta)",
               ),
@@ -141,10 +164,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: isSpeaking
                     ? Container(
                         width: double.infinity,
-                        padding: EdgeInsets.all(Size * 8),
+                        padding: EdgeInsets.all(  8),
                         decoration: BoxDecoration(
-                          color: Colors.white12,
-                          borderRadius: BorderRadius.circular(Size * 30),
+                          color: Colors. black12,
+                          borderRadius: BorderRadius.circular(  30),
                         ),
                         child: SingleChildScrollView(
                           reverse: true,
@@ -154,8 +177,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               return Text(
                                 " $word",
                                 style: TextStyle(
-                                  fontSize: Size * 20.0,
-                                  color: Colors.white,
+                                  fontSize:   20.0,
+                                  color: Colors. black,
                                 ),
                               );
                             }).toList(),
@@ -163,37 +186,37 @@ class _MyHomePageState extends State<MyHomePage> {
                         ))
                     : Container(
                         decoration: BoxDecoration(
-                            color: Colors.white12,
-                            borderRadius: BorderRadius.circular(Size * 30)),
+                            color: Colors. black12,
+                            borderRadius: BorderRadius.circular(  30)),
                         child: Padding(
-                          padding: EdgeInsets.only(left: Size * 10),
+                          padding: EdgeInsets.only(left:   10),
                           child: TextFormField(
                             controller: textEditingController,
                             textInputAction: TextInputAction.next,
                             maxLines: null,
                             style: TextStyle(
-                                color: Colors.white, fontSize: Size * 20),
+                                color: Colors. black, fontSize:   20),
                             decoration: InputDecoration(
-                              hintStyle: TextStyle(color: Colors.white54),
+                              hintStyle: TextStyle(color: Colors. black54),
                               border: InputBorder.none,
                               hintText: 'Write Here',
                             ),
                           ),
                         )),
               ),
-              SizedBox(height: Size * 20),
+              SizedBox(height:   20),
               if (isExp)
                 Container(
-                  padding: EdgeInsets.all(Size * 10),
+                  padding: EdgeInsets.all(  10),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(Size * 20),
+                    borderRadius: BorderRadius.circular(  20),
                     gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.white.withOpacity(0.1),
+                          Colors. black.withOpacity(0.1),
                           Colors.transparent,
-                          Colors.white.withOpacity(0.1),
+                          Colors. black.withOpacity(0.1),
                         ]),
                   ),
                   child: Column(
@@ -201,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       SliderTheme(
                         data: SliderTheme.of(context).copyWith(
                           valueIndicatorTextStyle: TextStyle(
-                            fontSize: Size * 13,
+                            fontSize:   13,
                           ),
                         ),
                         child: Column(
@@ -212,8 +235,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 Text(
                                   "Pitch: ${pitch.toStringAsFixed(2)}",
                                   style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: Size * 20,
+                                      color: Colors. black,
+                                      fontSize:   20,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Expanded(
@@ -236,8 +259,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 Text(
                                   "Speech Rate: ${speechRate.toStringAsFixed(2)}",
                                   style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: Size * 20,
+                                      color: Colors. black,
+                                      fontSize:   20,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Expanded(
@@ -263,21 +286,21 @@ class _MyHomePageState extends State<MyHomePage> {
                           Text(
                             "Change Language : ",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: Size * 20,
+                                color: Colors. black,
+                                fontSize:   20,
                                 fontWeight: FontWeight.w500),
                           ),
                           Expanded(
                             child: Center(
                               child: Container(
-                                height: Size * 40,
+                                height:   40,
                                 decoration: BoxDecoration(
-                                    color: Colors.white70,
+                                    color: Colors. black87,
                                     borderRadius:
-                                        BorderRadius.circular(Size * 20)),
+                                        BorderRadius.circular(  20)),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: Size * 8.0),
+                                      horizontal:   8.0),
                                   child: DropdownButton<String>(
                                     value: selectedLanguage,
                                     items: languageItems,
@@ -299,13 +322,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Text(
                           "Save Changes",
                           style: TextStyle(
-                              fontSize: Size * 16, fontWeight: FontWeight.bold),
+                              fontSize:   16, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
                   ),
                 ),
-              SizedBox(height: Size * 20),
+              SizedBox(height:   20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -321,7 +344,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Text(
                       "Audio Settings",
                       style: TextStyle(
-                          fontSize: Size * 16, fontWeight: FontWeight.bold),
+                          fontSize:   16, fontWeight: FontWeight.bold),
                     ),
                   ),
                   ElevatedButton(
@@ -338,12 +361,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Text(
                       isSpeaking ? "Pause" : "Speak Text",
                       style: TextStyle(
-                          fontSize: Size * 16, fontWeight: FontWeight.bold),
+                          fontSize:   16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: Size * 20),
+              SizedBox(height:   20),
             ],
           ),
         ),
@@ -354,9 +377,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
 // class ImageScreen extends StatefulWidget {
 //   final String branch;
-//   double size;
 //
-//   ImageScreen({required this.branch,required this.size});
+//
+//   ImageScreen({required this.branch,  });
 //
 //   @override
 //   _ImageScreenState createState() => _ImageScreenState();
@@ -392,9 +415,6 @@ class _MyHomePageState extends State<MyHomePage> {
 //
 //   //method to set show content call back
 //   void _setFullScreenContentCallback() {
-//     if (rewardedAd == null) {
-//       return;
-//     }
 //     rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
 //       //when ad  shows fullscreen
 //       onAdShowedFullScreenContent: (RewardedAd ad) =>
@@ -482,14 +502,14 @@ class _MyHomePageState extends State<MyHomePage> {
 //   @override
 //   Widget build(BuildContext context) {
 //     return Padding(
-//       padding:  EdgeInsets.all(widget.size *15.0),
+//       padding:  EdgeInsets.all( 15.0),
 //       child: Container(
 //         decoration: BoxDecoration(
 //             color: Colors.black,
-//             borderRadius: BorderRadius.circular(widget.size *10),
-//             border: Border.all(color: Colors.white54)),
+//             borderRadius: BorderRadius.circular( 10),
+//             border: Border.all(color: Colors. black54)),
 //         child: Padding(
-//           padding:  EdgeInsets.symmetric(vertical:widget.size * 5, horizontal: widget.size *10),
+//           padding:  EdgeInsets.symmetric(vertical:  5, horizontal:  10),
 //           child: Row(
 //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //             crossAxisAlignment: CrossAxisAlignment.start,
@@ -499,8 +519,8 @@ class _MyHomePageState extends State<MyHomePage> {
 //                 crossAxisAlignment: CrossAxisAlignment.start,
 //                 children: [
 //                   Text(
-//                     "Support Us => ",
-//                     style: TextStyle(color: Colors.white, fontSize: widget.size *20),
+//                     "Support Us",
+//                     style: TextStyle(color: Colors. white, fontSize:  20),
 //                   ),
 //                 ],
 //               ),
@@ -535,27 +555,27 @@ class _MyHomePageState extends State<MyHomePage> {
 //                 child: Container(
 //                     decoration: BoxDecoration(
 //                         color: Colors.lightGreenAccent,
-//                         borderRadius: BorderRadius.circular(widget.size *10)
+//                         borderRadius: BorderRadius.circular( 10)
 //                     ),
 //                     child: Padding(
-//                       padding:  EdgeInsets.symmetric(vertical: widget.size *3,horizontal: widget.size *10),
-//                       child: Text('Help',style: TextStyle(color: Colors.black,fontSize: widget.size *20,fontWeight: FontWeight.w500),),
+//                       padding:  EdgeInsets.symmetric(vertical:  3,horizontal:  10),
+//                       child: Text('Join',style: TextStyle(color: Colors.black,fontSize:  20,fontWeight: FontWeight.w500),),
 //                     )),
 //               )
 //                   : Text(
 //                 'Wait for few secs',
-//                 style: TextStyle(fontSize:widget.size * 18, color: Colors.amber),
+//                 style: TextStyle(fontSize:  18, color: Colors.amber),
 //               )
 //                   : Text(
 //                 'Wait for ${remainingTime.round()} mins',
-//                 style: TextStyle(fontSize: widget.size *18, color: Colors.amber),
+//                 style: TextStyle(fontSize:  18, color: Colors.amber),
 //               ),
 //               if (!_canOpenImage)
 //                 InkWell(
 //                   child: Icon(
 //                     Icons.refresh,
-//                     color: Colors.white,
-//                     size:widget.size * 35,
+//                     color: Colors. black,
+//                     size:  35,
 //                   ),
 //                   onTap: () {
 //                     _checkImageOpenStatus();
@@ -637,41 +657,39 @@ class _supportListState extends State<supportList> {
 
   @override
   Widget build(BuildContext context) {
-    double Size = size(context);
     return Scaffold(
         body: SafeArea(
       child: Column(
         children: [
           backButton(
-              size: size(context),
               text: "Supported List",
               child: SizedBox(
-                width: Size * 45,
+                width:   45,
               )),
           !commentsIds.contains(fullUserId())
               ? Padding(
                   padding: EdgeInsets.symmetric(
-                      vertical: Size * 8, horizontal: Size * 20),
+                      vertical:   8, horizontal:   20),
                   child: Row(
                     children: [
                       Flexible(
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Colors.white30,
-                              borderRadius: BorderRadius.circular(Size * 20)),
+                              color: Colors. black38,
+                              borderRadius: BorderRadius.circular(  20)),
                           child: Padding(
-                            padding: EdgeInsets.only(left: Size * 10),
+                            padding: EdgeInsets.only(left:   10),
                             child: TextFormField(
                               controller: _comment,
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.multiline,
                               style: TextStyle(
-                                  color: Colors.white, fontSize: Size * 25),
+                                  color: Colors. black, fontSize:   25),
                               maxLines: null,
                               // Allows the field to expand as needed
                               decoration: const InputDecoration(
                                 hintStyle: TextStyle(
-                                  color: Colors.white60,
+                                  color: Colors. black87,
                                 ),
                                 border: InputBorder.none,
                                 hintText: 'write your message',
@@ -682,7 +700,7 @@ class _supportListState extends State<supportList> {
                       ),
                       InkWell(
                         child: Padding(
-                          padding: EdgeInsets.all(Size * 5.0),
+                          padding: EdgeInsets.all(  5.0),
                           child: Icon(
                             Icons.send,
                             color: Colors.lightBlueAccent,
@@ -701,67 +719,67 @@ class _supportListState extends State<supportList> {
                   "Your already Submitted",
                   style: TextStyle(
                       color: Colors.greenAccent,
-                      fontSize: Size * 30,
+                      fontSize:   30,
                       fontWeight: FontWeight.w700),
                 ),
           Padding(
-            padding: EdgeInsets.all(Size * 5.0),
+            padding: EdgeInsets.all(  5.0),
             child: Text(
               "Note : You can send message only for one time",
-              style: TextStyle(color: Colors.amber, fontSize: Size * 15),
+              style: TextStyle(color: Colors.amber, fontSize:   15),
             ),
           ),
           Padding(
             padding:
-                EdgeInsets.symmetric(vertical: Size * 10, horizontal: Size * 5),
+                EdgeInsets.symmetric(vertical:   10, horizontal:   5),
             child: Text(
               "Thanks for being a member :)",
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: Size * 25,
+                  color: Colors. black,
+                  fontSize:   25,
                   fontWeight: FontWeight.w600),
             ),
           ),
           Container(
-            height: Size * 3,
-            width: Size * 150,
+            height:   3,
+            width:   150,
             decoration: BoxDecoration(
-              color: Colors.white54,
-              borderRadius: BorderRadius.circular(Size * 5),
+              color: Colors. black54,
+              borderRadius: BorderRadius.circular(  5),
             ),
           ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(
-                  vertical: Size * 10, horizontal: Size * 5),
+                  vertical:   10, horizontal:   5),
               child: ListView.builder(
                 shrinkWrap: true,
                 reverse: false,
-                padding: EdgeInsets.symmetric(horizontal: Size * 10),
+                padding: EdgeInsets.symmetric(horizontal:   10),
                 itemCount: comments.length,
                 itemBuilder: (BuildContext context, int index) {
                   String data = comments[index];
                   String user = data.split(";").first;
                   String comment = data.split(";").last;
                   return Padding(
-                    padding: EdgeInsets.symmetric(vertical: Size * 5),
+                    padding: EdgeInsets.symmetric(vertical:   5),
                     child: Row(
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(Size * 30),
-                              border: Border.all(color: Colors.white54)),
+                              borderRadius: BorderRadius.circular(  30),
+                              border: Border.all(color: Colors. black54)),
                           child: Padding(
-                            padding: EdgeInsets.all(Size * 3.0),
+                            padding: EdgeInsets.all(  3.0),
                             child: Text(
                               user.split(":").first,
                               style: TextStyle(
-                                  color: Colors.white, fontSize: Size * 20),
+                                  color: Colors. black, fontSize:   20),
                             ),
                           ),
                         ),
                         SizedBox(
-                          width: Size * 10,
+                          width:   10,
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -770,12 +788,12 @@ class _supportListState extends State<supportList> {
                             Text(
                               "@${user.split(":").last}",
                               style: TextStyle(
-                                  color: Colors.white54, fontSize: Size * 13),
+                                  color: Colors. black54, fontSize:   13),
                             ),
                             Text(
                               comment,
                               style: TextStyle(
-                                  color: Colors.white, fontSize: Size * 20),
+                                  color: Colors. black, fontSize:   20),
                             ),
                           ],
                         ),
@@ -785,7 +803,7 @@ class _supportListState extends State<supportList> {
                             child: Icon(
                               Icons.delete,
                               color: Colors.redAccent,
-                              size: Size * 30,
+                              size:   30,
                             ),
                             onTap: () {
                               addComment(false, data);
@@ -804,9 +822,9 @@ class _supportListState extends State<supportList> {
             child: Text(
               "Earned money \$ $money",
               style: TextStyle(
-                  color: Colors.white60,
+                  color: Colors. black54,
                   fontWeight: FontWeight.w500,
-                  fontSize: Size * 13),
+                  fontSize:   13),
             ),
           ),
         ],
