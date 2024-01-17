@@ -1,10 +1,10 @@
 name: srkr_study_app
 description: A new Flutter project.
 publish_to: 'none'
-version: 2023.11.14+26
+version: 2023.12.31+28
 
 environment:
-  sdk: ">=2.12.0-dev.68.0 <3.0.0"
+  sdk: '>=3.2.0-272.0.dev <4.0.0'
 dependencies:
   flutter:
     sdk: flutter
@@ -12,9 +12,8 @@ dependencies:
   firebase_storage:
   url_launcher:
   http:
-  fluttertoast:
-#  google_mobile_ads:
-#  youtube_explode_dart:
+
+
   carousel_slider:
   firebase_core:
   cloud_firestore:
@@ -22,24 +21,18 @@ dependencies:
   email_validator:
   intl:
   photo_view:
-  firebase_database:
   image_picker:
   path_provider:
   flutter_local_notifications:
-#  animations:
   flutter_pdfview:
   firebase_messaging:
-  marquee:
   shared_preferences:
   mailer:
-#  open_file:
   flutter_tts:
-#  visibility_detector:
-  objectbox_flutter_libs:
-#  flutter_speed_dial:
-  youtube_player_flutter:
-  youtube:
-#  flutter_inappwebview:
+  fluttertoast: ^8.2.4
+  objectbox_flutter_libs: ^1.3.0
+  firebase_database: ^10.4.0
+
 
 
 

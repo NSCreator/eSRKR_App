@@ -8,13 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:srkr_study_app/homePage/HomePage.dart';
 import 'dart:convert';
 
+import '../SubPages.dart';
 import '../TextField.dart';
 import '../functions.dart';
+import '../net.dart';
+import '../test.dart';
 
-int currentIndex = 0;
+
 class ImageShowAndDownload extends StatefulWidget {
   String  image;
   bool isZoom;
@@ -65,7 +67,6 @@ setState(() {
 
   @override
   Widget build(BuildContext context) {
-    double Size=size(context);
     return
       widget.isZoom
           ? InkWell(
@@ -87,11 +88,10 @@ setState(() {
                 context,
                 MaterialPageRoute(
                     builder: (context) => Scaffold(
-                        backgroundColor: Colors.black,
                         body: SafeArea(
                           child: Column(
                             children: [
-                              backButton(text: "back", size: Size , child: SizedBox(),),
+                              backButton(text: "back",  child: SizedBox(),),
                               Expanded(
                                 child: Center(
                                   child: File(filePath).existsSync()
@@ -133,34 +133,34 @@ DecorationImage ImageNotFoundForTextBooks = DecorationImage(
     image: AssetImage("assets/pdfTextBookIcon.png"), fit: BoxFit.cover);
 
 TextStyle secondTabBarTextStyle(
-    {Color color = Colors.white, required double size}) {
+    {Color color = Colors. black, required double size}) {
   return TextStyle(
-    color: Colors.white,
-    fontSize: size * 18,
+    color: Colors. black,
+    fontSize:   18,
   );
 }
 
 const TextStyle AppBarHeadingTextStyle =
-    TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700);
+    TextStyle(color: Colors. black, fontSize: 30, fontWeight: FontWeight.w700);
 const TextStyle creatorHeadingTextStyle =
-    TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white);
+    TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors. black);
 
 TextStyle secondHeadingTextStyle(
-    {Color color = Colors.white, required double size}) {
+    {Color color = Colors. black}) {
   return TextStyle(
-      color: color, fontSize: size * 22, fontWeight: FontWeight.w500);
+      color: color, fontSize:   22, fontWeight: FontWeight.w500);
 }
 
 class settings extends StatefulWidget {
   final String reg, branch, name;
-  final double size;
+
 
   const settings({
     Key? key,
     required this.reg,
     required this.name,
     required this.branch,
-    required this.size,
+
   }) : super(key: key);
 
   @override
@@ -180,622 +180,1159 @@ class _settingsState extends State<settings> {
       'Privacy Policy',
     ),
   ];
-
+  List<RegTimeTableConvertor> RegTimeTable = [];
+  Future<void> getData(bool isReload) async {
+    try {
+      BranchStudyMaterialsConvertor? data =
+      await getBranchStudyMaterials(widget.branch, isReload);
+      if (data != null) {
+        setState(() {
+          RegTimeTable = data.regulationAndTimeTable;
+        });
+      } else {
+        print("No data found for the specified branch.");
+      }
+    } catch (e) {
+      print("Error getting subjects: $e");
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData(true);
+  }
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding:  EdgeInsets.all(widget.size*15.0),
-            child: Text(
-              "My Account",
-              style: TextStyle(color: Colors.white, fontSize: widget.size*20),
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            color: Colors.white30,
-            padding: EdgeInsets.all(widget.size*8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: widget.size * 70,
-                  width: widget.size * 70,
-                  margin: EdgeInsets.symmetric(horizontal:widget.size* 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(widget.size * 40),
-                    color: Colors.black,
-                  ),
-                  child: Center(
-                      child: Text(
-                    picText(""),
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontSize: widget.size * 40,
-                        fontFamily: "test"),
-                  )),
+
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Icon(Icons.arrow_back),
+                    Text(
+                      "Back",
+                      style: TextStyle(fontSize: 18),
+                    )
+                  ],
                 ),
-                Column(
+              ),
+              Padding(
+                padding:  EdgeInsets.all(15.0),
+                child: Text(
+                  "My Account",
+                  style: TextStyle(color: Colors.black, fontSize: 20),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                color: Colors.black26,
+                padding: EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      height:  70,
+                      width:  70,
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(40),
+                        color: Colors. black,
+                      ),
+                      child: Center(
+                          child: Text(
+                        picText(""),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                            fontSize:  30,
+                            fontFamily: "test"),
+                      )),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${widget.name.replaceAll(";", " ").toUpperCase()}",
+                          style: TextStyle(
+                              fontSize:  25.0,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                              fontFamily: "test"),
+                        ),
+                        Text(
+                          fullUserId(),
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w600,
+                              fontSize:  18,
+                              fontFamily: "test"),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("${widget.branch} ${widget.reg}  ",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:  16,
+                                    fontFamily: "test")),
+
+                            InkWell(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 3,
+                                    horizontal:  8),
+                                margin: EdgeInsets.symmetric(horizontal: 5),
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.circular(  20),
+                                  color: Colors.black38,
+                                ),
+                                child: Icon(Icons.edit,color: Colors.white,size: 30,),
+                              ),
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Dialog(
+                                      backgroundColor: Colors.transparent,
+                                      // backgroundColor:
+                                      // Colors.blueGrey.withOpacity(0.6),
+                                      // shape: RoundedRectangleBorder(
+                                      //     borderRadius:
+                                      //     BorderRadius.circular(
+                                      //           20)),
+                                      elevation: 20,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors. white,
+                                            borderRadius: BorderRadius.circular(
+                                                 30)),
+                                        child: ListView.builder(
+                                          physics:
+                                          const BouncingScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: RegTimeTable.length,
+                                          itemBuilder:
+                                              (context, int index) {
+                                            final SubjectsData =
+                                            RegTimeTable[index];
+                                            return Center(
+                                              child: Padding(
+                                                padding: EdgeInsets
+                                                    .symmetric(
+                                                    vertical:
+                                                    3.0),
+                                                child: InkWell(
+                                                  child: Text(
+                                                    SubjectsData.regulation
+                                                        .toUpperCase(),
+                                                    style: TextStyle(
+                                                        color: Colors
+                                                            .black87,
+                                                        fontSize:
+                                                        20,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,fontFamily: "test"),
+                                                  ),
+                                                  onTap: () {
+                                                    FirebaseFirestore
+                                                        .instance
+                                                        .collection(
+                                                        "user")
+                                                        .doc(
+                                                        fullUserId())
+                                                        .update({
+                                                      "reg":
+                                                      SubjectsData
+                                                          .regulation
+                                                    });
+                                                    Navigator.pop(
+                                                        context);
+
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              // if ((!isGmail())&&(!isOwner()))
+              //   ImageScreen(
+              //     branch: widget.branch,
+              //   ),
+
+              SizedBox(height: 5.0),
+
+              Padding(
+                padding:  EdgeInsets.all(10.0),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "${widget.name.replaceAll(";", " ").toUpperCase()}",
-                      style: TextStyle(
-                          fontSize: widget.size * 25.0,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          fontFamily: "test"),
-                    ),
-                    Text(
-                      fullUserId(),
-                      style: TextStyle(
-                          color: Colors.white60,
-                          fontWeight: FontWeight.w600,
-                          fontSize: widget.size * 18,
-                          fontFamily: "test"),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Row(
-                      children: [
-                        Text("${widget.branch} ${widget.reg}",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: widget.size * 20,
-                                fontFamily: "test")),
-                        InkWell(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: widget.size * 3,
-                                horizontal: widget.size * 8),
-                            margin: EdgeInsets.symmetric(horizontal: widget.size*5),
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(widget.size * 20),
-                              color: Colors.white30,
-                            ),
-                            child: Text(
-                              "Change",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: widget.size * 20),
-                            ),
-                          ),
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Dialog(
-                                  backgroundColor: Colors.transparent,
-                                  // backgroundColor:
-                                  // Colors.blueGrey.withOpacity(0.6),
-                                  // shape: RoundedRectangleBorder(
-                                  //     borderRadius:
-                                  //     BorderRadius.circular(
-                                  //         widget.size * 20)),
-                                  elevation: 20,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.white70,
-                                        borderRadius: BorderRadius.circular(
-                                            widget.size * 30)),
-                                    child: StreamBuilder<
-                                            List<RegulationConvertor>>(
-                                        stream: readRegulation(widget.branch),
-                                        builder: (context, snapshot) {
-                                          final user = snapshot.data;
-                                          switch (snapshot.connectionState) {
-                                            case ConnectionState.waiting:
-                                              return const Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                strokeWidth: 0.3,
-                                                color: Colors.cyan,
-                                              ));
-                                            default:
-                                              if (snapshot.hasError) {
-                                                return const Center(
-                                                    child: Text(
-                                                        'Error with Regulation Data or\n Check Internet Connection'));
-                                              } else {
-                                                return ListView.builder(
-                                                  physics:
-                                                      const BouncingScrollPhysics(),
-                                                  shrinkWrap: true,
-                                                  itemCount: user!.length,
-                                                  itemBuilder:
-                                                      (context, int index) {
-                                                    final SubjectsData =
-                                                        user[index];
-                                                    return Center(
-                                                      child: Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: widget
-                                                                        .size *
-                                                                    5.0),
-                                                        child: InkWell(
-                                                          child: Text(
-                                                            SubjectsData.id
-                                                                .toUpperCase(),
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: widget
-                                                                        .size *
-                                                                    20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                          onTap: () {
-                                                            FirebaseFirestore
-                                                                .instance
-                                                                .collection(
-                                                                    "user")
-                                                                .doc(
-                                                                    fullUserId())
-                                                                .update({
-                                                              "reg":
-                                                                  SubjectsData
-                                                                      .id
-                                                            });
-                                                            Navigator.pop(
-                                                                context);
+                    Text("Settings",style: TextStyle(color: Colors.deepOrange.withOpacity(0.8),fontSize:25),),
 
-                                                          },
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              }
-                                          }
-                                        }),
-                                  ),
-                                );
-                              },
-                            );
-                          },
+                    InkWell(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10,vertical:5),
+                        margin: EdgeInsets.only(top: 10,bottom: 2),
+                        decoration: BoxDecoration(
+                            color: Colors.black26,
+                            borderRadius: BorderRadius.circular(10)
                         ),
-                      ],
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.report_problem_outlined,
+                                  color: Colors.black87,
+                                  size:  25,
+                                ),
+                                Text(" Report",style: TextStyle(color: Colors.black,fontSize: 25),),
+                              ],
+                            ),
+                            Icon(Icons.chevron_right,size: 25,color: Colors.black54,)
+                          ],
+                        ),
+                      ),
+                      onTap: (){
+                        sendingMails("sujithnimmala03@gmail.com");
+                      },
                     ),
+                    InkWell(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal:  10,vertical:  5),
+                        margin: EdgeInsets.symmetric(vertical:  2),
+                        decoration: BoxDecoration(
+                            color: Colors.black26,
+                            borderRadius: BorderRadius.circular( 10)
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.privacy_tip_outlined,
+                                  color: Colors.black87,
+                                  size:   25,
+                                ),
+                                Text(" Privacy Policy",style: TextStyle(color: Colors.black,fontSize:  25),),
+                              ],
+                            ),
+                            Icon(Icons.chevron_right,size:  25,color: Colors.black54,)
+                          ],
+                        ),
+                      ),
+                      onTap: (){
+                        ExternalLaunchUrl(
+                            "https://github.com/NSCreator/PRIVACY_POLACY/blob/main/Privacy-policy");
+
+                      },
+                    ),
+                    InkWell(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal:  10,vertical:  5),
+                        margin: EdgeInsets.symmetric(vertical:  2),
+                        decoration: BoxDecoration(
+                            color: Colors.black26,
+                            borderRadius: BorderRadius.circular( 10)
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.read_more,
+                                  color: Colors.black87,
+                                  size:   25,
+                                ),
+                                Text(" About",style: TextStyle(color: Colors.black,fontSize:  25),),
+                              ],
+                            ),
+                            Icon(Icons.chevron_right,size:  25,color: Colors.black54,)
+                          ],
+                        ),
+                      ),
+                      onTap: (){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const about()));
+
+                                      },
+                    ),
+
                   ],
-                )
-              ],
-            ),
-          ),
-          // if ((!isGmail())&&(!isOwner()))
-          //   ImageScreen(
-          //     size: widget.size,
-          //     branch: widget.branch,
-          //   ),
-          SizedBox(
-            width: widget.size*10,
-          ),
-
-          SizedBox(height: widget.size * 5.0),
-
-          Padding(
-            padding:  EdgeInsets.all(widget.size*10.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Settings",style: TextStyle(color: Colors.orangeAccent.withOpacity(0.8),fontSize:widget.size* 25),),
-
-                InkWell(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: widget.size*10,vertical:widget.size* 5),
-                    margin: EdgeInsets.only(top:widget.size* 10,bottom:widget.size* 2),
-                    decoration: BoxDecoration(
-                        color: Colors.white12,
-                        borderRadius: BorderRadius.circular(widget.size*10)
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.report_problem_outlined,
-                              color: Colors.white60,
-                              size: widget.size * 25,
-                            ),
-                            Text(" Report",style: TextStyle(color: Colors.white,fontSize: widget.size*25),),
-                          ],
-                        ),
-                        Icon(Icons.chevron_right,size:widget.size* 25,color: Colors.white54,)
-                      ],
-                    ),
-                  ),
-                  onTap: (){
-                    sendingMails("sujithnimmala03@gmail.com");
-                  },
                 ),
-                InkWell(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal:widget.size* 10,vertical: widget.size*5),
-                    margin: EdgeInsets.symmetric(vertical: widget.size*2),
-                    decoration: BoxDecoration(
-                        color: Colors.white12,
-                        borderRadius: BorderRadius.circular(widget.size*10)
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.privacy_tip_outlined,
-                              color: Colors.white60,
-                              size: widget.size * 25,
-                            ),
-                            Text(" Privacy Policy",style: TextStyle(color: Colors.white,fontSize:widget.size* 25),),
-                          ],
-                        ),
-                        Icon(Icons.chevron_right,size: widget.size*25,color: Colors.white54,)
-                      ],
-                    ),
-                  ),
-                  onTap: (){
-                    ExternalLaunchUrl(
-                        "https://github.com/NSCreator/PRIVACY_POLACY/blob/main/Privacy-policy");
+              ),
 
-                  },
-                ),
-                InkWell(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal:widget.size* 10,vertical:widget.size* 5),
-                    margin: EdgeInsets.symmetric(vertical: widget.size*2),
-                    decoration: BoxDecoration(
-                        color: Colors.white12,
-                        borderRadius: BorderRadius.circular(widget.size*10)
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.read_more,
-                              color: Colors.white60,
-                              size: widget.size * 25,
-                            ),
-                            Text(" About",style: TextStyle(color: Colors.white,fontSize: widget.size*25),),
-                          ],
-                        ),
-                        Icon(Icons.chevron_right,size: widget.size*25,color: Colors.white54,)
-                      ],
-                    ),
-                  ),
-                  onTap: (){
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const about()));
+                Padding(
+                  padding:  EdgeInsets.all( 8.0),
+                  child: Column(
+                    children: [
+                      // Container(
+                      //   padding: EdgeInsets.symmetric(vertical:  5, horizontal:  8),
+                      //   decoration: BoxDecoration(
+                      //       color: Colors.black,
+                      //       borderRadius: BorderRadius.circular( 20)),
+                      //   child: Column(
+                      //     mainAxisAlignment: MainAxisAlignment.start,
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       InkWell(
+                      //         child: Container(
+                      //           padding: EdgeInsets.symmetric(
+                      //               horizontal:  10, vertical:  5),
+                      //           margin:
+                      //           EdgeInsets.only(bottom:  5, left:  2, top:  10),
+                      //           decoration: BoxDecoration(
+                      //               color: Colors. black12,
+                      //               borderRadius: BorderRadius.circular( 10)),
+                      //           child: Row(
+                      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //             children: [
+                      //               Row(
+                      //                 children: [
+                      //                   Icon(
+                      //                     Icons.add_box_outlined,
+                      //                     color: Colors.  black87,
+                      //                     size:   25,
+                      //                   ),
+                      //                   Text(
+                      //                     " Create Events",
+                      //                     style: TextStyle(
+                      //                         color: Colors. black, fontSize:  25),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //               Icon(
+                      //                 Icons.chevron_right,
+                      //                 size:  25,
+                      //                 color: Colors. black54,
+                      //               )
+                      //             ],
+                      //           ),
+                      //         ),
+                      //         onTap: () {
+                      //           Navigator.push(
+                      //               context,
+                      //               MaterialPageRoute(
+                      //                   builder: (context) => addEvent(
+                      //
+                      //                     branch: widget.branch,
+                      //                   )));
+                      //         },
+                      //       ),
+                      //       InkWell(
+                      //         child: Container(
+                      //           padding: EdgeInsets.symmetric(
+                      //               horizontal:  10, vertical:  5),
+                      //           margin:
+                      //           EdgeInsets.only(bottom:  5, left:  2, top:  10),
+                      //           decoration: BoxDecoration(
+                      //               color: Colors. black12,
+                      //               borderRadius: BorderRadius.circular( 10)),
+                      //           child: Row(
+                      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //             children: [
+                      //               Row(
+                      //                 children: [
+                      //                   Icon(
+                      //                     Icons.add_box_outlined,
+                      //                     color: Colors.  black87,
+                      //                     size:   25,
+                      //                   ),
+                      //                   Text(
+                      //                     " Create Regulation by R2_",
+                      //                     style: TextStyle(
+                      //                         color: Colors. black, fontSize:  25),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //               Icon(
+                      //                 Icons.chevron_right,
+                      //                 size:  25,
+                      //                 color: Colors. black54,
+                      //               )
+                      //             ],
+                      //           ),
+                      //         ),
+                      //         onTap: () {
+                      //           Navigator.push(context, MaterialPageRoute(builder: (context)=>RegSylMP( branch: widget.branch,)));
+                      //
+                      //         },
+                      //       ),
+                      //       Text(
+                      //         "Create News",
+                      //         style: TextStyle(
+                      //             color: Colors.orangeAccent, fontSize:  25),
+                      //       ),
+                      //       Row(
+                      //         children: [
+                      //           Flexible(
+                      //             child: InkWell(
+                      //               child: Container(
+                      //                 padding: EdgeInsets.symmetric(
+                      //                     horizontal:  10, vertical:  5),
+                      //                 margin: EdgeInsets.only(
+                      //                     bottom:  5, right:  2, top:  10),
+                      //                 decoration: BoxDecoration(
+                      //                     color: Colors. black12,
+                      //                     borderRadius: BorderRadius.circular( 10)),
+                      //                 child: Row(
+                      //                   mainAxisAlignment:
+                      //                   MainAxisAlignment.spaceBetween,
+                      //                   children: [
+                      //                     Expanded(
+                      //                       child: Row(
+                      //                         children: [
+                      //                           Icon(
+                      //                             Icons.add_box_outlined,
+                      //                             color: Colors.  black87,
+                      //                             size:   25,
+                      //                           ),
+                      //                           Expanded(
+                      //                             child: Text(" Flash News",
+                      //                                 style: TextStyle(
+                      //                                     color: Colors. black,
+                      //                                     fontSize:  25),
+                      //                                 maxLines: 1),
+                      //                           ),
+                      //                         ],
+                      //                       ),
+                      //                     ),
+                      //                     Icon(
+                      //                       Icons.chevron_right,
+                      //                       size:  25,
+                      //                       color: Colors. black54,
+                      //                     )
+                      //                   ],
+                      //                 ),
+                      //               ),
+                      //               onTap: () {
+                      //                 Navigator.push(
+                      //                     context,
+                      //                     MaterialPageRoute(
+                      //                         builder: (context) =>
+                      //                             flashNewsCreator(
+                      //                               branch: widget.branch,
+                      //
+                      //                             )));
+                      //               },
+                      //             ),
+                      //           ),
+                      //           Flexible(
+                      //             child: InkWell(
+                      //               child: Container(
+                      //                 padding: EdgeInsets.symmetric(
+                      //                     horizontal:  10, vertical:  5),
+                      //                 margin: EdgeInsets.only(
+                      //                     bottom:  5, left:  2, top:  10),
+                      //                 decoration: BoxDecoration(
+                      //                     color: Colors. black12,
+                      //                     borderRadius: BorderRadius.circular( 10)),
+                      //                 child: Row(
+                      //                   mainAxisAlignment:
+                      //                   MainAxisAlignment.spaceBetween,
+                      //                   children: [
+                      //                     Row(
+                      //                       children: [
+                      //                         Icon(
+                      //                           Icons.add_box_outlined,
+                      //                           color: Colors.  black87,
+                      //                           size:   25,
+                      //                         ),
+                      //                         Text(
+                      //                           " News",
+                      //                           style: TextStyle(
+                      //                               color: Colors. black,
+                      //                               fontSize:  25),
+                      //                         ),
+                      //                       ],
+                      //                     ),
+                      //                     Icon(
+                      //                       Icons.chevron_right,
+                      //                       size:  25,
+                      //                       color: Colors. black54,
+                      //                     )
+                      //                   ],
+                      //                 ),
+                      //               ),
+                      //               onTap: () {
+                      //                 Navigator.push(
+                      //                     context,
+                      //                     MaterialPageRoute(
+                      //                         builder: (context) => updateCreator(
+                      //                           branch: widget.branch,
+                      //
+                      //                         )));
+                      //               },
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical:  5, horizontal:  8),
+                        margin: EdgeInsets.symmetric(vertical:  10),
 
-                                  },
-                ),
-
-              ],
-            ),
-          ),
-          StreamBuilder<List<followUsConvertor>>(
-              stream: readfollowUs(),
-              builder: (context, snapshot) {
-                final Books = snapshot.data;
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      strokeWidth: 0.3,
-                      color: Colors.cyan,
-                    ));
-                  default:
-                    if (snapshot.hasError) {
-                      return const Center(
-                          child: Text(
-                              'Error with TextBooks Data or\n Check Internet Connection'));
-                    } else {
-                      if (Books!.isEmpty) {
-                        return Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(widget.size * 8.0),
-                            child: Text(
-                              "Nothing To Follow",
-                              style: TextStyle(
-                                color: Color.fromRGBO(195, 228, 250, 1),
-                              ),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Column(
+                        decoration: BoxDecoration(
+                            color: Colors. black12,
+                            borderRadius: BorderRadius.circular( 20)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: widget.size * 10,
-                                  top: widget.size * 20,
-                                  bottom: widget.size * 8),
-                              child: Text(
-                                "Follow Us",
-                                style: TextStyle(
-                                  fontSize: widget.size * 20,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color.fromRGBO(195, 228, 250, 1),
+                            Text(
+                              "Create Materials",
+                              style: TextStyle(
+                                  color: Colors.orangeAccent, fontSize:  25),
+                            ),
+
+                            InkWell(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal:  10, vertical:  5),
+                                margin: EdgeInsets.only(bottom:  5),
+                                decoration: BoxDecoration(
+                                    color: Colors. black12,
+                                    borderRadius: BorderRadius.circular( 10)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.add_box_outlined,
+                                          color: Colors.  black87,
+                                          size:   25,
+                                        ),
+                                        Text(
+                                          " Books",
+                                          style: TextStyle(
+                                              color: Colors. black, fontSize:  25),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      size:  25,
+                                      color: Colors. black54,
+                                    )
+                                  ],
                                 ),
                               ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => BooksCreator(
+                                          branch: widget.branch,
+                                        )));
+                              },
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(widget.size * 8.0),
-                              child: SizedBox(
-                                height: widget.size * 40,
-                                child: ListView.separated(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: Books.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) =>
-                                          InkWell(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          left: widget.size * 5,
-                                          bottom: widget.size * 10),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: const Color.fromRGBO(
-                                                174, 228, 242, 0.15),
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                              widget.size * 15),
-                                          color: Colors.black.withOpacity(0.3),
-                                          // border: Border.all(color: Colors.white),
+                            InkWell(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal:  10, vertical:  5),
+                                margin: EdgeInsets.only(bottom:  5),
+                                decoration: BoxDecoration(
+                                    color: Colors. black12,
+                                    borderRadius: BorderRadius.circular( 10)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.add_box_outlined,
+                                          color: Colors.  black87,
+                                          size:   25,
                                         ),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        widget.size * 15),
-                                                color: Colors.black
-                                                    .withOpacity(0.4),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    Books[index].photoUrl,
+                                        Text(
+                                          "Subjects",
+                                          style: TextStyle(
+                                              color: Colors. black, fontSize:  25),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      size:  25,
+                                      color: Colors. black54,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SubjectCreator(
+                                          branch: widget.branch,
+                                        )));
+                              },
+                            ),
+                            InkWell(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal:  10, vertical:  5),
+                                margin: EdgeInsets.only(bottom:  5),
+                                decoration: BoxDecoration(
+                                    color: Colors. black12,
+                                    borderRadius: BorderRadius.circular( 10)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.add_box_outlined,
+                                          color: Colors.  black87,
+                                          size:   25,
+                                        ),
+                                        Text(
+                                          "Lab Subjects",
+                                          style: TextStyle(
+                                              color: Colors. black, fontSize:  25),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      size:  25,
+                                      color: Colors. black54,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SubjectCreator(
+                                          branch: widget.branch,   isSub: false,
+                                        )));
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Container(
+                      //   padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                      //   margin: EdgeInsets.symmetric(vertical: 10),
+                      //
+                      //   decoration: BoxDecoration(
+                      //       color: Colors.black,
+                      //       borderRadius: BorderRadius.circular(20)),
+                      //   child: Column(
+                      //     children: [
+                      //       InkWell(
+                      //         child: Container(
+                      //           padding: EdgeInsets.symmetric(
+                      //               horizontal: 10, vertical: 5),
+                      //           margin:
+                      //           EdgeInsets.only(bottom: 5, right: 2, top: 10),
+                      //           decoration: BoxDecoration(
+                      //               color: Colors. black12,
+                      //               borderRadius: BorderRadius.circular(10)),
+                      //           child: Row(
+                      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //             children: [
+                      //               Row(
+                      //                 children: [
+                      //                   Icon(
+                      //                     Icons.add_box_outlined,
+                      //                     color: Colors. black54,
+                      //                     size:   25,
+                      //                   ),
+                      //                   Text(
+                      //                     " Time Table",
+                      //                     style: TextStyle(
+                      //                         color: Colors. black, fontSize: 25),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //               Icon(
+                      //                 Icons.chevron_right,
+                      //                 size: 25,
+                      //                 color: Colors. black54,
+                      //               )
+                      //             ],
+                      //           ),
+                      //         ),
+                      //         onTap: () {
+                      //           Navigator.push(
+                      //               context,
+                      //               MaterialPageRoute(
+                      //                   builder: (context) =>
+                      //                       timeTableSyllabusModalPaperCreator(
+                      //
+                      //                         mode: 'Time Table',
+                      //                         reg: widget.reg,
+                      //                         branch: widget.branch,
+                      //                       )));
+                      //         },
+                      //       ),
+                      //       InkWell(
+                      //         child: Container(
+                      //           padding: EdgeInsets.symmetric(
+                      //               horizontal: 10, vertical: 5),
+                      //           margin:
+                      //           EdgeInsets.only(bottom: 5, right: 2, top: 10),
+                      //           decoration: BoxDecoration(
+                      //               color: Colors. black12,
+                      //               borderRadius: BorderRadius.circular(10)),
+                      //           child: Row(
+                      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //             children: [
+                      //               Row(
+                      //                 children: [
+                      //                   Icon(
+                      //                     Icons.add_box_outlined,
+                      //                     color: Colors. black54,
+                      //                     size:   25,
+                      //                   ),
+                      //                   Text(
+                      //                     " Syllabus",
+                      //                     style: TextStyle(
+                      //                         color: Colors. black, fontSize: 25),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //               Icon(
+                      //                 Icons.chevron_right,
+                      //                 size: 25,
+                      //                 color: Colors. black54,
+                      //               )
+                      //             ],
+                      //           ),
+                      //         ),
+                      //         onTap: () {
+                      //           if (widget.reg.isNotEmpty && widget.reg != "None")
+                      //             Navigator.push(
+                      //                 context,
+                      //                 MaterialPageRoute(
+                      //                     builder: (context) =>
+                      //                         timeTableSyllabusModalPaperCreator(
+                      //                           heading: widget.reg,
+                      //
+                      //                           mode: 'Syllabus',
+                      //                           reg: widget.reg,
+                      //                           branch: widget.branch,
+                      //                           id: widget.reg,
+                      //                         )));
+                      //           else {
+                      //             showToastText("Select Your Regulation");
+                      //           }
+                      //         },
+                      //       ),
+                      //       InkWell(
+                      //         child: Container(
+                      //           padding: EdgeInsets.symmetric(
+                      //               horizontal: 10, vertical: 5),
+                      //           margin:
+                      //           EdgeInsets.only(bottom: 5, left: 2, top: 10),
+                      //           decoration: BoxDecoration(
+                      //               color: Colors. black12,
+                      //               borderRadius: BorderRadius.circular(10)),
+                      //           child: Row(
+                      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //             children: [
+                      //               Row(
+                      //                 children: [
+                      //                   Icon(
+                      //                     Icons.add_box_outlined,
+                      //                     color: Colors. black54,
+                      //                     size:   25,
+                      //                   ),
+                      //                   Text(
+                      //                     " Model Paper",
+                      //                     style: TextStyle(
+                      //                         color: Colors. black,
+                      //                         fontSize:   22),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //               Icon(
+                      //                 Icons.chevron_right,
+                      //                 size: 25,
+                      //                 color: Colors. black54,
+                      //               )
+                      //             ],
+                      //           ),
+                      //         ),
+                      //         onTap: () {
+                      //           if (widget.reg.isNotEmpty && widget.reg != "None")
+                      //             Navigator.push(
+                      //                 context,
+                      //                 MaterialPageRoute(
+                      //                     builder: (context) =>
+                      //                         timeTableSyllabusModalPaperCreator(
+                      //                           heading: widget.reg,
+                      //
+                      //                           mode: 'modalPaper',
+                      //                           reg: widget.reg,
+                      //                           branch: widget.branch,
+                      //                           id: widget.reg,
+                      //                         )));
+                      //           else {
+                      //             showToastText("Select Your Regulation");
+                      //           }
+                      //         },
+                      //       ),
+                      //     ],
+                      //   ),
+                      // )
+
+                    ],
+                  ),
+                ),
+              StreamBuilder<List<followUsConvertor>>(
+                  stream: readfollowUs(),
+                  builder: (context, snapshot) {
+                    final Books = snapshot.data;
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                            child: CircularProgressIndicator(
+                          strokeWidth: 0.3,
+                          color: Colors.cyan,
+                        ));
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text(
+                                  'Error with TextBooks Data or\n Check Internet Connection'));
+                        } else {
+                          if (Books!.isEmpty) {
+                            return Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(  8.0),
+                                child: Text(
+                                  "Nothing To Follow",
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(195, 228, 250, 1),
+                                  ),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left:   10,
+                                      top:   20,
+                                      bottom:   8),
+                                  child: Text(
+                                    "Follow Us",
+                                    style: TextStyle(
+                                      fontSize:   20,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(  8.0),
+                                  child: Container(
+                                    constraints: BoxConstraints(maxHeight: 50),
+
+                                    child: ListView.separated(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: Books.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) =>
+                                              InkWell(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left:   5,
+                                              bottom:   10),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: const Color.fromRGBO(
+                                                    174, 228, 242, 0.15),
+                                              ),
+                                              borderRadius: BorderRadius.circular(
+                                                    15),
+                                              color: Colors.black.withOpacity(0.3),
+                                              // border: Border.all(color: Colors. black),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                              15),
+                                                    color: Colors.black
+                                                        .withOpacity(0.4),
+                                                    image: DecorationImage(
+                                                      image: NetworkImage(
+                                                        Books[index].photoUrl,
+                                                      ),
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ),
-                                                  fit: BoxFit.cover,
+                                                  height:   35,
+                                                  width:   50,
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.all(
+                                                        5.0),
+                                                  child: Text(
+                                                    Books[index].name,
+                                                    style: TextStyle(
+                                                        fontSize:   16,
+                                                        color: Colors. black),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          if (Books[index].name == "Gmail") {
+                                            sendingMails(Books[index].link);
+                                          } else {
+                                            if (Books[index].link.isNotEmpty)
+                                              ExternalLaunchUrl(Books[index].link);
+                                            else
+                                              showToastText(
+                                                  "No ${Books[index].name} Link");
+                                          }
+                                        },
+                                      ),
+                                      shrinkWrap: true,
+                                      separatorBuilder: (context, index) =>
+                                          SizedBox(
+                                        width:   9,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                        }
+                    }
+                  }),
+
+              SizedBox(
+                height:   30,
+              ),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical:  10),
+                decoration: BoxDecoration(color: Colors.black26),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding:  EdgeInsets.only(bottom:  10.0,left:  30,right:  30),
+                      child: InkWell(
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical:  5),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(  10),
+                              border: Border.all(color: Colors.black54)),
+                          child: Center(
+                            child: Text(
+                              "Logout",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize:   22,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(  20)),
+                                elevation: 16,
+                                child: Container(
+                                  decoration: BoxDecoration(
+
+                                    borderRadius:
+                                        BorderRadius.circular(  20),
+                                  ),
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    children: <Widget>[
+                                      SizedBox(height:   15),
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.only(left:   15),
+                                        child: Text(
+                                          "Do you want Log Out",
+                                          style: TextStyle(
+                                              color: Colors. black,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize:   18),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height:   5,
+                                      ),
+                                      Center(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Spacer(),
+                                            InkWell(
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black26,
+
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                            25),
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal:   15,
+                                                      vertical:   5),
+                                                  child: Text(
+                                                    "Back",
+                                                    style: TextStyle(
+                                                        color: Colors. black,
+                                                        fontSize:   14),
+                                                  ),
                                                 ),
                                               ),
-                                              height: widget.size * 35,
-                                              width: widget.size * 50,
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
                                             ),
-                                            Padding(
-                                              padding: EdgeInsets.all(
-                                                  widget.size * 5.0),
-                                              child: Text(
-                                                Books[index].name,
-                                                style: TextStyle(
-                                                    fontSize: widget.size * 16,
-                                                    color: Colors.white),
+                                            SizedBox(
+                                              width:   10,
+                                            ),
+                                            InkWell(
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red,
+
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                            25),
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal:   15,
+                                                      vertical:   5),
+                                                  child: Text(
+                                                    "Log Out",
+                                                    style: TextStyle(
+                                                        color: Colors. black,
+                                                        fontSize:   14),
+                                                  ),
+                                                ),
                                               ),
+                                              onTap: () {
+                                                FirebaseAuth.instance.signOut();
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                            SizedBox(
+                                              width:   20,
                                             ),
                                           ],
                                         ),
                                       ),
-                                    ),
-                                    onTap: () {
-                                      if (Books[index].name == "Gmail") {
-                                        sendingMails(Books[index].link);
-                                      } else {
-                                        if (Books[index].link.isNotEmpty)
-                                          ExternalLaunchUrl(Books[index].link);
-                                        else
-                                          showToastText(
-                                              "No ${Books[index].name} Link");
-                                      }
-                                    },
-                                  ),
-                                  shrinkWrap: true,
-                                  separatorBuilder: (context, index) =>
                                       SizedBox(
-                                    width: widget.size * 9,
+                                        height:   10,
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                    }
-                }
-              }),
-
-          SizedBox(
-            height: widget.size * 30,
-          ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: widget.size*10),
-            decoration: BoxDecoration(color: Colors.white12),
-            child: Column(
-              children: [
-                Padding(
-                  padding:  EdgeInsets.only(bottom:widget.size* 10.0,left:widget.size* 30,right: widget.size*30),
-                  child: InkWell(
-                    child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical:widget.size* 5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(widget.size * 10),
-                          border: Border.all(color: Colors.white54)),
-                      child: Center(
-                        child: Text(
-                          "Logout",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: widget.size * 22,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    ),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Dialog(
-                            backgroundColor: Colors.black.withOpacity(0.3),
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(widget.size * 20)),
-                            elevation: 16,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.tealAccent),
-                                borderRadius:
-                                    BorderRadius.circular(widget.size * 20),
-                              ),
-                              child: ListView(
-                                shrinkWrap: true,
-                                children: <Widget>[
-                                  SizedBox(height: widget.size * 15),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(left: widget.size * 15),
-                                    child: Text(
-                                      "Do you want Log Out",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: widget.size * 18),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: widget.size * 5,
-                                  ),
-                                  Center(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Spacer(),
-                                        InkWell(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.black26,
-                                              border: Border.all(
-                                                  color: Colors.white
-                                                      .withOpacity(0.3)),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      widget.size * 25),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: widget.size * 15,
-                                                  vertical: widget.size * 5),
-                                              child: Text(
-                                                "Back",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: widget.size * 14),
-                                              ),
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                        SizedBox(
-                                          width: widget.size * 10,
-                                        ),
-                                        InkWell(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.red,
-                                              border: Border.all(
-                                                  color: Colors.black),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      widget.size * 25),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: widget.size * 15,
-                                                  vertical: widget.size * 5),
-                                              child: Text(
-                                                "Log Out",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: widget.size * 14),
-                                              ),
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            FirebaseAuth.instance.signOut();
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                        SizedBox(
-                                          width: widget.size * 20,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: widget.size * 10,
-                                  ),
-                                ],
-                              ),
-                            ),
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(
-                      "eSRKR",
-                      style: TextStyle(
-                          color: Colors.white54   , fontSize: widget.size * 14),
-                    ),
-                    Text(
-                      "v2023.10.3",
-                      style: TextStyle(
-                        fontSize: widget.size * 9.0,
-                        color: Colors.white70,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text(
+                          "eSRKR",
+                          style: TextStyle(
+                              color: Colors.black54   , fontSize:   14),
+                        ),
+                        Text(
+                          "v2023.12.31",
+                          style: TextStyle(
+                            fontSize:   9.0,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
 
-                    Text(
-                      "from NS",
-                      style: TextStyle(
-                          color: Colors.white54, fontSize: widget.size * 14),
-                    ),
+                        Text(
+                          "from NS",
+                          style: TextStyle(
+                              color: Colors.black54, fontSize:   14),
+                        ),
+                      ],
+                    )
                   ],
-                )
-              ],
-            ),
+                ),
+              ),
+
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -881,7 +1418,7 @@ class about extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     color: const Color.fromRGBO(38, 39, 43, 0.6),
-                    border: Border.all(color: Colors.white),
+                    border: Border.all(color: Colors. black),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(
@@ -895,13 +1432,13 @@ class about extends StatelessWidget {
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
-                              color: Colors.white70),
+                              color: Colors. black87),
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 10, top: 3, bottom: 3),
                           child: Text(
                             about.description,
-                            style: TextStyle(color: Colors.white38),
+                            style: TextStyle(color: Colors. black38),
                           ),
                         ),
                       ],

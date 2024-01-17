@@ -6,7 +6,6 @@ import 'package:srkr_study_app/test.dart';
 import 'homePage/HomePage.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'main.dart';
 import 'homePage/settings.dart';
 import 'dart:io';
 import 'functions.dart';
@@ -14,427 +13,426 @@ import 'notification.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-class addEvent extends StatefulWidget {
-  String NewsId;
-  String heading;
-  String link;
-  String photoUrl;
-  String subMessage;
-  String branch;
-  final double size;
+// class addEvent extends StatefulWidget {
+//   String NewsId;
+//   String heading;
+//   String link;
+//   String photoUrl;
+//   String subMessage;
+//   String branch;
+//
+//
+//   addEvent(
+//       {this.NewsId = "",
+//       this.link = '',
+//       this.heading = "",
+//       this.photoUrl = "",
+//       this.subMessage = "",
+//
+//       required this.branch});
+//
+//   @override
+//   State<addEvent> createState() => _addEventState();
+// }
+//
+// class _addEventState extends State<addEvent> {
+//   FirebaseStorage storage = FirebaseStorage.instance;
+//   String Branch = "";
+//   bool isBranch = false;
+//   final HeadingController = TextEditingController();
+//   final DescriptionController = TextEditingController();
+//   final PhotoUrlController = TextEditingController();
+//   final LinkController = TextEditingController();
+//   bool _isImage = false;
+//
+//   void AutoFill() async {
+//     HeadingController.text = widget.heading;
+//     PhotoUrlController.text = widget.photoUrl;
+//     DescriptionController.text = widget.subMessage;
+//     LinkController.text = widget.link;
+//     if (widget.photoUrl.length > 3) {
+//       setState(() {
+//         _isImage = true;
+//       });
+//     }
+//   }
+//
+//   @override
+//   void initState() {
+//     AutoFill();
+//     super.initState();
+//   }
+//
+//   @override
+//   void dispose() {
+//     HeadingController.dispose();
+//     PhotoUrlController.dispose();
+//     LinkController.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//         body: SafeArea(
+//       child: SingleChildScrollView(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.start,
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             backButton(
+//                 text: "Events Creator",
+//                 child: SizedBox(
+//                   width:   45,
+//                 )),
+//             TextFieldContainer(
+//               child: TextFormField(
+//                 controller: HeadingController,
+//                 textInputAction: TextInputAction.next,
+//                 style:
+//                     TextStyle(color: Colors. black, fontSize:   20),
+//                 decoration: InputDecoration(
+//                     border: InputBorder.none,
+//                     hintText: 'heading',
+//                     hintStyle: TextStyle(color: Colors. black54)),
+//               ),
+//               heading: "Heading",
+//             ),
+//             TextFieldContainer(
+//               child: TextFormField(
+//                 controller: DescriptionController,
+//                 textInputAction: TextInputAction.next,
+//                 style:
+//                     TextStyle(color: Colors. black, fontSize:   20),
+//                 decoration: InputDecoration(
+//                     border: InputBorder.none,
+//                     hintText: 'description',
+//                     hintStyle: TextStyle(color: Colors. black54)),
+//               ),
+//               heading: "Description",
+//             ),
+//             TextFieldContainer(
+//               child: TextFormField(
+//                 controller: LinkController,
+//                 textInputAction: TextInputAction.next,
+//                 style:
+//                     TextStyle(color: Colors. black, fontSize:   20),
+//                 decoration: InputDecoration(
+//                     border: InputBorder.none,
+//                     hintText: 'youTube Url',
+//                     hintStyle: TextStyle(color: Colors. black54)),
+//               ),
+//               heading: "YouTube Url",
+//             ),
+//             if (_isImage == true)
+//               Padding(
+//                 padding: EdgeInsets.only(
+//                     left:   10, top:   20),
+//                 child: Row(
+//                   children: [
+//                     Container(
+//                         height:   110,
+//                         width:   180,
+//                         decoration: BoxDecoration(
+//                             color: Colors.black.withOpacity(0.5),
+//                             borderRadius:
+//                                 BorderRadius.circular(  14),
+//                             image: DecorationImage(
+//                                 image: NetworkImage(
+//                                     PhotoUrlController.text.trim()),
+//                                 fit: BoxFit.fill))),
+//                     InkWell(
+//                       child: Padding(
+//                         padding: EdgeInsets.only(
+//                             left:   30,
+//                             top:   10,
+//                             bottom:   10,
+//                             right:   10),
+//                         child: Text(
+//                           "Delete",
+//                           style: TextStyle(
+//                               fontSize:   30,
+//                               color: CupertinoColors.destructiveRed),
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             if (_isImage == false)
+//               InkWell(
+//                 child: Padding(
+//                   padding: EdgeInsets.only(
+//                       left:   15,
+//                       top:   20,
+//                       bottom:   10),
+//                   child: Row(
+//                     children: [
+//                       Icon(
+//                         Icons.upload,
+//                         size:   35,
+//                         color: Colors. black,
+//                       ),
+//                       SizedBox(
+//                         width:   5,
+//                       ),
+//                       Text(
+//                         "Upload Photo",
+//                         style: TextStyle(
+//                             fontSize:   30, color: Colors. black),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 onTap: () async {
+//                   final pickedFile = await ImagePicker()
+//                       .pickImage(source: ImageSource.gallery);
+//                   File file = File(pickedFile!.path);
+//                   final Reference ref =
+//                       storage.ref().child('${widget.branch}/events/${getID()}');
+//                   final TaskSnapshot task = await ref.putFile(file);
+//                   final String url = await task.ref.getDownloadURL();
+//                   PhotoUrlController.text = url;
+//                   bool _isLoading = false;
+//                   showDialog(
+//                     context: context,
+//                     builder: (context) {
+//                       return Dialog(
+//                         backgroundColor: Colors.black.withOpacity(0.1),
+//                         shape: RoundedRectangleBorder(
+//                             borderRadius:
+//                                 BorderRadius.circular(  20)),
+//                         elevation: 16,
+//                         child: Container(
+//                           decoration: BoxDecoration(
+//                             border: Border.all(
+//                                 color: Colors. black.withOpacity(0.1)),
+//                             borderRadius:
+//                                 BorderRadius.circular(  20),
+//                           ),
+//                           child: ListView(
+//                             physics: BouncingScrollPhysics(),
+//                             shrinkWrap: true,
+//                             children: <Widget>[
+//                               Center(
+//                                 child: Padding(
+//                                   padding: EdgeInsets.all(  8.0),
+//                                   child: Text(
+//                                     "Image",
+//                                     style: TextStyle(
+//                                         fontSize:   22,
+//                                         fontWeight: FontWeight.w300,
+//                                         color: Colors.blue),
+//                                   ),
+//                                 ),
+//                               ),
+//                               Stack(
+//                                 children: <Widget>[
+//                                   Image.network(
+//                                     url,
+//                                     fit: BoxFit.cover,
+//                                     loadingBuilder: (context, child, progress) {
+//                                       if (progress == null) {
+//                                         _isLoading = false;
+//                                       }
+//                                       return progress == null
+//                                           ? child
+//                                           : Center(
+//                                               child:
+//                                                   CircularProgressIndicator());
+//                                     },
+//                                   ),
+//                                   if (_isLoading)
+//                                     Center(
+//                                       child: CircularProgressIndicator(),
+//                                     ),
+//                                 ],
+//                               ),
+//                               SizedBox(
+//                                 height:   10,
+//                               ),
+//                               Row(
+//                                 children: [
+//                                   InkWell(
+//                                     child: Padding(
+//                                       padding:
+//                                           EdgeInsets.all(  5.0),
+//                                       child: Text(
+//                                         "Cancel & Delete",
+//                                         style: TextStyle(
+//                                             color: Colors. black,
+//                                             fontSize:   20),
+//                                       ),
+//                                     ),
+//                                     onTap: () async {
+//                                       final Uri uri = Uri.parse(url);
+//                                       final String fileName =
+//                                           uri.pathSegments.last;
+//                                       final Reference ref =
+//                                           storage.ref().child("/${fileName}");
+//                                       try {
+//                                         await ref.delete();
+//                                         showToastText(
+//                                             'Image deleted successfully');
+//                                       } catch (e) {
+//                                         showToastText(
+//                                             'Error deleting image: $e');
+//                                       }
+//                                       Navigator.pop(context);
+//                                     },
+//                                   ),
+//                                   SizedBox(
+//                                     width:   20,
+//                                   ),
+//                                   InkWell(
+//                                     child: Padding(
+//                                       padding:
+//                                           EdgeInsets.all(  5.0),
+//                                       child: Text(
+//                                         "Okay",
+//                                         style: TextStyle(
+//                                             color: Colors. black,
+//                                             fontSize:   20),
+//                                       ),
+//                                     ),
+//                                     onTap: () {
+//                                       setState(() {
+//                                         PhotoUrlController.text = url;
+//                                         _isImage = true;
+//                                       });
+//                                       Navigator.pop(context);
+//                                     },
+//                                   ),
+//                                 ],
+//                                 mainAxisAlignment: MainAxisAlignment.center,
+//                                 crossAxisAlignment: CrossAxisAlignment.center,
+//                               )
+//                             ],
+//                           ),
+//                         ),
+//                       );
+//                     },
+//                   );
+//                 },
+//               ),
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.end,
+//               children: [
+//                 InkWell(
+//                   onTap: () {
+//                     Navigator.pop(context);
+//                   },
+//                   child: Container(
+//                     decoration: BoxDecoration(
+//                       color: Colors.grey[500],
+//                       borderRadius: BorderRadius.circular(  15),
+//                       border: Border.all(color: Colors. black),
+//                     ),
+//                     child: Padding(
+//                       padding: EdgeInsets.only(
+//                           left:   10,
+//                           right:   10,
+//                           top:   5,
+//                           bottom:   5),
+//                       child: Text("Back..."),
+//                     ),
+//                   ),
+//                 ),
+//                 InkWell(
+//                   onTap: () {
+//                     if (widget.NewsId.length > 3) {
+//                       // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
+//                       FirebaseFirestore.instance
+//                           .collection(widget.branch)
+//                           .doc("events")
+//                           .collection("events")
+//                           .doc(widget.NewsId)
+//                           .update({
+//                         "heading": HeadingController.text.trim(),
+//                         "link": LinkController.text.trim(),
+//                         "image": PhotoUrlController.text,
+//                         "description": DescriptionController.text
+//                       });
+//                       messageToOwner(
+//                           "Update is Updated\nBy '${fullUserId()}\n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
+//                     } else {
+//                       createevents(
+//                         heading: HeadingController.text.trim(),
+//                         description: DescriptionController.text,
+//                         videoUrl: LinkController.text.trim(),
+//                         photoUrl: PhotoUrlController.text.trim(),
+//                         created: fullUserId(),
+//                         branch: widget.branch,
+//                         id: getID(),
+//                       );
+//                       messageToOwner(
+//                           "${widget.branch} event is Created\nBy '${fullUserId()}\n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
+//                     }
+//
+//                     HeadingController.clear();
+//                     LinkController.clear();
+//                     PhotoUrlController.clear();
+//                     Navigator.pop(context);
+//                   },
+//                   child: widget.NewsId.length < 3
+//                       ? Container(
+//                           decoration: BoxDecoration(
+//                             color: Colors.grey[500],
+//                             borderRadius:
+//                                 BorderRadius.circular(  15),
+//                             border: Border.all(color: Colors. black),
+//                           ),
+//                           child: Padding(
+//                             padding: EdgeInsets.only(
+//                                 left:   10,
+//                                 right:   10,
+//                                 top:   5,
+//                                 bottom:   5),
+//                             child: Text("Create"),
+//                           ),
+//                         )
+//                       : Container(
+//                           decoration: BoxDecoration(
+//                             color: Colors.grey[500],
+//                             borderRadius:
+//                                 BorderRadius.circular(  15),
+//                             border: Border.all(color: Colors. black),
+//                           ),
+//                           child: Padding(
+//                             padding: EdgeInsets.only(
+//                                 left:   10,
+//                                 right:   10,
+//                                 top:   5,
+//                                 bottom:   5),
+//                             child: Text("Update"),
+//                           ),
+//                         ),
+//                 ),
+//                 SizedBox(
+//                   width:   15,
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ),
+//       ),
+//     ));
+//   }
+// }
 
-  addEvent(
-      {this.NewsId = "",
-      this.link = '',
-      this.heading = "",
-      this.photoUrl = "",
-      this.subMessage = "",
-      required this.size,
-      required this.branch});
-
-  @override
-  State<addEvent> createState() => _addEventState();
-}
-
-class _addEventState extends State<addEvent> {
-  FirebaseStorage storage = FirebaseStorage.instance;
-  String Branch = "";
-  bool isBranch = false;
-  final HeadingController = TextEditingController();
-  final DescriptionController = TextEditingController();
-  final PhotoUrlController = TextEditingController();
-  final LinkController = TextEditingController();
-  bool _isImage = false;
-
-  void AutoFill() async {
-    HeadingController.text = widget.heading;
-    PhotoUrlController.text = widget.photoUrl;
-    DescriptionController.text = widget.subMessage;
-    LinkController.text = widget.link;
-    if (widget.photoUrl.length > 3) {
-      setState(() {
-        _isImage = true;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    AutoFill();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    HeadingController.dispose();
-    PhotoUrlController.dispose();
-    LinkController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            backButton(
-                size: widget.size,
-                text: "Events Creator",
-                child: SizedBox(
-                  width: widget.size * 45,
-                )),
-            TextFieldContainer(
-              child: TextFormField(
-                controller: HeadingController,
-                textInputAction: TextInputAction.next,
-                style:
-                    TextStyle(color: Colors.white, fontSize: widget.size * 20),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'heading',
-                    hintStyle: TextStyle(color: Colors.white54)),
-              ),
-              heading: "Heading",
-            ),
-            TextFieldContainer(
-              child: TextFormField(
-                controller: DescriptionController,
-                textInputAction: TextInputAction.next,
-                style:
-                    TextStyle(color: Colors.white, fontSize: widget.size * 20),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'description',
-                    hintStyle: TextStyle(color: Colors.white54)),
-              ),
-              heading: "Description",
-            ),
-            TextFieldContainer(
-              child: TextFormField(
-                controller: LinkController,
-                textInputAction: TextInputAction.next,
-                style:
-                    TextStyle(color: Colors.white, fontSize: widget.size * 20),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'youTube Url',
-                    hintStyle: TextStyle(color: Colors.white54)),
-              ),
-              heading: "YouTube Url",
-            ),
-            if (_isImage == true)
-              Padding(
-                padding: EdgeInsets.only(
-                    left: widget.size * 10, top: widget.size * 20),
-                child: Row(
-                  children: [
-                    Container(
-                        height: widget.size * 110,
-                        width: widget.size * 180,
-                        decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
-                            borderRadius:
-                                BorderRadius.circular(widget.size * 14),
-                            image: DecorationImage(
-                                image: NetworkImage(
-                                    PhotoUrlController.text.trim()),
-                                fit: BoxFit.fill))),
-                    InkWell(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            left: widget.size * 30,
-                            top: widget.size * 10,
-                            bottom: widget.size * 10,
-                            right: widget.size * 10),
-                        child: Text(
-                          "Delete",
-                          style: TextStyle(
-                              fontSize: widget.size * 30,
-                              color: CupertinoColors.destructiveRed),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            if (_isImage == false)
-              InkWell(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      left: widget.size * 15,
-                      top: widget.size * 20,
-                      bottom: widget.size * 10),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.upload,
-                        size: widget.size * 35,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: widget.size * 5,
-                      ),
-                      Text(
-                        "Upload Photo",
-                        style: TextStyle(
-                            fontSize: widget.size * 30, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-                onTap: () async {
-                  final pickedFile = await ImagePicker()
-                      .pickImage(source: ImageSource.gallery);
-                  File file = File(pickedFile!.path);
-                  final Reference ref =
-                      storage.ref().child('${widget.branch}/events/${getID()}');
-                  final TaskSnapshot task = await ref.putFile(file);
-                  final String url = await task.ref.getDownloadURL();
-                  PhotoUrlController.text = url;
-                  bool _isLoading = false;
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return Dialog(
-                        backgroundColor: Colors.black.withOpacity(0.1),
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(widget.size * 20)),
-                        elevation: 16,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.white.withOpacity(0.1)),
-                            borderRadius:
-                                BorderRadius.circular(widget.size * 20),
-                          ),
-                          child: ListView(
-                            physics: BouncingScrollPhysics(),
-                            shrinkWrap: true,
-                            children: <Widget>[
-                              Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(widget.size * 8.0),
-                                  child: Text(
-                                    "Image",
-                                    style: TextStyle(
-                                        fontSize: widget.size * 22,
-                                        fontWeight: FontWeight.w300,
-                                        color: Colors.blue),
-                                  ),
-                                ),
-                              ),
-                              Stack(
-                                children: <Widget>[
-                                  Image.network(
-                                    url,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, progress) {
-                                      if (progress == null) {
-                                        _isLoading = false;
-                                      }
-                                      return progress == null
-                                          ? child
-                                          : Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                    },
-                                  ),
-                                  if (_isLoading)
-                                    Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: widget.size * 10,
-                              ),
-                              Row(
-                                children: [
-                                  InkWell(
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.all(widget.size * 5.0),
-                                      child: Text(
-                                        "Cancel & Delete",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: widget.size * 20),
-                                      ),
-                                    ),
-                                    onTap: () async {
-                                      final Uri uri = Uri.parse(url);
-                                      final String fileName =
-                                          uri.pathSegments.last;
-                                      final Reference ref =
-                                          storage.ref().child("/${fileName}");
-                                      try {
-                                        await ref.delete();
-                                        showToastText(
-                                            'Image deleted successfully');
-                                      } catch (e) {
-                                        showToastText(
-                                            'Error deleting image: $e');
-                                      }
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  SizedBox(
-                                    width: widget.size * 20,
-                                  ),
-                                  InkWell(
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.all(widget.size * 5.0),
-                                      child: Text(
-                                        "Okay",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: widget.size * 20),
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      setState(() {
-                                        PhotoUrlController.text = url;
-                                        _isImage = true;
-                                      });
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ],
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[500],
-                      borderRadius: BorderRadius.circular(widget.size * 15),
-                      border: Border.all(color: Colors.white),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left: widget.size * 10,
-                          right: widget.size * 10,
-                          top: widget.size * 5,
-                          bottom: widget.size * 5),
-                      child: Text("Back..."),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    if (widget.NewsId.length > 3) {
-                      // UpdateBranchNew(heading: HeadingController.text.trim(), description: DescriptionController.text.trim(), Date: getTime(), photoUrl: PhotoUrlController.text.trim(),id: widget.NewsId);
-                      FirebaseFirestore.instance
-                          .collection(widget.branch)
-                          .doc("events")
-                          .collection("events")
-                          .doc(widget.NewsId)
-                          .update({
-                        "heading": HeadingController.text.trim(),
-                        "link": LinkController.text.trim(),
-                        "image": PhotoUrlController.text,
-                        "description": DescriptionController.text
-                      });
-                      messageToOwner(
-                          "Update is Updated\nBy '${fullUserId()}\n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
-                    } else {
-                      createevents(
-                        heading: HeadingController.text.trim(),
-                        description: DescriptionController.text,
-                        videoUrl: LinkController.text.trim(),
-                        photoUrl: PhotoUrlController.text.trim(),
-                        created: fullUserId(),
-                        branch: widget.branch,
-                        id: getID(),
-                      );
-                      messageToOwner(
-                          "${widget.branch} event is Created\nBy '${fullUserId()}\n    Heading : ${HeadingController.text.trim()}\n    Description : ${DescriptionController.text}    \nImage : ${PhotoUrlController.text}    \nLink : ${LinkController.text.trim()}\n **${widget.branch}");
-                    }
-
-                    HeadingController.clear();
-                    LinkController.clear();
-                    PhotoUrlController.clear();
-                    Navigator.pop(context);
-                  },
-                  child: widget.NewsId.length < 3
-                      ? Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[500],
-                            borderRadius:
-                                BorderRadius.circular(widget.size * 15),
-                            border: Border.all(color: Colors.white),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: widget.size * 10,
-                                right: widget.size * 10,
-                                top: widget.size * 5,
-                                bottom: widget.size * 5),
-                            child: Text("Create"),
-                          ),
-                        )
-                      : Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[500],
-                            borderRadius:
-                                BorderRadius.circular(widget.size * 15),
-                            border: Border.all(color: Colors.white),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: widget.size * 10,
-                                right: widget.size * 10,
-                                top: widget.size * 5,
-                                bottom: widget.size * 5),
-                            child: Text("Update"),
-                          ),
-                        ),
-                ),
-                SizedBox(
-                  width: widget.size * 15,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    ));
-  }
-}
-
-TextStyle textFieldStyle(double size) {
+TextStyle textFieldStyle() {
   return TextStyle(
-    color: Colors.white,
+    color: Colors. black,
     fontWeight: FontWeight.w500,
-    fontSize: size * 20,
+    fontSize:   20,
   );
 }
 
-TextStyle textFieldHintStyle(double size) {
+TextStyle textFieldHintStyle() {
   return TextStyle(
-    color: Colors.white54,
+    color: Colors. black54,
     fontWeight: FontWeight.w300,
-    fontSize: size * 18,
+    fontSize:   18,
   );
 }
 
@@ -451,14 +449,13 @@ class TextFieldContainer extends StatefulWidget {
 class _TextFieldContainerState extends State<TextFieldContainer> {
   @override
   Widget build(BuildContext context) {
-    double Size = size(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.heading.isNotEmpty)
           Padding(
-            padding: EdgeInsets.only(left: Size * 15, top: Size * 8),
+            padding: EdgeInsets.only(left:   15, top:   8),
             child: Text(
               widget.heading,
               style: creatorHeadingTextStyle,
@@ -466,18 +463,18 @@ class _TextFieldContainerState extends State<TextFieldContainer> {
           ),
         Padding(
           padding: EdgeInsets.only(
-              left: Size * 10,
-              right: Size * 10,
-              top: Size * 5,
-              bottom: Size * 5),
+              left:   10,
+              right:   10,
+              top:   5,
+              bottom:   5),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              border: Border.all(color: Colors.white12),
-              borderRadius: BorderRadius.circular(Size * 15),
+              color: Colors. black.withOpacity(0.15),
+              border: Border.all(color: Colors. black12),
+              borderRadius: BorderRadius.circular(  15),
             ),
             child: Padding(
-              padding: EdgeInsets.only(left: Size * 10),
+              padding: EdgeInsets.only(left:   10),
               child: widget.child,
             ),
           ),
@@ -492,13 +489,11 @@ class flashNewsCreator extends StatefulWidget {
   String heading;
   String branch;
   String link;
-  final double size;
 
   flashNewsCreator({
     this.NewsId = "",
     this.link = '',
     this.heading = "",
-    required this.size,
     required this.branch,
   });
 
@@ -539,23 +534,23 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               backButton(
-                  size: widget.size,
+                    
                   text: "Flash News Creator",
                   child: SizedBox(
-                    width: widget.size * 45,
+                    width:   45,
                   )),
               TextFieldContainer(
                   heading: "Heading",
                   child: Padding(
-                    padding: EdgeInsets.only(left: widget.size * 10),
+                    padding: EdgeInsets.only(left:   10),
                     child: TextFormField(
                       controller: HeadingController,
                       textInputAction: TextInputAction.next,
                       maxLines: null,
                       style: TextStyle(
-                          color: Colors.white, fontSize: widget.size * 20),
+                          color: Colors. black, fontSize:   20),
                       decoration: InputDecoration(
-                        hintStyle: TextStyle(color: Colors.white54),
+                        hintStyle: TextStyle(color: Colors. black54),
                         border: InputBorder.none,
                         hintText: 'Heading',
                       ),
@@ -564,18 +559,18 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
               TextFieldContainer(
                   heading: "Link",
                   child: Padding(
-                    padding: EdgeInsets.only(left: widget.size * 10),
+                    padding: EdgeInsets.only(left:   10),
                     child: TextFormField(
                       //obscureText: true,
                       controller: LinkController,
                       textInputAction: TextInputAction.next,
                       maxLines: null,
                       style: TextStyle(
-                          color: Colors.white, fontSize: widget.size * 20),
+                          color: Colors. black, fontSize:   20),
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'if any link',
-                          hintStyle: TextStyle(color: Colors.white54)),
+                          hintStyle: TextStyle(color: Colors. black54)),
                     ),
                   )),
               Row(
@@ -588,15 +583,15 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(widget.size * 15),
-                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(  15),
+                        border: Border.all(color: Colors. black),
                       ),
                       child: Padding(
                         padding: EdgeInsets.only(
-                            left: widget.size * 10,
-                            right: widget.size * 10,
-                            top: widget.size * 5,
-                            bottom: widget.size * 5),
+                            left:   10,
+                            right:   10,
+                            top:   5,
+                            bottom:   5),
                         child: Text("Back..."),
                       ),
                     ),
@@ -644,15 +639,15 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
                             decoration: BoxDecoration(
                               color: Colors.grey[500],
                               borderRadius:
-                                  BorderRadius.circular(widget.size * 15),
-                              border: Border.all(color: Colors.white),
+                                  BorderRadius.circular(  15),
+                              border: Border.all(color: Colors. black),
                             ),
                             child: Padding(
                               padding: EdgeInsets.only(
-                                  left: widget.size * 10,
-                                  right: widget.size * 10,
-                                  top: widget.size * 5,
-                                  bottom: widget.size * 5),
+                                  left:   10,
+                                  right:   10,
+                                  top:   5,
+                                  bottom:   5),
                               child: Text("Create"),
                             ),
                           )
@@ -660,21 +655,21 @@ class _flashNewsCreatorState extends State<flashNewsCreator> {
                             decoration: BoxDecoration(
                               color: Colors.grey[500],
                               borderRadius:
-                                  BorderRadius.circular(widget.size * 15),
-                              border: Border.all(color: Colors.white),
+                                  BorderRadius.circular(  15),
+                              border: Border.all(color: Colors. black),
                             ),
                             child: Padding(
                               padding: EdgeInsets.only(
-                                  left: widget.size * 10,
-                                  right: widget.size * 10,
-                                  top: widget.size * 5,
-                                  bottom: widget.size * 5),
+                                  left:   10,
+                                  right:   10,
+                                  top:   5,
+                                  bottom:   5),
                               child: Text("Update"),
                             ),
                           ),
                   ),
                   SizedBox(
-                    width: widget.size * 15,
+                    width:   15,
                   ),
                 ],
               ),
@@ -693,13 +688,11 @@ class timeTableSyllabusModalPaperCreator extends StatefulWidget {
   String mode;
   String reg;
   String branch;
-  final double size;
 
   timeTableSyllabusModalPaperCreator({
     this.id = "",
     this.link = '',
     this.heading = "",
-    required this.size,
     required this.mode,
     required this.reg,
     required this.branch,
@@ -750,23 +743,22 @@ class _timeTableSyllabusModalPaperCreatorState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               backButton(
-                  size: widget.size,
                   text: widget.mode,
                   child: SizedBox(
-                    width: widget.size * 45,
+                    width:   45,
                   )),
               TextFieldContainer(
                   heading: "Heading",
                   child: Padding(
-                    padding: EdgeInsets.only(left: widget.size * 10),
+                    padding: EdgeInsets.only(left:   10),
                     child: TextFormField(
                       controller: HeadingController,
                       textInputAction: TextInputAction.next,
                       maxLines: null,
                       style: TextStyle(
-                          color: Colors.white, fontSize: widget.size * 20),
+                          color: Colors. black, fontSize:   20),
                       decoration: InputDecoration(
-                        hintStyle: TextStyle(color: Colors.white54),
+                        hintStyle: TextStyle(color: Colors. black54),
                         border: InputBorder.none,
                         hintText: 'Heading',
                       ),
@@ -776,33 +768,33 @@ class _timeTableSyllabusModalPaperCreatorState
                 TextFieldContainer(
                     heading: "Link",
                     child: Padding(
-                      padding: EdgeInsets.only(left: widget.size * 10),
+                      padding: EdgeInsets.only(left:   10),
                       child: TextFormField(
                         //obscureText: true,
                         controller: LinkController,
                         textInputAction: TextInputAction.next,
                         maxLines: null,
                         style: TextStyle(
-                            color: Colors.white, fontSize: widget.size * 20),
+                            color: Colors. black, fontSize:   20),
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Link',
-                            hintStyle: TextStyle(color: Colors.white54)),
+                            hintStyle: TextStyle(color: Colors. black54)),
                       ),
                     )),
               if (_isImage == true && widget.mode == "Time Table")
                 Padding(
                   padding: EdgeInsets.only(
-                      left: widget.size * 10, top: widget.size * 20),
+                      left:   10, top:   20),
                   child: Row(
                     children: [
                       Container(
-                          height: widget.size * 110,
-                          width: widget.size * 180,
+                          height:   110,
+                          width:   180,
                           decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.5),
                               borderRadius:
-                                  BorderRadius.circular(widget.size * 14),
+                                  BorderRadius.circular(  14),
                               image: DecorationImage(
                                   image: NetworkImage(
                                       PhotoUrlController.text.trim()),
@@ -810,14 +802,14 @@ class _timeTableSyllabusModalPaperCreatorState
                       InkWell(
                         child: Padding(
                           padding: EdgeInsets.only(
-                              left: widget.size * 30,
-                              top: widget.size * 10,
-                              bottom: widget.size * 10,
-                              right: widget.size * 10),
+                              left:   30,
+                              top:   10,
+                              bottom:   10,
+                              right:   10),
                           child: Text(
                             "Delete",
                             style: TextStyle(
-                                fontSize: widget.size * 30,
+                                fontSize:   30,
                                 color: CupertinoColors.destructiveRed),
                           ),
                         ),
@@ -829,23 +821,23 @@ class _timeTableSyllabusModalPaperCreatorState
                 InkWell(
                   child: Padding(
                     padding: EdgeInsets.only(
-                        left: widget.size * 15,
-                        top: widget.size * 20,
-                        bottom: widget.size * 10),
+                        left:   15,
+                        top:   20,
+                        bottom:   10),
                     child: Row(
                       children: [
                         Icon(
                           Icons.upload,
-                          size: widget.size * 35,
-                          color: Colors.white,
+                          size:   35,
+                          color: Colors. black,
                         ),
                         SizedBox(
-                          width: widget.size * 5,
+                          width:   5,
                         ),
                         Text(
                           "Upload Photo",
                           style: TextStyle(
-                              fontSize: widget.size * 30, color: Colors.white),
+                              fontSize:   30, color: Colors. black),
                         ),
                       ],
                     ),
@@ -867,14 +859,14 @@ class _timeTableSyllabusModalPaperCreatorState
                           backgroundColor: Colors.black.withOpacity(0.1),
                           shape: RoundedRectangleBorder(
                               borderRadius:
-                                  BorderRadius.circular(widget.size * 20)),
+                                  BorderRadius.circular(  20)),
                           elevation: 16,
                           child: Container(
                             decoration: BoxDecoration(
                               border: Border.all(
-                                  color: Colors.white.withOpacity(0.1)),
+                                  color: Colors. black.withOpacity(0.1)),
                               borderRadius:
-                                  BorderRadius.circular(widget.size * 20),
+                                  BorderRadius.circular(  20),
                             ),
                             child: ListView(
                               physics: BouncingScrollPhysics(),
@@ -882,11 +874,11 @@ class _timeTableSyllabusModalPaperCreatorState
                               children: <Widget>[
                                 Center(
                                   child: Padding(
-                                    padding: EdgeInsets.all(widget.size * 8.0),
+                                    padding: EdgeInsets.all(  8.0),
                                     child: Text(
                                       "Image",
                                       style: TextStyle(
-                                          fontSize: widget.size * 22,
+                                          fontSize:   22,
                                           fontWeight: FontWeight.w300,
                                           color: Colors.blue),
                                     ),
@@ -916,19 +908,19 @@ class _timeTableSyllabusModalPaperCreatorState
                                   ],
                                 ),
                                 SizedBox(
-                                  height: widget.size * 10,
+                                  height:   10,
                                 ),
                                 Row(
                                   children: [
                                     InkWell(
                                       child: Padding(
                                         padding:
-                                            EdgeInsets.all(widget.size * 5.0),
+                                            EdgeInsets.all(  5.0),
                                         child: Text(
                                           "Cancel & Delete",
                                           style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: widget.size * 20),
+                                              color: Colors. black,
+                                              fontSize:   20),
                                         ),
                                       ),
                                       onTap: () async {
@@ -949,17 +941,17 @@ class _timeTableSyllabusModalPaperCreatorState
                                       },
                                     ),
                                     SizedBox(
-                                      width: widget.size * 20,
+                                      width:   20,
                                     ),
                                     InkWell(
                                       child: Padding(
                                         padding:
-                                            EdgeInsets.all(widget.size * 5.0),
+                                            EdgeInsets.all(  5.0),
                                         child: Text(
                                           "Okay",
                                           style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: widget.size * 20),
+                                              color: Colors. black,
+                                              fontSize:   20),
                                         ),
                                       ),
                                       onTap: () {
@@ -992,107 +984,21 @@ class _timeTableSyllabusModalPaperCreatorState
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.grey[500],
-                        borderRadius: BorderRadius.circular(widget.size * 15),
-                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(  15),
+                        border: Border.all(color: Colors. black),
                       ),
                       child: Padding(
                         padding: EdgeInsets.only(
-                            left: widget.size * 10,
-                            right: widget.size * 10,
-                            top: widget.size * 5,
-                            bottom: widget.size * 5),
+                            left:   10,
+                            right:   10,
+                            top:   5,
+                            bottom:   5),
                         child: Text("Back..."),
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      if (widget.mode == "Time Table") {
-                        if (widget.id.length > 3) {
-                          FirebaseFirestore.instance
-                              .collection(widget.branch)
-                              .doc("regulation")
-                              .collection("regulationWithSem")
-                              .doc(widget.reg)
-                              .collection("timeTables")
-                              .doc(widget.id)
-                              .update({
-                            "heading": HeadingController.text.trim(),
-                            "image": PhotoUrlController.text.trim()
-                          });
-                        } else {
-                          createTimeTable(
-                              branch: widget.branch,
-                              heading: HeadingController.text.trim(),
-                              photoUrl: PhotoUrlController.text.trim(),
-                              reg: widget.reg);
-                        }
-                      } else {
-                        if (widget.id.length > 3) {
-                          if (widget.mode == "mp") {
-                            FirebaseFirestore.instance
-                                .collection(widget.branch)
-                                .doc("regulation")
-                                .collection("regulationWithYears")
-                                .doc(widget.id.substring(0, 10))
-                                .update({
-                              "modelPaper": LinkController.text.trim(),
-                            });
-                          } else {
-                            FirebaseFirestore.instance
-                                .collection(widget.branch)
-                                .doc("regulation")
-                                .collection("regulationWithYears")
-                                .doc(widget.id.substring(0, 10))
-                                .update({
-                              "syllabus": LinkController.text.trim(),
-                            });
-                          }
-                        }
-                      }
-
-                      HeadingController.clear();
-                      LinkController.clear();
-
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                    child: widget.id.length < 3
-                        ? Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[500],
-                              borderRadius:
-                                  BorderRadius.circular(widget.size * 15),
-                              border: Border.all(color: Colors.white),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  left: widget.size * 10,
-                                  right: widget.size * 10,
-                                  top: widget.size * 5,
-                                  bottom: widget.size * 5),
-                              child: Text("Create"),
-                            ),
-                          )
-                        : Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[500],
-                              borderRadius:
-                                  BorderRadius.circular(widget.size * 15),
-                              border: Border.all(color: Colors.white),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  left: widget.size * 10,
-                                  right: widget.size * 10,
-                                  top: widget.size * 5,
-                                  bottom: widget.size * 5),
-                              child: Text("Update"),
-                            ),
-                          ),
-                  ),
                   SizedBox(
-                    width: widget.size * 15,
+                    width:   15,
                   ),
                 ],
               ),
@@ -1112,7 +1018,7 @@ class updateCreator extends StatefulWidget {
   String photoUrl;
   String subMessage;
   String branch;
-  final double size;
+    
 
   updateCreator(
       {this.NewsId = "",
@@ -1121,7 +1027,7 @@ class updateCreator extends StatefulWidget {
       this.photoUrl = "",
       this.subMessage = "",
       this.mode = false,
-      required this.size,
+
       required this.branch});
 
   @override
@@ -1176,21 +1082,21 @@ class _updateCreatorState extends State<updateCreator> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             backButton(
-                size: widget.size,
+                  
                 text: "Updater",
                 child: SizedBox(
-                  width: widget.size * 45,
+                  width:   45,
                 )),
             TextFieldContainer(
               child: TextFormField(
                 controller: HeadingController,
                 textInputAction: TextInputAction.next,
                 style:
-                    TextStyle(color: Colors.white, fontSize: widget.size * 20),
+                    TextStyle(color: Colors. black, fontSize:   20),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Heading',
-                    hintStyle: TextStyle(color: Colors.white54)),
+                    hintStyle: TextStyle(color: Colors. black54)),
               ),
               heading: "Heading",
             ),
@@ -1199,11 +1105,11 @@ class _updateCreatorState extends State<updateCreator> {
                 controller: DescriptionController,
                 textInputAction: TextInputAction.next,
                 style:
-                    TextStyle(color: Colors.white, fontSize: widget.size * 20),
+                    TextStyle(color: Colors. black, fontSize:   20),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Description',
-                    hintStyle: TextStyle(color: Colors.white54)),
+                    hintStyle: TextStyle(color: Colors. black54)),
               ),
               heading: "Description",
             ),
@@ -1212,27 +1118,27 @@ class _updateCreatorState extends State<updateCreator> {
                 controller: LinkController,
                 textInputAction: TextInputAction.next,
                 style:
-                    TextStyle(color: Colors.white, fontSize: widget.size * 20),
+                    TextStyle(color: Colors. black, fontSize:   20),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Url',
-                    hintStyle: TextStyle(color: Colors.white54)),
+                    hintStyle: TextStyle(color: Colors. black54)),
               ),
               heading: "Url",
             ),
             if (_isImage == true)
               Padding(
                 padding: EdgeInsets.only(
-                    left: widget.size * 10, top: widget.size * 20),
+                    left:   10, top:   20),
                 child: Row(
                   children: [
                     Container(
-                        height: widget.size * 110,
-                        width: widget.size * 180,
+                        height:   110,
+                        width:   180,
                         decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.5),
                             borderRadius:
-                                BorderRadius.circular(widget.size * 14),
+                                BorderRadius.circular(  14),
                             image: DecorationImage(
                                 image: NetworkImage(
                                     PhotoUrlController.text.trim()),
@@ -1240,14 +1146,14 @@ class _updateCreatorState extends State<updateCreator> {
                     InkWell(
                       child: Padding(
                         padding: EdgeInsets.only(
-                            left: widget.size * 30,
-                            top: widget.size * 10,
-                            bottom: widget.size * 10,
-                            right: widget.size * 10),
+                            left:   30,
+                            top:   10,
+                            bottom:   10,
+                            right:   10),
                         child: Text(
                           "Delete",
                           style: TextStyle(
-                              fontSize: widget.size * 30,
+                              fontSize:   30,
                               color: CupertinoColors.destructiveRed),
                         ),
                       ),
@@ -1259,23 +1165,23 @@ class _updateCreatorState extends State<updateCreator> {
               InkWell(
                 child: Padding(
                   padding: EdgeInsets.only(
-                      left: widget.size * 15,
-                      top: widget.size * 20,
-                      bottom: widget.size * 10),
+                      left:   15,
+                      top:   20,
+                      bottom:   10),
                   child: Row(
                     children: [
                       Icon(
                         Icons.upload,
-                        size: widget.size * 35,
-                        color: Colors.white,
+                        size:   35,
+                        color: Colors. black,
                       ),
                       SizedBox(
-                        width: widget.size * 5,
+                        width:   5,
                       ),
                       Text(
                         "Upload Photo",
                         style: TextStyle(
-                            fontSize: widget.size * 30, color: Colors.white),
+                            fontSize:   30, color: Colors. black),
                       ),
                     ],
                   ),
@@ -1297,14 +1203,14 @@ class _updateCreatorState extends State<updateCreator> {
                         backgroundColor: Colors.black.withOpacity(0.1),
                         shape: RoundedRectangleBorder(
                             borderRadius:
-                                BorderRadius.circular(widget.size * 20)),
+                                BorderRadius.circular(  20)),
                         elevation: 16,
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Colors.white.withOpacity(0.1)),
+                                color: Colors. black.withOpacity(0.1)),
                             borderRadius:
-                                BorderRadius.circular(widget.size * 20),
+                                BorderRadius.circular(  20),
                           ),
                           child: ListView(
                             physics: BouncingScrollPhysics(),
@@ -1312,11 +1218,11 @@ class _updateCreatorState extends State<updateCreator> {
                             children: <Widget>[
                               Center(
                                 child: Padding(
-                                  padding: EdgeInsets.all(widget.size * 8.0),
+                                  padding: EdgeInsets.all(  8.0),
                                   child: Text(
                                     "Image",
                                     style: TextStyle(
-                                        fontSize: widget.size * 22,
+                                        fontSize:   22,
                                         fontWeight: FontWeight.w300,
                                         color: Colors.blue),
                                   ),
@@ -1345,19 +1251,19 @@ class _updateCreatorState extends State<updateCreator> {
                                 ],
                               ),
                               SizedBox(
-                                height: widget.size * 10,
+                                height:   10,
                               ),
                               Row(
                                 children: [
                                   InkWell(
                                     child: Padding(
                                       padding:
-                                          EdgeInsets.all(widget.size * 5.0),
+                                          EdgeInsets.all(  5.0),
                                       child: Text(
                                         "Cancel & Delete",
                                         style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: widget.size * 20),
+                                            color: Colors. black,
+                                            fontSize:   20),
                                       ),
                                     ),
                                     onTap: () async {
@@ -1378,17 +1284,17 @@ class _updateCreatorState extends State<updateCreator> {
                                     },
                                   ),
                                   SizedBox(
-                                    width: widget.size * 20,
+                                    width:   20,
                                   ),
                                   InkWell(
                                     child: Padding(
                                       padding:
-                                          EdgeInsets.all(widget.size * 5.0),
+                                          EdgeInsets.all(  5.0),
                                       child: Text(
                                         "Okay",
                                         style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: widget.size * 20),
+                                            color: Colors. black,
+                                            fontSize:   20),
                                       ),
                                     ),
                                     onTap: () {
@@ -1420,7 +1326,7 @@ class _updateCreatorState extends State<updateCreator> {
                         flex: 3,
                         child: Text(
                           "This is news for the whole college and branch.",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          style: TextStyle(color: Colors. black, fontSize: 20),
                         )),
                     Expanded(
                       child: Switch(
@@ -1445,15 +1351,15 @@ class _updateCreatorState extends State<updateCreator> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[500],
-                      borderRadius: BorderRadius.circular(widget.size * 15),
-                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(  15),
+                      border: Border.all(color: Colors. black),
                     ),
                     child: Padding(
                       padding: EdgeInsets.only(
-                          left: widget.size * 10,
-                          right: widget.size * 10,
-                          top: widget.size * 5,
-                          bottom: widget.size * 5),
+                          left:   10,
+                          right:   10,
+                          top:   5,
+                          bottom:   5),
                       child: Text("Back..."),
                     ),
                   ),
@@ -1528,15 +1434,15 @@ class _updateCreatorState extends State<updateCreator> {
                           decoration: BoxDecoration(
                             color: Colors.grey[500],
                             borderRadius:
-                                BorderRadius.circular(widget.size * 15),
-                            border: Border.all(color: Colors.white),
+                                BorderRadius.circular(  15),
+                            border: Border.all(color: Colors. black),
                           ),
                           child: Padding(
                             padding: EdgeInsets.only(
-                                left: widget.size * 10,
-                                right: widget.size * 10,
-                                top: widget.size * 5,
-                                bottom: widget.size * 5),
+                                left:   10,
+                                right:   10,
+                                top:   5,
+                                bottom:   5),
                             child: Text("Create"),
                           ),
                         )
@@ -1544,21 +1450,21 @@ class _updateCreatorState extends State<updateCreator> {
                           decoration: BoxDecoration(
                             color: Colors.grey[500],
                             borderRadius:
-                                BorderRadius.circular(widget.size * 15),
-                            border: Border.all(color: Colors.white),
+                                BorderRadius.circular(  15),
+                            border: Border.all(color: Colors. black),
                           ),
                           child: Padding(
                             padding: EdgeInsets.only(
-                                left: widget.size * 10,
-                                right: widget.size * 10,
-                                top: widget.size * 5,
-                                bottom: widget.size * 5),
+                                left:   10,
+                                right:   10,
+                                top:   5,
+                                bottom:   5),
                             child: Text("Update"),
                           ),
                         ),
                 ),
                 SizedBox(
-                  width: widget.size * 15,
+                  width:   15,
                 ),
               ],
             ),
@@ -1619,7 +1525,6 @@ class _BooksCreatorState extends State<BooksCreator> {
 
   @override
   Widget build(BuildContext context) {
-    double Size = size(context);
 
     return Scaffold(
       body: SafeArea(
@@ -1629,18 +1534,18 @@ class _BooksCreatorState extends State<BooksCreator> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               backButton(
-                  size: Size,
-                  child: SizedBox(width: Size * 45),
+                    
+                  child: SizedBox(width:   45),
                   text: "Books Creator"),
               TextFieldContainer(
                 child: TextFormField(
                   controller: HeadingController,
                   textInputAction: TextInputAction.next,
-                  style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                  style: TextStyle(color: Colors. black, fontSize:   20),
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Heading',
-                      hintStyle: TextStyle(color: Colors.white54)),
+                      hintStyle: TextStyle(color: Colors. black54)),
                 ),
                 heading: "Heading",
               ),
@@ -1648,11 +1553,11 @@ class _BooksCreatorState extends State<BooksCreator> {
                 child: TextFormField(
                   controller: DescriptionController,
                   textInputAction: TextInputAction.next,
-                  style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                  style: TextStyle(color: Colors. black, fontSize:   20),
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Description',
-                      hintStyle: TextStyle(color: Colors.white54)),
+                      hintStyle: TextStyle(color: Colors. black54)),
                 ),
                 heading: "Description",
               ),
@@ -1660,11 +1565,11 @@ class _BooksCreatorState extends State<BooksCreator> {
                 child: TextFormField(
                   controller: AuthorController,
                   textInputAction: TextInputAction.next,
-                  style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                  style: TextStyle(color: Colors. black, fontSize:   20),
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Author',
-                      hintStyle: TextStyle(color: Colors.white54)),
+                      hintStyle: TextStyle(color: Colors. black54)),
                 ),
                 heading: "Author",
               ),
@@ -1672,11 +1577,11 @@ class _BooksCreatorState extends State<BooksCreator> {
                 child: TextFormField(
                   controller: EditionController,
                   textInputAction: TextInputAction.next,
-                  style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                  style: TextStyle(color: Colors. black, fontSize:   20),
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Edition',
-                      hintStyle: TextStyle(color: Colors.white54)),
+                      hintStyle: TextStyle(color: Colors. black54)),
                 ),
                 heading: "Edition",
               ),
@@ -1684,16 +1589,16 @@ class _BooksCreatorState extends State<BooksCreator> {
                 child: TextFormField(
                   controller: LinkController,
                   textInputAction: TextInputAction.next,
-                  style: TextStyle(color: Colors.white, fontSize: Size * 20),
+                  style: TextStyle(color: Colors. black, fontSize:   20),
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Link',
-                      hintStyle: TextStyle(color: Colors.white54)),
+                      hintStyle: TextStyle(color: Colors. black54)),
                 ),
                 heading: "PDF Link",
               ),
               SizedBox(
-                height: Size * 20,
+                height:   20,
               ),
               Row(
                 children: [
@@ -1704,7 +1609,7 @@ class _BooksCreatorState extends State<BooksCreator> {
                       },
                       child: Text("Back")),
                   SizedBox(
-                    width: Size * 10,
+                    width:   10,
                   ),
                   ElevatedButton(
                     onPressed: () async {
@@ -1727,7 +1632,7 @@ class _BooksCreatorState extends State<BooksCreator> {
                         : Text("Update"),
                   ),
                   SizedBox(
-                    width: Size * 20,
+                    width:   20,
                   ),
                 ],
               )
@@ -2036,16 +1941,14 @@ class _UnitsCreatorState extends State<UnitsCreator> {
 
   @override
   Widget build(BuildContext context) {
-    double Size = size(context);
     return Scaffold(
         body: SafeArea(
       child: Column(
         children: [
           backButton(
-              size: size(context),
               text: "Create Unit",
               child: SizedBox(
-                width: Size * 45,
+                width:   45,
               )),
           Expanded(
             child: SingleChildScrollView(
@@ -2056,7 +1959,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                   if (widget.mode == "units")
                     Padding(
                       padding: EdgeInsets.only(
-                          left: Size * 15, top: Size * 8, bottom: Size * 10),
+                          left:   15, top:   8, bottom:   10),
                       child: Text(
                         "Type Selected : $unit",
                         style: creatorHeadingTextStyle,
@@ -2064,7 +1967,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                     ),
                   if (widget.mode == "units")
                     SizedBox(
-                      height: Size * 30,
+                      height:   30,
                       child: ListView.separated(
                         physics: const BouncingScrollPhysics(),
                         scrollDirection: Axis.horizontal,
@@ -2073,24 +1976,24 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                         itemBuilder: (context, int index) {
                           if (index == 0) {
                             return Padding(
-                              padding: EdgeInsets.only(left: Size * 25),
+                              padding: EdgeInsets.only(left:   25),
                               child: InkWell(
                                 child: Container(
                                     decoration: BoxDecoration(
                                         color: unit == "Unknown"
-                                            ? Colors.white.withOpacity(0.6)
-                                            : Colors.white.withOpacity(0.1),
+                                            ? Colors. black.withOpacity(0.6)
+                                            : Colors. black.withOpacity(0.1),
                                         borderRadius:
-                                            BorderRadius.circular(Size * 10)),
+                                            BorderRadius.circular(  10)),
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
-                                          vertical: Size * 3,
-                                          horizontal: Size * 8),
+                                          vertical:   3,
+                                          horizontal:   8),
                                       child: Text(
                                         "Unknown",
                                         style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: Size * 25,
+                                            color: Colors. black,
+                                            fontSize:   25,
                                             fontWeight: FontWeight.w500),
                                       ),
                                     )),
@@ -2106,19 +2009,19 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                               child: Container(
                                   decoration: BoxDecoration(
                                       color: unit == "Unit $index"
-                                          ? Colors.white.withOpacity(0.6)
-                                          : Colors.white.withOpacity(0.1),
+                                          ? Colors. black.withOpacity(0.6)
+                                          : Colors. black.withOpacity(0.1),
                                       borderRadius:
-                                          BorderRadius.circular(Size * 10)),
+                                          BorderRadius.circular(  10)),
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: Size * 3,
-                                        horizontal: Size * 8),
+                                        vertical:   3,
+                                        horizontal:   8),
                                     child: Text(
                                       "Unit $index",
                                       style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: Size * 25,
+                                          color: Colors. black,
+                                          fontSize:   25,
                                           fontWeight: FontWeight.w500),
                                     ),
                                   )),
@@ -2131,7 +2034,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                           }
                         },
                         separatorBuilder: (context, index) => SizedBox(
-                          width: Size * 3,
+                          width:   3,
                         ),
                       ),
                     ),
@@ -2139,9 +2042,9 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                     child: TextFormField(
                       controller: HeadingController,
                       textInputAction: TextInputAction.next,
-                      style: textFieldStyle(size(context)),
+                      style: textFieldStyle(),
                       decoration: InputDecoration(
-                        hintStyle: TextStyle(color: Colors.white54),
+                        hintStyle: TextStyle(color: Colors. black54),
                         border: InputBorder.none,
                         hintText: 'Heading',
                       ),
@@ -2151,7 +2054,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                   if (widget.mode == "more")
                     Padding(
                       padding: EdgeInsets.only(
-                          left: Size * 15, top: Size * 8, bottom: Size * 10),
+                          left:   15, top:   8, bottom:   10),
                       child: Text(
                         "Type Selected : $unit",
                         style: creatorHeadingTextStyle,
@@ -2159,7 +2062,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                     ),
                   if (widget.mode == "more")
                     SizedBox(
-                      height: Size * 30,
+                      height:   30,
                       child: ListView.separated(
                         physics: const BouncingScrollPhysics(),
                         scrollDirection: Axis.horizontal,
@@ -2170,18 +2073,18 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                             child: Container(
                                 decoration: BoxDecoration(
                                     color: unit == list[index]
-                                        ? Colors.white.withOpacity(0.6)
-                                        : Colors.white.withOpacity(0.1),
+                                        ? Colors. black.withOpacity(0.6)
+                                        : Colors. black.withOpacity(0.1),
                                     borderRadius:
-                                        BorderRadius.circular(Size * 10)),
+                                        BorderRadius.circular(  10)),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                      vertical: Size * 3, horizontal: Size * 8),
+                                      vertical:   3, horizontal:   8),
                                   child: Text(
                                     list[index],
                                     style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: Size * 25,
+                                        color: Colors. black,
+                                        fontSize:   25,
                                         fontWeight: FontWeight.w500),
                                   ),
                                 )),
@@ -2193,7 +2096,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                           );
                         },
                         separatorBuilder: (context, index) => SizedBox(
-                          width: Size * 3,
+                          width:   3,
                         ),
                       ),
                     ),
@@ -2202,9 +2105,9 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                       child: TextFormField(
                         controller: PDFUrlController,
                         textInputAction: TextInputAction.next,
-                        style: textFieldStyle(size(context)),
+                        style: textFieldStyle(),
                         decoration: InputDecoration(
-                          hintStyle: TextStyle(color: Colors.white54),
+                          hintStyle: TextStyle(color: Colors. black54),
                           border: InputBorder.none,
                           hintText: 'Url',
                         ),
@@ -2215,7 +2118,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                     ),
                   if (widget.mode == "units")
                     Padding(
-                      padding: EdgeInsets.only(left: Size * 15, top: Size * 8),
+                      padding: EdgeInsets.only(left:   15, top:   8),
                       child: Text(
                         "Description",
                         style: creatorHeadingTextStyle,
@@ -2232,7 +2135,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                             color: Colors.red,
                             alignment: Alignment.centerRight,
                             padding:
-                                EdgeInsets.symmetric(horizontal: Size * 16.0),
+                                EdgeInsets.symmetric(horizontal:   16.0),
                             child: Icon(
                               Icons.delete,
                               color: Colors.black,
@@ -2246,7 +2149,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                             title: Text(
                               DescriptionList[index].data,
                               style: TextStyle(
-                                  color: Colors.white, fontSize: Size * 20),
+                                  color: Colors. black, fontSize:   20),
                             ),
                             trailing: SingleChildScrollView(
                               child: Row(
@@ -2276,7 +2179,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                                   InkWell(
                                     child: Icon(
                                       Icons.move_up,
-                                      size: Size * 30,
+                                      size:   30,
                                       color: Colors.amber,
                                     ),
                                     onTap: () {
@@ -2301,20 +2204,20 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                       children: [
                         Padding(
                           padding: EdgeInsets.only(
-                              left: Size * 10,
-                              right: Size * 10,
-                              top: Size * 5,
-                              bottom: Size * 5),
+                              left:   10,
+                              right:   10,
+                              top:   5,
+                              bottom:   5),
                           child: TextFieldContainer(
                             child: TextFormField(
                               controller: _DescriptionController,
-                              style: textFieldStyle(size(context)),
+                              style: textFieldStyle(),
                               keyboardType: TextInputType.multiline,
                               maxLines: null,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: 'Enter Description Here',
-                                hintStyle: TextStyle(color: Colors.white54),
+                                hintStyle: TextStyle(color: Colors. black54),
                               ),
                             ),
                           ),
@@ -2324,13 +2227,13 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                             Flexible(
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                    left: Size * 10,
-                                    right: Size * 10,
-                                    top: Size * 5,
-                                    bottom: Size * 5),
+                                    left:   10,
+                                    right:   10,
+                                    top:   5,
+                                    bottom:   5),
                                 child: TextFieldContainer(
                                   child: TextFormField(
-                                    style: textFieldStyle(size(context)),
+                                    style: textFieldStyle(),
                                     keyboardType: TextInputType.multiline,
                                     maxLines: 1,
                                     onChanged: (value) {
@@ -2340,7 +2243,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                                       border: InputBorder.none,
                                       hintText: 'Enter Page Number (Optional)',
                                       hintStyle:
-                                          TextStyle(color: Colors.white54),
+                                          TextStyle(color: Colors. black54),
                                     ),
                                   ),
                                 ),
@@ -2361,7 +2264,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                     ),
                   if (widget.mode == "units")
                     Padding(
-                      padding: EdgeInsets.only(left: Size * 15, top: Size * 8),
+                      padding: EdgeInsets.only(left:   15, top:   8),
                       child: Text(
                         "Question",
                         style: creatorHeadingTextStyle,
@@ -2378,7 +2281,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                             color: Colors.red,
                             alignment: Alignment.centerRight,
                             padding:
-                                EdgeInsets.symmetric(horizontal: Size * 16.0),
+                                EdgeInsets.symmetric(horizontal:   16.0),
                             child: Icon(
                               Icons.delete,
                               color: Colors.black,
@@ -2392,7 +2295,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                             title: Text(
                               QuestionsList[index].data,
                               style: TextStyle(
-                                  color: Colors.white, fontSize: Size * 20),
+                                  color: Colors. black, fontSize:   20),
                             ),
                             trailing: SingleChildScrollView(
                               child: Row(
@@ -2422,7 +2325,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                                   InkWell(
                                     child: Icon(
                                       Icons.move_up,
-                                      size: Size * 30,
+                                      size:   30,
                                       color: Colors.amber,
                                     ),
                                     onTap: () {
@@ -2447,20 +2350,20 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                       children: [
                         Padding(
                           padding: EdgeInsets.only(
-                              left: Size * 10,
-                              right: Size * 10,
-                              top: Size * 5,
-                              bottom: Size * 5),
+                              left:   10,
+                              right:   10,
+                              top:   5,
+                              bottom:   5),
                           child: TextFieldContainer(
                               child: TextFormField(
                             controller: _QuestionsController,
-                            style: textFieldStyle(size(context)),
+                            style: textFieldStyle(),
                             keyboardType: TextInputType.multiline,
                             maxLines: null,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Enter Question Here',
-                              hintStyle: TextStyle(color: Colors.white54),
+                              hintStyle: TextStyle(color: Colors. black54),
                             ),
                           )),
                         ),
@@ -2469,20 +2372,20 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                    left: Size * 10,
-                                    right: Size * 10,
-                                    top: Size * 5,
-                                    bottom: Size * 5),
+                                    left:   10,
+                                    right:   10,
+                                    top:   5,
+                                    bottom:   5),
                                 child: TextFieldContainer(
                                     child: TextFormField(
-                                  style: textFieldStyle(size(context)),
+                                  style: textFieldStyle(),
                                   keyboardType: TextInputType.multiline,
                                   maxLines: 1,
                                   onChanged: (value) {},
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: 'Enter Question Here',
-                                    hintStyle: TextStyle(color: Colors.white54),
+                                    hintStyle: TextStyle(color: Colors. black54),
                                   ),
                                 )),
                               ),
@@ -2490,15 +2393,15 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                             InkWell(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.white12,
-                                  border: Border.all(color: Colors.white),
+                                  color: Colors. black12,
+                                  border: Border.all(color: Colors. black),
                                   borderRadius:
-                                      BorderRadius.circular(Size * 14),
+                                      BorderRadius.circular(  14),
                                 ),
                                 child: Icon(
                                   !isEdit ? Icons.add : Icons.save,
-                                  size: Size * 45,
-                                  color: Colors.white,
+                                  size:   45,
+                                  color: Colors. black,
                                 ),
                               ),
                               onTap: () {
@@ -2514,7 +2417,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                     ),
                   if (widget.mode == "more")
                     Padding(
-                      padding: EdgeInsets.only(left: Size * 15, top: Size * 8),
+                      padding: EdgeInsets.only(left:   15, top:   8),
                       child: Text(
                         "Description",
                         style: creatorHeadingTextStyle,
@@ -2531,7 +2434,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                             color: Colors.red,
                             alignment: Alignment.centerRight,
                             padding:
-                                EdgeInsets.symmetric(horizontal: Size * 16.0),
+                                EdgeInsets.symmetric(horizontal:   16.0),
                             child: Icon(
                               Icons.delete,
                               color: Colors.black,
@@ -2545,7 +2448,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                             title: Text(
                               NormalDescriptionList[index],
                               style: TextStyle(
-                                  color: Colors.white, fontSize: Size * 20),
+                                  color: Colors. black, fontSize:   20),
                             ),
                             trailing: SingleChildScrollView(
                               child: Row(
@@ -2575,7 +2478,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                                   InkWell(
                                     child: Icon(
                                       Icons.move_up,
-                                      size: Size * 30,
+                                      size:   30,
                                       color: Colors.amber,
                                     ),
                                     onTap: () {
@@ -2601,20 +2504,20 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                         Flexible(
                           child: Padding(
                             padding: EdgeInsets.only(
-                                left: Size * 10,
-                                right: Size * 10,
-                                top: Size * 5,
-                                bottom: Size * 5),
+                                left:   10,
+                                right:   10,
+                                top:   5,
+                                bottom:   5),
                             child: TextFieldContainer(
                                 child: TextFormField(
                               controller: _NormalDescriptionController,
-                              style: textFieldStyle(size(context)),
+                              style: textFieldStyle(),
                               keyboardType: TextInputType.multiline,
                               maxLines: null,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: 'Enter Description Here',
-                                hintStyle: TextStyle(color: Colors.white54),
+                                hintStyle: TextStyle(color: Colors. black54),
                               ),
                             )),
                           ),
@@ -2622,14 +2525,14 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                         InkWell(
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.white12,
-                              border: Border.all(color: Colors.white),
-                              borderRadius: BorderRadius.circular(Size * 14),
+                              color: Colors. black12,
+                              border: Border.all(color: Colors. black),
+                              borderRadius: BorderRadius.circular(  14),
                             ),
                             child: Icon(
                               !isEdit ? Icons.add : Icons.save,
-                              size: Size * 45,
-                              color: Colors.white,
+                              size:   45,
+                              color: Colors. black,
                             ),
                           ),
                           onTap: () {
@@ -2646,9 +2549,9 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                       child: TextFormField(
                         controller: AuthorController,
                         textInputAction: TextInputAction.next,
-                        style: textFieldStyle(size(context)),
+                        style: textFieldStyle(),
                         decoration: InputDecoration(
-                          hintStyle: TextStyle(color: Colors.white54),
+                          hintStyle: TextStyle(color: Colors. black54),
                           border: InputBorder.none,
                           hintText: 'Author',
                         ),
@@ -2660,9 +2563,9 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                       child: TextFormField(
                         controller: EditionController,
                         textInputAction: TextInputAction.next,
-                        style: textFieldStyle(size(context)),
+                        style: textFieldStyle(),
                         decoration: InputDecoration(
-                          hintStyle: TextStyle(color: Colors.white54),
+                          hintStyle: TextStyle(color: Colors. black54),
                           border: InputBorder.none,
                           hintText: 'Edition',
                         ),
@@ -2670,7 +2573,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                       heading: "Edition",
                     ),
                   SizedBox(
-                    height: Size * 10,
+                    height:   10,
                   ),
                   Row(
                     children: [
@@ -2682,7 +2585,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                         child: Text("Back"),
                       ),
                       SizedBox(
-                        width: Size * 10,
+                        width:   10,
                       ),
                       ElevatedButton(
                           style: ButtonStyle(
@@ -2851,7 +2754,7 @@ class _UnitsCreatorState extends State<UnitsCreator> {
                               ? "Create"
                               : "Update")),
                       SizedBox(
-                        width: Size * 20,
+                        width:   20,
                       ),
                     ],
                   )
