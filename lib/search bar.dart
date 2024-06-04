@@ -1,71 +1,59 @@
+// @immutable
 import 'package:flutter/material.dart';
-import 'package:srkr_study_app/test.dart';
+import 'package:srkr_study_app/functions.dart';
+import 'package:srkr_study_app/get_all_data.dart';
+import 'package:srkr_study_app/settings/settings.dart';
 import 'TextField.dart';
-import 'subjects.dart';
+import 'subjects/subjects.dart';
 
-class MyAppq extends StatefulWidget {
-  BranchStudyMaterialsConvertor data;
-  final String branch;
-  final String reg;
+class SearchPage extends StatefulWidget {
+  BranchStudyMaterialsConverter data;
 
-  MyAppq({
+
+  SearchPage({
     Key? key,
-    required this.branch,
     required this.data,
-    required this.reg,
   }) : super(key: key);
 
   @override
-  State<MyAppq> createState() => _MyAppqState();
+  State<SearchPage> createState() => _SearchPageState();
 }
 
-class _MyAppqState extends State<MyAppq> {
+class _SearchPageState extends State<SearchPage> {
   String name = "";
 
   @override
   Widget build(BuildContext context) => Scaffold(
 
-      body: SafeArea(
+          body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            backButton(),
+            Heading(heading: "Search Bar"),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: Row(
-                children: [
-                  InkWell(
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                      size: 30,
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
+              padding: EdgeInsets.symmetric( vertical: 5),
+              child: TextFieldContainer(
+                  child: TextField(
+
+                onChanged: (val) {
+                  setState(() {
+                    name = val;
+                  });
+                },
+                style: TextStyle(color: Colors.white, fontSize: 15),
+                decoration: InputDecoration(
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.white54,
+                    size: 30,
                   ),
-                  Flexible(
-                      child: TextFieldContainer(
-                          child: TextField(
-                    onChanged: (val) {
-                      setState(() {
-                        name = val;
-                      });
-                    },
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                    decoration: InputDecoration(
-                      icon: Icon(
-                        Icons.search,
-                        color: Colors.black,
-                        size: 20,
-                      ),
-                      border: InputBorder.none,
-                      hintText: 'Search Bar',
-                      hintStyle: TextStyle(color: Colors.black54, fontSize: 20),
-                    ),
-                  ))),
-                ],
-              ),
+                  border: InputBorder.none,
+                  hintText: 'Search Bar',
+                  hintStyle: TextStyle(color: Colors.white54, fontSize: 20),
+                ),
+              )),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -82,19 +70,17 @@ class _MyAppqState extends State<MyAppq> {
                           child: InkWell(
                             child: Text(
                               "Subjects",
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 20),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
                             ),
                             onTap: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => Subjects(
-                                            branch: widget.branch,
-                                            reg: widget.reg,
+
                                             subjects: widget.data.subjects,
-                                            syllabusModelPaper:
-                                                widget.data.regSylMP,
+                                            mode: true,
                                           )));
                             },
                           ),
@@ -111,38 +97,58 @@ class _MyAppqState extends State<MyAppq> {
                                   data.heading.full
                                       .toLowerCase()
                                       .startsWith(name.toLowerCase()) ||
-                                  data.regulation
-                                      .contains(name.toUpperCase()) ||
                                   name.isEmpty) {
                                 return InkWell(
-                                  child: Container(
-                                    margin: EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 2),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                        color: Colors.black12,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20))),
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${data.heading.short} - ${data.heading.full}",
-                                            style: TextStyle(
-                                              fontSize: 20.0,
-                                              color: Colors.black,
-                                            ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(child: Container(
+                                        margin: EdgeInsets.only(
+                                            left: 10, top: 2,bottom: 2),
+                                        padding: EdgeInsets.symmetric( vertical: 5),
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(0.1),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20))),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "${data.heading.short}",
+                                          style: TextStyle(
+                                            fontSize: 25.0,
+                                            color: Colors.white,
                                           ),
-
-                                        ],
+                                        ),
+                                      ),),
+                                      Expanded(
+                                        flex:3,
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 2),
+                                          padding: EdgeInsets.only(
+                                              left: 15, top: 5,bottom: 5),
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white.withOpacity(0.05),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20))),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "${data.heading.full}",
+                                                style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
                                   onTap: () {
                                     Navigator.push(
@@ -150,12 +156,7 @@ class _MyAppqState extends State<MyAppq> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 subjectUnitsData(
-                                                  reg: widget.reg,
-                                                  branch: widget.branch,
                                                   mode: true,
-                                                  syllabusModelPaper:
-                                                      widget
-                                                          .data.regSylMP,
                                                   data: data,
                                                 )));
                                   },
@@ -175,21 +176,18 @@ class _MyAppqState extends State<MyAppq> {
                           child: InkWell(
                             child: Text(
                               "Lab Subjects",
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 20),
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 20),
                             ),
                             onTap: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => LabSubjects(
-                                            branch: widget.branch,
-                                            reg: widget.reg,
-                                            labSubjects:
-                                                widget.data.labSubjects,
-                                            syllabusModelPaper:
-                                                widget.data.regSylMP,
-                                          )));
+                                      builder: (context) => Subjects(
+
+                                        subjects: widget.data.labSubjects,
+                                        mode: false,
+                                      )));
                             },
                           ),
                         ),
@@ -206,38 +204,58 @@ class _MyAppqState extends State<MyAppq> {
                                   data.heading.full
                                       .toLowerCase()
                                       .startsWith(name.toLowerCase()) ||
-                                  data.regulation
-                                      .contains(name.toUpperCase()) ||
                                   name.isEmpty) {
                                 return InkWell(
-                                  child: Container(
-                                    margin: EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 2),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                        color: Colors.black12,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20))),
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${data.heading.short} - ${data.heading.full}",
-                                            style: TextStyle(
-                                              fontSize: 20.0,
-                                              color: Colors.black,
-                                            ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(child: Container(
+                                        margin: EdgeInsets.only(
+                                            left: 10, top: 2,bottom: 2),
+                                        padding: EdgeInsets.symmetric( vertical: 5),
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            color: Colors.black.withOpacity(0.05),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20))),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "${data.heading.short}",
+                                          style: TextStyle(
+                                            fontSize: 25.0,
+                                            color: Colors.black,
                                           ),
-
-                                        ],
+                                        ),
+                                      ),),
+                                      Expanded(
+                                        flex:3,
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 2),
+                                          padding: EdgeInsets.only(
+                                              left: 10, top: 5,bottom: 5),
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                              color: Colors.black.withOpacity(0.05),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20))),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "${data.heading.full}",
+                                                style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
                                   onTap: () {
                                     Navigator.push(
@@ -245,12 +263,8 @@ class _MyAppqState extends State<MyAppq> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 subjectUnitsData(
-                                                  branch: widget.branch,
                                                   mode: false,
                                                   data: data,
-                                                  reg: widget.reg,
-                                                  syllabusModelPaper:
-                                                      widget.data.regSylMP,
                                                 )));
                                   },
                                 );

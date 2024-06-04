@@ -1,18 +1,21 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srkr_study_app/functions.dart';
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import 'ads.dart';
-
+import 'package:srkr_study_app/subjects/subjects.dart';
+import 'package:srkr_study_app/uploader.dart';
+import 'settings/settings.dart';
+import 'package:path/path.dart' as path;
 class AskAi extends StatefulWidget {
-  // const AskAi({super.key});
+  List<FileUploader> data;
+   AskAi({required this.data});
 
   @override
   State<AskAi> createState() => _AskAiState();
@@ -22,12 +25,34 @@ class _AskAiState extends State<AskAi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        child: Column(
-          children: [
 
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              backButton(),
+              Heading(heading: "Software Domain Route Map"),
+              GridView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisSpacing: 10,
+                  crossAxisCount: 2,
+                  childAspectRatio: 8.5 / 12.5,
+                ),
+                itemCount: widget.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return pdfContainer(data:widget.data[index]);
+                },
+              ),
+              SizedBox(
+                height: 50,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -35,13 +60,14 @@ class _AskAiState extends State<AskAi> {
 }
 
 
-class MyHomePage extends StatefulWidget {
+
+class TTS extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _TTSState createState() => _TTSState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  FlutterTts flutterTts = FlutterTts();
+class _TTSState extends State<TTS> {
+
   TextEditingController textEditingController = TextEditingController();
   bool isSpeaking = false;
   final List<String> words = [];
@@ -49,62 +75,35 @@ class _MyHomePageState extends State<MyHomePage> {
   double speechRate = 0.5; // Initial speech rate value (range: 0.0 - 1.0)
   String selectedLanguage = 'en-US'; // Initial language
   List<DropdownMenuItem<String>> languageItems = []; // List of language items
-  String _currentWord = "";
+
   bool isExp = false;
 
   @override
   void initState() {
     super.initState();
-
-    flutterTts.setProgressHandler(
-        (String text, int startOffset, int endOffset, String word) {
-      setState(() {
-        _currentWord = word;
-        words.add(_currentWord);
-      });
-    });
-    // Initialize the FlutterTts instance
+    initTTS();
     loadSavedSettings();
-
-    // Get the list of available languages
     getAvailableLanguages();
-    // Load saved settings
   }
 
   // Initialize FlutterTts
   Future<void> initTts() async {
-    await flutterTts.setLanguage(selectedLanguage);
-    await flutterTts.setPitch(pitch);
-    await flutterTts.setSpeechRate(speechRate);
-    await flutterTts.setVolume(1);
+    await _flutterTts.setLanguage(selectedLanguage);
+    await _flutterTts.setPitch(pitch);
+    await _flutterTts.setSpeechRate(speechRate);
+    await _flutterTts.setVolume(1);
   }
 
-  Future<void> speakText(String text) async {
-    await flutterTts.speak(text);
-    setState(() {
-      isSpeaking = true;
-    });
-  }
 
-  // Function to pause text-to-speech
-  Future<void> pauseSpeech() async {
-    await flutterTts.pause();
-    setState(() {
-      isSpeaking = false;
-    });
-  }
-
-  // Function to change language
   Future<void> changeLanguage(String languageCode) async {
-    await flutterTts.setLanguage(languageCode);
+    await _flutterTts.setLanguage(languageCode);
     setState(() {
       selectedLanguage = languageCode;
     });
   }
 
-  // Function to get the list of available languages
   Future<void> getAvailableLanguages() async {
-    List<dynamic> languages = await flutterTts.getLanguages;
+    List<dynamic> languages = await _flutterTts.getLanguages;
     setState(() {
       languageItems = languages
           .map((language) => DropdownMenuItem<String>(
@@ -138,56 +137,71 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    // Dispose of the FlutterTts instance and the controller when done
-    flutterTts.stop();
+    _flutterTts.stop();
     textEditingController.dispose();
-    // Save settings when the widget is disposed
     super.dispose();
   }
 
+
+  FlutterTts _flutterTts = FlutterTts();
+
+  List<Map> _voices = [];
+  Map? _currentVoice;
+
+  int? _currentWordStart, _currentWordEnd;
+
+  void initTTS() {
+    _flutterTts.setProgressHandler((text, start, end, word) {
+      setState(() {
+        _currentWordStart = start;
+        _currentWordEnd = end;
+      });
+    });
+    _flutterTts.getVoices.then((data) {
+      try {
+        List<Map> voices = List<Map>.from(data);
+        setState(() {
+          _voices =
+              voices.where((voice) => voice["name"].contains("en")).toList();
+          _currentVoice = _voices.first;
+          setVoice(_currentVoice!);
+        });
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
+
+  void setVoice(Map voice) {
+    _flutterTts.setVoice({"name": voice["name"], "locale": voice["locale"]});
+  }
+  bool isPlaying =false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(  16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              backButton(
-                child: SizedBox(
-                  width:   45,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              children: [
+                backButton(
+
                 ),
-                text: "Reader (Beta)",
-              ),
-              Expanded(
-                child: isSpeaking
-                    ? Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(  8),
-                        decoration: BoxDecoration(
-                          color: Colors. black12,
-                          borderRadius: BorderRadius.circular(  30),
-                        ),
-                        child: SingleChildScrollView(
-                          reverse: true,
-                          child: Wrap(
-                            children: words.asMap().entries.map((entry) {
-                              final word = entry.value;
-                              return Text(
-                                " $word",
-                                style: TextStyle(
-                                  fontSize:   20.0,
-                                  color: Colors. black,
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ))
+                Heading(heading: "Text To Speech -- Testing",padding: EdgeInsets.zero,)
+              ],
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: isPlaying
+                    ? SingleChildScrollView(child: _buildUI())
                     : Container(
                         decoration: BoxDecoration(
-                            color: Colors. black12,
+                            color:  Colors. white.withOpacity(0.08),
                             borderRadius: BorderRadius.circular(  30)),
+
+
                         child: Padding(
                           padding: EdgeInsets.only(left:   10),
                           child: TextFormField(
@@ -195,182 +209,245 @@ class _MyHomePageState extends State<MyHomePage> {
                             textInputAction: TextInputAction.next,
                             maxLines: null,
                             style: TextStyle(
-                                color: Colors. black, fontSize:   20),
+                                color: Colors. white, fontSize:   20),
                             decoration: InputDecoration(
-                              hintStyle: TextStyle(color: Colors. black54),
+                              hintStyle: TextStyle(color: Colors. white54),
                               border: InputBorder.none,
                               hintText: 'Write Here',
                             ),
                           ),
                         )),
               ),
-              SizedBox(height:   20),
-              if (isExp)
-                Container(
-                  padding: EdgeInsets.all(  10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(  20),
-                    gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors. black.withOpacity(0.1),
-                          Colors.transparent,
-                          Colors. black.withOpacity(0.1),
-                        ]),
-                  ),
-                  child: Column(
-                    children: [
-                      SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          valueIndicatorTextStyle: TextStyle(
-                            fontSize:   13,
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                Text(
-                                  "Pitch: ${pitch.toStringAsFixed(2)}",
-                                  style: TextStyle(
-                                      color: Colors. black,
-                                      fontSize:   20,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                Expanded(
-                                  child: Slider(
-                                    value: pitch,
-                                    min: 0.0, // Adjusted minimum value
-                                    max: 1.0,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        pitch = value;
-                                        flutterTts.setPitch(pitch);
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "Speech Rate: ${speechRate.toStringAsFixed(2)}",
-                                  style: TextStyle(
-                                      color: Colors. black,
-                                      fontSize:   20,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                Expanded(
-                                  child: Slider(
-                                    value: speechRate,
-                                    min: 0.0, // Adjusted minimum value
-                                    max: 1.0,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        speechRate = value;
-                                        flutterTts.setSpeechRate(speechRate);
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+            ),
+            SizedBox(height:   20),
+            if (isExp)
+              Container(
+                padding: EdgeInsets.all(  10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(  20),
+                  gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors. black.withOpacity(0.1),
+                        Colors.transparent,
+                        Colors. black.withOpacity(0.1),
+                      ]),
+                ),
+                child: Column(
+                  children: [
+                    SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        valueIndicatorTextStyle: TextStyle(
+                          fontSize:   13,
                         ),
                       ),
-                      Row(
-                        children: [
-                          Text(
-                            "Change Language : ",
-                            style: TextStyle(
-                                color: Colors. black,
-                                fontSize:   20,
-                                fontWeight: FontWeight.w500),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          _speakerSelector(),
+                          Row(
+                            children: [
+                              Text(
+                                "Pitch: ${pitch.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                    color: Colors. black,
+                                    fontSize:   20,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              Expanded(
+                                child: Slider(
+                                  value: pitch,
+                                  min: 0.0, // Adjusted minimum value
+                                  max: 1.0,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      pitch = value;
+                                      _flutterTts.setPitch(pitch);
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                          Expanded(
-                            child: Center(
-                              child: Container(
-                                height:   40,
-                                decoration: BoxDecoration(
-                                    color: Colors. black87,
-                                    borderRadius:
-                                        BorderRadius.circular(  20)),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal:   8.0),
-                                  child: DropdownButton<String>(
-                                    value: selectedLanguage,
-                                    items: languageItems,
-                                    onChanged: (value) {
-                                      // Call the changeLanguage function when a language is selected
-                                      changeLanguage(value!);
-                                    },
-                                  ),
+                          Row(
+                            children: [
+                              Text(
+                                "Speech Rate: ${speechRate.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                    color: Colors. black,
+                                    fontSize:   20,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              Expanded(
+                                child: Slider(
+                                  value: speechRate,
+                                  min: 0.0, // Adjusted minimum value
+                                  max: 1.0,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      speechRate = value;
+                                      _flutterTts.setSpeechRate(speechRate);
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Change Language : ",
+                          style: TextStyle(
+                              color: Colors. black,
+                              fontSize:   20,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: Container(
+                              height:   40,
+                              decoration: BoxDecoration(
+                                  color: Colors. black87,
+                                  borderRadius:
+                                      BorderRadius.circular(  20)),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal:   8.0),
+                                child: DropdownButton<String>(
+                                  value: selectedLanguage,
+                                  items: languageItems,
+                                  onChanged: (value) {
+                                    // Call the changeLanguage function when a language is selected
+                                    changeLanguage(value!);
+                                  },
                                 ),
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          saveSettings();
-                        },
-                        child: Text(
-                          "Save Changes",
-                          style: TextStyle(
-                              fontSize:   16, fontWeight: FontWeight.bold),
                         ),
+                      ],
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        saveSettings();
+                      },
+                      child: Text(
+                        "Save Changes",
+                        style: TextStyle(
+                            fontSize:   16, fontWeight: FontWeight.bold),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+            SizedBox(height:   20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueGrey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isExp = !isExp;
+                    });
+                  },
+                  child: Text(
+                    "Audio Settings",
+                    style: TextStyle(
+                        fontSize:   16, fontWeight: FontWeight.bold),
                   ),
                 ),
-              SizedBox(height:   20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueGrey,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isExp = !isExp;
-                      });
-                    },
-                    child: Text(
-                      "Audio Settings",
-                      style: TextStyle(
-                          fontSize:   16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (isSpeaking) {
-                        pauseSpeech();
-                      } else {
-                        words.clear();
-                        setState(() {});
-                        speakText(textEditingController.text);
-                        saveSettings();
-                      }
-                    },
-                    child: Text(
-                      isSpeaking ? "Pause" : "Speak Text",
-                      style: TextStyle(
-                          fontSize:   16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height:   20),
-            ],
-          ),
+
+              ],
+            ),
+            SizedBox(height:   20),
+          ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          if(!isPlaying){
+            _flutterTts.speak(textEditingController.text);
+            saveSettings();
+            setState(() {
+              isPlaying=true;
+            });
+          }else{
+            _flutterTts.pause();
+            setState(() {
+              isPlaying=false;
+            });
+          }
+
+
+        },
+        child:  Icon(
+          isPlaying?Icons.pause:Icons.play_arrow,
+        ),
+      ),
+    );
+  }
+  Widget _buildUI() {
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: const TextStyle(
+                fontWeight: FontWeight.w300,
+                fontSize: 20,
+                color: Colors.white,
+              ),
+              children: <TextSpan>[
+                TextSpan(
+                  text: textEditingController.text.substring(0, _currentWordStart),
+                ),
+                if (_currentWordStart != null)
+                  TextSpan(
+                    text: textEditingController.text.substring(
+                        _currentWordStart!, _currentWordEnd),
+                    style:  TextStyle(
+                      color: Colors.white,
+                      backgroundColor: Colors.greenAccent.withOpacity(0.5),
+                    ),
+                  ),
+                if (_currentWordEnd != null)
+                  TextSpan(
+                    text: textEditingController.text.substring(_currentWordEnd!),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _speakerSelector() {
+    return DropdownButton(
+      value: _currentVoice,
+      items: _voices
+          .map(
+            (_voice) => DropdownMenuItem(
+          value: _voice,
+          child: Text(
+            _voice["name"],
+          ),
+        ),
+      )
+          .toList(),
+      onChanged: (value) {},
     );
   }
 }
@@ -662,10 +739,7 @@ class _supportListState extends State<supportList> {
       child: Column(
         children: [
           backButton(
-              text: "Supported List",
-              child: SizedBox(
-                width:   45,
-              )),
+            ),
           !commentsIds.contains(fullUserId())
               ? Padding(
                   padding: EdgeInsets.symmetric(
@@ -831,4 +905,24 @@ class _supportListState extends State<supportList> {
       ),
     ));
   }
+}
+ openFile(String filePath,String name) async {
+  showToastText("Loading...");
+
+    if ( File(filePath).existsSync()) {
+
+
+      Directory tempDir = await getTemporaryDirectory();
+      String fileNameWithoutExtension = path.basenameWithoutExtension(filePath);
+      String newFilePath = path.join(tempDir.path, '$fileNameWithoutExtension.${name.split(".").last}');
+      await File(filePath).copy(newFilePath);
+      if (await File(newFilePath).exists()) {
+        await OpenFilex.open(newFilePath);
+      } else {
+        showToastText('Failed to create temporary file');
+      }
+    } else {
+      showToastText('File does not exist');
+    }
+
 }

@@ -7,246 +7,244 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srkr_study_app/TextField.dart';
-import 'package:srkr_study_app/homePage/settings.dart';
+import 'package:srkr_study_app/settings/settings.dart';
+
 import 'functions.dart';
+
+import 'main.dart';
 import 'notification.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
-
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final formKey = GlobalKey<FormState>();
-
-  final emailController = TextEditingController();
+class LoginPage extends StatelessWidget {
+  final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-        body: SafeArea(
-      child: Center(
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "eSRKR ",
-                style: TextStyle(
-                    fontSize:   30,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.deepOrange),
-              ),
-              SizedBox(
-                height:   10,
-              ),
-              Text(
-                "Welcome Back!",
-                style: TextStyle(
-                    fontSize:   35,
-                    fontWeight: FontWeight.bold,
-                    color: Colors. black),
-              ),
-              SizedBox(
-                height:   40,
-              ),
+      backgroundColor: Colors.black.withOpacity(0.05),
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(
+              "eSRKR ",
+              style: TextStyle(
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orangeAccent),
+            ),
+            Column(
+              children: [
 
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal:   25),
-                child: TextFieldContainer(
-                  child: TextField(
-                    controller: emailController,
-                    textInputAction: TextInputAction.next,
-                    style: TextStyle(color: Colors. black, fontSize:   20),
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Email',
-                        hintStyle: TextStyle(
-                            color: Colors. black54, fontSize:   20)),
-                  ),
-                ),
-              ),
-              //password
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal:   25),
-                child: TextFieldContainer(
-                    child: TextField(
-                  obscureText: true,
-                  controller: passwordController,
-                  textInputAction: TextInputAction.next,
-                  style: TextStyle(color: Colors. black, fontSize:   20),
-                  decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Password',
-                      hintStyle: TextStyle(
-                          color: Colors. black54, fontSize:   20)),
-                )),
-              ),
-
-              //sign in button
-              SizedBox(
-                height:   10,
-              ),
-
-              InkWell(
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal:   20, vertical:   10),
-                  decoration: BoxDecoration(
-                    color: Colors.greenAccent,
-                    borderRadius: BorderRadius.circular(  10),
-                  ),
-                  child: Text(
-                    "Sign In",
-                    style: TextStyle(
-                        fontSize:   20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                ),
-                onTap: signIn,
-              ),
-
-              SizedBox(
-                height: 20,
-              ),
-              InkWell(
-                child: Text(
-                  "Forgot Password?",
+                Text(
+                  'Welcome back you\'ve been missed!',
                   style: TextStyle(
-                      fontSize:   18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red),
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
                 ),
-                onTap: () async {
-                  if (emailController.text.length > 10) {
-                    final String email = emailController.text.trim();
-                    try {
-                      await _auth.sendPasswordResetEmail(email: email);
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Password Reset Email Sent'),
-                          content: Text(
-                              'An email with instructions to reset your password has been sent to $email.'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text('OK',style: TextStyle(fontSize:   14),),
-                            ),
-                          ],
-                        ),
-                      );
-                    } catch (error) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Error'),
-                          content: Text(error.toString()),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  } else {
-                    showToastText("Enter Gmail");
-                  }
-                },
-              ),
 
-              SizedBox(
-                height:   20,
-              ),
-              Wrap(
+                const SizedBox(height: 25),
+
+                MyTextField(
+                  controller: usernameController,
+                  hintText: 'Username',
+                  obscureText: false,
+                ),
+
+                const SizedBox(height: 10),
+
+                MyTextField(
+                  controller: passwordController,
+                  hintText: 'Password',
+                  obscureText: true,
+                ),
+
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                        onTap: () async {
+                          final String email = usernameController.text.trim();
+                          if (email.length > 10) {
+                            try {
+                              await _auth.sendPasswordResetEmail(email: email);
+                              showDialog(
+                                context: context,
+                                builder: (context) =>
+                                    AlertDialog(
+                                      title: Text('Password Reset Email Sent'),
+                                      content: Text(
+                                          'An email with instructions to reset your password has been sent to $email.'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                              );
+                            } catch (error) {
+                              showDialog(
+                                context: context,
+                                builder: (context) =>
+                                    AlertDialog(
+                                      title: Text('Error'),
+                                      content: Text(error.toString()),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                              );
+                            }
+                          } else {
+                            showToastText("Enter Gmail");
+                          }
+                        },
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(color: Colors.grey[500]),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 25),
+
+                // sign in button
+                InkWell(
+                  onTap: () => signIn(context, usernameController.text,
+                      passwordController.text),
+                  child: Container(
+                    padding: const EdgeInsets.all(25),
+                    margin: const EdgeInsets.symmetric(horizontal: 25),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Sign In",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+            Text(
+              "or",
+              style: TextStyle(fontSize: 15,color: Colors.white54),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => createNewUser()));
+              },
+              child: Row(
+                // alignment: WrapAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Not a Member?",
-                    style: TextStyle(
-                        fontSize:   20,
-                        fontWeight: FontWeight.w600,
-                        color: Colors. black),
+                    'Not a member? ',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
-                  InkWell(
-                    child: Text(
-                      " Register",
-                      style: TextStyle(
-                          fontSize:   20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.cyan),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => createNewUser(
-
-                                  )));
-                    },
+                  Text(
+                    'Register Now',
+                    style: TextStyle(
+                        color: Colors.orangeAccent,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 20),
                   ),
                 ],
               ),
-              SizedBox(
-                height:   20,
-              ),
-              InkWell(
-                child: Text(
-                  "Report",
-                  style: TextStyle(
-                      color: Colors.redAccent,
-                      fontWeight: FontWeight.w600,
-                      fontSize:   20),
-                ),
-                onTap: () {
-                  sendingMails("sujithnimmala03@gmail.com");
-                },
-              ),
-            ],
-          ),
+            )
+          ],
         ),
       ),
-    ));
+    );
   }
 
-  Future signIn() async {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => Center(
-              child: CircularProgressIndicator(),
-            ));
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text.trim().toLowerCase(),
-          password: passwordController.text.trim());
 
-      updateToken("");
-    } on FirebaseException catch (e) {
-      showToastText(e.message as String);
-      Utils.showSnackBar(e.message);
-    }
-    Navigator.pop(context);
+}
+
+Future signIn(BuildContext context, String user, String password) async {
+  showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) =>
+          Center(
+            child: CircularProgressIndicator(),
+          ));
+  try {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: user.trim().toLowerCase(),
+        password: password.trim());
+    Navigator.of(context).pop();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('lastOpenAdTime', DateTime
+        .now()
+        .millisecondsSinceEpoch);
+    updateToken(getBranch(user.trim()));
+  } on FirebaseException catch (e) {
+    showToastText(e.message as String);
+    Navigator.of(context).pop();
+  }
+}
+
+class MyTextField extends StatelessWidget {
+  final controller;
+  final String hintText;
+  final bool obscureText;
+
+  const MyTextField({
+    required this.controller,
+    required this.hintText,
+    required this.obscureText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: TextField(
+        style: TextStyle(color: Colors.white,fontSize: 15),
+        controller: controller,
+        obscureText: obscureText,
+        decoration: InputDecoration(
+            enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.shade400),
+            ),
+            fillColor: Colors.white10,
+
+            filled: true,
+            hintText: hintText,
+            hintStyle: TextStyle(color: Colors.grey[500])),
+      ),
+    );
   }
 }
 
@@ -263,19 +261,29 @@ class _createNewUserState extends State<createNewUser> {
   bool isTrue = false;
   bool isSend = false;
   String otp = "";
-  List branches = ["ECE", "CIVIL", "CSE", "EEE", "IT", "MECH","AIDS","CSBS","AIML","CSD","CSIT"];
+  List branches = [
+    "ECE",
+    "CIVIL",
+    "CSE",
+    "EEE",
+    "IT",
+    "MECH",
+    "AIDS",
+    "CSBS",
+    "AIML",
+    "CSD",
+    "CSIT"
+  ];
   String branch = "None";
   final emailController = TextEditingController();
+  final usernameController = TextEditingController();
   final otpController = TextEditingController();
   final passwordController = TextEditingController();
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
-  final gmailController = TextEditingController();
   final passwordController_X = TextEditingController();
 
   String generateCode() {
     final Random random = Random();
-    const characters = '0123456789abcdefghijklmnopqrstuvwxyz';
+    const characters = '123456789abcdefghijklmnpqrstuvwxyz';
     String code = '';
     for (int i = 0; i < 6; i++) {
       code += characters[random.nextInt(characters.length)];
@@ -285,412 +293,581 @@ class _createNewUserState extends State<createNewUser> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              backButton(
-
-                  text: "Enter College Mail ID",
-                  child: SizedBox(
-                    width:   45,
-                  )),
-              SizedBox(
-                height:   15,
-              ),
-              TextFieldContainer(
-                  child: TextFormField(
-                controller: emailController,
-                textInputAction: TextInputAction.next,
-                style: textFieldStyle(),
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Enter College Mail ID',
-                    hintStyle: textFieldHintStyle()),
-                validator: (email) =>
-                    email != null && !EmailValidator.validate(email)
-                        ? "Enter a valid Email"
-                        : null,
-              )),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+          child: SingleChildScrollView(
+            child: Column(
                 children: [
-                  if (isSend)
-                    Flexible(
-                      child: TextFieldContainer(
-                          child: TextFormField(
-                        controller: otpController,
-                        textInputAction: TextInputAction.next,
-                        style: textFieldStyle(),
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Enter OTP',
-                            hintStyle: textFieldHintStyle()),
-                      )),
-                    ),
-                  Padding(
-                    padding:  EdgeInsets.symmetric(horizontal:   10),
-                    child: InkWell(
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.blueGrey,
-                            borderRadius: BorderRadius.circular(  20)),
-                        child: Padding(
-                          padding:  EdgeInsets.symmetric(
-                              vertical:   5, horizontal:   10),
-                          child: Text(
-                            isSend ? "Verify" : "Send OTP",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize:   25,
-                                fontWeight: FontWeight.w600),
-                          ),
+                backButton(),
+            SizedBox(
+              height: 15,
+            ),
+            TextFieldContainer(
+
+              heading: "Format : 2_b91a____@srkrec.ac.in (STD)",
+                child: TextFormField(
+                  enabled: (!isTrue) && (!isSend),
+                  controller: emailController,
+                  textInputAction: TextInputAction.next,
+                  style: textFieldStyle(),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Enter College Mail ID',
+                      hintStyle: textFieldHintStyle()),
+                  validator: (email) =>
+                  email != null && !EmailValidator.validate(email)
+                      ? "Enter a valid Email"
+                      : null,
+                )),
+                  if (!isTrue)Padding(
+              padding: EdgeInsets.only(left: 10, top: 10, bottom: 5,right: 10),
+              child: Text(
+                  'Note : "OTP will only be sent for the domain srkrec.ac.in"',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,color: Colors.white),
+            ),
+          ),
+                  if (!isTrue)Padding(
+              padding: EdgeInsets.only(left: 10, top: 10, bottom: 5,right: 10),
+              child: Text(
+                  'Note : "Use Outlook for OTP. If the OTP does not arrive, then check in spam messages. If you still aren'
+                  't receiving it, there may'
+                  'be a problem with our regulated Gmail. Please check it."',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500,color: Colors.white70),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (isSend)
+                  Flexible(
+                    child: TextFieldContainer(
+                        child: TextFormField(
+                          controller: otpController,
+                          textInputAction: TextInputAction.next,
+                          style: textFieldStyle(),
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Enter OTP',
+                              hintStyle: textFieldHintStyle()),
+                        )),
+                  ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: InkWell(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.blueGrey,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10),
+                        child: Text(
+                          isSend ? "Verify" : "Send OTP",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 25,
+                              fontWeight: FontWeight.w600),
                         ),
                       ),
-                      onTap: () async {
-                        if (isSend) {
-                          if (otp == otpController.text.trim()) {
-                            isTrue = true;
-                            await FirebaseFirestore.instance
-                                .collection("tempRegisters")
-                                .doc(emailController.text)
-                                .delete();
-                          } else {
-                            showToastText("Please Enter Correct OTP");
-                          }
-                        }
-                        else {
+                    ),
+                    onTap: () async {
+                      if (isSend) {
+                        if (otp == otpController.text.trim()) {
+                          isTrue = true;
                           await FirebaseFirestore.instance
                               .collection("tempRegisters")
-                              .doc(emailController.text)
-                              .get()
-                              .then((DocumentSnapshot snapshot) async {
-                            if (snapshot.exists) {
-                              var data = snapshot.data();
-                              if (data != null && data is Map<String, dynamic>) {
-                                String value = data['code'];
-                                  otp = value;
-                                await FirebaseFirestore.instance
-                                    .collection("tempRegisters")
-                                    .doc(emailController.text)
-                                    .set({"email": emailController.text, "code": otp});
-                              }
-                            }
-                            else {
-                              otp = await generateCode();
-                             await FirebaseFirestore.instance
+                              .doc(emailController.text.toLowerCase())
+                              .delete();
+                        } else {
+                          showToastText("Please Enter Correct OTP");
+                        }
+                      }
+                      else {
+                        await FirebaseFirestore.instance
+                            .collection("tempRegisters")
+                            .doc(emailController.text.toLowerCase())
+                            .get()
+                            .then((DocumentSnapshot snapshot) async {
+                          if (snapshot.exists) {
+                            var data = snapshot.data();
+                            if (data != null && data is Map<String, dynamic>) {
+                              String value = data['code'];
+                              otp = value;
+                              await FirebaseFirestore.instance
                                   .collection("tempRegisters")
-                                  .doc(emailController.text)
-                                  .set({"email": emailController.text, "code": otp});
-                            }
-                            setState(() {
-                              otp;
-                            });
-
-                          }).catchError((error) {
-                            print(
-                                "An error occurred while retrieving data: $error");
-                          });
-                          var email = emailController.text.trim().split('@');
-                          if (email[1] == 'srkrec.ac.in') {
-                            sendEmail(emailController.text.trim(), otp);
-                            String str = emailController.text.substring(6, 8);
-                            if (str == '04') {
-                              branch = 'ECE';
-                            } else if (str == '01') {
-                              branch = 'CIVIL';
-                            } else if (str == '05') {
-                              branch = 'CSE';
-                            } else if (str == '02') {
-                              branch = 'EEE';
-                            } else if (str == '12') {
-                              branch = 'IT';
-                            } else if (str == '03') {
-                              branch = 'MECH';
-                            } else if (str == '57') {
-                              branch = 'CSBS';
-                            } else if (str == '54') {
-                              branch = 'AIDS';
-                            } else {
-                              branch = "None";
+                                  .doc(emailController.text.toLowerCase())
+                                  .set({
+                                "email": emailController.text.toLowerCase(),
+                                "code": otp,
+                                "data": getID()
+                              });
                             }
                           }
                           else {
-                            if (emailController.text.split('@').last == 'gmail.com') {
-                              showToastText("OTP is Not Sent to Email");
-                            }
-                            else
-                              showToastText("Please Enter Correct Email ID");
-                          }
-                          messageToOwner(
-                            emailController.text + "'s code : $otp",
-                          );
-                          isSend = true;
-                        }
-
-                        setState(() {
-                          branch;
-                          isSend;
-                          otp;
-                          isTrue;
-                        });
-
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                "Your Branch : $branch",
-                style: TextStyle(color: Colors. black, fontSize:   20),
-              ),
-              if (isTrue)
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding:
-                           EdgeInsets.symmetric(vertical:   15, horizontal:   15),
-                      child: Text(
-                        "Fill the Details",
-                        style: creatorHeadingTextStyle,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Flexible(
-                          child: TextFieldContainer(
-                              child: TextFormField(
-                            controller: firstNameController,
-                            textInputAction: TextInputAction.next,
-                            style: textFieldStyle(),
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'First Name',
-                                hintStyle: textFieldHintStyle()),
-                          )),
-                        ),
-                        Flexible(
-                          child: TextFieldContainer(
-                              child: TextFormField(
-                            controller: lastNameController,
-                            textInputAction: TextInputAction.next,
-                            style: textFieldStyle(),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Last Name',
-                              hintStyle: textFieldHintStyle(),
-                            ),
-                          )),
-                        ),
-                      ],
-                    ),
-                    TextFieldContainer(
-                        child: TextFormField(
-                      controller: gmailController,
-                      textInputAction: TextInputAction.next,
-                      style: textFieldStyle(),
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Enter Personal mail ID',
-                          hintStyle: textFieldHintStyle()),
-                      validator: (email) =>
-                          email != null && !EmailValidator.validate(email)
-                              ? "Enter a valid Email"
-                              : null,
-                    )),
-                    TextFieldContainer(
-                        child: TextFormField(
-                      obscureText: true,
-                      controller: passwordController,
-                      textInputAction: TextInputAction.next,
-                      style: textFieldStyle  (),
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Password',
-                          hintStyle: textFieldHintStyle()),
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (value) => value != null && value.length < 6
-                          ? "Enter min. 6 characters"
-                          : null,
-                    )),
-                    TextFieldContainer(
-                        child: TextFormField(
-                      obscureText: true,
-                      controller: passwordController_X,
-                      textInputAction: TextInputAction.next,
-                      style: textFieldStyle  (),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Conform Password',
-                        hintStyle: textFieldHintStyle  (),
-                      ),
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (value) => value != null && value.length < 6
-                          ? "Enter min. 6 characters"
-                          : null,
-                    )),
-                    Padding(
-                      padding:
-                           EdgeInsets.symmetric(vertical:   10, horizontal:   10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Selected Branch : $branch",
-                            style: creatorHeadingTextStyle,
-                          ),
-                          if((int.tryParse(emailController.text.substring(0,2))== null&& emailController.text.split("@").last == "srkrec.ac.in")||emailController.text.split("@").last == "gmail.com")ElevatedButton(onPressed: (){
-                            setState(() {
-                              branch = "None";
+                            otp = await generateCode();
+                            await FirebaseFirestore.instance
+                                .collection("tempRegisters")
+                                .doc(emailController.text.toLowerCase())
+                                .set({
+                              "email": emailController.text.toLowerCase(),
+                              "code": otp
                             });
-                          }, child: Text("Edit"))
-                        ],
-                      ),
-                    ),
-                    if (branch == "None")
-                      Padding(
-                        padding:  EdgeInsets.all(  8.0),
-                        child: Container(
-                          constraints: BoxConstraints(maxHeight: 50),
-
-                          child: ListView.separated(
-                            physics: const BouncingScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: branches.length,
-                            // Display only top 5 items
-                            itemBuilder: (context, int index) {
-                              return InkWell(
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        color: branch == branches[index]
-                                            ? Colors. black.withOpacity(0.6)
-                                            : Colors. black.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(  10)),
-                                    child: Padding(
-                                      padding:  EdgeInsets.symmetric(
-                                          vertical:   3, horizontal:   8),
-                                      child: Text(
-                                        "${branches[index]}",
-                                        style: TextStyle(
-                                            color: Colors. black,
-                                            fontSize:   25,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    )),
-                                onTap: () {
-                                  setState(() {
-                                    branch = branches[index];
-                                  });
-                                },
-                              );
-                            },
-                            separatorBuilder: (context, index) => SizedBox(
-                              width:   3,
-                            ),
-                          ),
-                        ),
-                      ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.only(right:   15),
-                        child:
-                            Text('cancel ', style: TextStyle(fontSize:   20)),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        if (passwordController.text.trim() ==
-                            passwordController_X.text.trim()) {
-                          if (firstNameController.text.isNotEmpty &&
-                              lastNameController.text.isNotEmpty &&
-                              gmailController.text.isNotEmpty &&
-                              branch.isNotEmpty) {
-                            showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (context) => Center(
-                                      child: CircularProgressIndicator(),
-                                    ));
-                            try {
-
-                              await FirebaseAuth.instance
-                                  .createUserWithEmailAndPassword(
-                                      email:
-                                          emailController.text.trim().toLowerCase(),
-                                      password: passwordController.text.trim());
-
-                              NotificationService().showNotification(
-                                  title: "Welcome to eSRKR app!",
-                                  body: "Your Successfully Registered!");
-                              updateToken(branch);
-                              newUser(emailController.text.trim().toLowerCase());
-                              await FirebaseFirestore.instance
-                                  .collection("user")
-                                  .doc(emailController.text)
-                                  .set({
-                                "id": emailController.text,
-                                "name": firstNameController.text +
-                                    ";" +
-                                    lastNameController.text,
-                                "gmail": gmailController.text,
-                                "branch": branch,
-                                "reg": "None"
-                              });
-                            } on FirebaseException catch (e) {
-                              print(e);
-                              Utils.showSnackBar(e.message);
-                            }
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          } else {
-                            showToastText("Fill All Details");
                           }
-                        } else {
-                          showToastText("Enter Same Password");
+                          setState(() {
+                            otp;
+                          });
+                        }).catchError((error) {
+                          print(
+                              "An error occurred while retrieving data: $error");
+                        });
+                        var email = emailController.text.toLowerCase()
+                            .trim()
+                            .split('@');
+                        if (email[1] == 'srkrec.ac.in') {
+                          sendEmail(emailController.text.toLowerCase().trim(),
+                              otp);
+                          branch = await getBranch(emailController.text
+                              .toLowerCase());
                         }
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.only(right:   15),
-                        child: Text(
-                          'Sign up ',
-                          style: TextStyle(fontSize:   20),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 100,)
-                  ],
+                        else {
+                          if (emailController.text
+                              .split('@')
+                              .last
+                              .toLowerCase() == 'gmail.com') {
+                            showToastText("OTP is Not Sent to Email");
+                          }
+                          else
+                            showToastText("Please Enter Correct Email ID");
+                        }
+                        messageToOwner(
+                          emailController.text.toLowerCase() + "'s code : $otp",
+                        );
+                        isSend = true;
+                      }
+
+                      setState(() {
+                        branch;
+                        isSend;
+                        otp;
+                        isTrue;
+                      });
+                    },
+                  ),
                 ),
+              ],
+            ),
+          ),
+          Text(
+            "Your Branch : $branch",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          if (isTrue)
+      Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding:
+          EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+          child: Text(
+            "Fill the Details",
+            style: creatorHeadingTextStyle,
+          ),
+        ),
+
+        TextFieldContainer(
+          child: TextFormField(
+
+            controller: usernameController,
+            textInputAction: TextInputAction.next,
+            style: textFieldStyle(),
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Name',
+                hintStyle: textFieldHintStyle()),
+
+          ), heading: "User Name",),
+        TextFieldContainer(
+          child: TextFormField(
+            obscureText: true,
+            controller: passwordController,
+            textInputAction: TextInputAction.next,
+            style: textFieldStyle(),
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Password',
+                hintStyle: textFieldHintStyle()),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) =>
+            value != null && value.length < 6
+                ? "Enter min. 6 characters"
+                : null,
+          ), heading: "Password",),
+        TextFieldContainer(
+            child: TextFormField(
+              obscureText: true,
+              controller: passwordController_X,
+              textInputAction: TextInputAction.next,
+              style: textFieldStyle(),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Conform Password',
+                hintStyle: textFieldHintStyle(),
+              ),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) =>
+              value != null && value.length < 6
+                  ? "Enter min. 6 characters"
+                  : null,
+            )),
+        if (branch == "None")Padding(
+          padding:
+          EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Selected Branch : $branch",
+                style: creatorHeadingTextStyle,
+              ),
+              if((int.tryParse(emailController.text.substring(0, 2)) == null &&
+                  emailController.text
+                      .split("@")
+                      .last == "srkrec.ac.in") || emailController.text
+                  .split("@")
+                  .last == "gmail.com")ElevatedButton(onPressed: () {
+                setState(() {
+                  branch = "None";
+                });
+              }, child: Text("Edit"))
             ],
           ),
         ),
-      ),
+        if (branch == "None")
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Container(
+              constraints: BoxConstraints(maxHeight: 50),
+
+              child: ListView.separated(
+                physics: const BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemCount: branches.length,
+                // Display only top 5 items
+                itemBuilder: (context, int index) {
+                  return InkWell(
+                    child: Column(
+                      children: [
+                        Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 2, horizontal: 20),
+                            margin: EdgeInsets.only(left: index == 0 ? 10 : 3),
+
+                            decoration: BoxDecoration(
+                                color: branch == branches[index]
+                                    ? Colors.black.withOpacity(0.6)
+                                    : Colors.black.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Text(
+                              "${branches[index]}",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500),
+                            )),
+                      ],
+                    ),
+                    onTap: () {
+                      setState(() {
+                        branch = branches[index];
+                      });
+                    },
+                  );
+                },
+                separatorBuilder: (context, index) =>
+                    SizedBox(
+                      width: 3,
+                    ),
+              ),
+            ),
+          ),
+        SizedBox(height: 10,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('cancel ', style: TextStyle(fontSize: 25,color: Colors.white70)),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (branch == "None") {
+                  showToastText("Select Branch");
+                  return;
+                }
+                if (passwordController.text.trim() ==
+                    passwordController_X.text.trim()) {
+                  showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) =>
+                          Center(
+                            child: CircularProgressIndicator(),
+                          ));
+                  try {
+                    await FirebaseAuth.instance
+                        .createUserWithEmailAndPassword(
+                        email:
+                        emailController.text.trim().toLowerCase(),
+                        password: passwordController.text.trim());
+                    await Future.delayed(Duration(seconds: 1));
+                    FirebaseAuth _auth = FirebaseAuth.instance;
+                    await _auth.currentUser!.updateDisplayName(
+                        usernameController.text + ";" + branch);
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    prefs.setInt('lastOpenAdTime', DateTime
+                        .now()
+                        .millisecondsSinceEpoch);
+                    NotificationService().showNotification(
+                        title: "Welcome to eSRKR app!",
+                        body: "Your Successfully Registered!");
+                    updateToken(branch);
+                    newUser(emailController.text.trim().toLowerCase());
+                  } on FirebaseException catch (e) {
+                    print(e);
+                    Utils.showSnackBar(e.message);
+                  }
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                } else {
+                  showToastText("Enter Same Password");
+                }
+              },
+              child: Padding(
+                padding: EdgeInsets.only(right: 15),
+                child: Text(
+                  'Sign up ',
+                  style: TextStyle(fontSize: 30,color: Colors.orangeAccent),
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 100,)
+
+      ],
+    ),
+    ],
+    ),
+    ),
+    ),
     );
   }
 
   Future<void> sendEmail(String mail, String otp) async {
-    final smtpServer = gmail('esrkr.app@gmail.com', 'wndwwhhpifpgnanu');
+    final smtpServer = gmail(
+        'esrkr.study.app@gmail.com', 'tvkd ujkb ybdt leay');
+    DateTime currentDate = DateTime.now();
+    String formattedDate = DateFormat('d MMM, y').format(currentDate);
+    String htmlContent = """
+    <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Static Template</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    style="
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #ffffff;
+      font-size: 14px;
+    "
+  >
+    <div
+      style="
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 45px 20px 60px;
+        background: #f4f7ff;
+         background-repeat: no-repeat;
+        background-size: 800px 452px;
+        background-position: top center;
+        font-size: 14px;
+        color: #434343;
+      "
+    >
+      <header>
+        <table style="width: 100%;">
+          <tbody>
+            <tr style="height: 0;">
+           
+              <td>
+               
+                <h2 style="text-align: left;">eSRKR App</h2>
+              </td>
+ 
+              <td style="text-align: right;">
+                <span
+                  style="font-size: 16px; line-height: 30px;"
+                  >$formattedDate</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </header>
+
+      <main>
+        <div
+          style="
+            margin: 0;
+            margin-top: 50px;
+            padding: 92px 20px 115px;
+            background: #ffffff;
+            border-radius: 30px;
+            text-align: center;
+          "
+        >
+          <div style="width: 100%; max-width: 489px; margin: 0 auto;">
+            <h1
+              style="
+                margin: 0;
+                font-size: 24px;
+                font-weight: 500;
+                color: #1f1f1f;
+              "
+            >
+            App Login OTP
+            </h1>
+            <p
+              style="
+                margin: 0;
+                margin-top: 17px;
+                font-size: 16px;
+                font-weight: 500;
+              "
+            >
+              Hey ${emailController.text
+        .split("@")
+        .first
+        .toUpperCase()},
+            </p>
+            <p
+              style="
+                margin: 0;
+                margin-top: 17px;
+                font-weight: 500;
+                letter-spacing: 0.56px;
+              "
+            >
+            Your code is:
+            </p>
+            <p
+              style="
+                margin: 0;
+                margin-top: 60px;
+                font-size: 30px;
+                font-weight: 600;
+                letter-spacing: 15px;
+                color: #ba3d4f;
+              "
+            >
+              $otp
+            </p>
+            <p
+            style="
+              margin: 0;
+              margin-top: 17px;
+              font-weight: 500;
+              letter-spacing: 0.56px;
+            "
+          >
+          OTP is valid until 
+            <span style="font-weight: 800; color: #1f1f1f;">App is Closed</span>..
+          </p>
+            <p
+              style="
+                margin: 0;
+                margin-top: 17px;
+                font-size: 18px;
+                font-weight: 500;
+                letter-spacing: 0.56px;
+              "
+            >
+            Thank you for being a member of the eSRKR App.
+            </p>
+          </div>
+        </div>
+
+        <p
+          style="
+            max-width: 600px;
+            margin: 0 auto;
+            margin-top: 90px;
+            text-align: center;
+            font-weight: 500;
+            color: #8c8c8c;
+          "
+        >
+        Need help? You can reach us at <span  style="color: #499fb6; text-decoration: none;">esrkr.study.app@gmail.com</span>
+         
+          or 
+          <span  style="color: #499fb6; text-decoration: none;">sujithnimmala03@gmail.com</span>
+        </p>
+      </main>
+
+      <footer
+        style="
+          width: 100%;
+          margin: 20px auto 0;
+          text-align: center;
+          border-top: 1px solid #e6ebf1;
+        ">
+        <p
+          style="
+            margin: 0;
+            text-align: center;
+            margin-top: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #434343;
+          "
+        >
+        eSRKR App Team
+        </p>
+        <p style="margin: 0; margin-top: 8px; color: #434343;text-align: center;">
+        - ECE Department -
+        </p>
+      
+      </footer>
+    </div>
+  </body>
+</html>
+""";
 
     // Create the message
     final message = Message()
-      ..from = Address('esrkr.app@gmail.com')
+      ..from = Address('esrkr.study.app@gmail.com')
       ..recipients.add(mail)
       ..subject = 'eSRKR App'
-      ..text = 'Dear Member,\n\n'
-          'Thank you for being a member of eSRKR App. Your Code is: $otp.\n\n'
-          'If you have any questions or need assistance, please don\'t hesitate to contact us.\n\n'
-          'Best regards,\n'
-          'The eSRKR App Team';
+      ..html = htmlContent; // Set the HTML content
 
     try {
-      final sendReport = await send(message, smtpServer);
-      print('Message sent: ${sendReport.toString()}');
+      await send(message, smtpServer);
+      showToastText("OTP Sent");
     } catch (e) {
       print('Error sending email: $e');
       showToastText('Error sending email: $e');
@@ -705,7 +882,7 @@ Future<void> newUser(String email) async {
   FirebaseFirestore.instance
       .collection("tokens")
       .doc(
-          "sujithnimmala03@gmail.com") // Replace "documentId" with the ID of the document you want to retrieve
+      "sujithnimmala03@gmail.com") // Replace "documentId" with the ID of the document you want to retrieve
       .get()
       .then((DocumentSnapshot snapshot) {
     if (snapshot.exists) {
@@ -721,7 +898,7 @@ Future<void> newUser(String email) async {
             .doc(email)
             .set({
           "id": getID(),
-          "fromTo":email,
+          "fromTo": email,
           "data": "new user@$token",
           "image": ""
         });
@@ -738,4 +915,127 @@ Future<void> newUser(String email) async {
   }).catchError((error) {
     print("An error occurred while retrieving data: $error");
   });
+}
+
+getBranch(String email) {
+  String str = email.substring(6, 8);
+  if (str == '04') {
+    return 'ECE';
+  } else if (str == '01') {
+    return 'CIVIL';
+  } else if (str == '05') {
+    return 'CSE';
+  } else if (str == '02') {
+    return 'EEE';
+  } else if (str == '12') {
+    return 'IT';
+  } else if (str == '03') {
+    return 'MECH';
+  } else if (str == '57') {
+    return 'CSBS';
+  } else if (str == '54') {
+    return 'AIDS';
+  } else {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    if (_auth.currentUser!.email != null) {
+      return _auth.currentUser!.displayName!.split(";").last;
+    }
+    return "ECE";
+  }
+}
+
+bool isAnonymousUser() => FirebaseAuth.instance.currentUser!.isAnonymous;
+
+
+class UpdatePasswordPage extends StatefulWidget {
+  const UpdatePasswordPage({Key? key}) : super(key: key);
+
+  @override
+  _UpdatePasswordPageState createState() => _UpdatePasswordPageState();
+}
+
+class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _currentUser = FirebaseAuth.instance.currentUser;
+  final _newPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _newPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  backButton(),
+                  Heading(
+                    heading: "Update Password Page", padding: EdgeInsets.zero,)
+                ],
+              ),
+              const SizedBox(height: 16.0),
+              TextFieldContainer(
+                  child: TextFormField(
+                    controller: _newPasswordController,
+                    textInputAction: TextInputAction.next,
+                    style: textFieldStyle(),
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'New Password',
+                        hintStyle: textFieldHintStyle()),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a new password.';
+                      }
+                      return null;
+                    },
+                  )),
+
+              const SizedBox(height: 16.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      // _currentUser!.updateDisplayName("displayName");
+
+                      if (_formKey.currentState!.validate()) {
+                        try {
+                          await _currentUser!.updatePassword(
+                              _newPasswordController.text);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Password updated successfully.'),
+                            ),
+                          );
+                          Navigator.pop(context);
+                        } on FirebaseAuthException catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'Error updating password: ${e.message}'),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    child: const Text('Update Password'),
+                  ),
+                  SizedBox(width: 16.0),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

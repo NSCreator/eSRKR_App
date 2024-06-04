@@ -1,14 +1,14 @@
 {
   "project_info": {
-    "project_number": "922256000367",
-    "firebase_url": "https://esrkr-app-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "esrkr-app",
-    "storage_bucket": "esrkr-app.appspot.com"
+    "project_number": "1066742888174",
+    "firebase_url": "https://esrkr-study-app-default-rtdb.firebaseio.com",
+    "project_id": "esrkr-study-app",
+    "storage_bucket": "esrkr-study-app.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:922256000367:android:5d3aee3de0b5955bd6949a",
+        "mobilesdk_app_id": "1:1066742888174:android:e5301c70726884d56fe5ff",
         "android_client_info": {
           "package_name": "com.nimmalasujith.esrkr"
         }
@@ -16,7 +16,26 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBDqW-2hA1dM5rOLl9kVE6Dhp5EsqUhNfE"
+          "current_key": "AIzaSyDecRg9CXuUfrbC1l521xJgddVvKS10Vmg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1066742888174:android:59170206feecbc0a6fe5ff",
+        "android_client_info": {
+          "package_name": "com.nimmalasujith.esrkr_pdfs_view"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDecRg9CXuUfrbC1l521xJgddVvKS10Vmg"
         }
       ],
       "services": {

@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -44,44 +41,56 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCm8BPwoYXL9naD5dj0sgKlOBREmvBGy4M',
-    appId: '1:922256000367:web:b161bb7aaafe5bfdd6949a',
-    messagingSenderId: '922256000367',
-    projectId: 'esrkr-app',
-    authDomain: 'esrkr-app.firebaseapp.com',
-    databaseURL: 'https://esrkr-app-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'esrkr-app.appspot.com',
-    measurementId: 'G-PTLKXFXF6F',
+    apiKey: 'AIzaSyCQ96orZOL0fZydFmCCAal1idQlxv7tuoM',
+    appId: '1:1066742888174:web:f83a62f07cad01e36fe5ff',
+    messagingSenderId: '1066742888174',
+    projectId: 'esrkr-study-app',
+    authDomain: 'esrkr-study-app.firebaseapp.com',
+    databaseURL: 'https://esrkr-study-app-default-rtdb.firebaseio.com',
+    storageBucket: 'esrkr-study-app.appspot.com',
+    measurementId: 'G-K78QK25XRH',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBDqW-2hA1dM5rOLl9kVE6Dhp5EsqUhNfE',
-    appId: '1:922256000367:android:5d3aee3de0b5955bd6949a',
-    messagingSenderId: '922256000367',
-    projectId: 'esrkr-app',
-    databaseURL: 'https://esrkr-app-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'esrkr-app.appspot.com',
+    apiKey: 'AIzaSyDecRg9CXuUfrbC1l521xJgddVvKS10Vmg',
+    appId: '1:1066742888174:android:e5301c70726884d56fe5ff',
+    messagingSenderId: '1066742888174',
+    projectId: 'esrkr-study-app',
+    databaseURL: 'https://esrkr-study-app-default-rtdb.firebaseio.com',
+    storageBucket: 'esrkr-study-app.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAVKhC-9Laj55wmlfZqc8fMeNrHWZj2wT4',
-    appId: '1:922256000367:ios:b81d57cc715193edd6949a',
-    messagingSenderId: '922256000367',
-    projectId: 'esrkr-app',
-    databaseURL: 'https://esrkr-app-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'esrkr-app.appspot.com',
-    androidClientId: '922256000367-pr4gj3k622slqgjf8pfspm9gdjidjji4.apps.googleusercontent.com',
-    iosBundleId: 'com.nimmalasujith.srkrStudyApp',
+    apiKey: 'AIzaSyB6zDKwWcyIXZSDrSVF3-jQ85EZkK-wSuI',
+    appId: '1:1066742888174:ios:849dfaae8a550d1b6fe5ff',
+    messagingSenderId: '1066742888174',
+    projectId: 'esrkr-study-app',
+    databaseURL: 'https://esrkr-study-app-default-rtdb.firebaseio.com',
+    storageBucket: 'esrkr-study-app.appspot.com',
+    androidClientId: '1066742888174-91n4k2bpv945407sf0j4miv02b3mualu.apps.googleusercontent.com',
+    iosBundleId: 'com.nimmalasujith.esrkr',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAVKhC-9Laj55wmlfZqc8fMeNrHWZj2wT4',
-    appId: '1:922256000367:ios:f8d0b214d85802b0d6949a',
-    messagingSenderId: '922256000367',
-    projectId: 'esrkr-app',
-    databaseURL: 'https://esrkr-app-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'esrkr-app.appspot.com',
-    androidClientId: '922256000367-pr4gj3k622slqgjf8pfspm9gdjidjji4.apps.googleusercontent.com',
-    iosBundleId: 'com.nimmalasujith.srkrStudyApp.RunnerTests',
+    apiKey: 'AIzaSyB6zDKwWcyIXZSDrSVF3-jQ85EZkK-wSuI',
+    appId: '1:1066742888174:ios:4e016339ca7b353c6fe5ff',
+    messagingSenderId: '1066742888174',
+    projectId: 'esrkr-study-app',
+    databaseURL: 'https://esrkr-study-app-default-rtdb.firebaseio.com',
+    storageBucket: 'esrkr-study-app.appspot.com',
+    androidClientId: '1066742888174-91n4k2bpv945407sf0j4miv02b3mualu.apps.googleusercontent.com',
+    iosBundleId: 'com.nimmalasujith.srkrStudyApp',
   );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCQ96orZOL0fZydFmCCAal1idQlxv7tuoM',
+    appId: '1:1066742888174:web:efe81ba956b516c86fe5ff',
+    messagingSenderId: '1066742888174',
+    projectId: 'esrkr-study-app',
+    authDomain: 'esrkr-study-app.firebaseapp.com',
+    databaseURL: 'https://esrkr-study-app-default-rtdb.firebaseio.com',
+    storageBucket: 'esrkr-study-app.appspot.com',
+    measurementId: 'G-43X4BCHVYN',
+  );
+
 }

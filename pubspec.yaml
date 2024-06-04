@@ -1,38 +1,46 @@
 name: srkr_study_app
 description: A new Flutter project.
 publish_to: 'none'
-version: 2023.12.31+28
+version: 2024.5.7+37
 
 environment:
-  sdk: '>=3.2.0-272.0.dev <4.0.0'
+  sdk: '>=2.12.0 <4.0.0'
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons:
-  firebase_storage:
+
   url_launcher:
+
   http:
-
-
-  carousel_slider:
+  firebase_database:
   firebase_core:
   cloud_firestore:
+  firebase_messaging:
   firebase_auth:
+
   email_validator:
+  carousel_slider:
   intl:
   photo_view:
-  image_picker:
+
   path_provider:
   flutter_local_notifications:
   flutter_pdfview:
-  firebase_messaging:
   shared_preferences:
   mailer:
   flutter_tts:
   fluttertoast:
-  objectbox_flutter_libs:
-  firebase_database: 
-  google_mobile_ads: ^4.0.0
+  file_picker:
+  dio:
+  pdfx:
+  open_filex:
+  firebase_storage:
+  google_fonts:
+
+  google_mobile_ads:
+  flutter_polls: ^0.1.6
+
 
 
 
@@ -40,6 +48,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons:
 
 
 flutter_icons:
@@ -50,9 +59,9 @@ flutter_icons:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/
-  fonts:
-    - family: test
-      fonts:
-        - asset: assets/fonts/SairaCondensed-Regular.ttf
+#  assets:
+#    - assets/
+#  fonts:
+#    - family: test
+#      fonts:
+#        - asset: assets/fonts/SairaCondensed-Regular.ttf

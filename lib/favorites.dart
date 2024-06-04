@@ -1,34 +1,33 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:srkr_study_app/subjects.dart';
-import 'package:srkr_study_app/test.dart';
+import 'package:srkr_study_app/functions.dart';
+import 'package:srkr_study_app/settings/settings.dart';
+import 'package:srkr_study_app/subjects/convertors.dart';
+import 'package:srkr_study_app/subjects/subjects.dart';
+import 'package:srkr_study_app/get_all_data.dart';
 
 
 class favoritesSubjects extends StatefulWidget {
     
-  String branch;
-  String reg;
 
-  favoritesSubjects(
-      {   required this.branch, required this.reg});
 
   @override
   State<favoritesSubjects> createState() => _favoritesSubjectsState();
 }
 
 class _favoritesSubjectsState extends State<favoritesSubjects> {
-  List<subjectConvertor> subjects = [];
-  List<subjectConvertor> labSubjects = [];
-  List<subjectConvertor> regSubjects = [];
-  List<subjectConvertor> regLabSubjects = [];
+  List<SubjectConverter> subjects = [];
+  List<SubjectConverter> labSubjects = [];
+  List<SubjectConverter> regSubjects = [];
+  List<SubjectConverter> regLabSubjects = [];
 
   getData() async {
     subjects = await SubjectPreferences.get();
     labSubjects = await LabSubjectPreferences.get();
     try {
-      BranchStudyMaterialsConvertor? data =
-          await getBranchStudyMaterials(widget.branch, false);
+      BranchStudyMaterialsConverter? data =
+          await getBranchStudyMaterials( false);
       if (data != null) {
         regSubjects = data.subjects;
         regLabSubjects = data.labSubjects;
@@ -55,11 +54,7 @@ class _favoritesSubjectsState extends State<favoritesSubjects> {
 
   @override
   Widget build(BuildContext context) {
-    final combinedData = [...regSubjects, ...regLabSubjects];
 
-    List<subjectConvertor> filteredItems = combinedData
-        .where((item) => item.regulation.contains(widget.reg.toUpperCase().trim()))
-        .toList();
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -67,18 +62,9 @@ class _favoritesSubjectsState extends State<favoritesSubjects> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              backButton(),
               if (subjects.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 10, horizontal: 20),
-                  child: Text(
-                    "Subjects",
-                    style: TextStyle(
-                        color: Colors. black,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ),
+                Heading(heading: "Subjects"),
               if (subjects.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -105,11 +91,9 @@ class _favoritesSubjectsState extends State<favoritesSubjects> {
                               pageBuilder: (context, animation,
                                   secondaryAnimation) =>
                                   subjectUnitsData(
-                                    syllabusModelPaper: [],
-                                    branch: widget.branch,
+
                                     mode:  true ,
                                     data: data,
-                                    reg: widget.reg,
                                   ),
                               transitionsBuilder: (context, animation,
                                   secondaryAnimation, child) {
@@ -229,17 +213,7 @@ class _favoritesSubjectsState extends State<favoritesSubjects> {
                   ),
                 ),
               if (labSubjects.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 10, horizontal: 20),
-                  child: Text(
-                    "Lab Subjects",
-                    style: TextStyle(
-                        color: Colors. black,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ),
+                Heading(heading: "Lab Subjects"),
               if (labSubjects.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -265,12 +239,10 @@ class _favoritesSubjectsState extends State<favoritesSubjects> {
                               pageBuilder: (context, animation,
                                   secondaryAnimation) =>
                                   subjectUnitsData(
-                                    syllabusModelPaper: [],
 
-                                    branch: widget.branch,
+
                                     mode:  false ,
                                     data: data,
-                                    reg: widget.reg,
                                   ),
                               transitionsBuilder: (context, animation,
                                   secondaryAnimation, child) {
@@ -389,140 +361,6 @@ class _favoritesSubjectsState extends State<favoritesSubjects> {
                     ),
                   ),
                 ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 8,horizontal: 15),
-                margin: EdgeInsets.symmetric(vertical: 20,horizontal: 5),
-                decoration: BoxDecoration(
-                    color: Colors.black12,
-                    borderRadius: BorderRadius.circular(25)
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Based on Regulation",
-                          style: TextStyle(
-                              color: Colors. black, fontSize:   25,fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                    Center(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical:  10),
-                        child: filteredItems.isNotEmpty
-                            ? GridView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisSpacing:   5,
-                            mainAxisSpacing:   5,
-                            childAspectRatio:
-                            (  5) / (  3.5),
-                            crossAxisCount: 4,
-                          ),
-                          itemCount: filteredItems.length,
-                          itemBuilder: (context, int index) {
-
-                            final itemData = filteredItems[index];
-                            final isFlashConvertor =
-                            regSubjects.contains(itemData);
-
-                            return InkWell(
-                              child: ClipRRect(
-                                borderRadius:
-                                BorderRadius.circular(  25),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        15),
-
-                                    color: isFlashConvertor
-                                        ? Colors. black54
-                                        : Colors
-                                        . black26, // Change the color here
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      itemData.heading.short,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        // Change the text color here
-                                        fontSize:   25,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: "test"
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    transitionDuration:
-                                    const Duration(milliseconds: 300),
-                                    pageBuilder: (context, animation,
-                                        secondaryAnimation) =>
-                                        subjectUnitsData(
-                                          syllabusModelPaper: [],
-                                          branch: widget.branch,
-                                          mode: isFlashConvertor ? true : false,
-                                          data: itemData,
-                                          reg: widget.reg,
-                                        ),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      final fadeTransition = FadeTransition(
-                                        opacity: animation,
-                                        child: child,
-                                      );
-
-                                      return Container(
-                                        color: Colors.black
-                                            .withOpacity(animation.value),
-                                        child: AnimatedOpacity(
-                                          duration:
-                                          Duration(milliseconds: 300),
-                                          opacity:
-                                          animation.value.clamp(0.3, 1.0),
-                                          child: fadeTransition,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        )
-                            : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.library_books,
-                              color: Colors. black,
-                            ),
-                            SizedBox(
-                              height:   10,
-                            ),
-                            Text(
-                              "No Subjects",
-                              style: TextStyle(
-                                  color: Colors. black, fontSize:   20),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               SizedBox(
                 height: 100,
               )
@@ -537,7 +375,7 @@ class _favoritesSubjectsState extends State<favoritesSubjects> {
 class SubjectPreferences {
   static const String key = "Subjects";
 
-  static Future<void> save(List<subjectConvertor> subjects) async {
+  static Future<void> save(List<SubjectConverter> subjects) async {
     final prefs = await SharedPreferences.getInstance();
     final subjectsJson = subjects.map((subject) => subject.toJson()).toList();
     final subjectsString = jsonEncode(subjectsJson);
@@ -545,13 +383,13 @@ class SubjectPreferences {
   }
 
   // Get a list of subjects from shared preferences
-  static Future<List<subjectConvertor>> get() async {
+  static Future<List<SubjectConverter>> get() async {
     final prefs = await SharedPreferences.getInstance();
     final subjectsString = prefs.getString(key);
     if (subjectsString != null) {
       final subjectsJson = jsonDecode(subjectsString) as List;
       return subjectsJson
-          .map((json) => subjectConvertor.fromJson(json))
+          .map((json) => SubjectConverter.fromJson(json))
           .toList();
     } else {
       return [];
@@ -559,15 +397,15 @@ class SubjectPreferences {
   }
 
   // Add a new subject to shared preferences
-  static Future<void> add(subjectConvertor newSubject) async {
-    final List<subjectConvertor> subjects = await get();
+  static Future<void> add(SubjectConverter newSubject) async {
+    final List<SubjectConverter> subjects = await get();
     subjects.add(newSubject);
     await save(subjects);
   }
 
   // Delete a subject from shared preferences
   static Future<void> delete(String subjectId) async {
-    List<subjectConvertor> subjects = await get();
+    List<SubjectConverter> subjects = await get();
     subjects.removeWhere((subject) => subject.id == subjectId);
     await save(subjects);
   }
@@ -576,7 +414,7 @@ class SubjectPreferences {
 class LabSubjectPreferences {
   static const String key = "labSubjects";
 
-  static Future<void> save(List<subjectConvertor> subjects) async {
+  static Future<void> save(List<SubjectConverter> subjects) async {
     final prefs = await SharedPreferences.getInstance();
     final subjectsJson = subjects.map((subject) => subject.toJson()).toList();
     final subjectsString = jsonEncode(subjectsJson);
@@ -584,13 +422,13 @@ class LabSubjectPreferences {
   }
 
   // Get a list of subjects from shared preferences
-  static Future<List<subjectConvertor>> get() async {
+  static Future<List<SubjectConverter>> get() async {
     final prefs = await SharedPreferences.getInstance();
     final subjectsString = prefs.getString(key);
     if (subjectsString != null) {
       final subjectsJson = jsonDecode(subjectsString) as List;
       return subjectsJson
-          .map((json) => subjectConvertor.fromJson(json))
+          .map((json) => SubjectConverter.fromJson(json))
           .toList();
     } else {
       return [];
@@ -598,15 +436,15 @@ class LabSubjectPreferences {
   }
 
   // Add a new subject to shared preferences
-  static Future<void> add(subjectConvertor newSubject) async {
-    final List<subjectConvertor> subjects = await get();
+  static Future<void> add(SubjectConverter newSubject) async {
+    final List<SubjectConverter> subjects = await get();
     subjects.add(newSubject);
     await save(subjects);
   }
 
   // Delete a subject from shared preferences
   static Future<void> delete(String subjectId) async {
-    List<subjectConvertor> subjects = await get();
+    List<SubjectConverter> subjects = await get();
     subjects.removeWhere((subject) => subject.id == subjectId);
     await save(subjects);
   }
