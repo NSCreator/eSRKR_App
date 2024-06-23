@@ -1,6 +1,6 @@
 # srkr_study_app
 Home Page View
-
+<img src="[/images/output/video1.gif](https://github.com/NSCreator/eSRKR_App/assets/92940655/ad01006c-1869-4da7-abd5-9e2cbb03329a)" width="250" height="250"/>
 ![WhatsApp Image 2024-06-23 at 15 33 56](https://github.com/NSCreator/eSRKR_App/assets/92940655/ad01006c-1869-4da7-abd5-9e2cbb03329a | width=100)
 
 Authentication Pages (Login and SignIn )
