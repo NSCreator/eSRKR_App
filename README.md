@@ -1,4 +1,4 @@
-# srkr_study_app
+# srkr_study_app (Owner Version)
 <h2>All code files are in the lib folder.</h2>
 
 <h1>Home Page View</h1>
